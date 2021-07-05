@@ -8,3 +8,10 @@ repository = "https://github.com/swc-project/plguins.git"
 version = "0.0.0"
 
 [dependencies]
+swc_plugin = "0.0.0"
+
+[build-dependencies]
+swc_plugin_build = "0.0.0"
+
+[dev-dependencies]
+swc_plugin_testing = "0.0.0"
