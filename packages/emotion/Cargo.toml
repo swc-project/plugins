@@ -1,0 +1,10 @@
+[package]
+authors = ["강동윤 <kdy1997.dev@gmail.com>"]
+description = "SWC plugin for emotion"
+edition = "2018"
+license = "Apache-2.0"
+name = "swc_plugin_emotion"
+repository = "https://github.com/swc-project/plguins.git"
+version = "0.0.0"
+
+[dependencies]
