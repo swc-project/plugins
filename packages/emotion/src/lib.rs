@@ -1,3 +1,5 @@
+#![crate_type = "cdylib"]
+
 use abi_stable::export_root_module;
 use abi_stable::prefix_type::PrefixTypeTrait;
 use abi_stable::sabi_extern_fn;
