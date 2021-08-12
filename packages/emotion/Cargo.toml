@@ -9,6 +9,7 @@ version = "0.0.0"
 
 [dependencies]
 swc_plugin = "0.0.0"
+swc_plugin_shared = "0.0.0"
 
 [build-dependencies]
 swc_plugin_build = "0.0.0"
