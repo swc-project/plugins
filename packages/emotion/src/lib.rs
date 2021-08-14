@@ -23,6 +23,6 @@ fn get_js_ast_version() -> RString {
 }
 
 #[sabi_extern_fn]
-fn process_js(_config_json: RStr, ast_json: RStr) -> RResult<RString, RString> {
-    ROk(ast_json.into())
+fn process_js(_config_json: RStr, ast_json: RString) -> RResult<RString, RString> {
+    ROk(ast_json)
 }
