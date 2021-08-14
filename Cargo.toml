@@ -4,5 +4,4 @@ members = ["packages/emotion"]
 [patch.crates-io]
 swc_plugin = {path = "../swc-plugin/plugin"}
 swc_plugin_build = {path = "../swc-plugin/plugin/build"}
-swc_plugin_shared = {path = "../swc-plugin/plugin/shared"}
 swc_plugin_testing = {path = "../swc-plugin/plugin/testing"}
