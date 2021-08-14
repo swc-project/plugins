@@ -14,7 +14,7 @@ use RResult::ROk;
 pub fn get_library() -> SwcPluginRef {
     SwcPlugin {
         get_js_ast_version,
-        process_js,
+        process_js: Some(process_js),
     }
     .leak_into_prefix()
 }
