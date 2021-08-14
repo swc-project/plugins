@@ -4,8 +4,8 @@ use abi_stable::sabi_extern_fn;
 use abi_stable::std_types::RResult;
 use abi_stable::std_types::RStr;
 use abi_stable::std_types::RString;
-use swc_plugin_shared::SwcPlugin;
-use swc_plugin_shared::SwcPluginRef;
+use swc_plugin::SwcPlugin;
+use swc_plugin::SwcPluginRef;
 use RResult::ROk;
 
 #[export_root_module]
@@ -24,5 +24,7 @@ fn get_js_ast_version() -> RString {
 
 #[sabi_extern_fn]
 fn process_js(_config_json: RStr, ast_json: RString) -> RResult<RString, RString> {
+    let ast = serde_json::from_str(ast_json).unwrap();
+
     ROk(ast_json)
 }
