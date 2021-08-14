@@ -7,6 +7,9 @@ name = "swc_plugin_emotion"
 repository = "https://github.com/swc-project/plguins.git"
 version = "0.0.0"
 
+[lib]
+crate-type = ["cdylib"]
+
 [dependencies]
 abi_stable = "0.9.3"
 swc_plugin = "0.0.0"
