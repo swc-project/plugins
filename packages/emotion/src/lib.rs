@@ -1,22 +1,21 @@
-use abi_stable::export_root_module;
-use abi_stable::prefix_type::PrefixTypeTrait;
-use abi_stable::sabi_extern_fn;
-use abi_stable::std_types::RResult;
-use abi_stable::std_types::RStr;
-use abi_stable::std_types::RString;
-use swc_plugin::ecmascript::ast::ModuleItem;
-use swc_plugin::ecmascript::ast::Program;
-use swc_plugin::ecmascript::visit::noop_fold_type;
-use swc_plugin::ecmascript::visit::Fold;
-use swc_plugin::ecmascript::visit::FoldWith;
-use swc_plugin::SwcPlugin;
-use swc_plugin::SwcPluginRef;
+use abi_stable::{
+    export_root_module,
+    prefix_type::PrefixTypeTrait,
+    sabi_extern_fn,
+    std_types::{RResult, RStr, RString},
+};
+use swc_plugin::{
+    ecmascript::{
+        ast::{ModuleItem, Program},
+        visit::{noop_fold_type, Fold, FoldWith},
+    },
+    SwcPlugin, SwcPluginRef,
+};
 use RResult::ROk;
 
 #[export_root_module]
 pub fn get_library() -> SwcPluginRef {
     SwcPlugin {
-        get_js_ast_version,
         process_js: Some(process_js),
     }
     .leak_into_prefix()
