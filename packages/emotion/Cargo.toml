@@ -11,7 +11,6 @@ version = "0.0.0"
 crate-type = ["cdylib"]
 
 [dependencies]
-abi_stable = "0.9.3"
 serde_json = "1.0.66"
 swc_plugin = "0.1.0"
 
