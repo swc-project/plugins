@@ -1,0 +1,4 @@
+/** @jsx jsx */
+import { jsx, css } from '@emotion/react';
+
+const SomeComponent = props => <div css={/*#__PURE__*/css("color:", window, ";" + (process.env.NODE_ENV === "production" ? "" : ";label:SomeComponent;"), process.env.NODE_ENV === "production" ? "" : "/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL19fdGVzdHNfXy9fX2ZpeHR1cmVzX18vY29yZS13aXRoLWNzcy1pbXBvcnQtZHluYW1pYy5qcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFLWSIsImZpbGUiOiIuLi8uLi8uLi9fX3Rlc3RzX18vX19maXh0dXJlc19fL2NvcmUtd2l0aC1jc3MtaW1wb3J0LWR5bmFtaWMuanMiLCJzb3VyY2VzQ29udGVudCI6WyIvKiogQGpzeCBqc3ggKi9cbmltcG9ydCB7IGpzeCwgY3NzIH0gZnJvbSAnQGVtb3Rpb24vcmVhY3QnXG5cbmNvbnN0IFNvbWVDb21wb25lbnQgPSBwcm9wcyA9PiAoXG4gIDxkaXZcbiAgICBjc3M9e2Nzc2BcbiAgICAgIGNvbG9yOiAke3dpbmRvd307XG4gICAgYH1cbiAgICB7Li4ucHJvcHN9XG4gIC8+XG4pXG4iXX0= */")} {...props} />;

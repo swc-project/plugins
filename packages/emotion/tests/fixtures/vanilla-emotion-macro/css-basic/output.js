@@ -1,0 +1,4 @@
+import { css } from '@emotion/css';
+
+/*#__PURE__*/
+css("margin:12px 48px;color:#ffffff;display:flex;flex:1 0 auto;color:blue;@media (min-width: 420px){line-height:40px;}width:", window.whatever, ";" + (process.env.NODE_ENV === "production" ? "" : "/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uL19fdGVzdHNfXy92YW5pbGxhLWVtb3Rpb24tbWFjcm8vX19maXh0dXJlc19fL2Nzcy1iYXNpYy5qcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFFRyIsImZpbGUiOiIuLi8uLi8uLi8uLi9fX3Rlc3RzX18vdmFuaWxsYS1lbW90aW9uLW1hY3JvL19fZml4dHVyZXNfXy9jc3MtYmFzaWMuanMiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBjc3MgfSBmcm9tICdAZW1vdGlvbi9jc3MnXG5cbmNzc2BcbiAgbWFyZ2luOiAxMnB4IDQ4cHg7XG4gIGNvbG9yOiAjZmZmZmZmO1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbGV4OiAxIDAgYXV0bztcbiAgY29sb3I6IGJsdWU7XG4gIEBtZWRpYSAobWluLXdpZHRoOiA0MjBweCkge1xuICAgIGxpbmUtaGVpZ2h0OiA0MHB4O1xuICB9XG4gIHdpZHRoOiAke3dpbmRvdy53aGF0ZXZlcn07XG5gXG4iXX0= */"));
