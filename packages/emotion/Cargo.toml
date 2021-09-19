@@ -15,5 +15,6 @@ swc_ecma_utils = "0.44.2"
 swc_ecma_visit = "0.38.1"
 
 [dev-dependencies]
+swc_ecma_transforms_base = "0.31.1"
 swc_ecma_transforms_testing = "0.32.2"
 testing = "0.13.1"
