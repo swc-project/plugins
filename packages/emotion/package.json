@@ -1,0 +1,11 @@
+{
+  "name": "emotion",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/cli": "^7.15.7",
+    "@babel/core": "^7.15.5",
+    "@emotion/babel-plugin": "^11.3.0"
+  }
+}
