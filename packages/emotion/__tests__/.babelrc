@@ -1,5 +1,5 @@
 {
     "plugins": [
-        "@emotion"
+        "@emotion/babel-plugin"
     ]
 }

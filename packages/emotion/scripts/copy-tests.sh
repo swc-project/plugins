@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -eux
 
-
-yarn run babel __tests__
+rm -rf __tests__/**/__snapshots__
+yarn run babel __tests__ -d tests/fixtures/
