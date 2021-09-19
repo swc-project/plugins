@@ -7,4 +7,11 @@ echo ""
 TEST_DIR="${1/__tests__/}"  
 TEST_DIR="${TEST_DIR/__fixtures__/}"  
 
-yarn run babel $1 -d "tests/fixture/$TEST_DIR"
+
+for filename in $1/*.js; do
+    TEST_NAME="$(basename $filename .js)"
+    echo "$filename => $TEST_DIR$TEST_NAME"
+
+    yarn run babel $filename -o "tests/fixtures/$TEST_DIR$TEST_NAME/output.js"
+    cp $filename "tests/fixtures/$TEST_DIR$TEST_NAME/input.js"
+done
