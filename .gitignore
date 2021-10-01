@@ -2,3 +2,4 @@
 Cargo.lock
 *.js
 *.node
+.DS_Store
