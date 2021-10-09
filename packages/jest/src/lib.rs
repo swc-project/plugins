@@ -8,10 +8,7 @@ use swc_ecmascript::{
 };
 use swc_plugin::{SwcPlugin, SwcPluginRef};
 
-#[export_root_module]
-pub fn get_library() -> SwcPluginRef {
-    SwcPlugin {}.leak_into_prefix()
-}
+swc_plugin::define_js_plugin!(jest);
 
 static HOIST_METHODS: phf::Set<&str> = phf_set![
     "mock",
