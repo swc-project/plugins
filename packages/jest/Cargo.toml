@@ -11,4 +11,5 @@ abi_stable = "0.10.2"
 phf = {version = "0.10.0", features = ["macros"]}
 swc_atoms = {path = "../../../swc-plugin/atoms/"}
 swc_common = {path = "../../../swc-plugin/common/"}
+swc_ecmascript = {path = "../../../swc-plugin/ecmascript/", features = ["utils", "visit"]}
 swc_plugin = {path = "../../../swc-plugin/plugin/"}
