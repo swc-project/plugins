@@ -1,9 +1,2 @@
 [workspace]
 members = ["packages/jest"]
-
-[patch.crates-io]
-swc_atoms = {path = "../swc-plugin/atoms"}
-swc_common = {path = "../swc-plugin/common"}
-swc_plugin = {path = "../swc-plugin/plugin"}
-swc_plugin_build = {path = "../swc-plugin/plugin/build"}
-swc_plugin_testing = {path = "../swc-plugin/plugin/testing"}
