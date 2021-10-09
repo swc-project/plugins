@@ -1,12 +1,11 @@
-use abi_stable::{export_root_module, prefix_type::PrefixTypeTrait};
 use phf::phf_set;
+use serde::Deserialize;
 use swc_common::util::take::Take;
 use swc_ecmascript::{
     ast::*,
     utils::{prepend_stmts, StmtLike},
     visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith},
 };
-use swc_plugin::{SwcPlugin, SwcPluginRef};
 
 swc_plugin::define_js_plugin!(jest);
 
@@ -18,9 +17,12 @@ static HOIST_METHODS: phf::Set<&str> = phf_set![
     "deepUnmock"
 ];
 
-pub fn jest() -> impl Fold + VisitMut {
+fn jest(_: Conig) -> impl Fold + VisitMut {
     as_folder(Jest)
 }
+
+#[derive(Deserialize)]
+struct Conig {}
 
 struct Jest;
 
