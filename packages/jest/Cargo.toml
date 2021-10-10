@@ -6,6 +6,9 @@ license = "Apache-2.0"
 name = "swc_plugin_jest"
 version = "0.1.0"
 
+[lib]
+crate-type = ["cdylib", "rlib"]
+
 [dependencies]
 abi_stable = "0.10.2"
 phf = {version = "0.10.0", features = ["macros"]}
