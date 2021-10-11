@@ -6,7 +6,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "homepage": "https://swc.rs",
+  "repository": {
+    "type": "git",
+    "url": "+https://github.com/swc-project/plugins.git"
+  },
+  "bugs": {
+    "url": "https://github.com/swc-project/plugins/issues"
+  },
+  "author": "강동윤 <kdy1997.dev@gmail.com>",
   "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "license": "Apache-2.0"
 }
