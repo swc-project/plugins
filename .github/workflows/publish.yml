@@ -141,13 +141,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Login to registry
-        run: |
-          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD $DOCKER_REGISTRY_URL
-        env:
-          DOCKER_REGISTRY_URL: ghcr.io
-          DOCKER_USERNAME: ${{ github.actor }}
-          DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          override: true
+          target: x86_64-unknown-linux-musl
 
       - name: Cache
         uses: actions/cache@v2
@@ -156,22 +155,13 @@ jobs:
             target/
           key: linux-musl-publish-integration
 
-      - name: Pull docker image
-        run: |
-          docker pull ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine
-          docker tag ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-alpine builder
-
       - name: Install swc devtool
         run: |
           cargo install --git https://github.com/swc-project/swd.git --branch init
 
       - name: Build
         shell: bash
-        run: swd plugin build --package --release
-
-      - name: Build - docker
-        run: |
-          docker run --rm -v $(pwd):/swc -w /swc builder sh -c "npm run build"
+        run: swd plugin build --package --release --target x86_64-unknown-linux-musl
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
