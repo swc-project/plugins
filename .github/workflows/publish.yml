@@ -134,41 +134,6 @@ jobs:
           name: bindings
           path: "*.swc-pkg.tgz"
 
-  build-linux-musl:
-    name: Build - linux-musl
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          override: true
-          target: x86_64-unknown-linux-musl
-
-      - name: Cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            target/
-          key: linux-musl-publish-integration
-
-      - name: Install swc devtool
-        run: |
-          cargo install --git https://github.com/swc-project/swd.git --branch init
-
-      - name: Build
-        shell: bash
-        run: swd plugin build --package --release --target x86_64-unknown-linux-musl
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: bindings
-          path: "*.swc-pkg.tgz"
-
   build-apple-silicon:
     name: Build - aarch64-apple-darwin
     runs-on: macos-latest
@@ -254,53 +219,6 @@ jobs:
       - name: Build
         shell: bash
         run: swd plugin build --package --release --target aarch64-unknown-linux-gnu
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: bindings
-          path: "*.swc-pkg.tgz"
-
-  build-linux-aarch64-musl:
-    name: Build - aarch64-unknown-linux-musl
-    runs-on: ubuntu-18.04
-
-    steps:
-      - run: docker run --rm --privileged multiarch/qemu-user-static:register --reset
-
-      - uses: actions/checkout@v2
-
-      - name: Setup node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 14
-
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          override: true
-          target: aarch64-unknown-linux-musl
-
-      - name: Cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            target/
-          key: aarch64-linux-musl-publish-integration
-
-      - name: Install cross compile toolchain
-        run: |
-          sudo apt-get update
-          sudo apt-get install gcc-aarch64-linux-gnu -y
-
-      - name: Install swc devtool
-        run: |
-          cargo install --git https://github.com/swc-project/swd.git --branch init
-
-      - name: Build
-        shell: bash
-        run: swd plugin build --package --release --target aarch64-unknown-linux-musl
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
@@ -448,13 +366,11 @@ jobs:
       - build
       - build-windows-i686
       - build-windows-aarch64
-      - build-linux-musl
       - build-linux-arm7
       - build-linux-aarch64
       - build-apple-silicon
       - build-android-aarch64
       - build-freebsd
-      - build-linux-aarch64-musl
     steps:
       - uses: actions/checkout@v2
 
