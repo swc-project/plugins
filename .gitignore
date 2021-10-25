@@ -5,4 +5,4 @@ Cargo.lock
 .DS_Store
 *.html
 
-*.swc-pkg.zip
+*.swc-pkg.tar.gz
