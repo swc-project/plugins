@@ -5,6 +5,7 @@ on:
   - push
 
 env:
+  RUST_LOG: debug
   CARGO_INCREMENTAL: 0
   CI: "1"
   DEBUG: "napi:*"
