@@ -34,7 +34,7 @@ jobs:
 
       - name: Install swc devtool
         run: |
-          cargo install --git git@github.com:swc-project/swd.git --branch init
+          cargo install --git https://github.com/swc-project/swd.git --branch init
 
       - name: Build
         shell: bash
@@ -89,7 +89,7 @@ jobs:
 
       - name: Install swc devtool
         run: |
-          cargo install --git git@github.com:swc-project/swd.git --branch init
+          cargo install --git https://github.com/swc-project/swd.git --branch init
 
       - name: Build
         shell: bash
@@ -121,7 +121,7 @@ jobs:
 
       - name: Install swc devtool
         run: |
-          cargo install --git git@github.com:swc-project/swd.git --branch init
+          cargo install --git https://github.com/swc-project/swd.git --branch init
 
       - name: Build
         shell: bash
@@ -164,7 +164,7 @@ jobs:
 
       - name: Install swc devtool
         run: |
-          cargo install --git git@github.com:swc-project/swd.git --branch init
+          cargo install --git https://github.com/swc-project/swd.git --branch init
 
       - name: Build
         shell: bash
@@ -210,7 +210,7 @@ jobs:
 
       - name: Install swc devtool
         run: |
-          cargo install --git git@github.com:swc-project/swd.git --branch init
+          cargo install --git https://github.com/swc-project/swd.git --branch init
 
       - name: Cross build aarch64
         run: |
@@ -262,7 +262,7 @@ jobs:
 
       - name: Install swc devtool
         run: |
-          cargo install --git git@github.com:swc-project/swd.git --branch init
+          cargo install --git https://github.com/swc-project/swd.git --branch init
 
       - name: Build
         shell: bash
@@ -311,7 +311,7 @@ jobs:
 
       - name: Install swc devtool
         run: |
-          cargo install --git git@github.com:swc-project/swd.git --branch init
+          cargo install --git https://github.com/swc-project/swd.git --branch init
 
       - name: Build
         shell: bash
@@ -358,7 +358,7 @@ jobs:
 
       - name: Install swc devtool
         run: |
-          cargo install --git git@github.com:swc-project/swd.git --branch init
+          cargo install --git https://github.com/swc-project/swd.git --branch init
 
       - name: Build
         shell: bash
@@ -392,7 +392,7 @@ jobs:
 
       - name: Install swc devtool
         run: |
-          cargo install --git git@github.com:swc-project/swd.git --branch init
+          cargo install --git https://github.com/swc-project/swd.git --branch init
 
       - name: Build
         shell: bash
@@ -438,7 +438,7 @@ jobs:
             yarn --version
           run: |
             export PATH="/usr/local/cargo/bin:$PATH"
-            cargo install --git git@github.com:swc-project/swd.git --branch init
+            cargo install --git https://github.com/swc-project/swd.git --branch init
             pwd
             ls -lah
             whoami
