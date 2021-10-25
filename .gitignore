@@ -4,3 +4,5 @@ Cargo.lock
 *.node
 .DS_Store
 *.html
+
+*.swc-pkg.zip
