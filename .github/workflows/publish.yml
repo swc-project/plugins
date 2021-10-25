@@ -127,8 +127,6 @@ jobs:
       - name: Build
         shell: bash
         run: swd plugin build --release
-        env:
-          MACOSX_DEPLOYMENT_TARGET: "10.13"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
@@ -170,8 +168,6 @@ jobs:
       - name: Build
         shell: bash
         run: swd plugin build --release
-        env:
-          MACOSX_DEPLOYMENT_TARGET: "10.13"
 
       - name: Build - docker
         run: |
@@ -268,8 +264,6 @@ jobs:
       - name: Build
         shell: bash
         run: swd plugin build --release --target aarch64-unknown-linux-gnu
-        env:
-          MACOSX_DEPLOYMENT_TARGET: "10.13"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
@@ -364,8 +358,6 @@ jobs:
       - name: Build
         shell: bash
         run: swd plugin build --release --target armv7-unknown-linux-gnueabihf
-        env:
-          MACOSX_DEPLOYMENT_TARGET: "10.13"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
