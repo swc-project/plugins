@@ -360,7 +360,7 @@ jobs:
           path: "*.swc-pkg.tgz"
 
   publish:
-    name: npm
+    name: Publish on npm
     runs-on: ubuntu-latest
     needs:
       - build
