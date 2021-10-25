@@ -39,7 +39,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: swd plugin build --release
+        run: swd plugin build --package --release
         env:
           MACOSX_DEPLOYMENT_TARGET: "10.13"
 
@@ -94,7 +94,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: swd plugin build --release
+        run: swd plugin build --package --release
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
@@ -126,7 +126,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: swd plugin build --release
+        run: swd plugin build --package --release
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
@@ -167,7 +167,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: swd plugin build --release
+        run: swd plugin build --package --release
 
       - name: Build - docker
         run: |
@@ -216,7 +216,7 @@ jobs:
           export CXX=$(xcrun -f clang++);
           SYSROOT=$(xcrun --sdk macosx --show-sdk-path);
           export CFLAGS="-isysroot $SYSROOT -isystem $SYSROOT";
-          swd plugin build --release --target aarch64-apple-darwin
+          swd plugin build --package --release --target aarch64-apple-darwin
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
@@ -263,7 +263,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: swd plugin build --release --target aarch64-unknown-linux-gnu
+        run: swd plugin build --package --release --target aarch64-unknown-linux-gnu
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
@@ -310,7 +310,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: swd plugin build --release --target aarch64-unknown-linux-musl
+        run: swd plugin build --package --release --target aarch64-unknown-linux-musl
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
@@ -357,7 +357,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: swd plugin build --release --target armv7-unknown-linux-gnueabihf
+        run: swd plugin build --package --release --target armv7-unknown-linux-gnueabihf
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
@@ -391,7 +391,7 @@ jobs:
         shell: bash
         run: |
           export CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/darwin-x86_64/bin/aarch64-linux-android24-clang"
-          swd plugin build --release --target aarch64-linux-android
+          swd plugin build --package --release --target aarch64-linux-android
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
@@ -438,7 +438,7 @@ jobs:
             env
             freebsd-version
             cargo build --release -p node
-            swd plugin build --release
+            swd plugin build --package --release
             rm -rf node_modules
             rm -rf target
 
