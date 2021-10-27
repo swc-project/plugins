@@ -1092,6 +1092,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6446ced80d6c486436db5c078dde11a9f73d42b57fb273121e160b84f63d894c"
 
 [[package]]
+name = "styled_components"
+version = "0.0.0"
+
+[[package]]
 name = "swc_atoms"
 version = "0.2.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1285,6 +1289,13 @@ dependencies = [
  "swc_common",
  "swc_ecmascript",
  "swc_plugin",
+]
+
+[[package]]
+name = "swc_plugin_styled_components"
+version = "0.0.0"
+dependencies = [
+ "styled_components",
 ]
 
 [[package]]
