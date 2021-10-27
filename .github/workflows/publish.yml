@@ -1,0 +1,411 @@
+name: Publish
+
+on:
+  # TODO: Publish only
+  - push
+
+env:
+  RUST_LOG: debug
+  CARGO_INCREMENTAL: 0
+  CI: "1"
+  DEBUG: "napi:*"
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-18.04, macos-latest, windows-latest]
+
+    name: Build - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          override: true
+
+      - name: Install swc devtool
+        run: |
+          cargo install --git https://github.com/swc-project/swd.git --branch init
+
+      - name: Build
+        shell: bash
+        run: swd plugin build --package --release
+        env:
+          MACOSX_DEPLOYMENT_TARGET: "10.13"
+
+      # - name: Strip (linux)
+      #   shell: bash
+      #   if: matrix.os == 'ubuntu-18.04'
+      #   run: strip swc.*.node
+
+      # - name: Strip (mac os x)
+      #   shell: bash
+      #   if: matrix.os == 'macos-latest'
+      #   run: strip -x swc.*.node
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: bindings
+          path: "*.swc-pkg.tgz"
+
+  build-windows-i686:
+    name: Build - windows-i686
+    runs-on: windows-latest
+    env:
+      CARGO_PROFILE_RELEASE_CODEGEN_UNITS: 32
+      CARGO_PROFILE_RELEASE_LTO: "false"
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install node x86
+        run: |
+          choco install nodejs-lts --x86 -y --force
+          refreshenv
+
+      - name: Set 32bit Node.js path
+        run: |
+          echo "C:\\Program Files (x86)\\nodejs" >> $GITHUB_PATH
+        shell: bash
+
+      - name: Node.js arch
+        run: node -e "console.log(process.arch)"
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          override: true
+          target: i686-pc-windows-msvc
+
+      - name: Install swc devtool
+        run: |
+          cargo install --git https://github.com/swc-project/swd.git --branch init
+
+      - name: Build
+        shell: bash
+        run: swd plugin build --package --release
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: bindings
+          path: "*.swc-pkg.tgz"
+
+  build-windows-aarch64:
+    name: Build - windows-aarch64
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          override: true
+          target: aarch64-pc-windows-msvc
+
+      - name: Install swc devtool
+        run: |
+          cargo install --git https://github.com/swc-project/swd.git --branch init
+
+      - name: Build
+        shell: bash
+        run: swd plugin build --package --release
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: bindings
+          path: "*.swc-pkg.tgz"
+
+  build-apple-silicon:
+    name: Build - aarch64-apple-darwin
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          override: true
+          target: aarch64-apple-darwin
+
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            target/
+          key: aarch64-apple-darwin-publish-integration
+
+      - name: Install swc devtool
+        run: |
+          cargo install --git https://github.com/swc-project/swd.git --branch init
+
+      - name: Cross build aarch64
+        run: |
+          sudo rm -Rf /Library/Developer/CommandLineTools/SDKs/*;
+          export CC=$(xcrun -f clang);
+          export CXX=$(xcrun -f clang++);
+          SYSROOT=$(xcrun --sdk macosx --show-sdk-path);
+          export CFLAGS="-isysroot $SYSROOT -isystem $SYSROOT";
+          swd plugin build --package --release --target aarch64-apple-darwin
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: bindings
+          path: "*.swc-pkg.tgz"
+
+  build-linux-aarch64:
+    name: Build - aarch64-unknown-linux-gnu
+    runs-on: ubuntu-18.04
+
+    steps:
+      - run: docker run --rm --privileged multiarch/qemu-user-static:register --reset
+
+      - uses: actions/checkout@v2
+
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          override: true
+          target: aarch64-unknown-linux-gnu
+
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            target/
+          key: aarch64-linux-gnu-publish-integration
+
+      - name: Install cross compile toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu -y
+
+      - name: Install swc devtool
+        run: |
+          cargo install --git https://github.com/swc-project/swd.git --branch init
+
+      - name: Build
+        shell: bash
+        run: swd plugin build --package --release --target aarch64-unknown-linux-gnu
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: bindings
+          path: "*.swc-pkg.tgz"
+
+  build-linux-arm7:
+    name: Build - arm7-unknown-linux-gnu
+    runs-on: ubuntu-18.04
+
+    steps:
+      - run: docker run --rm --privileged multiarch/qemu-user-static:register --reset
+
+      - uses: actions/checkout@v2
+
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          override: true
+          target: armv7-unknown-linux-gnueabihf
+
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            target/
+          key: arm7-linux-gnu-publish-integration
+
+      - name: Install cross compile toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install gcc-arm-linux-gnueabihf -y
+
+      - name: Install swc devtool
+        run: |
+          cargo install --git https://github.com/swc-project/swd.git --branch init
+
+      - name: Build
+        shell: bash
+        run: swd plugin build --package --release --target armv7-unknown-linux-gnueabihf
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: bindings
+          path: "*.swc-pkg.tgz"
+
+  build-android-aarch64:
+    name: Build - Android - aarch64
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          override: true
+          target: aarch64-linux-android
+
+      - name: Install swc devtool
+        run: |
+          cargo install --git https://github.com/swc-project/swd.git --branch init
+
+      - name: Build
+        shell: bash
+        run: |
+          export CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/darwin-x86_64/bin/aarch64-linux-android24-clang"
+          swd plugin build --package --release --target aarch64-linux-android
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: bindings
+          path: "*.swc-pkg.tgz"
+
+  build-freebsd:
+    runs-on: macos-10.15
+    name: Build - FreeBSD
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        id: build
+        uses: vmactions/freebsd-vm@v0.1.5
+        env:
+          DEBUG: "napi:*"
+          RUSTUP_HOME: /usr/local/rustup
+          CARGO_HOME: /usr/local/cargo
+          RUSTUP_IO_THREADS: 1
+        with:
+          envs: "DEBUG RUSTUP_HOME CARGO_HOME RUSTUP_IO_THREADS"
+          usesh: true
+          mem: 6000
+          prepare: |
+            pkg install -y curl node14
+            curl -qL https://www.npmjs.com/install.sh | sh
+            npm install -g yarn
+            curl https://sh.rustup.rs -sSf --output rustup.sh
+            sh rustup.sh -y --profile minimal --default-toolchain stable
+            source /usr/local/cargo/env
+            echo "~~~~ rustc --version ~~~~"
+            rustc --version
+            echo "~~~~ node -v ~~~~"
+            node -v
+            echo "~~~~ yarn --version ~~~~"
+            yarn --version
+          run: |
+            export PATH="/usr/local/cargo/bin:$PATH"
+            cargo install --git https://github.com/swc-project/swd.git --branch init
+            pwd
+            ls -lah
+            whoami
+            env
+            freebsd-version
+            cargo build --release -p node
+            swd plugin build --package --release
+            rm -rf node_modules
+            rm -rf target
+
+      - name: "List files"
+        run: ls -la
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: bindings
+          path: "*.swc-pkg.tgz"
+
+  publish:
+    name: Publish on npm
+    runs-on: ubuntu-latest
+    needs:
+      - build
+      - build-windows-i686
+      - build-windows-aarch64
+      - build-linux-arm7
+      - build-linux-aarch64
+      - build-apple-silicon
+      - build-android-aarch64
+      - build-freebsd
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Set release name
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: List binaries
+        run: ls -R artifacts
+        shell: bash
+
+      - name: Move binaries
+        shell: bash
+        run: npm run artifacts
+
+      - name: List npm
+        run: ls -R ./scripts/npm
+        shell: bash
+
+      - name: Publish
+        run: |
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+          npm publish --access public --dry-run
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

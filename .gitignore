@@ -1,0 +1,9 @@
+/target
+Cargo.lock
+*.js
+*.node
+.DS_Store
+*.html
+
+*.swc-pkg.tgz
+*.swc-pkg.zip
