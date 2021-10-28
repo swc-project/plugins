@@ -15,5 +15,5 @@ swc_ecmascript = {version = "0.82.0", features = ["utils", "visit"]}
 
 [dev-dependencies]
 swc_ecma_transforms_testing = "0.42.0"
-swc_ecmascript = {version = "0.82.0", features = ["transforms"]}
+swc_ecmascript = {version = "0.82.0", features = ["parser", "transforms"]}
 testing = "0.15.1"
