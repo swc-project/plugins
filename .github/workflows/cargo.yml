@@ -1,0 +1,61 @@
+name: Cargo
+
+on:
+  - push
+  - pull_request
+
+env:
+  RUST_LOG: debug
+  CARGO_INCREMENTAL: 0
+  CI: "1"
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    name: Test - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Handle line endings
+        shell: bash
+        if: runner.os == 'Windows'
+        run: |
+          git config --system core.autocrlf false
+          git config --system core.eol lf
+
+      - uses: actions/checkout@v2
+
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          override: true
+
+      - name: Configure path (windows)
+        shell: bash
+        if: runner.os == 'Windows'
+        run: |
+          echo 'C:\\npm\\prefix' >> $GITHUB_PATH
+
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/
+            target
+            Cargo.lock
+          key: cargo-dev-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            cargo-dev-${{ runner.os }}
+
+      - name: Run cargo test
+        run: |
+          cargo test --all --color always
