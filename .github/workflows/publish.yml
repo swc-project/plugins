@@ -393,6 +393,10 @@ jobs:
         run: ls -R artifacts
         shell: bash
 
+      - name: Install swc devtool
+        run: |
+          cargo install --git https://github.com/swc-project/swd.git --branch init
+
       - name: Publish
         run: |
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
