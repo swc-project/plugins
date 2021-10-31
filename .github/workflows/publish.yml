@@ -1,8 +1,10 @@
 name: Publish
 
 on:
-  # TODO: Publish only
-  - push
+  push:
+    branches:
+      - main
+      - ci
 
 env:
   RUST_LOG: debug
