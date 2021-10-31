@@ -17,12 +17,13 @@ static HOIST_METHODS: phf::Set<&str> = phf_set![
     "deepUnmock"
 ];
 
-fn jest(_: Conig) -> impl Fold + VisitMut {
+fn jest(_: Config) -> impl Fold + VisitMut {
     as_folder(Jest)
 }
 
 #[derive(Deserialize)]
-struct Conig {}
+#[serde(rename_all = "camelCase")]
+struct Config {}
 
 struct Jest;
 
