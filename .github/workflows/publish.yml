@@ -397,10 +397,19 @@ jobs:
         run: |
           cargo install --git https://github.com/swc-project/swd.git --branch init
 
-      - name: Publish
+      - name: Configure npm
         run: |
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-          npm publish --access public --dry-run
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish platform packages
+        run: |
+          swd plugin publish-deps
+
+      - name: Publish main packages
+        run: |
+          npm publish --access public
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
