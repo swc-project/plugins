@@ -1,2 +1,5 @@
 [workspace]
-members = ["packages/jest"]
+members = [
+  "packages/internal-test",
+  "packages/jest",
+]
