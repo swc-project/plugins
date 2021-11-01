@@ -11,6 +11,7 @@ echo "Using $BIN_URL"
 
 mkdir -p swc-dev-built
 curl $BIN_URL -o swc-dev-built/swc-dev
+chmod +x swc-dev-built/swc-dev
 echo "$(pwd)/swc-dev-built" >> $GITHUB_PATH
 
 echo $LATEST_TAG
