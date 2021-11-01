@@ -10,10 +10,6 @@ env:
   RUST_LOG: debug
   CARGO_INCREMENTAL: 0
 
-defaults:
-  run:
-    shell: bash
-
 jobs:
   build:
     strategy:
@@ -38,6 +34,7 @@ jobs:
           override: true
 
       - name: Install swc devtool
+        shell: bash
         run: |
           ./scripts/ci/install-swc-dev.sh
 
