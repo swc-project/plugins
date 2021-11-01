@@ -90,6 +90,7 @@ jobs:
           target: i686-pc-windows-msvc
 
       - name: Install swc devtool
+        shell: bash
         run: |
           ./scripts/ci/install-swc-dev.sh
 
@@ -122,6 +123,7 @@ jobs:
           target: aarch64-pc-windows-msvc
 
       - name: Install swc devtool
+        shell: bash
         run: |
           ./scripts/ci/install-swc-dev.sh
 
@@ -162,6 +164,7 @@ jobs:
           key: aarch64-apple-darwin-publish-integration
 
       - name: Install swc devtool
+        shell: bash
         run: |
           ./scripts/ci/install-swc-dev.sh
 
@@ -214,6 +217,7 @@ jobs:
           sudo apt-get install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu -y
 
       - name: Install swc devtool
+        shell: bash
         run: |
           ./scripts/ci/install-swc-dev.sh
 
@@ -261,6 +265,7 @@ jobs:
           sudo apt-get install gcc-arm-linux-gnueabihf -y
 
       - name: Install swc devtool
+        shell: bash
         run: |
           ./scripts/ci/install-swc-dev.sh
 
@@ -293,6 +298,7 @@ jobs:
           target: aarch64-linux-android
 
       - name: Install swc devtool
+        shell: bash
         run: |
           ./scripts/ci/install-swc-dev.sh
 
@@ -340,6 +346,7 @@ jobs:
         shell: bash
 
       - name: Install swc devtool
+        shell: bash
         run: |
           ./scripts/ci/install-swc-dev.sh
 
