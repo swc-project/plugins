@@ -37,7 +37,7 @@ jobs:
 
       - name: Install swc devtool
         run: |
-          cargo install --git https://github.com/swc-project/swd.git --branch init
+          ./scripts/ci/install-swc-dev.sh
 
       - name: Build
         shell: bash
@@ -92,7 +92,7 @@ jobs:
 
       - name: Install swc devtool
         run: |
-          cargo install --git https://github.com/swc-project/swd.git --branch init
+          ./scripts/ci/install-swc-dev.sh
 
       - name: Build
         shell: bash
@@ -124,7 +124,7 @@ jobs:
 
       - name: Install swc devtool
         run: |
-          cargo install --git https://github.com/swc-project/swd.git --branch init
+          ./scripts/ci/install-swc-dev.sh
 
       - name: Build
         shell: bash
@@ -164,7 +164,7 @@ jobs:
 
       - name: Install swc devtool
         run: |
-          cargo install --git https://github.com/swc-project/swd.git --branch init
+          ./scripts/ci/install-swc-dev.sh
 
       - name: Cross build aarch64
         run: |
@@ -216,7 +216,7 @@ jobs:
 
       - name: Install swc devtool
         run: |
-          cargo install --git https://github.com/swc-project/swd.git --branch init
+          ./scripts/ci/install-swc-dev.sh
 
       - name: Build
         shell: bash
@@ -263,7 +263,7 @@ jobs:
 
       - name: Install swc devtool
         run: |
-          cargo install --git https://github.com/swc-project/swd.git --branch init
+          ./scripts/ci/install-swc-dev.sh
 
       - name: Build
         shell: bash
@@ -295,7 +295,7 @@ jobs:
 
       - name: Install swc devtool
         run: |
-          cargo install --git https://github.com/swc-project/swd.git --branch init
+          ./scripts/ci/install-swc-dev.sh
 
       - name: Build
         shell: bash
@@ -342,7 +342,7 @@ jobs:
 
       - name: Install swc devtool
         run: |
-          cargo install --git https://github.com/swc-project/swd.git --branch init
+          ./scripts/ci/install-swc-dev.sh
 
       - name: Configure npm
         run: |
