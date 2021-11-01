@@ -405,7 +405,7 @@ jobs:
 
       - name: Publish platform packages
         run: |
-          swd plugin publish-deps --artifacts-dir artifacts/bindings
+          swd plugin publish-deps --artifacts-dir artifacts/bindings  --access public
 
       - name: Publish main packages
         run: |
