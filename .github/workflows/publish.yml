@@ -41,7 +41,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: swd plugin build --package --release
+        run: swc-dev plugin build --package --release
         env:
           MACOSX_DEPLOYMENT_TARGET: "10.13"
 
@@ -96,7 +96,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: swd plugin build --package --release
+        run: swc-dev plugin build --package --release
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
@@ -128,7 +128,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: swd plugin build --package --release
+        run: swc-dev plugin build --package --release
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
@@ -173,7 +173,7 @@ jobs:
           export CXX=$(xcrun -f clang++);
           SYSROOT=$(xcrun --sdk macosx --show-sdk-path);
           export CFLAGS="-isysroot $SYSROOT -isystem $SYSROOT";
-          swd plugin build --package --release --target aarch64-apple-darwin
+          swc-dev plugin build --package --release --target aarch64-apple-darwin
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
@@ -220,7 +220,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: swd plugin build --package --release --target aarch64-unknown-linux-gnu
+        run: swc-dev plugin build --package --release --target aarch64-unknown-linux-gnu
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
@@ -267,7 +267,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: swd plugin build --package --release --target armv7-unknown-linux-gnueabihf
+        run: swc-dev plugin build --package --release --target armv7-unknown-linux-gnueabihf
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
@@ -301,7 +301,7 @@ jobs:
         shell: bash
         run: |
           export CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/darwin-x86_64/bin/aarch64-linux-android24-clang"
-          swd plugin build --package --release --target aarch64-linux-android
+          swc-dev plugin build --package --release --target aarch64-linux-android
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
@@ -352,7 +352,7 @@ jobs:
 
       - name: Publish platform packages
         run: |
-          swd plugin publish-deps --artifacts-dir artifacts/bindings  --access public
+          swc-dev plugin publish-deps --artifacts-dir artifacts/bindings  --access public
 
       - name: Publish main packages
         run: |
