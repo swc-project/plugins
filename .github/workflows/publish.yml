@@ -10,6 +10,10 @@ env:
   RUST_LOG: debug
   CARGO_INCREMENTAL: 0
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   build:
     strategy:
