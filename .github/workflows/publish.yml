@@ -27,7 +27,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 16
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
@@ -113,7 +113,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 16
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
@@ -146,7 +146,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 16
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
@@ -193,7 +193,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 16
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
@@ -240,7 +240,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 16
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
@@ -284,7 +284,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 16
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
@@ -327,7 +327,7 @@ jobs:
           usesh: true
           mem: 6000
           prepare: |
-            pkg install -y curl node14
+            pkg install -y curl node16
             curl -qL https://www.npmjs.com/install.sh | sh
             npm install -g yarn
             curl https://sh.rustup.rs -sSf --output rustup.sh
@@ -379,7 +379,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 16
 
       # - name: Set release name
       #   run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
@@ -409,7 +409,7 @@ jobs:
 
       - name: Publish main packages
         run: |
-          npm publish --access public
+          npm publish --workspaces --access public
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
