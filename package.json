@@ -1,0 +1,5 @@
+{
+  "name": "swc-plugins",
+  "private": true,
+  "workspaces": ["packages/internal-test", "packages/jest"]
+}

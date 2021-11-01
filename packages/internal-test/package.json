@@ -1,7 +1,7 @@
 {
-  "name": "@swc/plugin-jest",
+  "name": "@swc/plugin-internal-test",
   "version": "0.1.4",
-  "description": "Jest transform plugin for https://swc.rs",
+  "description": "Internal plugin for integration testing",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
