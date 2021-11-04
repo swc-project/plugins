@@ -3,9 +3,3 @@ members = [
   "packages/internal-test",
   "packages/jest",
 ]
-
-[profile.dev]
-rpath = true
-
-[profile.release]
-rpath = true
