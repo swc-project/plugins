@@ -1,12 +1,17 @@
 //! Port of https://github.com/styled-components/babel-plugin-styled-components/blob/a20c3033508677695953e7a434de4746168eeb4e/src/visitors/transpileCssProp.js
 
+use once_cell::sync::Lazy;
+use regex::Regex;
 use swc_atoms::JsWord;
-use swc_common::{Spanned, DUMMY_SP};
+use swc_common::{util::take::Take, Spanned, DUMMY_SP};
 use swc_ecmascript::{
     ast::*,
-    utils::{prepend, private_ident},
+    utils::{prepend, private_ident, quote_ident, quote_str, ExprExt, ExprFactory},
     visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith},
 };
+
+static TAG_NAME_REGEX: Lazy<Regex> =
+    Lazy::new(|| Regex::new("^[a-z][a-z\\d]*(\\-[a-z][a-z\\d]*)?$").unwrap());
 
 pub fn transpile_css_prop() -> impl Fold + VisitMut {
     as_folder(TranspileCssProp::default())
@@ -47,11 +52,11 @@ impl VisitMut for TranspileCssProp {
         }
     }
 
-    fn visit_mut_jsx_element(&mut self, n: &mut JSXElement) {
-        n.visit_mut_children_with(self);
+    fn visit_mut_jsx_element(&mut self, elem: &mut JSXElement) {
+        elem.visit_mut_children_with(self);
 
-        for attr in &n.opening.attrs {
-            match &*attr {
+        for attr in elem.opening.attrs.iter_mut() {
+            match &mut *attr {
                 JSXAttrOrSpread::JSXAttr(attr) => {
                     if !matches!(&attr.name, JSXAttrName::Ident(i) if &*i.sym == "css") {
                         continue;
@@ -62,11 +67,108 @@ impl VisitMut for TranspileCssProp {
                         .get_or_insert_with(|| private_ident!("styled"))
                         .clone();
 
-                    let mut name = get_name(&n.opening.name);
-                    name = get_first_letter_uppercased(&name);
+                    let mut name = get_name(&elem.opening.name);
+                    let id_sym = get_first_letter_uppercased(&name);
 
                     let id: Ident =
-                        private_ident!(n.opening.name.span(), format!("Styled{}", name));
+                        private_ident!(elem.opening.name.span(), format!("Styled{}", id_sym));
+
+                    let (styled, injector) = if TAG_NAME_REGEX.is_match(&name) {
+                        (
+                            (Expr::Call(CallExpr {
+                                span: DUMMY_SP,
+                                callee: import_name.as_callee(),
+                                args: vec![Lit::Str(Str {
+                                    span: DUMMY_SP,
+                                    value: name.into(),
+                                    has_escape: false,
+                                    kind: Default::default(),
+                                })
+                                .as_arg()],
+                                type_args: Default::default(),
+                            })),
+                            None::<()>,
+                        )
+                    } else {
+                        // let name_expr = get_name_expr(&n.opening.name);
+
+                        // TODO
+
+                        return;
+                    };
+
+                    let mut css = match &mut attr.value {
+                        Some(css) => {
+                            //
+
+                            match css {
+                                JSXAttrValue::Lit(Lit::Str(v)) => Expr::Tpl(Tpl {
+                                    span: DUMMY_SP,
+                                    exprs: Default::default(),
+                                    quasis: vec![TplElement {
+                                        span: DUMMY_SP,
+                                        tail: true,
+                                        cooked: None,
+                                        raw: v.clone(),
+                                    }],
+                                }),
+                                JSXAttrValue::JSXExprContainer(JSXExprContainer {
+                                    expr: JSXExpr::Expr(v),
+                                    ..
+                                }) => match &mut **v {
+                                    Expr::Tpl(..) => *v.take(),
+                                    // TODO: Check if `path.node.value.expression.quasi` is array
+                                    // Expr::TaggedTpl(v) if v.tag.is_ident_ref_to("css".into()) =>
+                                    // {     v.tpl.quasis[0].
+                                    // take() }
+                                    Expr::Object(..) => *v.take(),
+                                    _ => Expr::Tpl(Tpl {
+                                        span: DUMMY_SP,
+                                        exprs: vec![v.take()],
+                                        quasis: vec![
+                                            TplElement {
+                                                span: DUMMY_SP,
+                                                tail: false,
+                                                cooked: None,
+                                                raw: quote_str!(""),
+                                            },
+                                            TplElement {
+                                                span: DUMMY_SP,
+                                                tail: true,
+                                                cooked: None,
+                                                raw: quote_str!(""),
+                                            },
+                                        ],
+                                    }),
+                                },
+
+                                _ => return,
+                            }
+                        }
+                        None => return,
+                    };
+
+                    // TODO: Remove this attribute
+
+                    elem.opening.name = JSXElementName::Ident(id.clone());
+
+                    if let Some(closing) = &mut elem.closing {
+                        closing.name = JSXElementName::Ident(id.clone());
+                    }
+
+                    // object syntax
+                    if let Expr::Object(css) = &mut css {
+                        // Original plugin says
+                        //
+                        //
+                        // for objects as CSS props, we have to recurse through the object and
+                        // replace any object key/value scope references with generated props
+                        // similar to how the template literal transform above creates dynamic
+                        // interpolations
+                        let p = quote_ident!("p");
+
+                        let mut replace_object_with_prop_function = false;
+                    }
                 }
                 JSXAttrOrSpread::SpreadElement(_) => {}
             }
@@ -82,9 +184,9 @@ fn get_first_letter_uppercased(s: &str) -> String {
     }
 }
 
-fn get_name(el: &JSXElementName) -> String {
+fn get_name(el: &JSXElementName) -> JsWord {
     match el {
-        JSXElementName::Ident(v) => v.sym.to_string(),
+        JSXElementName::Ident(v) => v.sym.clone(),
         JSXElementName::JSXMemberExpr(e) => {
             format!("{}.{}", get_name_of_jsx_obj(&e.obj), e.prop.sym).into()
         }
