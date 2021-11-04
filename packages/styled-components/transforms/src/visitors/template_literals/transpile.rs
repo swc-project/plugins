@@ -167,12 +167,67 @@ impl VisitMut for TranspileCssProp {
                         // interpolations
                         let p = quote_ident!("p");
 
-                        let mut replace_object_with_prop_function = false;
+                        let mut reducer = PropertyReducer {
+                            p,
+                            replace_object_with_prop_function: false,
+                            extra_attrs: Default::default(),
+                        };
+
+                        css.props = css.props.into_iter().fold(vec![], |acc, property| {
+                            reducer.reduce_object_properties(acc, property)
+                        });
                     }
                 }
                 JSXAttrOrSpread::SpreadElement(_) => {}
             }
         }
+    }
+}
+
+struct PropertyReducer {
+    p: Ident,
+    replace_object_with_prop_function: bool,
+    extra_attrs: Vec<JSXAttrOrSpread>,
+}
+
+impl PropertyReducer {
+    fn reduce_object_properties(
+        &mut self,
+        acc: Vec<PropOrSpread>,
+        property: PropOrSpread,
+    ) -> Vec<PropOrSpread> {
+        match property {
+            PropOrSpread::Spread(ref mut prop) => {
+                // handle spread variables and such
+
+                if let Expr::Object(arg) = &mut *prop.expr {
+                    arg.props = arg
+                        .props
+                        .into_iter()
+                        .fold(vec![], |acc, p| self.reduce_object_properties(acc, p));
+                } else {
+                    self.replace_object_with_prop_function = true;
+
+                    let identifier = get_local_identifier(&prop.expr);
+
+                    self.extra_attrs.push(JSXAttrOrSpread::JSXAttr(JSXAttr {
+                        span: DUMMY_SP,
+                        name: JSXAttrName::Ident(identifier.clone()),
+                        value: Some(JSXAttrValue::JSXExprContainer(JSXExprContainer {
+                            span: DUMMY_SP,
+                            expr: JSXExpr::Expr(prop.expr.take()),
+                        })),
+                    }));
+
+                    prop.expr = Box::new(self.p.clone().make_member(identifier));
+                }
+
+                acc.push(property);
+            }
+            PropOrSpread::Prop(prop) => {}
+        }
+
+        acc
     }
 }
 
