@@ -1,5 +1,4 @@
 /target
-*.js
 *.node
 .DS_Store
 *.html
