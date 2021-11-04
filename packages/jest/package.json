@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-jest",
-  "version": "0.1.4",
+  "version": "0.1.9",
   "description": "Jest transform plugin for https://swc.rs",
   "main": "index.js",
   "scripts": {

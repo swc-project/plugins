@@ -15,7 +15,9 @@ fn tester(config: Config) -> impl Fold + VisitMut {
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct Config {
+    #[serde(default)]
     print_error: bool,
+    #[serde(default)]
     use_private_ident: bool,
 }
 
