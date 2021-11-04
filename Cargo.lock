@@ -14,9 +14,9 @@ dependencies = [
 
 [[package]]
 name = "abi_stable"
-version = "0.10.2"
+version = "0.10.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "709308333aa82687b93e978aeec6c60688cdecd7bd7d0378a9825227145878c4"
+checksum = "3c8f0d5c8e09e8b591f6db9f56b006c9b9e7a44064acb274411ae51aaaa1364d"
 dependencies = [
  "abi_stable_derive",
  "abi_stable_shared",
@@ -26,6 +26,7 @@ dependencies = [
  "libloading",
  "lock_api 0.4.5",
  "parking_lot 0.11.2",
+ "paste",
  "repr_offset",
  "rustc_version 0.4.0",
  "serde",
@@ -35,9 +36,9 @@ dependencies = [
 
 [[package]]
 name = "abi_stable_derive"
-version = "0.10.2"
+version = "0.10.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "178bbfd075531f3af85296ca9839f71d923406682819b595353d73fe4d853643"
+checksum = "3b9810ef8debee5544010d92dac0b88b32853cd5bd5ca3298243c99e931da0f0"
 dependencies = [
  "abi_stable_shared",
  "as_derive_utils",
@@ -51,9 +52,9 @@ dependencies = [
 
 [[package]]
 name = "abi_stable_shared"
-version = "0.10.2"
+version = "0.10.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "00a97e54ce35e7a69bfbd799b5d44d333c9e4eb430744efa4e4a9aa24670a6bc"
+checksum = "ece9da89066e018d908b48755e17cdd08a46ce222f84b1f226e837f836f84a5f"
 dependencies = [
  "core_extensions",
 ]
@@ -80,9 +81,9 @@ dependencies = [
 
 [[package]]
 name = "anyhow"
-version = "1.0.44"
+version = "1.0.45"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "61604a8f862e1d5c3229fdd78f8b02c68dcf73a4c4b05fd636d12240aaa242c1"
+checksum = "ee10e43ae4a853c0a3591d4e2ada1719e553be18199d9da9d4a83f5927c2f5c7"
 
 [[package]]
 name = "arrayvec"
@@ -92,9 +93,9 @@ checksum = "23b62fc65de8e4e7f52534fb52b0f3ed04746ae267519eef2a83941e8085068b"
 
 [[package]]
 name = "as_derive_utils"
-version = "0.10.2"
+version = "0.10.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "147c76e2cba05d6e2f0206b7e462e2076f907efd79ee37a2297872a1ec3cd177"
+checksum = "e0a26fa495cefb8c86d9ce183b3f39ad11678e54fb3c20e6b7dbd87770811d9b"
 dependencies = [
  "core_extensions",
  "proc-macro2",
@@ -129,6 +130,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cdb031dd78e28731d87d56cc8ffef4a8f36ca26c38fe2de700543e627f8a464a"
 
 [[package]]
+name = "bincode"
+version = "1.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b1f45e9417d87227c7a56d22e471c6206462cba514c7590c09aff4cf6d1ddcad"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "bitflags"
 version = "1.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -160,6 +170,15 @@ name = "core_extensions"
 version = "1.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "af52bfbfe8cfaf3cb376e1f7b6aa5ee51141e1e4b11fa067b3910d8b1ff52c42"
+dependencies = [
+ "core_extensions_proc_macros",
+]
+
+[[package]]
+name = "core_extensions_proc_macros"
+version = "1.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0c47d512f1f176b5136bb700fe836a7d69c58e79a0448627ac30dd91f66ce8ca"
 
 [[package]]
 name = "crossbeam-channel"
@@ -525,6 +544,12 @@ dependencies = [
  "smallvec 1.6.1",
  "winapi",
 ]
+
+[[package]]
+name = "paste"
+version = "1.0.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "acbf547ad0c65e31259204bd90935776d1c693cec2f4ff7abb7a1bbbd40dfe58"
 
 [[package]]
 name = "percent-encoding"
@@ -1078,12 +1103,15 @@ dependencies = [
 
 [[package]]
 name = "swc_common"
-version = "0.14.4"
+version = "0.14.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4cfa69a46e6f25a7b79d2cafc89777f35c3eb75de585055671ef1e096ba94acb"
+checksum = "2cc7f3a65556dcd305165d2d03068cc114df917435fe4d5220584c21a4d9684d"
 dependencies = [
+ "abi_stable",
  "ahash",
+ "anyhow",
  "ast_node",
+ "bincode",
  "cfg-if 0.1.10",
  "either",
  "from_variant",
@@ -1215,9 +1243,26 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin"
-version = "0.9.0"
+version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ec7994bcffc7489f5cd25a3b816a3820bdcb328526d1e5d6413eaf99a0ce5d77"
+checksum = "b60a688dd42748990174c4fbe6c8cc919d27b5dd060e4db897c4cb27a118522d"
+dependencies = [
+ "abi_stable",
+ "anyhow",
+ "serde",
+ "serde_json",
+ "swc_atoms",
+ "swc_common",
+ "swc_ecma_ast",
+ "swc_ecma_visit",
+ "swc_plugin_api",
+]
+
+[[package]]
+name = "swc_plugin_api"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3e078cdc54e6a9fb3f96b7c374c5ea6333707846f8cd891551bb5943fe9acbb8"
 dependencies = [
  "abi_stable",
  "anyhow",
