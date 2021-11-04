@@ -1243,9 +1243,9 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin"
-version = "0.10.0"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b60a688dd42748990174c4fbe6c8cc919d27b5dd060e4db897c4cb27a118522d"
+checksum = "259014051bed1a918cb7d4279fcc6abfafc649247ad2dacfebc66d07f786c915"
 dependencies = [
  "abi_stable",
  "anyhow",
@@ -1260,9 +1260,9 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_api"
-version = "0.1.0"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3e078cdc54e6a9fb3f96b7c374c5ea6333707846f8cd891551bb5943fe9acbb8"
+checksum = "031b433f31fefd06971c71763d22cd3c1de0c2c1da9d5b00136be7f1beb27f23"
 dependencies = [
  "abi_stable",
  "anyhow",
