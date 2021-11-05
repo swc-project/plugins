@@ -12,7 +12,7 @@ use swc_ecmascript::{
     visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith},
 };
 
-use crate::utils::get_prop_key_as_expr;
+use crate::utils::{get_prop_key_as_expr, get_prop_name};
 
 static TAG_NAME_REGEX: Lazy<Regex> =
     Lazy::new(|| Regex::new("^[a-z][a-z\\d]*(\\-[a-z][a-z\\d]*)?$").unwrap());
@@ -516,17 +516,6 @@ fn get_local_identifier(idx: &mut usize, expr: &Expr) -> Ident {
     // TODO: Unique identifier
 
     identifier
-}
-
-fn get_prop_name(p: &Prop) -> Option<&PropName> {
-    match p {
-        Prop::Shorthand(..) => None,
-        Prop::KeyValue(p) => Some(&p.key),
-        Prop::Assign(..) => None,
-        Prop::Getter(p) => Some(&p.key),
-        Prop::Setter(p) => Some(&p.key),
-        Prop::Method(p) => Some(&p.key),
-    }
 }
 
 fn get_name(el: &JSXElementName) -> JsWord {

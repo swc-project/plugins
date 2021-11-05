@@ -22,3 +22,14 @@ pub(crate) fn prop_name_to_expr(p: &PropName) -> Cow<Expr> {
         PropName::Computed(e) => Cow::Borrowed(&e.expr),
     }
 }
+
+pub(crate) fn get_prop_name(p: &Prop) -> Option<&PropName> {
+    match p {
+        Prop::Shorthand(..) => None,
+        Prop::KeyValue(p) => Some(&p.key),
+        Prop::Assign(..) => None,
+        Prop::Getter(p) => Some(&p.key),
+        Prop::Setter(p) => Some(&p.key),
+        Prop::Method(p) => Some(&p.key),
+    }
+}
