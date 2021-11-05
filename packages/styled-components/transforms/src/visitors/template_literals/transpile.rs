@@ -22,6 +22,8 @@ pub fn transpile_css_prop() -> impl Fold + VisitMut {
 struct TranspileCssProp {
     import_name: Option<Ident>,
     injected_nodes: Vec<Stmt>,
+
+    identifier_idx: usize,
 }
 
 impl VisitMut for TranspileCssProp {
@@ -178,6 +180,7 @@ impl VisitMut for TranspileCssProp {
                             p: p.clone(),
                             replace_object_with_prop_function: false,
                             extra_attrs: Default::default(),
+                            identifier_idx: &mut self.identifier_idx,
                         };
 
                         css_obj.props = css_obj
@@ -263,13 +266,15 @@ impl VisitMut for TranspileCssProp {
     }
 }
 
-struct PropertyReducer {
+struct PropertyReducer<'a> {
     p: Ident,
     replace_object_with_prop_function: bool,
     extra_attrs: Vec<JSXAttrOrSpread>,
+
+    identifier_idx: &'a mut usize,
 }
 
-impl PropertyReducer {
+impl PropertyReducer<'_> {
     fn reduce_object_properties(
         &mut self,
         mut acc: Vec<PropOrSpread>,
@@ -288,7 +293,7 @@ impl PropertyReducer {
                 } else {
                     self.replace_object_with_prop_function = true;
 
-                    let identifier = get_local_identifier(&prop.expr);
+                    let identifier = get_local_identifier(&mut self.identifier_idx, &prop.expr);
 
                     self.extra_attrs.push(JSXAttrOrSpread::JSXAttr(JSXAttr {
                         span: DUMMY_SP,
@@ -313,7 +318,7 @@ impl PropertyReducer {
                 {
                     self.replace_object_with_prop_function = true;
 
-                    let identifier = get_local_identifier(&key);
+                    let identifier = get_local_identifier(&mut self.identifier_idx, &key);
 
                     self.extra_attrs.push(JSXAttrOrSpread::JSXAttr(JSXAttr {
                         span: DUMMY_SP,
@@ -344,7 +349,7 @@ impl PropertyReducer {
 
                     self.replace_object_with_prop_function = true;
 
-                    let identifier = get_local_identifier(&value);
+                    let identifier = get_local_identifier(&mut self.identifier_idx, &value);
 
                     self.extra_attrs.push(JSXAttrOrSpread::JSXAttr(JSXAttr {
                         span: DUMMY_SP,
@@ -416,8 +421,10 @@ fn set_key_of_prop(prop: &mut Prop, key: Box<Expr>) {
     });
 }
 
-fn get_local_identifier(expr: &Expr) -> Ident {
-    let identifier = private_ident!(expr.span(), "$_css");
+fn get_local_identifier(idx: &mut usize, expr: &Expr) -> Ident {
+    *idx += 1;
+
+    let identifier = private_ident!(expr.span(), format!("$_css{}", *idx));
 
     // TODO: Unique identifier
 
