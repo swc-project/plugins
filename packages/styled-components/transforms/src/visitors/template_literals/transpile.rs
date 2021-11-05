@@ -200,7 +200,7 @@ impl VisitMut for TranspileCssProp {
                         }
                     } else {
                         // tagged template literal
-                        let mut tpl = css.expect_tagged_tpl();
+                        // let mut tpl = css.expect_tagged_tpl();
                     }
                 }
                 JSXAttrOrSpread::SpreadElement(_) => {}
@@ -276,7 +276,7 @@ impl PropertyReducer {
                     set_key_of_prop(prop, Box::new(self.p.clone().make_member(identifier)));
                 }
 
-                let mut value = get_prop_value_mut(prop);
+                let mut value = take_prop_value(prop);
 
                 if let Expr::Object(value) = &mut *value {
                     value.props = value
@@ -320,12 +320,20 @@ impl PropertyReducer {
     }
 }
 
-fn get_prop_value_mut(prop: &mut Prop) -> Box<Expr> {
+fn take_prop_value(prop: &mut Prop) -> Box<Expr> {
     todo!()
 }
 
 fn set_key_of_prop(prop: &mut Prop, key: Box<Expr>) {
-    todo!()
+    let value = take_prop_value(prop);
+
+    *prop = Prop::KeyValue(KeyValueProp {
+        key: PropName::Computed(ComputedPropName {
+            span: DUMMY_SP,
+            expr: key,
+        }),
+        value,
+    });
 }
 
 fn get_local_identifier(expr: &Expr) -> Ident {
