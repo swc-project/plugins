@@ -311,10 +311,14 @@ impl PropertyReducer<'_> {
             }
             PropOrSpread::Prop(ref mut prop) => {
                 let key = get_prop_key_as_expr(&prop);
+                let key_pn = get_prop_name(prop);
 
                 if key.is_member()
                     || key.is_call()
-                    || (key.is_ident() && !matches!(&**prop, Prop::Shorthand(..)))
+                    || (key.is_ident()
+                        && key_pn.is_some()
+                        && key_pn.unwrap().is_computed()
+                        && !matches!(&**prop, Prop::Shorthand(..)))
                 {
                     self.replace_object_with_prop_function = true;
 
