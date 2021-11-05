@@ -175,7 +175,7 @@ impl VisitMut for TranspileCssProp {
                             extra_attrs: Default::default(),
                         };
 
-                        css.props = css.props.into_iter().fold(vec![], |acc, property| {
+                        css.props = css.props.take().into_iter().fold(vec![], |acc, property| {
                             reducer.reduce_object_properties(acc, property)
                         });
                     }
@@ -195,8 +195,8 @@ struct PropertyReducer {
 impl PropertyReducer {
     fn reduce_object_properties(
         &mut self,
-        acc: Vec<PropOrSpread>,
-        property: PropOrSpread,
+        mut acc: Vec<PropOrSpread>,
+        mut property: PropOrSpread,
     ) -> Vec<PropOrSpread> {
         match property {
             PropOrSpread::Spread(ref mut prop) => {
@@ -205,6 +205,7 @@ impl PropertyReducer {
                 if let Expr::Object(arg) = &mut *prop.expr {
                     arg.props = arg
                         .props
+                        .take()
                         .into_iter()
                         .fold(vec![], |acc, p| self.reduce_object_properties(acc, p));
                 } else {
@@ -228,11 +229,19 @@ impl PropertyReducer {
             }
             PropOrSpread::Prop(prop) => {
                 let key = get_prop_key_as_expr(&prop);
+
+                //https://github.com/styled-components/babel-plugin-styled-components/blob/a20c3033508677695953e7a434de4746168eeb4e/src/visitors/transpileCssProp.js#L149
             }
         }
 
         acc
     }
+}
+
+fn get_local_identifier(expr: &Expr) -> Ident {
+    let identifier = private_ident!(expr.span(), "css");
+
+    identifier
 }
 
 fn get_prop_key_as_expr(p: &Prop) -> Cow<Expr> {
