@@ -57,6 +57,8 @@ impl VisitMut for TranspileCssProp {
     fn visit_mut_jsx_element(&mut self, elem: &mut JSXElement) {
         elem.visit_mut_children_with(self);
 
+        let mut extra_attrs = vec![];
+
         for attr in elem.opening.attrs.iter_mut() {
             match &mut *attr {
                 JSXAttrOrSpread::JSXAttr(attr) => {
@@ -159,7 +161,7 @@ impl VisitMut for TranspileCssProp {
                     }
 
                     // object syntax
-                    if let Expr::Object(css) = &mut css {
+                    if let Expr::Object(css_obj) = &mut css {
                         // Original plugin says
                         //
                         //
@@ -170,19 +172,42 @@ impl VisitMut for TranspileCssProp {
                         let p = quote_ident!("p");
 
                         let mut reducer = PropertyReducer {
-                            p,
+                            p: p.clone(),
                             replace_object_with_prop_function: false,
                             extra_attrs: Default::default(),
                         };
 
-                        css.props = css.props.take().into_iter().fold(vec![], |acc, property| {
-                            reducer.reduce_object_properties(acc, property)
-                        });
+                        css_obj.props = css_obj
+                            .props
+                            .take()
+                            .into_iter()
+                            .fold(vec![], |acc, property| {
+                                reducer.reduce_object_properties(acc, property)
+                            });
+
+                        extra_attrs.extend(reducer.extra_attrs);
+
+                        if reducer.replace_object_with_prop_function {
+                            css = Expr::Arrow(ArrowExpr {
+                                span: DUMMY_SP,
+                                params: vec![Pat::Ident(p.clone().into())],
+                                body: BlockStmtOrExpr::Expr(Box::new(css.take())),
+                                is_async: false,
+                                is_generator: false,
+                                type_params: Default::default(),
+                                return_type: Default::default(),
+                            });
+                        }
+                    } else {
+                        // tagged template literal
+                        let mut tpl = css.expect_tagged_tpl();
                     }
                 }
                 JSXAttrOrSpread::SpreadElement(_) => {}
             }
         }
+
+        elem.opening.attrs.extend(extra_attrs);
     }
 }
 
