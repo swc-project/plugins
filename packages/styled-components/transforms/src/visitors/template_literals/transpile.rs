@@ -124,10 +124,9 @@ impl VisitMut for TranspileCssProp {
                                     ..
                                 }) => match &mut **v {
                                     Expr::Tpl(..) => *v.take(),
-                                    // TODO: Check if `path.node.value.expression.quasi` is array
-                                    // Expr::TaggedTpl(v) if v.tag.is_ident_ref_to("css".into()) =>
-                                    // {     v.tpl.quasis[0].
-                                    // take() }
+                                    Expr::TaggedTpl(v) if v.tag.is_ident_ref_to("css".into()) => {
+                                        Expr::Tpl(v.tpl.take())
+                                    }
                                     Expr::Object(..) => *v.take(),
                                     _ => Expr::Tpl(Tpl {
                                         span: DUMMY_SP,
@@ -205,6 +204,37 @@ impl VisitMut for TranspileCssProp {
                     } else {
                         // tagged template literal
                         // let mut tpl = css.expect_tagged_tpl();
+                    }
+
+                    let var = VarDeclarator {
+                        span: DUMMY_SP,
+                        name: Pat::Ident(id.clone().into()),
+                        init: Some(match css {
+                            Expr::Object(..) | Expr::Arrow(..) => Box::new(Expr::Call(CallExpr {
+                                span: DUMMY_SP,
+                                callee: styled.as_callee(),
+                                args: vec![css.as_arg()],
+                                type_args: Default::default(),
+                            })),
+                            _ => Box::new(Expr::TaggedTpl(TaggedTpl {
+                                span: DUMMY_SP,
+                                tag: Box::new(styled),
+                                type_params: Default::default(),
+                                tpl: css.expect_tpl(),
+                            })),
+                        }),
+                        definite: false,
+                    };
+                    match injector {
+                        Some(injector) => todo!("Use injector"),
+                        None => {
+                            self.injected_nodes.push(Stmt::Decl(Decl::Var(VarDecl {
+                                span: DUMMY_SP,
+                                kind: VarDeclKind::Var,
+                                declare: false,
+                                decls: vec![var],
+                            })));
+                        }
                     }
                 }
                 JSXAttrOrSpread::SpreadElement(_) => {}
