@@ -78,7 +78,7 @@ impl VisitMut for TranspileCssProp {
                     let id_sym = get_first_letter_uppercased(&name);
 
                     let id: Ident =
-                        private_ident!(elem.opening.name.span(), format!("Styled{}", id_sym));
+                        private_ident!(elem.opening.name.span(), format!("_Styled{}", id_sym));
 
                     let (styled, injector) = if TAG_NAME_REGEX.is_match(&name) {
                         (
@@ -101,7 +101,7 @@ impl VisitMut for TranspileCssProp {
 
                         // TODO
 
-                        return;
+                        continue;
                     };
 
                     let mut css = match &mut attr.value {
@@ -148,10 +148,10 @@ impl VisitMut for TranspileCssProp {
                                     }),
                                 },
 
-                                _ => return,
+                                _ => continue,
                             }
                         }
-                        None => return,
+                        None => continue,
                     };
 
                     // Remove this attribute
