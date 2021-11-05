@@ -396,7 +396,9 @@ fn set_key_of_prop(prop: &mut Prop, key: Box<Expr>) {
 }
 
 fn get_local_identifier(expr: &Expr) -> Ident {
-    let identifier = private_ident!(expr.span(), "css");
+    let identifier = private_ident!(expr.span(), "$_css");
+
+    // TODO: Unique identifier
 
     identifier
 }
