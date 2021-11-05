@@ -30,36 +30,6 @@ struct TranspileCssProp {
 impl VisitMut for TranspileCssProp {
     noop_visit_mut_type!();
 
-    fn visit_mut_module(&mut self, n: &mut Module) {
-        // TODO: Skip if there are no css prop usage
-        n.visit_mut_children_with(self);
-
-        if let Some(import_name) = self.import_name.take() {
-            let specifier = ImportSpecifier::Default(ImportDefaultSpecifier {
-                span: DUMMY_SP,
-                local: import_name,
-            });
-            prepend(
-                &mut n.body,
-                ModuleItem::ModuleDecl(ModuleDecl::Import(ImportDecl {
-                    span: DUMMY_SP,
-                    specifiers: vec![specifier],
-                    src: Str {
-                        span: DUMMY_SP,
-                        value: "styled-components".into(),
-                        has_escape: Default::default(),
-                        kind: Default::default(),
-                    },
-                    type_only: Default::default(),
-                    asserts: Default::default(),
-                })),
-            );
-        }
-
-        n.body
-            .extend(self.injected_nodes.take().into_iter().map(ModuleItem::Stmt));
-    }
-
     fn visit_mut_jsx_element(&mut self, elem: &mut JSXElement) {
         elem.visit_mut_children_with(self);
 
@@ -310,6 +280,44 @@ impl VisitMut for TranspileCssProp {
         });
 
         elem.opening.attrs.extend(extra_attrs);
+    }
+
+    fn visit_mut_member_expr(&mut self, e: &mut MemberExpr) {
+        e.obj.visit_mut_with(self);
+
+        if e.computed {
+            e.prop.visit_mut_with(self);
+        }
+    }
+
+    fn visit_mut_module(&mut self, n: &mut Module) {
+        // TODO: Skip if there are no css prop usage
+        n.visit_mut_children_with(self);
+
+        if let Some(import_name) = self.import_name.take() {
+            let specifier = ImportSpecifier::Default(ImportDefaultSpecifier {
+                span: DUMMY_SP,
+                local: import_name,
+            });
+            prepend(
+                &mut n.body,
+                ModuleItem::ModuleDecl(ModuleDecl::Import(ImportDecl {
+                    span: DUMMY_SP,
+                    specifiers: vec![specifier],
+                    src: Str {
+                        span: DUMMY_SP,
+                        value: "styled-components".into(),
+                        has_escape: Default::default(),
+                        kind: Default::default(),
+                    },
+                    type_only: Default::default(),
+                    asserts: Default::default(),
+                })),
+            );
+        }
+
+        n.body
+            .extend(self.injected_nodes.take().into_iter().map(ModuleItem::Stmt));
     }
 }
 
