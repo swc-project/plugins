@@ -428,7 +428,7 @@ fn set_key_of_prop(prop: &mut Prop, key: Box<Expr>) {
 fn get_local_identifier(idx: &mut usize, expr: &Expr) -> Ident {
     *idx += 1;
 
-    let identifier = private_ident!(expr.span(), format!("$_css{}", *idx));
+    let identifier = quote_ident!(expr.span(), format!("$_css{}", *idx));
 
     // TODO: Unique identifier
 
