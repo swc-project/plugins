@@ -1,5 +1,4 @@
 use std::borrow::Cow;
-
 use swc_ecmascript::ast::*;
 
 pub(crate) fn get_prop_key_as_expr(p: &Prop) -> Cow<Expr> {
