@@ -70,7 +70,7 @@ impl VisitMut for DisplayNameAndId {
                                                                 "componentId" | "displayName" => {
                                                                     true
                                                                 }
-                                                                _ => [false],
+                                                                _ => false,
                                                             }
                                                         }
                                                         _ => false,
