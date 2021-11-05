@@ -1,5 +1,6 @@
 //! Port of https://github.com/styled-components/babel-plugin-styled-components/blob/a20c3033508677695953e7a434de4746168eeb4e/src/visitors/transpileCssProp.js
 
+use inflector::Inflector;
 use once_cell::sync::Lazy;
 use regex::Regex;
 use std::borrow::Cow;
@@ -76,8 +77,8 @@ impl VisitMut for TranspileCssProp {
                         .get_or_insert_with(|| private_ident!("_styled"))
                         .clone();
 
-                    let mut name = get_name(&elem.opening.name);
-                    let id_sym = get_first_letter_uppercased(&name);
+                    let name = get_name(&elem.opening.name);
+                    let id_sym = name.to_class_case();
 
                     let id: Ident =
                         private_ident!(elem.opening.name.span(), format!("_Styled{}", id_sym));
@@ -539,19 +540,11 @@ fn prop_name_to_expr(p: &PropName) -> Cow<Expr> {
     }
 }
 
-fn get_first_letter_uppercased(s: &str) -> String {
-    let mut c = s.chars();
-    match c.next() {
-        None => String::new(),
-        Some(f) => f.to_uppercase().collect::<String>() + c.as_str(),
-    }
-}
-
 fn get_name(el: &JSXElementName) -> JsWord {
     match el {
         JSXElementName::Ident(v) => v.sym.clone(),
         JSXElementName::JSXMemberExpr(e) => {
-            format!("{}{}", get_name_of_jsx_obj(&e.obj), e.prop.sym).into()
+            format!("{}_{}", get_name_of_jsx_obj(&e.obj), e.prop.sym).into()
         }
         _ => {
             unimplemented!("get_name for namespaced jsx element")
