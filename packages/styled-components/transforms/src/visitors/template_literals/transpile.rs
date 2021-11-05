@@ -71,7 +71,7 @@ impl VisitMut for TranspileCssProp {
 
                     let import_name = self
                         .import_name
-                        .get_or_insert_with(|| private_ident!("styled"))
+                        .get_or_insert_with(|| private_ident!("_styled"))
                         .clone();
 
                     let mut name = get_name(&elem.opening.name);
