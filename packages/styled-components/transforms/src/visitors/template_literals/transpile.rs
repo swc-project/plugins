@@ -330,12 +330,14 @@ impl PropertyReducer {
 
                 let mut value = take_prop_value(prop);
 
-                if let Expr::Object(value) = &mut *value {
-                    value.props = value
+                if let Expr::Object(value_obj) = &mut *value {
+                    value_obj.props = value_obj
                         .props
                         .take()
                         .into_iter()
                         .fold(vec![], |acc, p| self.reduce_object_properties(acc, p));
+
+                    set_value_of_prop(prop, value);
                     acc.push(property);
                 } else if !matches!(&*value, Expr::Lit(..)) {
                     // if a non-primitive value we have to interpolate it
@@ -363,12 +365,31 @@ impl PropertyReducer {
                         value: Box::new(self.p.clone().make_member(identifier)),
                     }))));
                 } else {
+                    set_value_of_prop(prop, value);
                     acc.push(property);
                 }
             }
         }
 
         acc
+    }
+}
+
+fn set_value_of_prop(prop: &mut Prop, value: Box<Expr>) {
+    match prop {
+        Prop::Shorthand(p) => {
+            *prop = Prop::KeyValue(KeyValueProp {
+                key: PropName::Ident(p.clone()),
+                value,
+            });
+        }
+        Prop::KeyValue(p) => {
+            p.value = value;
+        }
+        Prop::Assign(..) => unreachable!("assign property is not allowed for object literals"),
+        Prop::Getter(p) => todo!(),
+        Prop::Setter(p) => todo!(),
+        Prop::Method(p) => todo!(),
     }
 }
 
@@ -401,6 +422,17 @@ fn get_local_identifier(expr: &Expr) -> Ident {
     // TODO: Unique identifier
 
     identifier
+}
+
+fn get_prop_name(p: &Prop) -> Option<&PropName> {
+    match p {
+        Prop::Shorthand(p) => None,
+        Prop::KeyValue(p) => Some(&p.key),
+        Prop::Assign(p) => None,
+        Prop::Getter(p) => Some(&p.key),
+        Prop::Setter(p) => Some(&p.key),
+        Prop::Method(p) => Some(&p.key),
+    }
 }
 
 fn get_prop_key_as_expr(p: &Prop) -> Cow<Expr> {
