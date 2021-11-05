@@ -206,7 +206,47 @@ impl VisitMut for TranspileCssProp {
                         }
                     } else {
                         // tagged template literal
-                        // let mut tpl = css.expect_tagged_tpl();
+                        let mut tpl = css.expect_tpl();
+
+                        tpl.exprs =
+                            tpl.exprs
+                                .take()
+                                .into_iter()
+                                .fold(vec![], |mut acc, mut expr| {
+                                    if expr.is_fn_expr() || expr.is_arrow() {
+                                        acc.push(expr);
+                                    } else {
+                                        let identifier =
+                                            get_local_identifier(&mut self.identifier_idx, &expr);
+                                        let p = quote_ident!("P");
+                                        extra_attrs.push(JSXAttrOrSpread::JSXAttr(JSXAttr {
+                                            span: DUMMY_SP,
+                                            name: JSXAttrName::Ident(identifier.clone()),
+                                            value: Some(JSXAttrValue::JSXExprContainer(
+                                                JSXExprContainer {
+                                                    span: DUMMY_SP,
+                                                    expr: JSXExpr::Expr(expr.take()),
+                                                },
+                                            )),
+                                        }));
+
+                                        acc.push(Box::new(Expr::Arrow(ArrowExpr {
+                                            span: DUMMY_SP,
+                                            params: vec![Pat::Ident(p.clone().into())],
+                                            body: BlockStmtOrExpr::Expr(Box::new(
+                                                p.make_member(identifier),
+                                            )),
+                                            is_async: false,
+                                            is_generator: false,
+                                            type_params: Default::default(),
+                                            return_type: Default::default(),
+                                        })))
+                                    }
+
+                                    acc
+                                });
+
+                        css = Expr::Tpl(tpl);
                     }
 
                     let var = VarDeclarator {
