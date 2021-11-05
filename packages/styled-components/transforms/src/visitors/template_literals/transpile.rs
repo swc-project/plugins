@@ -21,6 +21,7 @@ pub fn transpile_css_prop() -> impl Fold + VisitMut {
 #[derive(Default)]
 struct TranspileCssProp {
     import_name: Option<Ident>,
+    injected_nodes: Vec<Stmt>,
 }
 
 impl VisitMut for TranspileCssProp {
@@ -51,6 +52,9 @@ impl VisitMut for TranspileCssProp {
                 })),
             );
         }
+
+        n.body
+            .extend(self.injected_nodes.take().into_iter().map(ModuleItem::Stmt));
     }
 
     fn visit_mut_jsx_element(&mut self, elem: &mut JSXElement) {
@@ -151,8 +155,8 @@ impl VisitMut for TranspileCssProp {
                         None => return,
                     };
 
+                    // Remove this attribute
                     attr.name = JSXAttrName::Ident(Take::dummy());
-                    // TODO: Remove this attribute
 
                     elem.opening.name = JSXElementName::Ident(id.clone());
 
