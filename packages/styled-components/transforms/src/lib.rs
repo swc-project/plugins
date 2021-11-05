@@ -1,5 +1,5 @@
 use crate::visitors::{
-    display_name_and_id::display_name_and_id, template_literals::transpile::transpile_css_prop,
+    display_name_and_id::display_name_and_id, transpile_css_prop::transpile::transpile_css_prop,
 };
 use swc_common::chain;
 use swc_ecmascript::visit::{Fold, VisitMut};
