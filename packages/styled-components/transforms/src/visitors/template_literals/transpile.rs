@@ -82,7 +82,7 @@ impl VisitMut for TranspileCssProp {
                     let id: Ident =
                         private_ident!(elem.opening.name.span(), format!("_Styled{}", id_sym));
 
-                    let (styled, injector) = if TAG_NAME_REGEX.is_match(&name) {
+                    let (styled, inject_after) = if TAG_NAME_REGEX.is_match(&name) {
                         (
                             (Expr::Call(CallExpr {
                                 span: DUMMY_SP,
@@ -99,11 +99,17 @@ impl VisitMut for TranspileCssProp {
                             None::<()>,
                         )
                     } else {
-                        // let name_expr = get_name_expr(&n.opening.name);
+                        let name_expr = get_name_expr(&elem.opening.name);
 
-                        // TODO
-
-                        continue;
+                        (
+                            Expr::Call(CallExpr {
+                                span: DUMMY_SP,
+                                callee: import_name.as_callee(),
+                                args: vec![name_expr.as_arg()],
+                                type_args: Default::default(),
+                            }),
+                            None,
+                        )
                     };
 
                     let mut css = match &mut attr.value {
@@ -268,7 +274,7 @@ impl VisitMut for TranspileCssProp {
                         }),
                         definite: false,
                     };
-                    match injector {
+                    match inject_after {
                         Some(injector) => todo!("Use injector"),
                         None => {
                             self.injected_nodes.push(Stmt::Decl(Decl::Var(VarDecl {
@@ -303,6 +309,32 @@ impl VisitMut for TranspileCssProp {
         });
 
         elem.opening.attrs.extend(extra_attrs);
+    }
+}
+
+fn get_name_expr(name: &JSXElementName) -> Box<Expr> {
+    fn get_name_expr_jsx_object(name: &JSXObject) -> Box<Expr> {
+        match name {
+            JSXObject::Ident(n) => Box::new(Expr::Ident(n.clone())),
+            JSXObject::JSXMemberExpr(n) => Box::new(Expr::Member(MemberExpr {
+                span: DUMMY_SP,
+                obj: ExprOrSuper::Expr(get_name_expr_jsx_object(&n.obj)),
+                prop: Box::new(Expr::Ident(n.prop.clone())),
+                computed: false,
+            })),
+        }
+    }
+    match name {
+        JSXElementName::Ident(n) => Box::new(Expr::Ident(n.clone())),
+        JSXElementName::JSXMemberExpr(n) => Box::new(Expr::Member(MemberExpr {
+            span: DUMMY_SP,
+            obj: ExprOrSuper::Expr(get_name_expr_jsx_object(&n.obj)),
+            prop: Box::new(Expr::Ident(n.prop.clone())),
+            computed: false,
+        })),
+        JSXElementName::JSXNamespacedName(..) => {
+            unimplemented!("get_name_expr for JSXNamespacedName")
+        }
     }
 }
 
