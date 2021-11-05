@@ -321,7 +321,14 @@ impl PropertyReducer {
 }
 
 fn take_prop_value(prop: &mut Prop) -> Box<Expr> {
-    todo!()
+    match prop {
+        Prop::Shorthand(p) => Box::new(Expr::Ident(p.clone())),
+        Prop::KeyValue(p) => p.value.take(),
+        Prop::Assign(..) => unreachable!("assign property is not allowed for object literals"),
+        Prop::Getter(p) => todo!(),
+        Prop::Setter(p) => todo!(),
+        Prop::Method(p) => todo!(),
+    }
 }
 
 fn set_key_of_prop(prop: &mut Prop, key: Box<Expr>) {
