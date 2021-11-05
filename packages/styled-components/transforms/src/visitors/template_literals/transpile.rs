@@ -510,9 +510,9 @@ fn get_local_identifier(idx: &mut usize, expr: &Expr) -> Ident {
 
 fn get_prop_name(p: &Prop) -> Option<&PropName> {
     match p {
-        Prop::Shorthand(p) => None,
+        Prop::Shorthand(..) => None,
         Prop::KeyValue(p) => Some(&p.key),
-        Prop::Assign(p) => None,
+        Prop::Assign(..) => None,
         Prop::Getter(p) => Some(&p.key),
         Prop::Setter(p) => Some(&p.key),
         Prop::Method(p) => Some(&p.key),
@@ -557,9 +557,6 @@ fn get_name_of_jsx_obj(el: &JSXObject) -> JsWord {
         JSXObject::Ident(v) => v.sym.clone(),
         JSXObject::JSXMemberExpr(e) => {
             format!("{}{}", get_name_of_jsx_obj(&e.obj), e.prop.sym).into()
-        }
-        _ => {
-            unimplemented!("get_name for namespaced jsx element")
         }
     }
 }
