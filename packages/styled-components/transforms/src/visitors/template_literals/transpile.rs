@@ -227,15 +227,80 @@ impl PropertyReducer {
 
                 acc.push(property);
             }
-            PropOrSpread::Prop(prop) => {
+            PropOrSpread::Prop(ref mut prop) => {
                 let key = get_prop_key_as_expr(&prop);
 
-                //https://github.com/styled-components/babel-plugin-styled-components/blob/a20c3033508677695953e7a434de4746168eeb4e/src/visitors/transpileCssProp.js#L149
+                if key.is_member()
+                    || key.is_call()
+                    || (key.is_ident() && !matches!(&**prop, Prop::Shorthand(..)))
+                {
+                    self.replace_object_with_prop_function = true;
+
+                    let identifier = get_local_identifier(&key);
+
+                    self.extra_attrs.push(JSXAttrOrSpread::JSXAttr(JSXAttr {
+                        span: DUMMY_SP,
+                        name: identifier.clone().into(),
+                        value: Some(JSXAttrValue::JSXExprContainer(JSXExprContainer {
+                            span: DUMMY_SP,
+                            // TODO: Perf
+                            expr: JSXExpr::Expr(Box::new(key.clone().into_owned())),
+                        })),
+                    }));
+
+                    set_key_of_prop(prop, Box::new(self.p.clone().make_member(identifier)));
+                }
+
+                let mut value = get_prop_value_mut(prop);
+
+                if let Expr::Object(value) = &mut *value {
+                    value.props = value
+                        .props
+                        .take()
+                        .into_iter()
+                        .fold(vec![], |acc, p| self.reduce_object_properties(acc, p));
+                    acc.push(property);
+                } else if !matches!(&*value, Expr::Lit(..)) {
+                    // if a non-primitive value we have to interpolate it
+
+                    self.replace_object_with_prop_function = true;
+
+                    let identifier = get_local_identifier(&value);
+
+                    self.extra_attrs.push(JSXAttrOrSpread::JSXAttr(JSXAttr {
+                        span: DUMMY_SP,
+                        name: JSXAttrName::Ident(identifier.clone()),
+                        value: Some(JSXAttrValue::JSXExprContainer(JSXExprContainer {
+                            span: DUMMY_SP,
+                            expr: JSXExpr::Expr(value.take()),
+                        })),
+                    }));
+
+                    let key = get_prop_key_as_expr(&prop);
+
+                    acc.push(PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
+                        key: PropName::Computed(ComputedPropName {
+                            span: DUMMY_SP,
+                            expr: Box::new(key.into_owned()),
+                        }),
+                        value: Box::new(self.p.clone().make_member(identifier)),
+                    }))));
+                } else {
+                    acc.push(property);
+                }
             }
         }
 
         acc
     }
+}
+
+fn get_prop_value_mut(prop: &mut Prop) -> Box<Expr> {
+    todo!()
+}
+
+fn set_key_of_prop(prop: &mut Prop, key: Box<Expr>) {
+    todo!()
 }
 
 fn get_local_identifier(expr: &Expr) -> Ident {
