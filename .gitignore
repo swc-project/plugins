@@ -5,3 +5,5 @@
 
 *.swc-pkg.tgz
 *.swc-pkg.zip
+
+node_modules
