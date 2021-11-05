@@ -434,7 +434,7 @@ fn get_name(el: &JSXElementName) -> JsWord {
     match el {
         JSXElementName::Ident(v) => v.sym.clone(),
         JSXElementName::JSXMemberExpr(e) => {
-            format!("{}.{}", get_name_of_jsx_obj(&e.obj), e.prop.sym).into()
+            format!("{}{}", get_name_of_jsx_obj(&e.obj), e.prop.sym).into()
         }
         _ => {
             unimplemented!("get_name for namespaced jsx element")
@@ -446,7 +446,7 @@ fn get_name_of_jsx_obj(el: &JSXObject) -> JsWord {
     match el {
         JSXObject::Ident(v) => v.sym.clone(),
         JSXObject::JSXMemberExpr(e) => {
-            format!("{}.{}", get_name_of_jsx_obj(&e.obj), e.prop.sym).into()
+            format!("{}{}", get_name_of_jsx_obj(&e.obj), e.prop.sym).into()
         }
         _ => {
             unimplemented!("get_name for namespaced jsx element")
