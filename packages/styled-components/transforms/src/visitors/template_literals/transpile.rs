@@ -1,10 +1,9 @@
 //! Port of https://github.com/styled-components/babel-plugin-styled-components/blob/a20c3033508677695953e7a434de4746168eeb4e/src/visitors/transpileCssProp.js
 
-use std::borrow::Cow;
-
 use once_cell::sync::Lazy;
 use regex::Regex;
-use swc_atoms::JsWord;
+use std::borrow::Cow;
+use swc_atoms::{js_word, JsWord};
 use swc_common::{util::take::Take, Spanned, DUMMY_SP};
 use swc_ecmascript::{
     ast::*,
@@ -152,6 +151,7 @@ impl VisitMut for TranspileCssProp {
                         None => return,
                     };
 
+                    attr.name = JSXAttrName::Ident(Take::dummy());
                     // TODO: Remove this attribute
 
                     elem.opening.name = JSXElementName::Ident(id.clone());
@@ -206,6 +206,24 @@ impl VisitMut for TranspileCssProp {
                 JSXAttrOrSpread::SpreadElement(_) => {}
             }
         }
+
+        elem.opening.attrs.retain(|attr| {
+            match attr {
+                JSXAttrOrSpread::JSXAttr(attr) => {
+                    if matches!(
+                        attr.name,
+                        JSXAttrName::Ident(Ident {
+                            sym: js_word!(""),
+                            ..
+                        })
+                    ) {
+                        return false;
+                    }
+                }
+                JSXAttrOrSpread::SpreadElement(_) => {}
+            }
+            true
+        });
 
         elem.opening.attrs.extend(extra_attrs);
     }
