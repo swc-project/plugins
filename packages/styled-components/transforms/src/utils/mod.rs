@@ -1,5 +1,6 @@
 use std::borrow::Cow;
-use swc_ecmascript::ast::*;
+use swc_atoms::js_word;
+use swc_ecmascript::{ast::*, utils::ExprExt};
 
 pub(crate) fn get_prop_key_as_expr(p: &Prop) -> Cow<Expr> {
     match p {
@@ -31,4 +32,28 @@ pub(crate) fn get_prop_name(p: &Prop) -> Option<&PropName> {
         Prop::Setter(p) => Some(&p.key),
         Prop::Method(p) => Some(&p.key),
     }
+}
+
+pub(crate) fn is_styled(tag: &Expr) -> bool {
+    match tag {
+        Expr::Call(CallExpr {
+            callee: ExprOrSuper::Expr(callee),
+            ..
+        }) => match &**callee {
+            Expr::Member(MemberExpr {
+                computed: false,
+                obj: ExprOrSuper::Expr(obj),
+                prop,
+                ..
+            }) => {
+                if !prop.is_ident_ref_to(js_word!("default")) {
+                    return is_styled(&obj);
+                }
+            }
+        },
+
+        _ => {}
+    }
+
+    false
 }
