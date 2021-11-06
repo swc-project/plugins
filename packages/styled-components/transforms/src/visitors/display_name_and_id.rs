@@ -1,15 +1,19 @@
-use crate::utils::get_prop_name;
+use std::rc::Rc;
+
+use crate::utils::{get_prop_name, State};
 use swc_ecmascript::{
     ast::*,
     visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith},
 };
 
-pub(crate) fn display_name_and_id() -> impl Fold + VisitMut {
-    as_folder(DisplayNameAndId::default())
+pub(crate) fn display_name_and_id(state: Rc<State>) -> impl Fold + VisitMut {
+    as_folder(DisplayNameAndId { state })
 }
 
-#[derive(Debug, Default)]
-struct DisplayNameAndId {}
+#[derive(Debug)]
+struct DisplayNameAndId {
+    state: Rc<State>,
+}
 
 impl VisitMut for DisplayNameAndId {
     noop_visit_mut_type!();

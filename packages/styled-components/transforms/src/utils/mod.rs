@@ -1,10 +1,13 @@
+pub use self::analyzer::analyze;
 use std::borrow::Cow;
-use swc_atoms::{js_word, JsWord};
+use swc_atoms::js_word;
 use swc_common::collections::AHashMap;
 use swc_ecmascript::{
     ast::*,
-    utils::{ident::IdentLike, quote_ident, ExprExt, Id},
+    utils::{ident::IdentLike, ExprExt, Id},
 };
+
+mod analyzer;
 
 pub(crate) fn get_prop_key_as_expr(p: &Prop) -> Cow<Expr> {
     match p {
@@ -39,9 +42,9 @@ pub(crate) fn get_prop_name(p: &Prop) -> Option<&PropName> {
 }
 
 /// This is created once per file.
-#[derive(Default)]
-pub(crate) struct State {
-    pub styled_required: Option<Id>,
+#[derive(Debug)]
+pub struct State {
+    pub(crate) styled_required: Option<Id>,
 
     imported_local_name: Option<Id>,
     import_name_cache: AHashMap<Id, Id>,
