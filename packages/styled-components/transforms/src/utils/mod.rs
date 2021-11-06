@@ -1,5 +1,5 @@
-pub use self::analyzer::analyze;
-use std::borrow::Cow;
+pub use self::analyzer::{analyze, analyzer};
+use std::{borrow::Cow, cell::RefCell};
 use swc_atoms::js_word;
 use swc_common::collections::AHashMap;
 use swc_ecmascript::{
@@ -42,12 +42,12 @@ pub(crate) fn get_prop_name(p: &Prop) -> Option<&PropName> {
 }
 
 /// This is created once per file.
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct State {
     pub(crate) styled_required: Option<Id>,
 
     imported_local_name: Option<Id>,
-    import_name_cache: AHashMap<Id, Id>,
+    import_name_cache: RefCell<AHashMap<Id, Id>>,
 }
 
 impl State {
@@ -67,6 +67,7 @@ impl State {
                         return self.is_styled(&obj);
                     }
                 }
+                _ => {}
             },
 
             _ => {}
@@ -147,9 +148,13 @@ impl State {
                                 return true;
                             }
                         }
+
+                        _ => {}
                     },
                     _ => {}
                 },
+
+                _ => {}
             }
         }
 
@@ -195,9 +200,13 @@ impl State {
                                 return true;
                             }
                         }
+
+                        _ => {}
                     },
                     _ => {}
                 },
+
+                _ => {}
             }
         }
 
@@ -221,18 +230,67 @@ impl State {
             None
         };
 
-        if let Some(cached) = self.import_name_cache.get(&cache_key) {
+        if let Some(cached) = self.import_name_cache.borrow().get(&cache_key) {
             return Some(cached.clone());
         }
 
         let name = local_name.map(|word| (word, Default::default()));
 
         if let Some(name) = name.clone() {
-            self.import_name_cache.insert(cache_key, name);
+            self.import_name_cache.borrow_mut().insert(cache_key, name);
         }
 
         name
     }
 
-    fn is_helper(&self, e: &Expr) -> bool {}
+    fn is_helper(&self, e: &Expr) -> bool {
+        self.is_create_global_style_helper(e)
+            || self.is_css_helper(e)
+            || self.is_inject_global_helper(e)
+            || self.is_use_theme(e)
+            || self.is_keyframes_helper(e)
+            || self.is_with_theme_helper(e)
+    }
+
+    fn is_css_helper(&self, e: &Expr) -> bool {
+        match e {
+            Expr::Ident(e) => Some(e.to_id()) == self.import_local_name("css", None),
+            _ => false,
+        }
+    }
+
+    fn is_create_global_style_helper(&self, e: &Expr) -> bool {
+        match e {
+            Expr::Ident(e) => Some(e.to_id()) == self.import_local_name("createGlobalStyle", None),
+            _ => false,
+        }
+    }
+
+    fn is_inject_global_helper(&self, e: &Expr) -> bool {
+        match e {
+            Expr::Ident(e) => Some(e.to_id()) == self.import_local_name("injectGlobal", None),
+            _ => false,
+        }
+    }
+
+    fn is_keyframes_helper(&self, e: &Expr) -> bool {
+        match e {
+            Expr::Ident(e) => Some(e.to_id()) == self.import_local_name("keyframes", None),
+            _ => false,
+        }
+    }
+
+    fn is_with_theme_helper(&self, e: &Expr) -> bool {
+        match e {
+            Expr::Ident(e) => Some(e.to_id()) == self.import_local_name("withTheme", None),
+            _ => false,
+        }
+    }
+
+    fn is_use_theme(&self, e: &Expr) -> bool {
+        match e {
+            Expr::Ident(e) => Some(e.to_id()) == self.import_local_name("useTheme", None),
+            _ => false,
+        }
+    }
 }

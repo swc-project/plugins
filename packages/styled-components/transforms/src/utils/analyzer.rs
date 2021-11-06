@@ -1,28 +1,53 @@
 use super::State;
+use std::{cell::RefCell, rc::Rc};
 use swc_common::DUMMY_SP;
 use swc_ecmascript::{
-    ast::{Invalid, Program},
-    visit::{noop_visit_type, Visit, VisitWith},
+    ast::*,
+    visit::{as_folder, noop_visit_mut_type, noop_visit_type, Fold, Visit, VisitMut, VisitWith},
 };
 
+pub fn analyzer(state: Rc<RefCell<State>>) -> impl VisitMut + Fold {
+    as_folder(AsAnalyzer { state })
+}
+
+struct AsAnalyzer {
+    state: Rc<RefCell<State>>,
+}
+
+impl VisitMut for AsAnalyzer {
+    noop_visit_mut_type!();
+
+    fn visit_mut_module(&mut self, p: &mut Module) {
+        let mut v = Analyzer {
+            state: &mut *self.state.borrow_mut(),
+        };
+
+        p.visit_with(&Invalid { span: DUMMY_SP }, &mut v);
+    }
+
+    fn visit_mut_script(&mut self, p: &mut Script) {
+        let mut v = Analyzer {
+            state: &mut *self.state.borrow_mut(),
+        };
+
+        p.visit_with(&Invalid { span: DUMMY_SP }, &mut v);
+    }
+}
+
 pub fn analyze(program: &Program) -> State {
-    let mut v = Analyzer {
-        state: State {
-            styled_required: Default::default(),
-            imported_local_name: Default::default(),
-            import_name_cache: Default::default(),
-        },
-    };
+    let mut state = State::default();
+
+    let mut v = Analyzer { state: &mut state };
 
     program.visit_with(&Invalid { span: DUMMY_SP }, &mut v);
 
-    v.state
+    state
 }
 
-struct Analyzer {
-    state: State,
+struct Analyzer<'a> {
+    state: &'a mut State,
 }
 
-impl Visit for Analyzer {
+impl Visit for Analyzer<'_> {
     noop_visit_type!();
 }
