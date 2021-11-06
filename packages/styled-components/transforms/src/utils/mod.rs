@@ -1,8 +1,9 @@
 use std::borrow::Cow;
-use swc_atoms::js_word;
+use swc_atoms::{js_word, JsWord};
+use swc_common::collections::AHashMap;
 use swc_ecmascript::{
     ast::*,
-    utils::{ident::IdentLike, ExprExt, Id},
+    utils::{ident::IdentLike, quote_ident, ExprExt, Id},
 };
 
 pub(crate) fn get_prop_key_as_expr(p: &Prop) -> Cow<Expr> {
@@ -37,9 +38,13 @@ pub(crate) fn get_prop_name(p: &Prop) -> Option<&PropName> {
     }
 }
 
+/// This is created once per file.
 #[derive(Default)]
 pub(crate) struct State {
     pub styled_required: Option<Id>,
+
+    imported_local_name: Option<Id>,
+    import_name_cache: AHashMap<Id, Id>,
 }
 
 impl State {
@@ -72,7 +77,9 @@ impl State {
                 ..
             }) => match &**obj {
                 Expr::Ident(obj) => {
-                    if obj.to_id() == self.import_local_name(obj) && !self.is_helper(&prop) {
+                    if Some(obj.to_id()) == self.import_local_name("default", Some(obj))
+                        && !self.is_helper(&prop)
+                    {
                         return true;
                     }
                 }
@@ -84,7 +91,7 @@ impl State {
                 ..
             }) => match &**callee {
                 Expr::Ident(callee) => {
-                    if callee.to_id() == self.import_local_name(&callee) {
+                    if Some(callee.to_id()) == self.import_local_name("default", Some(&callee)) {
                         return true;
                     }
                 }
@@ -143,7 +150,7 @@ impl State {
             }
         }
 
-        if let Some(import_local_name) = self.import_local_name_without_cache() {
+        if let Some(import_local_name) = self.import_local_name("default", None) {
             match tag {
                 Expr::Member(MemberExpr {
                     obj: ExprOrSuper::Expr(obj),
@@ -194,9 +201,35 @@ impl State {
         false
     }
 
-    fn import_local_name(&self, cache_identifier: &Ident) -> Id {}
+    fn import_local_name(&self, name: &str, cache_identifier: Option<&Ident>) -> Option<Id> {
+        if let Some(cached) = self.imported_local_name.clone() {
+            return Some(cached);
+        }
 
-    fn import_local_name_without_cache(&self) -> Option<Id> {}
+        let cache_key = cache_identifier.map(|i| i.to_id()).unwrap_or_default();
+
+        let local_name = if self.styled_required.is_some() {
+            Some(if name == "default" {
+                "styled".into()
+            } else {
+                name.clone().into()
+            })
+        } else {
+            None
+        };
+
+        if let Some(cached) = self.import_name_cache.get(&cache_key) {
+            return Some(cached.clone());
+        }
+
+        let name = local_name.map(|word| (word, Default::default()));
+
+        if let Some(name) = name.clone() {
+            self.import_name_cache.insert(cache_key, name);
+        }
+
+        name
+    }
 
     fn is_helper(&self, e: &Expr) -> bool {}
 }
