@@ -1,6 +1,7 @@
 use std::rc::Rc;
 
 use crate::utils::{get_prop_name, State};
+use swc_atoms::JsWord;
 use swc_ecmascript::{
     ast::*,
     visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith},
@@ -99,4 +100,30 @@ impl VisitMut for DisplayNameAndId {
             e.prop.visit_mut_with(self);
         }
     }
+}
+
+fn get_callee(e: &Expr) -> Option<&Expr> {
+    match e {
+        Expr::Call(CallExpr {
+            callee: ExprOrSuper::Expr(callee),
+            ..
+        }) => Some(&callee),
+        _ => None,
+    }
+}
+
+fn get_property_as_ident(e: &Expr) -> Option<&JsWord> {
+    match e {
+        Expr::Member(MemberExpr {
+            prop,
+            computed: false,
+            ..
+        }) => match &**prop {
+            Expr::Ident(p) => return Some(&p.sym),
+            _ => {}
+        },
+        _ => {}
+    }
+
+    None
 }
