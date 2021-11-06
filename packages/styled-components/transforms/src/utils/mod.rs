@@ -1,6 +1,9 @@
 use std::borrow::Cow;
 use swc_atoms::js_word;
-use swc_ecmascript::{ast::*, utils::ExprExt};
+use swc_ecmascript::{
+    ast::*,
+    utils::{ident::IdentLike, ExprExt, Id},
+};
 
 pub(crate) fn get_prop_key_as_expr(p: &Prop) -> Cow<Expr> {
     match p {
@@ -34,26 +37,166 @@ pub(crate) fn get_prop_name(p: &Prop) -> Option<&PropName> {
     }
 }
 
-pub(crate) fn is_styled(tag: &Expr) -> bool {
-    match tag {
-        Expr::Call(CallExpr {
-            callee: ExprOrSuper::Expr(callee),
-            ..
-        }) => match &**callee {
+#[derive(Default)]
+pub(crate) struct State {
+    pub styled_required: Option<Id>,
+}
+
+impl State {
+    pub(crate) fn is_styled(&self, tag: &Expr) -> bool {
+        match tag {
+            Expr::Call(CallExpr {
+                callee: ExprOrSuper::Expr(callee),
+                ..
+            }) => match &**callee {
+                Expr::Member(MemberExpr {
+                    computed: false,
+                    obj: ExprOrSuper::Expr(obj),
+                    prop,
+                    ..
+                }) => {
+                    if !prop.is_ident_ref_to(js_word!("default")) {
+                        return self.is_styled(&obj);
+                    }
+                }
+            },
+
+            _ => {}
+        }
+
+        match tag {
             Expr::Member(MemberExpr {
-                computed: false,
                 obj: ExprOrSuper::Expr(obj),
                 prop,
+                computed: false,
                 ..
-            }) => {
-                if !prop.is_ident_ref_to(js_word!("default")) {
-                    return is_styled(&obj);
+            }) => match &**obj {
+                Expr::Ident(obj) => {
+                    if obj.to_id() == self.import_local_name(obj) && !self.is_helper(&prop) {
+                        return true;
+                    }
                 }
-            }
-        },
+                _ => {}
+            },
 
-        _ => {}
+            Expr::Call(CallExpr {
+                callee: ExprOrSuper::Expr(callee),
+                ..
+            }) => match &**callee {
+                Expr::Ident(callee) => {
+                    if callee.to_id() == self.import_local_name(&callee) {
+                        return true;
+                    }
+                }
+                _ => {}
+            },
+
+            _ => {}
+        }
+
+        // styled-components might be imported using a require()
+        if let Some(style_required) = self.styled_required.clone() {
+            match tag {
+                Expr::Member(MemberExpr {
+                    obj: ExprOrSuper::Expr(obj),
+                    computed: false,
+                    ..
+                }) => match &**obj {
+                    Expr::Member(MemberExpr {
+                        span,
+                        obj: ExprOrSuper::Expr(obj_of_obj),
+                        prop,
+                        computed: false,
+                    }) => match &**obj_of_obj {
+                        Expr::Ident(obj_of_obj) => {
+                            if prop.is_ident_ref_to(js_word!("default"))
+                                && obj_of_obj.to_id() == style_required
+                            {
+                                return true;
+                            }
+                        }
+                        _ => {}
+                    },
+                    _ => {}
+                },
+
+                Expr::Call(CallExpr {
+                    callee: ExprOrSuper::Expr(callee),
+                    ..
+                }) => match &**callee {
+                    Expr::Member(MemberExpr {
+                        obj: ExprOrSuper::Expr(tag_callee_object),
+                        prop: tag_callee_property,
+                        computed: false,
+                        ..
+                    }) => match &**tag_callee_object {
+                        Expr::Ident(tag_callee_object) => {
+                            if tag_callee_property.is_ident_ref_to(js_word!("default"))
+                                && tag_callee_object.to_id() == style_required
+                            {
+                                return true;
+                            }
+                        }
+                    },
+                    _ => {}
+                },
+            }
+        }
+
+        if let Some(import_local_name) = self.import_local_name_without_cache() {
+            match tag {
+                Expr::Member(MemberExpr {
+                    obj: ExprOrSuper::Expr(obj),
+                    computed: false,
+                    ..
+                }) => match &**obj {
+                    Expr::Member(MemberExpr {
+                        span,
+                        obj: ExprOrSuper::Expr(obj_of_obj),
+                        prop,
+                        computed: false,
+                    }) => match &**obj_of_obj {
+                        Expr::Ident(obj_of_obj) => {
+                            if prop.is_ident_ref_to(js_word!("default"))
+                                && obj_of_obj.to_id() == import_local_name
+                            {
+                                return true;
+                            }
+                        }
+                        _ => {}
+                    },
+                    _ => {}
+                },
+
+                Expr::Call(CallExpr {
+                    callee: ExprOrSuper::Expr(callee),
+                    ..
+                }) => match &**callee {
+                    Expr::Member(MemberExpr {
+                        obj: ExprOrSuper::Expr(tag_callee_object),
+                        prop: tag_callee_property,
+                        computed: false,
+                        ..
+                    }) => match &**tag_callee_object {
+                        Expr::Ident(tag_callee_object) => {
+                            if tag_callee_property.is_ident_ref_to(js_word!("default"))
+                                && tag_callee_object.to_id() == import_local_name
+                            {
+                                return true;
+                            }
+                        }
+                    },
+                    _ => {}
+                },
+            }
+        }
+
+        false
     }
 
-    false
+    fn import_local_name(&self, cache_identifier: &Ident) -> Id {}
+
+    fn import_local_name_without_cache(&self) -> Option<Id> {}
+
+    fn is_helper(&self, e: &Expr) -> bool {}
 }
