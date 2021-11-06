@@ -22,7 +22,7 @@ impl VisitMut for DisplayNameAndId {
         expr.visit_mut_children_with(self);
 
         let is_styled = match expr {
-            Expr::TaggedTpl(e) => is_styled(&e.tag),
+            Expr::TaggedTpl(e) => self.state.is_styled(&e.tag),
 
             Expr::Call(CallExpr {
                 callee: ExprOrSuper::Expr(callee),
@@ -31,19 +31,19 @@ impl VisitMut for DisplayNameAndId {
             }) => {
                 (
                     // styled()
-                    is_styled(&*callee)
+                    self.state.is_styled(&*callee)
                         && get_property_as_ident(&callee)
                             .map(|v| v == "withConfig")
                             .unwrap_or(false)
                 ) || (
                     // styled(x)({})
-                    is_styled(&*callee)
+                    self.state.is_styled(&*callee)
                         && !get_callee(&callee)
                             .map(|callee| callee.is_member())
                             .unwrap_or(false)
                 ) || (
                     // styled(x).attrs()({})
-                    is_styled(callee)
+                    self.state.is_styled(callee)
                         && get_callee(&callee)
                             .map(|callee| {
                                 callee.is_member()
@@ -54,7 +54,7 @@ impl VisitMut for DisplayNameAndId {
                             .unwrap_or(false)
                 ) || (
                     // styled(x).withConfig({})
-                    is_styled(&*callee)
+                    self.state.is_styled(&*callee)
                         && get_callee(&callee)
                             .map(|callee| {
                                 callee.is_member()
