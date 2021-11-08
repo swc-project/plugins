@@ -1,6 +1,7 @@
-pub use crate::utils::{analyze, analyzer, State};
-use crate::visitors::{
-    display_name_and_id::display_name_and_id, transpile_css_prop::transpile::transpile_css_prop,
+use crate::visitors::transpile_css_prop::transpile::transpile_css_prop;
+pub use crate::{
+    utils::{analyze, analyzer, State},
+    visitors::display_name_and_id::display_name_and_id,
 };
 use serde::Deserialize;
 use std::{cell::RefCell, rc::Rc, sync::Arc};
@@ -43,6 +44,9 @@ impl Config {
     }
 }
 
+/// NOTE: **This is not complete**.
+///
+/// Only [analyzer] and [display_name_and_id] is implemented.
 pub fn styled_components(file: Arc<SourceFile>, config: Config) -> impl Fold + VisitMut {
     let state: Rc<RefCell<State>> = Default::default();
     let config = Rc::new(config);

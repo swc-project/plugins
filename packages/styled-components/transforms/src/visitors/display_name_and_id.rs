@@ -9,12 +9,12 @@ use swc_atoms::{js_word, JsWord};
 use swc_common::{util::take::Take, FileName, SourceFile, DUMMY_SP};
 use swc_ecmascript::{
     ast::*,
-    utils::{ident::IdentLike, quote_ident, ExprExt, ExprFactory},
+    utils::{quote_ident, ExprExt, ExprFactory},
     visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith},
 };
 use tracing::{span, trace, Level};
 
-pub(crate) fn display_name_and_id(
+pub fn display_name_and_id(
     file: Arc<SourceFile>,
     config: Rc<Config>,
     state: Rc<RefCell<State>>,
