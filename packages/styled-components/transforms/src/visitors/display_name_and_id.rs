@@ -79,8 +79,9 @@ impl DisplayNameAndId {
     }
 
     fn next_id(&mut self) -> usize {
+        let ret = self.component_id;
         self.component_id += 1;
-        self.component_id
+        ret
     }
 
     fn get_component_id(&mut self) -> String {
