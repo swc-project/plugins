@@ -25,6 +25,9 @@ pub struct Config {
 
     #[serde(default)]
     pub namespace: String,
+
+    #[serde(default)]
+    pub transpile_template_literals: bool,
 }
 
 impl Config {
