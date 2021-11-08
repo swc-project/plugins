@@ -12,6 +12,7 @@ use swc_ecmascript::{
     utils::{quote_ident, ExprExt, ExprFactory},
     visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith},
 };
+use tracing::{span, trace, Level};
 
 pub(crate) fn display_name_and_id(
     file: Arc<SourceFile>,
@@ -295,17 +296,27 @@ impl VisitMut for DisplayNameAndId {
             return;
         }
 
+        let _tracing = if cfg!(debug_assertions) {
+            Some(span!(Level::ERROR, "display_name_and_id").entered())
+        } else {
+            None
+        };
+
         let display_name = if let Some(..) = &self.config.display_name {
             Some(self.get_display_name(&expr))
         } else {
             None
         };
 
+        trace!("display_name: {:?}", display_name);
+
         let component_id = if self.config.use_ssr {
             Some(self.get_component_id().into())
         } else {
             None
         };
+
+        trace!("component_id: {:?}", display_name);
 
         self.add_config(
             expr,
