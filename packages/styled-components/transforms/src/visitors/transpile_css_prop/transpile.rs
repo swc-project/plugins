@@ -3,7 +3,6 @@
 use inflector::Inflector;
 use once_cell::sync::Lazy;
 use regex::Regex;
-use std::borrow::Cow;
 use swc_atoms::{js_word, JsWord};
 use swc_common::{util::take::Take, Spanned, DUMMY_SP};
 use swc_ecmascript::{
@@ -248,7 +247,7 @@ impl VisitMut for TranspileCssProp {
                         definite: false,
                     };
                     match inject_after {
-                        Some(injector) => todo!("Use injector"),
+                        Some(_injector) => todo!("Use injector"),
                         None => {
                             self.injected_nodes.push(Stmt::Decl(Decl::Var(VarDecl {
                                 span: DUMMY_SP,
@@ -479,9 +478,9 @@ fn set_value_of_prop(prop: &mut Prop, value: Box<Expr>) {
             p.value = value;
         }
         Prop::Assign(..) => unreachable!("assign property is not allowed for object literals"),
-        Prop::Getter(p) => todo!(),
-        Prop::Setter(p) => todo!(),
-        Prop::Method(p) => todo!(),
+        Prop::Getter(_p) => todo!(),
+        Prop::Setter(_p) => todo!(),
+        Prop::Method(_p) => todo!(),
     }
 }
 
@@ -490,9 +489,9 @@ fn take_prop_value(prop: &mut Prop) -> Box<Expr> {
         Prop::Shorthand(p) => Box::new(Expr::Ident(p.clone())),
         Prop::KeyValue(p) => p.value.take(),
         Prop::Assign(..) => unreachable!("assign property is not allowed for object literals"),
-        Prop::Getter(p) => todo!(),
-        Prop::Setter(p) => todo!(),
-        Prop::Method(p) => todo!(),
+        Prop::Getter(_p) => todo!(),
+        Prop::Setter(_p) => todo!(),
+        Prop::Method(_p) => todo!(),
     }
 }
 

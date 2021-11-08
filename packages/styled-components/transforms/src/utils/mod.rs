@@ -2,7 +2,7 @@ pub use self::analyzer::{analyze, analyzer};
 use once_cell::sync::Lazy;
 use regex::{Captures, Regex};
 use std::{borrow::Cow, cell::RefCell};
-use swc_atoms::{js_word, JsWord};
+use swc_atoms::js_word;
 use swc_common::collections::AHashMap;
 use swc_ecmascript::{
     ast::*,
@@ -116,10 +116,10 @@ impl State {
                     ..
                 }) => match &**obj {
                     Expr::Member(MemberExpr {
-                        span,
                         obj: ExprOrSuper::Expr(obj_of_obj),
                         prop,
                         computed: false,
+                        ..
                     }) => match &**obj_of_obj {
                         Expr::Ident(obj_of_obj) => {
                             if prop.is_ident_ref_to(js_word!("default"))
@@ -168,10 +168,10 @@ impl State {
                     ..
                 }) => match &**obj {
                     Expr::Member(MemberExpr {
-                        span,
                         obj: ExprOrSuper::Expr(obj_of_obj),
                         prop,
                         computed: false,
+                        ..
                     }) => match &**obj_of_obj {
                         Expr::Ident(obj_of_obj) => {
                             if prop.is_ident_ref_to(js_word!("default"))
