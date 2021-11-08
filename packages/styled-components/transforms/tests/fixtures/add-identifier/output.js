@@ -1,23 +1,23 @@
 import styled from "styled-components";
 const Test = styled.div.withConfig({
-    componentId: "sc-278245034064319926907629316816044298872-0"
+    componentId: "sc-d1540b571faa356fbee988f0cc8c1278-0"
 })`
   width: 100%;
 `;
 const Test2 = true ? styled.div.withConfig({
-    componentId: "sc-278245034064319926907629316816044298872-1"
+    componentId: "sc-d1540b571faa356fbee988f0cc8c1278-1"
 })`` : styled.div.withConfig({
-    componentId: "sc-278245034064319926907629316816044298872-2"
+    componentId: "sc-d1540b571faa356fbee988f0cc8c1278-2"
 })``;
 const styles = {
     One: styled.div.withConfig({
-        componentId: "sc-278245034064319926907629316816044298872-3"
+        componentId: "sc-d1540b571faa356fbee988f0cc8c1278-3"
     })``
 };
 let Component;
 Component = styled.div.withConfig({
-    componentId: "sc-278245034064319926907629316816044298872-4"
+    componentId: "sc-d1540b571faa356fbee988f0cc8c1278-4"
 })``;
 const WrappedComponent = styled(Inner).withConfig({
-    componentId: "sc-278245034064319926907629316816044298872-5"
+    componentId: "sc-d1540b571faa356fbee988f0cc8c1278-5"
 })``;
