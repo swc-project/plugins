@@ -151,7 +151,7 @@ impl DisplayNameAndId {
             }) = &**callee
             {
                 if prop.is_ident_ref_to("withConfig".into()) {
-                    if let Some(first_arg) = &mut args.get(0) {
+                    if let Some(first_arg) = args.get_mut(0) {
                         if first_arg.spread.is_none() && first_arg.expr.is_object() {
                             if let Expr::Object(obj) = &mut *first_arg.expr {
                                 if !already_has(&*obj) {
@@ -378,6 +378,7 @@ fn get_existing_config(e: &mut Expr) -> Option<&mut Expr> {
                             return Some(callee);
                         }
                     }
+                    _ => {}
                 }
 
                 match &mut **callee_callee {
@@ -399,11 +400,17 @@ fn get_existing_config(e: &mut Expr) -> Option<&mut Expr> {
                                     return Some(obj);
                                 }
                             }
+
+                            _ => {}
                         },
                         _ => {}
                     },
+
+                    _ => {}
                 }
             }
+
+            _ => {}
         },
         _ => {}
     }
