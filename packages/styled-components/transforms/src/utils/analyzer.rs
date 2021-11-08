@@ -88,7 +88,9 @@ impl Visit for Analyzer<'_> {
                     ImportSpecifier::Default(s) => {
                         self.state.imported_local_name = Some(s.local.to_id());
                     }
-                    ImportSpecifier::Namespace(_) => {}
+                    ImportSpecifier::Namespace(s) => {
+                        self.state.imported_local_ns = Some(s.local.to_id());
+                    }
                 }
             }
         }

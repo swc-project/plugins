@@ -49,6 +49,8 @@ pub struct State {
     pub(crate) styled_required: Option<Id>,
 
     imported_local_name: Option<Id>,
+    /// Namespace imports
+    imported_local_ns: Option<Id>,
     import_name_cache: RefCell<AHashMap<Id, Id>>,
 }
 
@@ -216,8 +218,17 @@ impl State {
     }
 
     fn import_local_name(&self, name: &str, cache_identifier: Option<&Ident>) -> Option<Id> {
-        if let Some(cached) = self.imported_local_name.clone() {
-            return Some(cached);
+        if name == "default" {
+            if let Some(cached) = self.imported_local_name.clone() {
+                return Some(cached);
+            }
+            if let Some(cached) = self.imported_local_ns.clone() {
+                return Some(cached);
+            }
+        }
+
+        if let Some(..) = self.imported_local_ns {
+            return Some((name.into(), Default::default()));
         }
 
         let cache_key = cache_identifier.map(|i| i.to_id()).unwrap_or_default();
