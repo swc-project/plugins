@@ -1,19 +1,55 @@
-use std::{cell::RefCell, rc::Rc};
+use std::{cell::RefCell, path::Path, rc::Rc, sync::Arc};
 
-use crate::utils::{get_prop_name, State};
+use crate::{
+    utils::{get_prop_name, State},
+    Config,
+};
 use swc_atoms::JsWord;
+use swc_common::FileName;
 use swc_ecmascript::{
     ast::*,
     visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith},
 };
 
-pub(crate) fn display_name_and_id(state: Rc<RefCell<State>>) -> impl Fold + VisitMut {
-    as_folder(DisplayNameAndId { state })
+pub(crate) fn display_name_and_id(
+    filename: Arc<FileName>,
+    state: Rc<RefCell<State>>,
+) -> impl Fold + VisitMut {
+    as_folder(DisplayNameAndId { filename, state })
 }
 
 #[derive(Debug)]
 struct DisplayNameAndId {
+    filename: Arc<FileName>,
     state: Rc<RefCell<State>>,
+}
+
+impl DisplayNameAndId {
+    fn get_name(&mut self, e: &Expr) -> String {}
+
+    fn get_block_name(&mut self, p: &Path) -> String {}
+
+    fn get_display_name(&mut self, e: &Expr) -> String {
+        let component_name = self.get_name(e);
+
+        match &*self.filename {
+            FileName::Real(f) => {
+                let block_name = self.get_block_name(f);
+
+                if block_name == component_name {
+                    return component_name;
+                }
+
+                if component_name.is_empty() {
+                    return prefix_leading_digit(block_name);
+                }
+
+                format!("{}__{}", prefix_leading_digit(block_name), component_name)
+            }
+
+            _ => component_name,
+        }
+    }
 }
 
 impl VisitMut for DisplayNameAndId {
@@ -97,7 +133,7 @@ impl VisitMut for DisplayNameAndId {
             return;
         }
 
-        let display_name = if use_display_name(&expr) {
+        let display_name = if let Some(display_name) = &self.config.display_name {
             get_display_name(
                 &expr,
                 if use_file_name() {

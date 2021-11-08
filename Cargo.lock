@@ -1355,6 +1355,7 @@ dependencies = [
  "Inflector",
  "once_cell",
  "regex",
+ "serde",
  "swc_atoms",
  "swc_common",
  "swc_ecma_transforms_testing",
