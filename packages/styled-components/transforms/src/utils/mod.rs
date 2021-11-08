@@ -233,6 +233,12 @@ impl State {
 
         let cache_key = cache_identifier.map(|i| i.to_id()).unwrap_or_default();
 
+        let ctxt = self
+            .styled_required
+            .as_ref()
+            .map(|v| v.1)
+            .unwrap_or_default();
+
         let local_name = if self.styled_required.is_some() {
             Some(if name == "default" {
                 "styled".into()
@@ -247,7 +253,7 @@ impl State {
             return Some(cached.clone());
         }
 
-        let name = local_name.map(|word| (word, Default::default()));
+        let name = local_name.map(|word| (word, ctxt));
 
         if let Some(name) = name.clone() {
             self.import_name_cache.borrow_mut().insert(cache_key, name);
