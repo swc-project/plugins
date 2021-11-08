@@ -4,7 +4,7 @@ use crate::{
 };
 use once_cell::sync::Lazy;
 use regex::Regex;
-use std::{cell::RefCell, path::Path, rc::Rc, sync::Arc};
+use std::{cell::RefCell, convert::TryInto, path::Path, rc::Rc, sync::Arc};
 use swc_atoms::{js_word, JsWord};
 use swc_common::{util::take::Take, FileName, SourceFile, DUMMY_SP};
 use swc_ecmascript::{
@@ -90,12 +90,18 @@ impl DisplayNameAndId {
 
         let next_id = self.next_id();
 
-        format!(
-            "{}sc-{:x}-{}",
-            self.config.use_namespace(),
-            self.file.src_hash,
-            next_id
-        )
+        let hash = {
+            let base = self.file.src_hash;
+            let base = base.to_be_bytes();
+            let a = u32::from_be_bytes(base[0..4].try_into().unwrap());
+            let b = u32::from_be_bytes(base[4..8].try_into().unwrap());
+            let c = u32::from_be_bytes(base[8..12].try_into().unwrap());
+            let d = u32::from_be_bytes(base[12..16].try_into().unwrap());
+
+            a ^ b ^ c ^ d
+        };
+
+        format!("{}sc-{:x}-{}", self.config.use_namespace(), hash, next_id)
     }
 
     fn add_config(
