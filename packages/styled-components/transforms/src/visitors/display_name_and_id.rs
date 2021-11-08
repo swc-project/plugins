@@ -223,7 +223,10 @@ impl VisitMut for DisplayNameAndId {
 
     fn visit_mut_assign_expr(&mut self, e: &mut AssignExpr) {
         let old = self.cur_display_name.take();
-        self.cur_display_name = e.left.as_ident().map(|v| v.sym.clone());
+
+        if old.is_none() {
+            self.cur_display_name = e.left.as_ident().map(|v| v.sym.clone());
+        }
 
         e.visit_mut_children_with(self);
 
@@ -241,6 +244,21 @@ impl VisitMut for DisplayNameAndId {
         }
 
         v.visit_mut_children_with(self);
+
+        self.cur_display_name = old;
+    }
+
+    fn visit_mut_key_value_prop(&mut self, e: &mut KeyValueProp) {
+        let old = self.cur_display_name.take();
+
+        match &e.key {
+            PropName::Ident(name) => {
+                self.cur_display_name = Some(name.sym.clone());
+            }
+            _ => {}
+        }
+
+        e.visit_mut_children_with(self);
 
         self.cur_display_name = old;
     }
