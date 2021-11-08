@@ -29,7 +29,7 @@ pub(crate) fn display_name_and_id(
 }
 
 static DISPLAY_NAME_REGEX: Lazy<Regex> =
-    Lazy::new(|| Regex::new(r"^[a-zA-Z][a-zA-Z0-9]*$").unwrap());
+    Lazy::new(|| Regex::new(r"^[a-zA-Z][a-zA-Z0-9]$").unwrap());
 
 #[derive(Debug)]
 struct DisplayNameAndId {
@@ -60,7 +60,7 @@ impl DisplayNameAndId {
         let component_name = self.cur_display_name.clone().unwrap_or(js_word!(""));
 
         match &self.file.name {
-            FileName::Real(f) => {
+            FileName::Real(f) if self.config.file_name => {
                 let block_name = self.get_block_name(f);
 
                 if block_name == &*component_name {
