@@ -129,13 +129,19 @@ impl DisplayNameAndId {
             }))))
         }
 
-        if let Some(Expr::Call(CallExpr { args, .. })) = get_existing_config(e) {
-            if let Some(Expr::Object(existing_config)) = args.get_mut(0).map(|v| &mut *v.expr) {
-                if !already_has(&existing_config) {
-                    existing_config.props.extend(with_config_props);
-                    return;
+        get_existing_config(e, |e| {
+            if let Expr::Call(CallExpr { args, .. }) = e {
+                if let Some(Expr::Object(existing_config)) = args.get_mut(0).map(|v| &mut *v.expr) {
+                    if !already_has(&existing_config) {
+                        existing_config.props.extend(with_config_props.take());
+                        return;
+                    }
                 }
             }
+        });
+
+        if with_config_props.is_empty() {
+            return;
         }
 
         if let Expr::Call(CallExpr {
@@ -289,7 +295,7 @@ impl VisitMut for DisplayNameAndId {
             return;
         }
 
-        let display_name = if let Some(display_name) = &self.config.display_name {
+        let display_name = if let Some(..) = &self.config.display_name {
             Some(self.get_display_name(&expr))
         } else {
             None
@@ -357,11 +363,13 @@ fn already_has(obj: &ObjectLit) -> bool {
         })
 }
 
-fn get_existing_config(e: &mut Expr) -> Option<&mut Expr> {
+fn get_existing_config<F>(e: &mut Expr, op: F)
+where
+    F: FnOnce(&mut Expr),
+{
     match e {
         Expr::Call(CallExpr {
             callee: ExprOrSuper::Expr(callee),
-            args,
             ..
         }) => match &mut **callee {
             Expr::Call(CallExpr {
@@ -375,7 +383,7 @@ fn get_existing_config(e: &mut Expr) -> Option<&mut Expr> {
                         ..
                     }) => {
                         if prop.is_ident_ref_to("withConfig".into()) {
-                            return Some(callee);
+                            return op(callee);
                         }
                     }
                     _ => {}
@@ -397,7 +405,7 @@ fn get_existing_config(e: &mut Expr) -> Option<&mut Expr> {
                                 ..
                             }) => {
                                 if prop.is_ident_ref_to("withConfig".into()) {
-                                    return Some(obj);
+                                    return op(obj);
                                 }
                             }
 
@@ -414,6 +422,4 @@ fn get_existing_config(e: &mut Expr) -> Option<&mut Expr> {
         },
         _ => {}
     }
-
-    None
 }
