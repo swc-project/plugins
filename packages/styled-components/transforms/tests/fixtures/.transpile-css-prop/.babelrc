@@ -1,0 +1,14 @@
+{
+  "plugins": [
+    [
+      "babel-plugin-styled-components",
+      {
+        "ssr": false,
+        "displayName": false,
+        "transpileTemplateLiterals": false,
+        "minify": false,
+        "cssProp": true
+      }
+    ]
+  ]
+}

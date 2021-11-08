@@ -1,0 +1,10 @@
+[package]
+description = "styled-components plugin for https://swc.rs"
+edition = "2018"
+license = "Apache-2.0"
+name = "swc_plugin_styled_components"
+version = "0.1.0"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+styled_components = {path = "./transforms/", version = "0.1.0"}
