@@ -233,28 +233,14 @@ impl VisitMut for DisplayNameAndId {
         self.cur_display_name = old;
     }
 
-    fn visit_mut_var_declarator(&mut self, v: &mut VarDeclarator) {
+    fn visit_mut_class_prop(&mut self, e: &mut ClassProp) {
         let old = self.cur_display_name.take();
 
-        match &v.name {
-            Pat::Ident(name) => {
-                self.cur_display_name = Some(name.id.sym.clone());
+        match &*e.key {
+            Expr::Ident(i) => {
+                self.cur_display_name = Some(i.sym.clone());
             }
-            _ => {}
-        }
 
-        v.visit_mut_children_with(self);
-
-        self.cur_display_name = old;
-    }
-
-    fn visit_mut_key_value_prop(&mut self, e: &mut KeyValueProp) {
-        let old = self.cur_display_name.take();
-
-        match &e.key {
-            PropName::Ident(name) => {
-                self.cur_display_name = Some(name.sym.clone());
-            }
             _ => {}
         }
 
@@ -370,12 +356,42 @@ impl VisitMut for DisplayNameAndId {
         )
     }
 
+    fn visit_mut_key_value_prop(&mut self, e: &mut KeyValueProp) {
+        let old = self.cur_display_name.take();
+
+        match &e.key {
+            PropName::Ident(name) => {
+                self.cur_display_name = Some(name.sym.clone());
+            }
+            _ => {}
+        }
+
+        e.visit_mut_children_with(self);
+
+        self.cur_display_name = old;
+    }
+
     fn visit_mut_member_expr(&mut self, e: &mut MemberExpr) {
         e.obj.visit_mut_with(self);
 
         if e.computed {
             e.prop.visit_mut_with(self);
         }
+    }
+
+    fn visit_mut_var_declarator(&mut self, v: &mut VarDeclarator) {
+        let old = self.cur_display_name.take();
+
+        match &v.name {
+            Pat::Ident(name) => {
+                self.cur_display_name = Some(name.id.sym.clone());
+            }
+            _ => {}
+        }
+
+        v.visit_mut_children_with(self);
+
+        self.cur_display_name = old;
     }
 }
 
