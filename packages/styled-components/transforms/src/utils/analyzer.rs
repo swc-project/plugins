@@ -11,10 +11,11 @@ use swc_ecmascript::{
 };
 
 pub fn analyzer(config: Rc<Config>, state: Rc<RefCell<State>>) -> impl VisitMut + Fold {
-    as_folder(AsAnalyzer { state })
+    as_folder(AsAnalyzer { config, state })
 }
 
 struct AsAnalyzer {
+    config: Rc<Config>,
     state: Rc<RefCell<State>>,
 }
 
@@ -23,6 +24,7 @@ impl VisitMut for AsAnalyzer {
 
     fn visit_mut_module(&mut self, p: &mut Module) {
         let mut v = Analyzer {
+            config: &self.config,
             state: &mut *self.state.borrow_mut(),
         };
 
@@ -31,6 +33,7 @@ impl VisitMut for AsAnalyzer {
 
     fn visit_mut_script(&mut self, p: &mut Script) {
         let mut v = Analyzer {
+            config: &self.config,
             state: &mut *self.state.borrow_mut(),
         };
 
@@ -38,10 +41,13 @@ impl VisitMut for AsAnalyzer {
     }
 }
 
-pub fn analyze(program: &Program) -> State {
+pub fn analyze(config: &Config, program: &Program) -> State {
     let mut state = State::default();
 
-    let mut v = Analyzer { state: &mut state };
+    let mut v = Analyzer {
+        config,
+        state: &mut state,
+    };
 
     program.visit_with(&Invalid { span: DUMMY_SP }, &mut v);
 
@@ -49,6 +55,7 @@ pub fn analyze(program: &Program) -> State {
 }
 
 struct Analyzer<'a> {
+    config: &'a Config,
     state: &'a mut State,
 }
 
@@ -56,7 +63,13 @@ impl Visit for Analyzer<'_> {
     noop_visit_type!();
 
     fn visit_import_decl(&mut self, i: &ImportDecl, _: &dyn Node) {
-        if &*i.src.value == "styled-components" {
+        let is_styled = if self.config.top_level_import_paths.is_empty() {
+            &*i.src.value == "styled-components"
+        } else {
+            self.config.top_level_import_paths.contains(&i.src.value)
+        };
+
+        if is_styled {
             for s in &i.specifiers {
                 match s {
                     ImportSpecifier::Named(_) => {}
