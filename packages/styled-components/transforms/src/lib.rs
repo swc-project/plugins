@@ -21,7 +21,7 @@ pub struct Config {
     #[serde(default)]
     pub ssr: bool,
 
-    #[serde(default)]
+    #[serde(default = "true_by_default")]
     pub file_name: bool,
 
     #[serde(default)]
