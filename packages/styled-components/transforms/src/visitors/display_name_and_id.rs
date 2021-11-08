@@ -27,7 +27,18 @@ struct DisplayNameAndId {
 impl DisplayNameAndId {
     fn get_name(&mut self, e: &Expr) -> String {}
 
-    fn get_block_name(&mut self, p: &Path) -> String {}
+    fn get_block_name(&mut self, p: &Path) -> String {
+        let file_stem = p.file_stem();
+        if let Some(file_stem) = file_stem {
+            if file_stem == "index" {
+            } else {
+                return file_stem.to_string_lossy().to_string();
+            }
+        } else {
+        }
+
+        self.get_block_name(&p.parent().expect("/index/index/index?"))
+    }
 
     fn get_display_name(&mut self, e: &Expr) -> String {
         let component_name = self.get_name(e);
