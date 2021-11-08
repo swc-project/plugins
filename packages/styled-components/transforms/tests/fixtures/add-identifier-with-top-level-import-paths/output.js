@@ -1,21 +1,23 @@
-import styled from '@xstyled/styled-components';
+import styled from "@xstyled/styled-components";
 const Test = styled.div.withConfig({
-  componentId: "sc-1mlyrvc-0"
-})`width:100%;`;
+    componentId: "sc-2fd35b87-0"
+})`
+  width: 100%;
+`;
 const Test2 = true ? styled.div.withConfig({
-  componentId: "sc-1mlyrvc-1"
+    componentId: "sc-2fd35b87-1"
 })`` : styled.div.withConfig({
-  componentId: "sc-1mlyrvc-2"
+    componentId: "sc-2fd35b87-2"
 })``;
 const styles = {
-  One: styled.div.withConfig({
-    componentId: "sc-1mlyrvc-3"
-  })``
+    One: styled.div.withConfig({
+        componentId: "sc-2fd35b87-3"
+    })``
 };
 let Component;
 Component = styled.div.withConfig({
-  componentId: "sc-1mlyrvc-4"
+    componentId: "sc-2fd35b87-4"
 })``;
 const WrappedComponent = styled(Inner).withConfig({
-  componentId: "sc-1mlyrvc-5"
+    componentId: "sc-2fd35b87-5"
 })``;
