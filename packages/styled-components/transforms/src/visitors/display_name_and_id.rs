@@ -92,6 +92,33 @@ impl VisitMut for DisplayNameAndId {
 
             _ => false,
         };
+
+        if !is_styled {
+            return;
+        }
+
+        let display_name = if use_display_name(&expr) {
+            get_display_name(
+                &expr,
+                if use_file_name() {
+                    Some(&self.state)
+                } else {
+                    None
+                },
+            )
+        } else {
+            None
+        };
+
+        add_config(
+            e,
+            display_name.map(|s| s.replace(DISPLAY_NAME_REGEX, "")),
+            if use_ssr(&self.state) {
+                Some(get_component_id(&&self.state))
+            } else {
+                None
+            },
+        )
     }
 
     fn visit_mut_member_expr(&mut self, e: &mut MemberExpr) {
