@@ -18,7 +18,7 @@ pub struct Config {
     #[serde(default = "true_by_default")]
     pub display_name: bool,
 
-    #[serde(default)]
+    #[serde(default = "true_by_default")]
     pub ssr: bool,
 
     #[serde(default = "true_by_default")]
