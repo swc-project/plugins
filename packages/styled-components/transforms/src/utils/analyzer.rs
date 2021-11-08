@@ -63,6 +63,8 @@ impl Visit for Analyzer<'_> {
     noop_visit_type!();
 
     fn visit_import_decl(&mut self, i: &ImportDecl, _: &dyn Node) {
+        let is_custom = !self.config.top_level_import_paths.is_empty();
+
         let is_styled = if self.config.top_level_import_paths.is_empty() {
             &*i.src.value == "styled-components"
         } else {
@@ -72,7 +74,17 @@ impl Visit for Analyzer<'_> {
         if is_styled {
             for s in &i.specifiers {
                 match s {
-                    ImportSpecifier::Named(_) => {}
+                    ImportSpecifier::Named(s) => {
+                        if is_custom
+                            && s.imported
+                                .as_ref()
+                                .map(|v| &*v.sym)
+                                .unwrap_or(&&*s.local.sym)
+                                == "styled"
+                        {
+                            self.state.imported_local_name = Some(s.local.to_id());
+                        }
+                    }
                     ImportSpecifier::Default(s) => {
                         self.state.imported_local_name = Some(s.local.to_id());
                     }
