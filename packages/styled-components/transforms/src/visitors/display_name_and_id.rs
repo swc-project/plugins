@@ -310,7 +310,7 @@ impl VisitMut for DisplayNameAndId {
 
         trace!("display_name: {:?}", display_name);
 
-        let component_id = if self.config.use_ssr {
+        let component_id = if self.config.ssr {
             Some(self.get_component_id().into())
         } else {
             None

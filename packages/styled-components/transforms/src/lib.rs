@@ -17,8 +17,8 @@ pub struct Config {
     #[serde(default)]
     pub display_name: Option<String>,
 
-    #[serde(default, rename = "useSSR")]
-    pub use_ssr: bool,
+    #[serde(default)]
+    pub ssr: bool,
 
     #[serde(default)]
     pub file_name: bool,
