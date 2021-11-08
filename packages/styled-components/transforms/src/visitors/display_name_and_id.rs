@@ -6,9 +6,10 @@ use once_cell::sync::Lazy;
 use regex::Regex;
 use std::{cell::RefCell, path::Path, rc::Rc, sync::Arc};
 use swc_atoms::{js_word, JsWord};
-use swc_common::{FileName, SourceFile};
+use swc_common::{FileName, SourceFile, DUMMY_SP};
 use swc_ecmascript::{
     ast::*,
+    utils::quote_ident,
     visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith},
 };
 
@@ -93,6 +94,35 @@ impl DisplayNameAndId {
     }
 
     fn add_config(&mut self, e: &Expr, display_name: Option<JsWord>, component_id: Option<JsWord>) {
+        if display_name.is_none() && component_id.is_none() {
+            return;
+        }
+
+        let mut with_config_props = vec![];
+
+        if let Some(display_name) = display_name {
+            with_config_props.push(PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
+                key: PropName::Ident(quote_ident!("displayName")),
+                value: Box::new(Expr::Lit(Lit::Str(Str {
+                    span: DUMMY_SP,
+                    value: display_name,
+                    has_escape: false,
+                    kind: Default::default(),
+                }))),
+            }))))
+        }
+
+        if let Some(component_id) = component_id {
+            with_config_props.push(PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
+                key: PropName::Ident(quote_ident!("componentId")),
+                value: Box::new(Expr::Lit(Lit::Str(Str {
+                    span: DUMMY_SP,
+                    value: component_id,
+                    has_escape: false,
+                    kind: Default::default(),
+                }))),
+            }))))
+        }
     }
 }
 
