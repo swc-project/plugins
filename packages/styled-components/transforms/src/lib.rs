@@ -5,6 +5,7 @@ pub use crate::{
 };
 use serde::Deserialize;
 use std::{cell::RefCell, rc::Rc, sync::Arc};
+use swc_atoms::JsWord;
 use swc_common::{chain, SourceFile};
 use swc_ecmascript::visit::{Fold, VisitMut};
 
@@ -26,6 +27,9 @@ pub struct Config {
 
     #[serde(default)]
     pub namespace: String,
+
+    #[serde(default)]
+    pub top_level_import_paths: Vec<JsWord>,
 
     #[serde(default)]
     pub transpile_template_literals: bool,
@@ -52,7 +56,7 @@ pub fn styled_components(file: Arc<SourceFile>, config: Config) -> impl Fold + V
     let config = Rc::new(config);
 
     chain!(
-        analyzer(state.clone()),
+        analyzer(config.clone(), state.clone()),
         display_name_and_id(file.clone(), config.clone(), state.clone()),
         transpile_css_prop()
     )

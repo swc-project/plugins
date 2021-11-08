@@ -1,11 +1,16 @@
 use super::State;
+use crate::Config;
 use std::{cell::RefCell, rc::Rc};
 use swc_common::DUMMY_SP;
-use swc_ecmascript::{ast::*, utils::ident::IdentLike, visit::{
+use swc_ecmascript::{
+    ast::*,
+    utils::ident::IdentLike,
+    visit::{
         as_folder, noop_visit_mut_type, noop_visit_type, Fold, Node, Visit, VisitMut, VisitWith,
-    }};
+    },
+};
 
-pub fn analyzer(state: Rc<RefCell<State>>) -> impl VisitMut + Fold {
+pub fn analyzer(config: Rc<Config>, state: Rc<RefCell<State>>) -> impl VisitMut + Fold {
     as_folder(AsAnalyzer { state })
 }
 
