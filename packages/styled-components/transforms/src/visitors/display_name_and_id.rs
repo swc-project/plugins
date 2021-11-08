@@ -222,7 +222,7 @@ impl VisitMut for DisplayNameAndId {
     noop_visit_mut_type!();
 
     fn visit_mut_assign_expr(&mut self, e: &mut AssignExpr) {
-        let old = self.cur_display_name.take();
+        let old = self.cur_display_name.clone();
 
         if old.is_none() {
             self.cur_display_name = e.left.as_ident().map(|v| v.sym.clone());
