@@ -6,10 +6,10 @@ use once_cell::sync::Lazy;
 use regex::Regex;
 use std::{cell::RefCell, path::Path, rc::Rc, sync::Arc};
 use swc_atoms::{js_word, JsWord};
-use swc_common::{FileName, SourceFile, DUMMY_SP};
+use swc_common::{util::take::Take, FileName, SourceFile, DUMMY_SP};
 use swc_ecmascript::{
     ast::*,
-    utils::quote_ident,
+    utils::{quote_ident, ExprExt, ExprFactory},
     visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith},
 };
 
@@ -93,7 +93,12 @@ impl DisplayNameAndId {
         )
     }
 
-    fn add_config(&mut self, e: &Expr, display_name: Option<JsWord>, component_id: Option<JsWord>) {
+    fn add_config(
+        &mut self,
+        e: &mut Expr,
+        display_name: Option<JsWord>,
+        component_id: Option<JsWord>,
+    ) {
         if display_name.is_none() && component_id.is_none() {
             return;
         }
@@ -123,6 +128,83 @@ impl DisplayNameAndId {
                 }))),
             }))))
         }
+
+        if let Some(Expr::Call(CallExpr { args, .. })) = get_existing_config(e) {
+            if let Some(Expr::Object(existing_config)) = args.get_mut(0).map(|v| &mut *v.expr) {
+                if !already_has(&existing_config) {
+                    existing_config.props.extend(with_config_props);
+                    return;
+                }
+            }
+        }
+
+        if let Expr::Call(CallExpr {
+            callee: ExprOrSuper::Expr(callee),
+            args,
+            ..
+        }) = e
+        {
+            if let Expr::Member(MemberExpr {
+                prop,
+                computed: false,
+                ..
+            }) = &**callee
+            {
+                if prop.is_ident_ref_to("withConfig".into()) {
+                    if let Some(first_arg) = &mut args.get(0) {
+                        if first_arg.spread.is_none() && first_arg.expr.is_object() {
+                            if let Expr::Object(obj) = &mut *first_arg.expr {
+                                if !already_has(&*obj) {
+                                    obj.props.extend(with_config_props);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if let Expr::TaggedTpl(e) = e {
+            e.tag = Box::new(Expr::Call(CallExpr {
+                span: DUMMY_SP,
+                callee: e
+                    .tag
+                    .take()
+                    .make_member(quote_ident!("withConfig"))
+                    .as_callee(),
+                args: vec![ObjectLit {
+                    span: DUMMY_SP,
+                    props: with_config_props,
+                }
+                .as_arg()],
+                type_args: Default::default(),
+            }));
+            return;
+        }
+
+        if let Expr::Call(CallExpr {
+            callee: ExprOrSuper::Expr(callee),
+            ..
+        }) = e
+        {
+            *callee = Box::new(Expr::Call(CallExpr {
+                span: DUMMY_SP,
+                callee: callee
+                    .take()
+                    .make_member(quote_ident!("withConfig"))
+                    .as_callee(),
+                args: vec![ObjectLit {
+                    span: DUMMY_SP,
+                    props: with_config_props,
+                }
+                .as_arg()],
+                type_args: Default::default(),
+            }));
+            return;
+        }
+
+        unreachable!("expr should be tagged tpl or call expr");
     }
 }
 
@@ -254,6 +336,74 @@ fn get_property_as_ident(e: &Expr) -> Option<&JsWord> {
         }) => match &**prop {
             Expr::Ident(p) => return Some(&p.sym),
             _ => {}
+        },
+        _ => {}
+    }
+
+    None
+}
+
+fn already_has(obj: &ObjectLit) -> bool {
+    obj.props
+        .iter()
+        .filter_map(|v| match v {
+            PropOrSpread::Prop(p) => Some(p),
+            _ => None,
+        })
+        .filter_map(|v| get_prop_name(v))
+        .any(|prop| match prop {
+            PropName::Ident(ident) => &*ident.sym == "componentId" || &*ident.sym == "displayName",
+            _ => false,
+        })
+}
+
+fn get_existing_config(e: &mut Expr) -> Option<&mut Expr> {
+    match e {
+        Expr::Call(CallExpr {
+            callee: ExprOrSuper::Expr(callee),
+            args,
+            ..
+        }) => match &mut **callee {
+            Expr::Call(CallExpr {
+                callee: ExprOrSuper::Expr(callee_callee),
+                ..
+            }) => {
+                match &**callee_callee {
+                    Expr::Member(MemberExpr {
+                        prop,
+                        computed: false,
+                        ..
+                    }) => {
+                        if prop.is_ident_ref_to("withConfig".into()) {
+                            return Some(callee);
+                        }
+                    }
+                }
+
+                match &mut **callee_callee {
+                    Expr::Member(MemberExpr {
+                        obj: ExprOrSuper::Expr(obj),
+                        computed: false,
+                        ..
+                    }) => match &**obj {
+                        Expr::Call(CallExpr {
+                            callee: ExprOrSuper::Expr(callee),
+                            ..
+                        }) => match &**callee {
+                            Expr::Member(MemberExpr {
+                                prop,
+                                computed: false,
+                                ..
+                            }) => {
+                                if prop.is_ident_ref_to("withConfig".into()) {
+                                    return Some(obj);
+                                }
+                            }
+                        },
+                        _ => {}
+                    },
+                }
+            }
         },
         _ => {}
     }
