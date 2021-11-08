@@ -80,6 +80,7 @@ impl Visit for Analyzer<'_> {
                             Expr::Lit(Lit::Str(v)) => {
                                 let is_styled = if self.config.top_level_import_paths.is_empty() {
                                     &*v.value == "styled-components"
+                                        || v.value.starts_with("styled-components/")
                                 } else {
                                     self.config.top_level_import_paths.contains(&v.value)
                                 };
@@ -102,7 +103,7 @@ impl Visit for Analyzer<'_> {
         let is_custom = !self.config.top_level_import_paths.is_empty();
 
         let is_styled = if self.config.top_level_import_paths.is_empty() {
-            &*i.src.value == "styled-components"
+            &*i.src.value == "styled-components" || i.src.value.starts_with("styled-components/")
         } else {
             self.config.top_level_import_paths.contains(&i.src.value)
         };
