@@ -91,7 +91,7 @@ impl DisplayNameAndId {
         let next_id = self.next_id();
 
         format!(
-            "{}sc-{}-{}",
+            "{}sc-{:x}-{}",
             self.config.use_namespace(),
             self.file.src_hash,
             next_id
