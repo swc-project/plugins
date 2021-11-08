@@ -4,26 +4,42 @@ use crate::visitors::{
 };
 use serde::Deserialize;
 use std::{cell::RefCell, rc::Rc, sync::Arc};
-use swc_common::{chain, FileName};
+use swc_common::{chain, SourceFile};
 use swc_ecmascript::visit::{Fold, VisitMut};
 
 mod css;
 mod utils;
 mod visitors;
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Default, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Config {
+    #[serde(default)]
     pub display_name: Option<String>,
+
+    #[serde(default, rename = "useSSR")]
+    pub use_ssr: bool,
+
+    #[serde(default)]
+    pub namespace: String,
 }
 
-pub fn styled_components(filename: Arc<FileName>, config: Config) -> impl Fold + VisitMut {
+impl Config {
+    pub(crate) fn use_namespace(&self) -> String {
+        if self.namespace.is_empty() {
+            return String::new();
+        }
+        format!("{}__", self.namespace)
+    }
+}
+
+pub fn styled_components(file: Arc<SourceFile>, config: Config) -> impl Fold + VisitMut {
     let state: Rc<RefCell<State>> = Default::default();
     let config = Rc::new(config);
 
     chain!(
         analyzer(state.clone()),
-        display_name_and_id(filename.clone(), config.clone(), state.clone()),
+        display_name_and_id(file.clone(), config.clone(), state.clone()),
         transpile_css_prop()
     )
 }

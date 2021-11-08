@@ -2,7 +2,7 @@
 
 use std::path::PathBuf;
 use styled_components::styled_components;
-use swc_common::chain;
+use swc_common::{chain, FileName};
 use swc_ecma_transforms_testing::test_fixture;
 use swc_ecmascript::{
     parser::{EsConfig, Syntax},
@@ -18,7 +18,12 @@ fn fixture(input: PathBuf) {
             jsx: true,
             ..Default::default()
         }),
-        &|_| chain!(resolver(), styled_components()),
+        &|t| {
+            //
+            let fm = t.cm.load_file(&input).unwrap();
+
+            chain!(resolver(), styled_components(fm, Default::default()))
+        },
         &input,
         &dir.join("output.js"),
     )

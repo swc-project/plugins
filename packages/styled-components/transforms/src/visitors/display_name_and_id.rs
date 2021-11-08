@@ -2,35 +2,43 @@ use crate::{
     utils::{get_name, get_prop_name, prefix_leading_digit, State},
     Config,
 };
+use once_cell::sync::Lazy;
+use regex::Regex;
 use std::{cell::RefCell, path::Path, rc::Rc, sync::Arc};
 use swc_atoms::{js_word, JsWord};
-use swc_common::FileName;
+use swc_common::{FileName, SourceFile};
 use swc_ecmascript::{
     ast::*,
     visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith},
 };
 
 pub(crate) fn display_name_and_id(
-    filename: Arc<FileName>,
+    file: Arc<SourceFile>,
     config: Rc<Config>,
     state: Rc<RefCell<State>>,
 ) -> impl Fold + VisitMut {
     as_folder(DisplayNameAndId {
-        filename,
+        file,
         config,
         state,
+        component_id: 0,
     })
 }
 
+static DISPLAY_NAME_REGEX: Lazy<Regex> =
+    Lazy::new(|| Regex::new(r"^[a-zA-Z][a-zA-Z0-9]*$").unwrap());
+
 #[derive(Debug)]
 struct DisplayNameAndId {
-    filename: Arc<FileName>,
+    file: Arc<SourceFile>,
     config: Rc<Config>,
     state: Rc<RefCell<State>>,
+
+    component_id: usize,
 }
 
 impl DisplayNameAndId {
-    fn get_block_name(&mut self, p: &Path) -> String {
+    fn get_block_name(&self, p: &Path) -> String {
         let file_stem = p.file_stem();
         if let Some(file_stem) = file_stem {
             if file_stem == "index" {
@@ -46,7 +54,7 @@ impl DisplayNameAndId {
     fn get_display_name(&mut self, e: &Expr) -> JsWord {
         let component_name = get_name(e).unwrap_or(js_word!(""));
 
-        match &*self.filename {
+        match &self.file.name {
             FileName::Real(f) => {
                 let block_name = self.get_block_name(f);
 
@@ -55,19 +63,36 @@ impl DisplayNameAndId {
                 }
 
                 if component_name.is_empty() {
-                    return prefix_leading_digit(block_name.into()).into();
+                    return prefix_leading_digit(&block_name).into();
                 }
 
-                format!(
-                    "{}__{}",
-                    prefix_leading_digit(block_name.into()),
-                    component_name
-                )
-                .into()
+                format!("{}__{}", prefix_leading_digit(&block_name), component_name).into()
             }
 
             _ => component_name,
         }
+    }
+
+    fn next_id(&mut self) -> usize {
+        self.component_id += 1;
+        self.component_id
+    }
+
+    fn get_component_id(&mut self) -> String {
+        // Prefix the identifier with a character because CSS classes cannot start with
+        // a number
+
+        let next_id = self.next_id();
+
+        format!(
+            "{}sc-{}-{}",
+            self.config.use_namespace(),
+            self.file.src_hash,
+            next_id
+        )
+    }
+
+    fn add_config(&mut self, e: &Expr, display_name: Option<JsWord>, component_id: Option<JsWord>) {
     }
 }
 
@@ -153,26 +178,21 @@ impl VisitMut for DisplayNameAndId {
         }
 
         let display_name = if let Some(display_name) = &self.config.display_name {
-            get_display_name(
-                &expr,
-                if use_file_name() {
-                    Some(&self.state)
-                } else {
-                    None
-                },
-            )
+            Some(self.get_display_name(&expr))
         } else {
             None
         };
 
-        add_config(
-            e,
-            display_name.map(|s| s.replace(DISPLAY_NAME_REGEX, "")),
-            if use_ssr(&self.state) {
-                Some(get_component_id(&&self.state))
-            } else {
-                None
-            },
+        let component_id = if self.config.use_ssr {
+            Some(self.get_component_id().into())
+        } else {
+            None
+        };
+
+        self.add_config(
+            expr,
+            display_name.map(|s| DISPLAY_NAME_REGEX.replace_all(&*s, "").into()),
+            component_id,
         )
     }
 

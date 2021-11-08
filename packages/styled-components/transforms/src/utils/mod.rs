@@ -311,7 +311,7 @@ pub fn get_name(e: &Expr) -> Option<JsWord> {
     named.map(|v| v.sym)
 }
 
-pub fn prefix_leading_digit(s: Cow<str>) -> Cow<str> {
+pub fn prefix_leading_digit(s: &str) -> Cow<str> {
     static REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"^(\d)").unwrap());
 
     REGEX.replace(&s, |s: &Captures| {
