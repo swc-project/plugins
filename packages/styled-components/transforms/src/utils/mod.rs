@@ -297,20 +297,6 @@ impl State {
     }
 }
 
-/// TODO(kdy1): Should we use Any?
-pub fn get_name(e: &Expr) -> Option<JsWord> {
-    let mut named = None;
-    match e {
-        Expr::Assign(e) => {
-            named = e.left.as_ident().cloned();
-        }
-
-        _ => {}
-    }
-
-    named.map(|v| v.sym)
-}
-
 pub fn prefix_leading_digit(s: &str) -> Cow<str> {
     static REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"^(\d)").unwrap());
 

@@ -1,5 +1,5 @@
 use crate::{
-    utils::{get_name, get_prop_name, prefix_leading_digit, State},
+    utils::{get_prop_name, prefix_leading_digit, State},
     Config,
 };
 use once_cell::sync::Lazy;
@@ -9,7 +9,7 @@ use swc_atoms::{js_word, JsWord};
 use swc_common::{util::take::Take, FileName, SourceFile, DUMMY_SP};
 use swc_ecmascript::{
     ast::*,
-    utils::{quote_ident, ExprExt, ExprFactory},
+    utils::{ident::IdentLike, quote_ident, ExprExt, ExprFactory},
     visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith},
 };
 use tracing::{span, trace, Level};
@@ -23,6 +23,7 @@ pub(crate) fn display_name_and_id(
         file,
         config,
         state,
+        cur_display_name: Default::default(),
         component_id: 0,
     })
 }
@@ -35,6 +36,8 @@ struct DisplayNameAndId {
     file: Arc<SourceFile>,
     config: Rc<Config>,
     state: Rc<RefCell<State>>,
+
+    cur_display_name: Option<JsWord>,
 
     component_id: usize,
 }
@@ -53,8 +56,8 @@ impl DisplayNameAndId {
         self.get_block_name(&p.parent().expect("/index/index/index?"))
     }
 
-    fn get_display_name(&mut self, e: &Expr) -> JsWord {
-        let component_name = get_name(e).unwrap_or(js_word!(""));
+    fn get_display_name(&mut self, _: &Expr) -> JsWord {
+        let component_name = self.cur_display_name.take().unwrap_or(js_word!(""));
 
         match &self.file.name {
             FileName::Real(f) => {
@@ -217,6 +220,30 @@ impl DisplayNameAndId {
 
 impl VisitMut for DisplayNameAndId {
     noop_visit_mut_type!();
+
+    fn visit_mut_assign_expr(&mut self, e: &mut AssignExpr) {
+        let old = self.cur_display_name.take();
+        self.cur_display_name = e.left.as_ident().map(|v| v.sym.clone());
+
+        e.visit_mut_children_with(self);
+
+        self.cur_display_name = old;
+    }
+
+    fn visit_mut_var_declarator(&mut self, v: &mut VarDeclarator) {
+        let old = self.cur_display_name.take();
+
+        match &v.name {
+            Pat::Ident(name) => {
+                self.cur_display_name = Some(name.id.sym.clone());
+            }
+            _ => {}
+        }
+
+        v.visit_mut_children_with(self);
+
+        self.cur_display_name = old;
+    }
 
     fn visit_mut_expr(&mut self, expr: &mut Expr) {
         expr.visit_mut_children_with(self);
