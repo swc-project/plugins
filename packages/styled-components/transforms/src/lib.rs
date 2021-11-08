@@ -14,8 +14,8 @@ mod visitors;
 #[derive(Debug, Default, Clone, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct Config {
-    #[serde(default)]
-    pub display_name: Option<String>,
+    #[serde(default = "true_by_default")]
+    pub display_name: bool,
 
     #[serde(default)]
     pub ssr: bool,
@@ -28,6 +28,10 @@ pub struct Config {
 
     #[serde(default)]
     pub transpile_template_literals: bool,
+}
+
+fn true_by_default() -> bool {
+    true
 }
 
 impl Config {

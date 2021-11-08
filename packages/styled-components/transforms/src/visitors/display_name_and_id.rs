@@ -302,7 +302,7 @@ impl VisitMut for DisplayNameAndId {
             None
         };
 
-        let display_name = if let Some(..) = &self.config.display_name {
+        let display_name = if self.config.display_name {
             Some(self.get_display_name(&expr))
         } else {
             None
