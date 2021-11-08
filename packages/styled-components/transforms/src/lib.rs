@@ -12,13 +12,16 @@ mod utils;
 mod visitors;
 
 #[derive(Debug, Default, Clone, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct Config {
     #[serde(default)]
     pub display_name: Option<String>,
 
     #[serde(default, rename = "useSSR")]
     pub use_ssr: bool,
+
+    #[serde(default)]
+    pub file_name: bool,
 
     #[serde(default)]
     pub namespace: String,

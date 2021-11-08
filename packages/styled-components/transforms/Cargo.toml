@@ -18,6 +18,7 @@ swc_ecmascript = {version = "0.85.0", features = ["utils", "visit"]}
 tracing = "0.1.29"
 
 [dev-dependencies]
+serde_json = "1.0.69"
 swc_ecma_transforms_testing = "0.44.0"
 swc_ecmascript = {version = "0.85.0", features = ["parser", "transforms"]}
 testing = "0.15.1"

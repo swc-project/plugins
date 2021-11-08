@@ -1,7 +1,7 @@
 #![deny(unused)]
 
-use std::path::PathBuf;
-use styled_components::styled_components;
+use std::{fs::read_to_string, path::PathBuf};
+use styled_components::{styled_components, Config};
 use swc_common::chain;
 use swc_ecma_transforms_testing::test_fixture;
 use swc_ecmascript::{
@@ -12,6 +12,8 @@ use swc_ecmascript::{
 #[testing::fixture("tests/fixtures/**/code.js")]
 fn fixture(input: PathBuf) {
     let dir = input.parent().unwrap();
+    let config = read_to_string(dir.join("config.json")).expect("failed to read config.json");
+    let config: Config = serde_json::from_str(&config).unwrap();
 
     test_fixture(
         Syntax::Es(EsConfig {
@@ -22,7 +24,7 @@ fn fixture(input: PathBuf) {
             //
             let fm = t.cm.load_file(&input).unwrap();
 
-            chain!(resolver(), styled_components(fm, Default::default()))
+            chain!(resolver(), styled_components(fm, config.clone()))
         },
         &input,
         &dir.join("output.js"),
