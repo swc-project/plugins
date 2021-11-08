@@ -1,27 +1,29 @@
-import { styled } from '@example/example';
+import { styled } from "@example/example";
 const Test = styled.div.withConfig({
-  displayName: "Test",
-  componentId: "sc-elhbfv-0"
-})`width:100%;`;
+    displayName: "Test",
+    componentId: "sc-bd3b1624-0"
+})`
+  width: 100%;
+`;
 const Test2 = true ? styled.div.withConfig({
-  displayName: "Test2",
-  componentId: "sc-elhbfv-1"
+    displayName: "Test2",
+    componentId: "sc-bd3b1624-1"
 })`` : styled.div.withConfig({
-  displayName: "Test2",
-  componentId: "sc-elhbfv-2"
+    displayName: "Test2",
+    componentId: "sc-bd3b1624-2"
 })``;
 const styles = {
-  One: styled.div.withConfig({
-    displayName: "One",
-    componentId: "sc-elhbfv-3"
-  })``
+    One: styled.div.withConfig({
+        displayName: "One",
+        componentId: "sc-bd3b1624-3"
+    })``
 };
 let Component;
 Component = styled.div.withConfig({
-  displayName: "Component",
-  componentId: "sc-elhbfv-4"
+    displayName: "Component",
+    componentId: "sc-bd3b1624-4"
 })``;
 const WrappedComponent = styled(Inner).withConfig({
-  displayName: "WrappedComponent",
-  componentId: "sc-elhbfv-5"
+    displayName: "WrappedComponent",
+    componentId: "sc-bd3b1624-5"
 })``;
