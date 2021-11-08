@@ -19,10 +19,11 @@ pub struct Config {
 
 pub fn styled_components(filename: Arc<FileName>, config: Config) -> impl Fold + VisitMut {
     let state: Rc<RefCell<State>> = Default::default();
+    let config = Rc::new(config);
 
     chain!(
         analyzer(state.clone()),
-        display_name_and_id(filename.clone(), state.clone()),
+        display_name_and_id(filename.clone(), config.clone(), state.clone()),
         transpile_css_prop()
     )
 }

@@ -12,14 +12,20 @@ use swc_ecmascript::{
 
 pub(crate) fn display_name_and_id(
     filename: Arc<FileName>,
+    config: Rc<Config>,
     state: Rc<RefCell<State>>,
 ) -> impl Fold + VisitMut {
-    as_folder(DisplayNameAndId { filename, state })
+    as_folder(DisplayNameAndId {
+        filename,
+        config,
+        state,
+    })
 }
 
 #[derive(Debug)]
 struct DisplayNameAndId {
     filename: Arc<FileName>,
+    config: Rc<Config>,
     state: Rc<RefCell<State>>,
 }
 
