@@ -1,10 +1,9 @@
 use super::State;
 use std::{cell::RefCell, rc::Rc};
 use swc_common::DUMMY_SP;
-use swc_ecmascript::{
-    ast::*,
-    visit::{as_folder, noop_visit_mut_type, noop_visit_type, Fold, Visit, VisitMut, VisitWith},
-};
+use swc_ecmascript::{ast::*, utils::ident::IdentLike, visit::{
+        as_folder, noop_visit_mut_type, noop_visit_type, Fold, Node, Visit, VisitMut, VisitWith,
+    }};
 
 pub fn analyzer(state: Rc<RefCell<State>>) -> impl VisitMut + Fold {
     as_folder(AsAnalyzer { state })
@@ -50,4 +49,18 @@ struct Analyzer<'a> {
 
 impl Visit for Analyzer<'_> {
     noop_visit_type!();
+
+    fn visit_import_decl(&mut self, i: &ImportDecl, _: &dyn Node) {
+        if &*i.src.value == "styled-components" {
+            for s in &i.specifiers {
+                match s {
+                    ImportSpecifier::Named(_) => {}
+                    ImportSpecifier::Default(s) => {
+                        self.state.imported_local_name = Some(s.local.to_id());
+                    }
+                    ImportSpecifier::Namespace(_) => {}
+                }
+            }
+        }
+    }
 }
