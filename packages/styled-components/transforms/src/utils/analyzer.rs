@@ -4,7 +4,7 @@ use std::{cell::RefCell, rc::Rc};
 use swc_common::DUMMY_SP;
 use swc_ecmascript::{
     ast::*,
-    utils::ident::IdentLike,
+    utils::{ident::IdentLike, ExprExt},
     visit::{
         as_folder, noop_visit_mut_type, noop_visit_type, Fold, Node, Visit, VisitMut, VisitWith,
     },
@@ -61,6 +61,42 @@ struct Analyzer<'a> {
 
 impl Visit for Analyzer<'_> {
     noop_visit_type!();
+
+    fn visit_var_declarator(&mut self, v: &VarDeclarator, _: &dyn Node) {
+        v.visit_children_with(self);
+
+        if let Pat::Ident(name) = &v.name {
+            match v.init.as_deref() {
+                Some(Expr::Call(CallExpr {
+                    callee: ExprOrSuper::Expr(callee),
+                    args,
+                    ..
+                })) => {
+                    if callee.is_ident_ref_to("require".into())
+                        && args.len() == 1
+                        && args[0].spread.is_none()
+                    {
+                        match &*args[0].expr {
+                            Expr::Lit(Lit::Str(v)) => {
+                                let is_styled = if self.config.top_level_import_paths.is_empty() {
+                                    &*v.value == "styled-components"
+                                } else {
+                                    self.config.top_level_import_paths.contains(&v.value)
+                                };
+
+                                if is_styled {
+                                    self.state.styled_required = Some(name.id.to_id());
+                                }
+                            }
+                            _ => {}
+                        }
+                    }
+                }
+
+                _ => {}
+            }
+        }
+    }
 
     fn visit_import_decl(&mut self, i: &ImportDecl, _: &dyn Node) {
         let is_custom = !self.config.top_level_import_paths.is_empty();
