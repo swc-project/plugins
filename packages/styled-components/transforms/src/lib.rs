@@ -33,6 +33,12 @@ pub struct Config {
 
     #[serde(default)]
     pub transpile_template_literals: bool,
+
+    #[serde(default)]
+    pub minify: bool,
+
+    #[serde(default)]
+    pub css_prop: bool,
 }
 
 fn true_by_default() -> bool {
