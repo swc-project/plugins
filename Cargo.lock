@@ -90,9 +90,9 @@ dependencies = [
 
 [[package]]
 name = "anyhow"
-version = "1.0.50"
+version = "1.0.51"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ecc78c299ae753905840c5d3ba036c51f61ce5a98a83f98d9c9d29dffd427f71"
+checksum = "8b26702f315f53b6071259e15dd9d64528213b44d61de1ec926eca7715d62203"
 
 [[package]]
 name = "arrayvec"
@@ -180,6 +180,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "cc"
+version = "1.0.72"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "22a9137b95ea06864e018375b72adfb7db6e6f68cfc8df5a04d00288050485ee"
+
+[[package]]
 name = "cfg-if"
 version = "0.1.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -265,6 +271,12 @@ dependencies = [
  "quote",
  "syn",
 ]
+
+[[package]]
+name = "cty"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b365fabc795046672053e29c954733ec3b05e4be654ab130fe8f1f94d7051f35"
 
 [[package]]
 name = "darling"
@@ -586,6 +598,26 @@ name = "memchr"
 version = "2.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "308cc39be01b73d0d18f82a0e7b2a3df85245f84af96fdddc5d202d27e47b86a"
+
+[[package]]
+name = "mimalloc-rust"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2ffcd5c93c5b59f49b89b58100fad6ea023dbec6f9344f0d0932a96d9497821a"
+dependencies = [
+ "cty",
+ "mimalloc-rust-sys",
+]
+
+[[package]]
+name = "mimalloc-rust-sys"
+version = "1.7.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "96f7f32dcc7aeb79781116048bbd27cc819b9db55805690b3379d536d40e9590"
+dependencies = [
+ "cc",
+ "cty",
+]
 
 [[package]]
 name = "new_debug_unreachable"
@@ -1134,9 +1166,9 @@ dependencies = [
 
 [[package]]
 name = "rplugin"
-version = "0.2.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "13ccf2f7e494f3b1cbf782927febfbe536a5219a36db1e9d0bc8aefeef30d1df"
+checksum = "d0058a3bc0f041176ac97140bad94b2ee6e2bb96dc267aa7643cb01a0fba5dba"
 dependencies = [
  "abi_stable",
  "rplugin_macros",
@@ -1146,9 +1178,16 @@ dependencies = [
 
 [[package]]
 name = "rplugin_macros"
-version = "0.1.0"
+version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2f67d8873ee4b09623ea97124b4e5cbf33dc972b7b1f1c708e927b20dec2c23c"
+checksum = "eff25644e3f06c87b797f9a9be9ae93194b30ec99a6c0eb04d63d347317addff"
+dependencies = [
+ "pmutil",
+ "proc-macro2",
+ "quote",
+ "swc_macros_common",
+ "syn",
+]
 
 [[package]]
 name = "rustc-hash"
@@ -1528,9 +1567,9 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_plugin_ast"
-version = "0.3.0"
+version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a6bcb20fb0f37bb18c2979e5ca26edbe70d7653bbbcd83b9f3b9110cb4b87f15"
+checksum = "cd0e5a28ceda18ea32820f17eb50a5fe52e439b32269e1657c5b8f76a1e6102c"
 dependencies = [
  "abi_stable",
  "num-bigint",
@@ -1709,10 +1748,19 @@ dependencies = [
 ]
 
 [[package]]
-name = "swc_plugin"
-version = "0.14.0"
+name = "swc_node_base"
+version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2460a37acde9f1ecc3dff9a223ed14dfa3a99aec9a293e8013a3593264efbc19"
+checksum = "d32ab9aa6f4abcc9a96c2c2559444919658f1c395965468a205ecff5e5f5a020"
+dependencies = [
+ "mimalloc-rust",
+]
+
+[[package]]
+name = "swc_plugin"
+version = "0.14.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "71953ae18688360da69910201d8adfa3e2cb876f62d8c54d15fccf21151869c5"
 dependencies = [
  "abi_stable",
  "anyhow",
@@ -1724,6 +1772,7 @@ dependencies = [
  "swc_ecma_ast 0.58.1",
  "swc_ecma_plugin_ast",
  "swc_ecma_visit 0.44.0",
+ "swc_node_base",
  "swc_plugin_js_api",
 ]
 
@@ -1742,9 +1791,9 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_js_api"
-version = "0.1.0"
+version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d7d5442acb5b60131d18f57a824e505fae15dbe4a9ea333b376416085b5bd9ec"
+checksum = "0014bef7458425735e10a677acb1af0d4a5605623d97562eae4ecd40fd7029fd"
 dependencies = [
  "abi_stable",
  "anyhow",
