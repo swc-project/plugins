@@ -90,9 +90,9 @@ dependencies = [
 
 [[package]]
 name = "anyhow"
-version = "1.0.45"
+version = "1.0.50"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ee10e43ae4a853c0a3591d4e2ada1719e553be18199d9da9d4a83f5927c2f5c7"
+checksum = "ecc78c299ae753905840c5d3ba036c51f61ce5a98a83f98d9c9d29dffd427f71"
 
 [[package]]
 name = "arrayvec"
@@ -518,15 +518,15 @@ dependencies = [
 
 [[package]]
 name = "libc"
-version = "0.2.107"
+version = "0.2.108"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fbe5e23404da5b4f555ef85ebed98fb4083e55a00c317800bc2a50ede9f3d219"
+checksum = "8521a1b57e76b1ec69af7599e75e38e7b7fad6610f037db8c79b127201b5d119"
 
 [[package]]
 name = "libloading"
-version = "0.7.1"
+version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c0cf036d15402bea3c5d4de17b3fce76b3e4a56ebc1f577be0e7a72f7c607cf0"
+checksum = "afe203d669ec979b7128619bae5a63b7b42e9203c1b29146079ee05e2f604b52"
 dependencies = [
  "cfg-if 1.0.0",
  "winapi",
@@ -1176,9 +1176,9 @@ dependencies = [
 
 [[package]]
 name = "ryu"
-version = "1.0.5"
+version = "1.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "71d301d4193d031abdd79ff7e3dd721168a9572ef3fe51a1517aba235bd8f86e"
+checksum = "3c9613b5a66ab9ba26415184cfc41156594925a9cf3a2057e57f31ff145f6568"
 
 [[package]]
 name = "scoped-tls"
@@ -1241,9 +1241,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.69"
+version = "1.0.72"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e466864e431129c7e0d3476b92f20458e5879919a0596c6472738d9fa2d342f8"
+checksum = "d0ffa0837f2dfa6fb90868c2b5468cad482e175f7dad97e7421951e663f2b527"
 dependencies = [
  "itoa",
  "ryu",
@@ -1368,7 +1368,7 @@ checksum = "6446ced80d6c486436db5c078dde11a9f73d42b57fb273121e160b84f63d894c"
 
 [[package]]
 name = "styled_components"
-version = "0.1.0"
+version = "0.3.0"
 dependencies = [
  "Inflector",
  "once_cell",
@@ -1558,9 +1558,9 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_transforms_base"
-version = "0.43.0"
+version = "0.43.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "819aa4d767fd0741176d3308f66f1e17900729e4930ebb14073c2027d37b82c6"
+checksum = "ec6efd25b5816a7a1481e4f6e95381157260cf2e3f167cabf7d5be6160ba9491"
 dependencies = [
  "once_cell",
  "phf 0.8.0",
@@ -1610,7 +1610,7 @@ dependencies = [
  "swc_ecma_ast 0.57.0",
  "swc_ecma_codegen",
  "swc_ecma_parser 0.77.0",
- "swc_ecma_transforms_base 0.43.0",
+ "swc_ecma_transforms_base 0.43.1",
  "swc_ecma_utils 0.51.0",
  "swc_ecma_visit 0.43.0",
  "tempfile",
@@ -1729,7 +1729,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_jest"
-version = "0.1.0"
+version = "0.3.0"
 dependencies = [
  "abi_stable",
  "phf 0.10.0",
@@ -1757,7 +1757,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_styled_components"
-version = "0.1.0"
+version = "0.3.0"
 dependencies = [
  "styled_components",
 ]
@@ -1822,15 +1822,16 @@ dependencies = [
 
 [[package]]
 name = "testing"
-version = "0.15.1"
+version = "0.15.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a8da9a63df2fde9103c0fe861c05506620f05242338e9aca471c29cb3403486c"
+checksum = "e764b2295c3486c1fff4e77723d43319ead3f3b7081a553525f9dc369e19b416"
 dependencies = [
  "ansi_term",
  "difference",
  "once_cell",
  "pretty_assertions",
  "regex",
+ "serde_json",
  "swc_common",
  "testing_macros",
  "tracing",
@@ -1839,9 +1840,9 @@ dependencies = [
 
 [[package]]
 name = "testing_macros"
-version = "0.2.3"
+version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "912fce0caaf5c4fed1eed411655c99f1788722d2c9e7a692691042c55d630fb3"
+checksum = "dc6976b6f5ffd18755bef29dce0e9e882382d53bc1ed9d414ccd5c0ee7346bc2"
 dependencies = [
  "anyhow",
  "glob",
@@ -1864,9 +1865,9 @@ dependencies = [
 
 [[package]]
 name = "tinyvec"
-version = "1.5.0"
+version = "1.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f83b2a3d4d9091d0abd7eba4dc2710b1718583bd4d8992e2190720ea38f391f7"
+checksum = "2c1c1d5a42b6245520c249549ec267180beaffcc0615401ac8e31853d4b6d8d2"
 dependencies = [
  "tinyvec_macros",
 ]
