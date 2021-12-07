@@ -1,13 +1,10 @@
 use super::State;
 use crate::Config;
 use std::{cell::RefCell, rc::Rc};
-use swc_common::DUMMY_SP;
 use swc_ecmascript::{
     ast::*,
     utils::{ident::IdentLike, ExprExt},
-    visit::{
-        as_folder, noop_visit_mut_type, noop_visit_type, Fold, Node, Visit, VisitMut, VisitWith,
-    },
+    visit::{as_folder, noop_visit_mut_type, noop_visit_type, Fold, Visit, VisitMut, VisitWith},
 };
 
 pub fn analyzer(config: Rc<Config>, state: Rc<RefCell<State>>) -> impl VisitMut + Fold {
@@ -28,7 +25,7 @@ impl VisitMut for AsAnalyzer {
             state: &mut *self.state.borrow_mut(),
         };
 
-        p.visit_with(&Invalid { span: DUMMY_SP }, &mut v);
+        p.visit_with(&mut v);
     }
 
     fn visit_mut_script(&mut self, p: &mut Script) {
@@ -37,7 +34,7 @@ impl VisitMut for AsAnalyzer {
             state: &mut *self.state.borrow_mut(),
         };
 
-        p.visit_with(&Invalid { span: DUMMY_SP }, &mut v);
+        p.visit_with(&mut v);
     }
 }
 
@@ -49,7 +46,7 @@ pub fn analyze(config: &Config, program: &Program) -> State {
         state: &mut state,
     };
 
-    program.visit_with(&Invalid { span: DUMMY_SP }, &mut v);
+    program.visit_with(&mut v);
 
     state
 }
@@ -62,7 +59,7 @@ struct Analyzer<'a> {
 impl Visit for Analyzer<'_> {
     noop_visit_type!();
 
-    fn visit_var_declarator(&mut self, v: &VarDeclarator, _: &dyn Node) {
+    fn visit_var_declarator(&mut self, v: &VarDeclarator) {
         v.visit_children_with(self);
 
         if let Pat::Ident(name) = &v.name {
@@ -99,7 +96,7 @@ impl Visit for Analyzer<'_> {
         }
     }
 
-    fn visit_import_decl(&mut self, i: &ImportDecl, _: &dyn Node) {
+    fn visit_import_decl(&mut self, i: &ImportDecl) {
         let is_custom = !self.config.top_level_import_paths.is_empty();
 
         let is_styled = if self.config.top_level_import_paths.is_empty() {
