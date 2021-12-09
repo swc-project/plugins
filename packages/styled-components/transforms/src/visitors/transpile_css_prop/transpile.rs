@@ -1,17 +1,21 @@
 //! Port of https://github.com/styled-components/babel-plugin-styled-components/blob/a20c3033508677695953e7a434de4746168eeb4e/src/visitors/transpileCssProp.js
 
+use std::collections::HashMap;
+
 use inflector::Inflector;
 use once_cell::sync::Lazy;
 use regex::Regex;
 use swc_atoms::{js_word, JsWord};
-use swc_common::{util::take::Take, Spanned, DUMMY_SP};
+use swc_common::{collections::AHashSet, util::take::Take, Spanned, DUMMY_SP};
 use swc_ecmascript::{
     ast::*,
     utils::{prepend, private_ident, quote_ident, quote_str, ExprExt, ExprFactory},
     visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith},
 };
 
-use crate::utils::{get_prop_key_as_expr, get_prop_name};
+use crate::utils::{get_prop_key_as_expr, get_prop_name, get_prop_name2};
+
+use super::top_level_binding_collector::collect_top_level_decls;
 
 static TAG_NAME_REGEX: Lazy<Regex> =
     Lazy::new(|| Regex::new("^[a-z][a-z\\d]*(\\-[a-z][a-z\\d]*)?$").unwrap());
@@ -26,6 +30,25 @@ struct TranspileCssProp {
     injected_nodes: Vec<Stmt>,
 
     identifier_idx: usize,
+    styled_idx: HashMap<JsWord, usize>,
+    bindings: Vec<AHashSet<JsWord>>,
+}
+
+impl TranspileCssProp {
+    fn next_styled_idx(&mut self, key: JsWord) -> usize {
+        let idx = self.styled_idx.entry(key).or_insert(0);
+        *idx += 1;
+        *idx
+    }
+    fn is_top_level_ident(&mut self, ident: &Ident) -> bool {
+        !self.bindings.is_empty()
+            && self.bindings[0].contains(&ident.sym)
+            && !self
+                .bindings
+                .iter()
+                .skip(1)
+                .any(|bindings| bindings.contains(&ident.sym))
+    }
 }
 
 impl VisitMut for TranspileCssProp {
@@ -51,8 +74,15 @@ impl VisitMut for TranspileCssProp {
                     let name = get_name(&elem.opening.name);
                     let id_sym = name.to_class_case();
 
-                    let id: Ident =
-                        private_ident!(elem.opening.name.span(), format!("_Styled{}", id_sym));
+                    // Match the original plugin's behavior.
+                    let id_sym = id_sym.trim_end_matches(char::is_numeric);
+
+                    let id_sym = JsWord::from(id_sym);
+                    let styled_idx = self.next_styled_idx(id_sym.clone());
+                    let id = quote_ident!(
+                        elem.opening.name.span(),
+                        append_if_gt_one(&format!("_Styled{}", id_sym), styled_idx)
+                    );
 
                     let (styled, inject_after) = if TAG_NAME_REGEX.is_match(&name) {
                         (
@@ -193,33 +223,44 @@ impl VisitMut for TranspileCssProp {
                                 .fold(vec![], |mut acc, mut expr| {
                                     if expr.is_fn_expr() || expr.is_arrow() {
                                         acc.push(expr);
-                                    } else {
-                                        let identifier =
-                                            get_local_identifier(&mut self.identifier_idx, &expr);
-                                        let p = quote_ident!("P");
-                                        extra_attrs.push(JSXAttrOrSpread::JSXAttr(JSXAttr {
-                                            span: DUMMY_SP,
-                                            name: JSXAttrName::Ident(identifier.clone()),
-                                            value: Some(JSXAttrValue::JSXExprContainer(
-                                                JSXExprContainer {
-                                                    span: DUMMY_SP,
-                                                    expr: JSXExpr::Expr(expr.take()),
-                                                },
-                                            )),
-                                        }));
-
-                                        acc.push(Box::new(Expr::Arrow(ArrowExpr {
-                                            span: DUMMY_SP,
-                                            params: vec![Pat::Ident(p.clone().into())],
-                                            body: BlockStmtOrExpr::Expr(Box::new(
-                                                p.make_member(identifier),
-                                            )),
-                                            is_async: false,
-                                            is_generator: false,
-                                            type_params: Default::default(),
-                                            return_type: Default::default(),
-                                        })))
+                                        return acc;
+                                    } else if let Some(root) = trace_root_value(&mut *expr) {
+                                        let direct_access = match root {
+                                            Expr::Lit(_) => true,
+                                            Expr::Ident(id) if self.is_top_level_ident(id) => true,
+                                            _ => false,
+                                        };
+                                        if direct_access {
+                                            acc.push(expr);
+                                            return acc;
+                                        }
                                     }
+
+                                    let identifier =
+                                        get_local_identifier(&mut self.identifier_idx, &expr);
+                                    let p = quote_ident!("p");
+                                    extra_attrs.push(JSXAttrOrSpread::JSXAttr(JSXAttr {
+                                        span: DUMMY_SP,
+                                        name: JSXAttrName::Ident(identifier.clone()),
+                                        value: Some(JSXAttrValue::JSXExprContainer(
+                                            JSXExprContainer {
+                                                span: DUMMY_SP,
+                                                expr: JSXExpr::Expr(expr.take()),
+                                            },
+                                        )),
+                                    }));
+
+                                    acc.push(Box::new(Expr::Arrow(ArrowExpr {
+                                        span: DUMMY_SP,
+                                        params: vec![Pat::Ident(p.clone().into())],
+                                        body: BlockStmtOrExpr::Expr(Box::new(
+                                            p.make_member(identifier),
+                                        )),
+                                        is_async: false,
+                                        is_generator: false,
+                                        type_params: Default::default(),
+                                        return_type: Default::default(),
+                                    })));
 
                                     acc
                                 });
@@ -285,7 +326,9 @@ impl VisitMut for TranspileCssProp {
 
     fn visit_mut_module(&mut self, n: &mut Module) {
         // TODO: Skip if there are no css prop usage
+        self.bindings.push(collect_top_level_decls(n));
         n.visit_mut_children_with(self);
+        self.bindings.pop().unwrap();
 
         if let Some(import_name) = self.import_name.take() {
             let specifier = ImportSpecifier::Default(ImportDefaultSpecifier {
@@ -436,13 +479,10 @@ impl PropertyReducer<'_> {
                         })),
                     }));
 
-                    let key = get_prop_key_as_expr(&prop);
+                    let key = get_prop_name2(&prop);
 
                     acc.push(PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
-                        key: PropName::Computed(ComputedPropName {
-                            span: DUMMY_SP,
-                            expr: Box::new(key.into_owned()),
-                        }),
+                        key: key.clone(),
                         value: Box::new(self.p.clone().make_member(identifier)),
                     }))));
                 } else {
@@ -500,11 +540,19 @@ fn set_key_of_prop(prop: &mut Prop, key: Box<Expr>) {
 fn get_local_identifier(idx: &mut usize, expr: &Expr) -> Ident {
     *idx += 1;
 
-    let identifier = quote_ident!(expr.span(), format!("$_css{}", *idx));
+    let identifier = quote_ident!(expr.span(), append_if_gt_one("$_css", *idx));
 
     // TODO: Unique identifier
 
     identifier
+}
+
+fn append_if_gt_one(s: &str, suffix: usize) -> String {
+    if suffix > 1 {
+        format!("{}{}", s, suffix)
+    } else {
+        s.to_string()
+    }
 }
 
 fn get_name(el: &JSXElementName) -> JsWord {
@@ -525,5 +573,18 @@ fn get_name_of_jsx_obj(el: &JSXObject) -> JsWord {
         JSXObject::JSXMemberExpr(e) => {
             format!("{}{}", get_name_of_jsx_obj(&e.obj), e.prop.sym).into()
         }
+    }
+}
+
+fn trace_root_value(e: &mut Expr) -> Option<&mut Expr> {
+    match e {
+        Expr::Member(e) => trace_root_value(&mut e.obj),
+        Expr::Call(e) => match &mut e.callee {
+            Callee::Expr(e) => trace_root_value(&mut **e),
+            _ => None,
+        },
+        Expr::Ident(_) => Some(e),
+        Expr::Lit(_) => Some(e),
+        _ => None,
     }
 }
