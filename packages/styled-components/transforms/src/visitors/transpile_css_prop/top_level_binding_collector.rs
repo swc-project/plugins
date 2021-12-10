@@ -1,20 +1,20 @@
-use swc_atoms::JsWord;
 use swc_common::collections::AHashSet;
 use swc_ecmascript::{
     ast::{
         ArrowExpr, ClassDecl, FnDecl, Function, ImportDefaultSpecifier, ImportNamedSpecifier,
-        ImportStarAsSpecifier, ModuleItem, ObjectPatProp, Param, Pat, Stmt, VarDeclarator,
+        ImportStarAsSpecifier, ObjectPatProp, Pat,
     },
+    utils::{id, Id},
     visit::{noop_visit_type, Visit, VisitWith},
 };
 
 // Modified from swc_ecma_utils/src/lib.rs:BindingCollector.
 pub struct TopLevelBindingCollector {
-    bindings: AHashSet<JsWord>,
+    bindings: AHashSet<Id>,
 }
 
 impl TopLevelBindingCollector {
-    fn add(&mut self, i: &JsWord) {
+    fn add(&mut self, i: &Id) {
         self.bindings.insert(i.clone());
     }
 }
@@ -23,20 +23,20 @@ impl Visit for TopLevelBindingCollector {
     noop_visit_type!();
 
     fn visit_class_decl(&mut self, node: &ClassDecl) {
-        self.add(&node.ident.sym);
+        self.add(&id(&node.ident));
     }
 
     fn visit_fn_decl(&mut self, node: &FnDecl) {
-        self.add(&node.ident.sym);
+        self.add(&id(&node.ident));
     }
 
     fn visit_pat(&mut self, node: &Pat) {
         match node {
-            Pat::Ident(i) => self.add(&i.id.sym),
+            Pat::Ident(i) => self.add(&id(&i.id)),
             Pat::Object(o) => {
                 for prop in o.props.iter() {
                     match prop {
-                        ObjectPatProp::Assign(a) => self.add(&a.key.sym),
+                        ObjectPatProp::Assign(a) => self.add(&id(&a.key)),
                         ObjectPatProp::KeyValue(k) => k.value.visit_with(self),
                         ObjectPatProp::Rest(_) => {}
                     }
@@ -47,48 +47,30 @@ impl Visit for TopLevelBindingCollector {
                     elem.visit_with(self);
                 }
             }
+            Pat::Assign(a) => {
+                a.left.visit_with(self);
+            }
             _ => {}
         }
-    }
-
-    fn visit_param(&mut self, node: &Param) {
-        node.visit_children_with(self);
     }
 
     fn visit_arrow_expr(&mut self, _: &ArrowExpr) {}
     fn visit_function(&mut self, _: &Function) {}
 
     fn visit_import_default_specifier(&mut self, node: &ImportDefaultSpecifier) {
-        self.add(&node.local.sym);
+        self.add(&id(&node.local));
     }
 
     fn visit_import_named_specifier(&mut self, node: &ImportNamedSpecifier) {
-        self.add(&node.local.sym);
+        self.add(&id(&node.local));
     }
 
     fn visit_import_star_as_specifier(&mut self, node: &ImportStarAsSpecifier) {
-        self.add(&node.local.sym);
-    }
-
-    fn visit_module_items(&mut self, nodes: &[ModuleItem]) {
-        for node in nodes {
-            node.visit_children_with(self)
-        }
-    }
-
-    fn visit_stmts(&mut self, nodes: &[Stmt]) {
-        for node in nodes {
-            node.visit_children_with(self)
-        }
-    }
-
-    fn visit_var_declarator(&mut self, node: &VarDeclarator) {
-        node.name.visit_with(self);
-        node.init.visit_with(self);
+        self.add(&id(&node.local));
     }
 }
 
-pub fn collect_top_level_decls<N>(n: &N) -> AHashSet<JsWord>
+pub fn collect_top_level_decls<N>(n: &N) -> AHashSet<Id>
 where
     N: VisitWith<TopLevelBindingCollector>,
 {
