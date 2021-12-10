@@ -1,6 +1,6 @@
 //! Port of https://github.com/styled-components/babel-plugin-styled-components/blob/a20c3033508677695953e7a434de4746168eeb4e/src/visitors/transpileCssProp.js
 
-use std::collections::HashMap;
+use std::{borrow::Cow, collections::HashMap};
 
 use inflector::Inflector;
 use once_cell::sync::Lazy;
@@ -544,11 +544,11 @@ fn get_local_identifier(idx: &mut usize, expr: &Expr) -> Ident {
     identifier
 }
 
-fn append_if_gt_one(s: &str, suffix: usize) -> String {
+fn append_if_gt_one(s: &str, suffix: usize) -> Cow<str> {
     if suffix > 1 {
-        format!("{}{}", s, suffix)
+        Cow::Owned(format!("{}{}", s, suffix))
     } else {
-        s.to_string()
+        Cow::Borrowed(s)
     }
 }
 
