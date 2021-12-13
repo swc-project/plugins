@@ -479,7 +479,7 @@ impl PropertyReducer<'_> {
                     let key = get_prop_name2(&prop);
 
                     acc.push(PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
-                        key: key.clone(),
+                        key,
                         value: Box::new(self.p.clone().make_member(identifier)),
                     }))));
                 } else {
