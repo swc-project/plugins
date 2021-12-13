@@ -2,7 +2,7 @@ use swc_common::collections::AHashSet;
 use swc_ecmascript::{
     ast::{
         ArrowExpr, ClassDecl, FnDecl, Function, ImportDefaultSpecifier, ImportNamedSpecifier,
-        ImportStarAsSpecifier, ObjectPatProp, Pat,
+        ImportStarAsSpecifier, ObjectPatProp, Pat, VarDeclarator,
     },
     utils::{ident::IdentLike, Id},
     visit::{noop_visit_type, Visit, VisitWith},
@@ -11,6 +11,7 @@ use swc_ecmascript::{
 // Modified from swc_ecma_utils/src/lib.rs:BindingCollector.
 pub struct TopLevelBindingCollector {
     bindings: AHashSet<Id>,
+    in_pat_decl: bool,
 }
 
 impl TopLevelBindingCollector {
@@ -31,6 +32,9 @@ impl Visit for TopLevelBindingCollector {
     }
 
     fn visit_pat(&mut self, node: &Pat) {
+        if !self.in_pat_decl {
+            return;
+        }
         match node {
             Pat::Ident(i) => self.add(&i.id.to_id()),
             Pat::Object(o) => {
@@ -68,6 +72,13 @@ impl Visit for TopLevelBindingCollector {
     fn visit_import_star_as_specifier(&mut self, node: &ImportStarAsSpecifier) {
         self.add(&node.local.to_id());
     }
+
+    fn visit_var_declarator(&mut self, node: &VarDeclarator) {
+        let old = self.in_pat_decl;
+        self.in_pat_decl = true;
+        node.name.visit_with(self);
+        self.in_pat_decl = old;
+    }
 }
 
 pub fn collect_top_level_decls<N>(n: &N) -> AHashSet<Id>
@@ -76,6 +87,7 @@ where
 {
     let mut v = TopLevelBindingCollector {
         bindings: Default::default(),
+        in_pat_decl: false,
     };
     n.visit_with(&mut v);
     v.bindings
