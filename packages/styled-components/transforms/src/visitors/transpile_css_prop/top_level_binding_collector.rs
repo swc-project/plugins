@@ -4,7 +4,7 @@ use swc_ecmascript::{
         ArrowExpr, ClassDecl, FnDecl, Function, ImportDefaultSpecifier, ImportNamedSpecifier,
         ImportStarAsSpecifier, ObjectPatProp, Pat,
     },
-    utils::{id, Id},
+    utils::{ident::IdentLike, Id},
     visit::{noop_visit_type, Visit, VisitWith},
 };
 
@@ -23,20 +23,20 @@ impl Visit for TopLevelBindingCollector {
     noop_visit_type!();
 
     fn visit_class_decl(&mut self, node: &ClassDecl) {
-        self.add(&id(&node.ident));
+        self.add(&node.ident.to_id());
     }
 
     fn visit_fn_decl(&mut self, node: &FnDecl) {
-        self.add(&id(&node.ident));
+        self.add(&node.ident.to_id());
     }
 
     fn visit_pat(&mut self, node: &Pat) {
         match node {
-            Pat::Ident(i) => self.add(&id(&i.id)),
+            Pat::Ident(i) => self.add(&i.id.to_id()),
             Pat::Object(o) => {
                 for prop in o.props.iter() {
                     match prop {
-                        ObjectPatProp::Assign(a) => self.add(&id(&a.key)),
+                        ObjectPatProp::Assign(a) => self.add(&a.key.to_id()),
                         ObjectPatProp::KeyValue(k) => k.value.visit_with(self),
                         ObjectPatProp::Rest(_) => {}
                     }
@@ -58,15 +58,15 @@ impl Visit for TopLevelBindingCollector {
     fn visit_function(&mut self, _: &Function) {}
 
     fn visit_import_default_specifier(&mut self, node: &ImportDefaultSpecifier) {
-        self.add(&id(&node.local));
+        self.add(&node.local.to_id());
     }
 
     fn visit_import_named_specifier(&mut self, node: &ImportNamedSpecifier) {
-        self.add(&id(&node.local));
+        self.add(&node.local.to_id());
     }
 
     fn visit_import_star_as_specifier(&mut self, node: &ImportStarAsSpecifier) {
-        self.add(&id(&node.local));
+        self.add(&node.local.to_id());
     }
 }
 
