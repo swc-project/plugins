@@ -1701,6 +1701,7 @@ name = "swc_plugin_jest"
 version = "0.6.0"
 dependencies = [
  "abi_stable",
+ "if_chain",
  "phf 0.10.1",
  "serde",
  "swc_atoms",

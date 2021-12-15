@@ -1,3 +1,4 @@
+use if_chain::if_chain;
 use phf::phf_set;
 use serde::Deserialize;
 use swc_common::util::take::Take;
@@ -40,41 +41,26 @@ impl Jest {
 
         let mut new = Vec::with_capacity(items.len());
         let mut hoisted = Vec::with_capacity(8);
-        items.into_iter().for_each(|item| {
+        for item in items {
             match item.try_into_stmt() {
-                Ok(stmt) => match &stmt {
-                    Stmt::Expr(ExprStmt { expr, .. }) => match &**expr {
-                        Expr::Call(CallExpr {
-                            callee: ExprOrSuper::Expr(callee),
-                            ..
-                        }) => match &**callee {
-                            Expr::Member(
-                                callee @ MemberExpr {
-                                    computed: false, ..
-                                },
-                            ) => match &callee.obj {
-                                ExprOrSuper::Super(_) => new.push(T::from_stmt(stmt)),
-                                ExprOrSuper::Expr(callee_obj) => match &**callee_obj {
-                                    Expr::Ident(i) if i.sym == *"jest" => match &*callee.prop {
-                                        Expr::Ident(prop) if HOIST_METHODS.contains(&*prop.sym) => {
-                                            hoisted.push(T::from_stmt(stmt));
-                                            return;
-                                        }
-                                        _ => new.push(T::from_stmt(stmt)),
-                                    },
-                                    _ => new.push(T::from_stmt(stmt)),
-                                },
-                            },
-                            _ => new.push(T::from_stmt(stmt)),
-                        },
-                        _ => new.push(T::from_stmt(stmt)),
-                    },
-
-                    _ => new.push(T::from_stmt(stmt)),
+                Ok(stmt) => if_chain! {
+                    if let Stmt::Expr(ExprStmt { expr, .. }) = &stmt;
+                    if let Expr::Call(CallExpr { callee: ExprOrSuper::Expr(callee), .. }) = &**expr;
+                    if let Expr::Member(callee @ MemberExpr { computed: false, ..  }) = &**callee;
+                    if let ExprOrSuper::Expr(callee_obj) = &callee.obj;
+                    if let Expr::Ident(i) = &**callee_obj;
+                    if i.sym == *"jest";
+                    if let Expr::Ident(prop) = &*callee.prop;
+                    if HOIST_METHODS.contains(&*prop.sym);
+                    then {
+                        hoisted.push(T::from_stmt(stmt));
+                    } else {
+                        new.push(T::from_stmt(stmt));
+                    }
                 },
                 Err(node) => new.push(node),
-            };
-        });
+            }
+        }
 
         prepend_stmts(&mut new, hoisted.into_iter());
 
