@@ -243,8 +243,8 @@ impl VisitMut for DisplayNameAndId {
     fn visit_mut_class_prop(&mut self, e: &mut ClassProp) {
         let old = self.cur_display_name.take();
 
-        match &*e.key {
-            Expr::Ident(i) => {
+        match &e.key {
+            PropName::Ident(i) => {
                 self.cur_display_name = Some(i.sym.clone());
             }
 
