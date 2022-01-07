@@ -112,7 +112,10 @@ impl Visit for Analyzer<'_> {
                         if is_custom
                             && s.imported
                                 .as_ref()
-                                .map(|v| &*v.sym)
+                                .map(|v| match v {
+                                    ModuleExportName::Ident(v) => &*v.sym,
+                                    ModuleExportName::Str(v) => &*v.value,
+                                })
                                 .unwrap_or(&&*s.local.sym)
                                 == "styled"
                         {
