@@ -7,7 +7,7 @@ use swc_ecmascript::{
     visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith},
 };
 
-swc_plugin::define_js_plugin!(jest);
+// swc_plugin::define_js_plugin!(jest);
 
 static HOIST_METHODS: phf::Set<&str> = phf_set![
     "mock",
@@ -45,25 +45,23 @@ impl Jest {
                 Ok(stmt) => match &stmt {
                     Stmt::Expr(ExprStmt { expr, .. }) => match &**expr {
                         Expr::Call(CallExpr {
-                            callee: ExprOrSuper::Expr(callee),
+                            callee: Callee::Expr(callee),
                             ..
                         }) => match &**callee {
                             Expr::Member(
                                 callee @ MemberExpr {
-                                    computed: false, ..
+                                    prop: MemberProp::Ident(prop),
+                                    ..
                                 },
-                            ) => match &callee.obj {
-                                ExprOrSuper::Super(_) => new.push(T::from_stmt(stmt)),
-                                ExprOrSuper::Expr(callee_obj) => match &**callee_obj {
-                                    Expr::Ident(i) if i.sym == *"jest" => match &*callee.prop {
-                                        Expr::Ident(prop) if HOIST_METHODS.contains(&*prop.sym) => {
-                                            hoisted.push(T::from_stmt(stmt));
-                                            return;
-                                        }
-                                        _ => new.push(T::from_stmt(stmt)),
-                                    },
+                            ) => match &*callee.obj {
+                                Expr::Ident(i) if i.sym == *"jest" => match prop {
+                                    _ if HOIST_METHODS.contains(&*prop.sym) => {
+                                        hoisted.push(T::from_stmt(stmt));
+                                        return;
+                                    }
                                     _ => new.push(T::from_stmt(stmt)),
                                 },
+                                _ => new.push(T::from_stmt(stmt)),
                             },
                             _ => new.push(T::from_stmt(stmt)),
                         },

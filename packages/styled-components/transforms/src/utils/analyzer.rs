@@ -65,7 +65,7 @@ impl Visit for Analyzer<'_> {
         if let Pat::Ident(name) = &v.name {
             match v.init.as_deref() {
                 Some(Expr::Call(CallExpr {
-                    callee: ExprOrSuper::Expr(callee),
+                    callee: Callee::Expr(callee),
                     args,
                     ..
                 })) => {
