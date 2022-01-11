@@ -6,7 +6,7 @@ use swc_atoms::js_word;
 use swc_common::collections::AHashMap;
 use swc_ecmascript::{
     ast::*,
-    utils::{ident::IdentLike, ExprExt, Id},
+    utils::{ident::IdentLike, Id},
 };
 
 mod analyzer;
