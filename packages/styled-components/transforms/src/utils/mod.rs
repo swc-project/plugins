@@ -84,7 +84,7 @@ impl State {
             }) => match &**obj {
                 Expr::Ident(obj) => {
                     if Some(obj.to_id()) == self.import_local_name("default", Some(obj))
-                        && !self.is_helper(&prop)
+                        && !self.is_helper(&Expr::Ident(prop.clone()))
                     {
                         return true;
                     }

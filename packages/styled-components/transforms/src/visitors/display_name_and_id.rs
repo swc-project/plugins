@@ -156,18 +156,17 @@ impl DisplayNameAndId {
         }
 
         if let Expr::Call(CallExpr {
-            callee: ExprOrSuper::Expr(callee),
+            callee: Callee::Expr(callee),
             args,
             ..
         }) = e
         {
             if let Expr::Member(MemberExpr {
-                prop,
-                computed: false,
+                prop: MemberProp::Ident(prop),
                 ..
             }) = &**callee
             {
-                if prop.is_ident_ref_to("withConfig".into()) {
+                if &*prop.sym == "withConfig" {
                     if let Some(first_arg) = args.get_mut(0) {
                         if first_arg.spread.is_none() && first_arg.expr.is_object() {
                             if let Expr::Object(obj) = &mut *first_arg.expr {
@@ -201,7 +200,7 @@ impl DisplayNameAndId {
         }
 
         if let Expr::Call(CallExpr {
-            callee: ExprOrSuper::Expr(callee),
+            callee: Callee::Expr(callee),
             ..
         }) = e
         {
@@ -263,7 +262,7 @@ impl VisitMut for DisplayNameAndId {
             Expr::TaggedTpl(e) => self.state.borrow().is_styled(&e.tag),
 
             Expr::Call(CallExpr {
-                callee: ExprOrSuper::Expr(callee),
+                callee: Callee::Expr(callee),
                 args,
                 ..
             }) => {
@@ -378,14 +377,6 @@ impl VisitMut for DisplayNameAndId {
         self.cur_display_name = old;
     }
 
-    fn visit_mut_member_expr(&mut self, e: &mut MemberExpr) {
-        e.obj.visit_mut_with(self);
-
-        if e.computed {
-            e.prop.visit_mut_with(self);
-        }
-    }
-
     fn visit_mut_var_declarator(&mut self, v: &mut VarDeclarator) {
         let old = self.cur_display_name.take();
 
@@ -405,7 +396,7 @@ impl VisitMut for DisplayNameAndId {
 fn get_callee(e: &Expr) -> Option<&Expr> {
     match e {
         Expr::Call(CallExpr {
-            callee: ExprOrSuper::Expr(callee),
+            callee: Callee::Expr(callee),
             ..
         }) => Some(&callee),
         _ => None,
@@ -415,13 +406,9 @@ fn get_callee(e: &Expr) -> Option<&Expr> {
 fn get_property_as_ident(e: &Expr) -> Option<&JsWord> {
     match e {
         Expr::Member(MemberExpr {
-            prop,
-            computed: false,
+            prop: MemberProp::Ident(p),
             ..
-        }) => match &**prop {
-            Expr::Ident(p) => return Some(&p.sym),
-            _ => {}
-        },
+        }) => return Some(&p.sym),
         _ => {}
     }
 
@@ -448,20 +435,19 @@ where
 {
     match e {
         Expr::Call(CallExpr {
-            callee: ExprOrSuper::Expr(callee),
+            callee: Callee::Expr(callee),
             ..
         }) => match &mut **callee {
             Expr::Call(CallExpr {
-                callee: ExprOrSuper::Expr(callee_callee),
+                callee: Callee::Expr(callee_callee),
                 ..
             }) => {
                 match &**callee_callee {
                     Expr::Member(MemberExpr {
-                        prop,
-                        computed: false,
+                        prop: MemberProp::Ident(prop),
                         ..
                     }) => {
-                        if prop.is_ident_ref_to("withConfig".into()) {
+                        if &*prop.sym == "withConfig" {
                             return op(callee);
                         }
                     }
@@ -470,20 +456,19 @@ where
 
                 match &mut **callee_callee {
                     Expr::Member(MemberExpr {
-                        obj: ExprOrSuper::Expr(obj),
-                        computed: false,
+                        obj,
+                        prop: MemberProp::Ident(..),
                         ..
                     }) => match &**obj {
                         Expr::Call(CallExpr {
-                            callee: ExprOrSuper::Expr(callee),
+                            callee: Callee::Expr(callee),
                             ..
                         }) => match &**callee {
                             Expr::Member(MemberExpr {
-                                prop,
-                                computed: false,
+                                prop: MemberProp::Ident(prop),
                                 ..
                             }) => {
-                                if prop.is_ident_ref_to("withConfig".into()) {
+                                if &*prop.sym == "withConfig" {
                                     return op(obj);
                                 }
                             }

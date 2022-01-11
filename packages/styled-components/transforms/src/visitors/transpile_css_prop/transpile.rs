@@ -283,14 +283,6 @@ impl VisitMut for TranspileCssProp {
         elem.opening.attrs.extend(extra_attrs);
     }
 
-    fn visit_mut_member_expr(&mut self, e: &mut MemberExpr) {
-        e.obj.visit_mut_with(self);
-
-        if e.computed {
-            e.prop.visit_mut_with(self);
-        }
-    }
-
     fn visit_mut_module(&mut self, n: &mut Module) {
         // TODO: Skip if there are no css prop usage
         n.visit_mut_children_with(self);
@@ -328,9 +320,8 @@ fn get_name_expr(name: &JSXElementName) -> Box<Expr> {
             JSXObject::Ident(n) => Box::new(Expr::Ident(n.clone())),
             JSXObject::JSXMemberExpr(n) => Box::new(Expr::Member(MemberExpr {
                 span: DUMMY_SP,
-                obj: ExprOrSuper::Expr(get_name_expr_jsx_object(&n.obj)),
-                prop: Box::new(Expr::Ident(n.prop.clone())),
-                computed: false,
+                obj: get_name_expr_jsx_object(&n.obj),
+                prop: MemberProp::Ident(n.prop.clone()),
             })),
         }
     }
@@ -338,9 +329,8 @@ fn get_name_expr(name: &JSXElementName) -> Box<Expr> {
         JSXElementName::Ident(n) => Box::new(Expr::Ident(n.clone())),
         JSXElementName::JSXMemberExpr(n) => Box::new(Expr::Member(MemberExpr {
             span: DUMMY_SP,
-            obj: ExprOrSuper::Expr(get_name_expr_jsx_object(&n.obj)),
-            prop: Box::new(Expr::Ident(n.prop.clone())),
-            computed: false,
+            obj: get_name_expr_jsx_object(&n.obj),
+            prop: MemberProp::Ident(n.prop.clone()),
         })),
         JSXElementName::JSXNamespacedName(..) => {
             unimplemented!("get_name_expr for JSXNamespacedName")
