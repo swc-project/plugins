@@ -6,7 +6,7 @@ use swc_atoms::js_word;
 use swc_common::collections::AHashMap;
 use swc_ecmascript::{
     ast::*,
-    utils::{ident::IdentLike, ExprExt, Id},
+    utils::{ident::IdentLike, Id},
 };
 
 mod analyzer;
@@ -58,16 +58,15 @@ impl State {
     pub(crate) fn is_styled(&self, tag: &Expr) -> bool {
         match tag {
             Expr::Call(CallExpr {
-                callee: ExprOrSuper::Expr(callee),
+                callee: Callee::Expr(callee),
                 ..
             }) => match &**callee {
                 Expr::Member(MemberExpr {
-                    computed: false,
-                    obj: ExprOrSuper::Expr(obj),
-                    prop,
+                    obj,
+                    prop: MemberProp::Ident(prop),
                     ..
                 }) => {
-                    if !prop.is_ident_ref_to(js_word!("default")) {
+                    if prop.sym != js_word!("default") {
                         return self.is_styled(&obj);
                     }
                 }
@@ -79,14 +78,13 @@ impl State {
 
         match tag {
             Expr::Member(MemberExpr {
-                obj: ExprOrSuper::Expr(obj),
-                prop,
-                computed: false,
+                obj,
+                prop: MemberProp::Ident(prop),
                 ..
             }) => match &**obj {
                 Expr::Ident(obj) => {
                     if Some(obj.to_id()) == self.import_local_name("default", Some(obj))
-                        && !self.is_helper(&prop)
+                        && !self.is_helper(&Expr::Ident(prop.clone()))
                     {
                         return true;
                     }
@@ -95,7 +93,7 @@ impl State {
             },
 
             Expr::Call(CallExpr {
-                callee: ExprOrSuper::Expr(callee),
+                callee: Callee::Expr(callee),
                 ..
             }) => match &**callee {
                 Expr::Ident(callee) => {
@@ -113,18 +111,17 @@ impl State {
         if let Some(style_required) = self.styled_required.clone() {
             match tag {
                 Expr::Member(MemberExpr {
-                    obj: ExprOrSuper::Expr(obj),
-                    computed: false,
+                    obj,
+                    prop: MemberProp::Ident(..),
                     ..
                 }) => match &**obj {
                     Expr::Member(MemberExpr {
-                        obj: ExprOrSuper::Expr(obj_of_obj),
-                        prop,
-                        computed: false,
+                        obj: obj_of_obj,
+                        prop: MemberProp::Ident(prop),
                         ..
                     }) => match &**obj_of_obj {
                         Expr::Ident(obj_of_obj) => {
-                            if prop.is_ident_ref_to(js_word!("default"))
+                            if prop.sym == js_word!("default")
                                 && obj_of_obj.to_id() == style_required
                             {
                                 return true;
@@ -136,17 +133,16 @@ impl State {
                 },
 
                 Expr::Call(CallExpr {
-                    callee: ExprOrSuper::Expr(callee),
+                    callee: Callee::Expr(callee),
                     ..
                 }) => match &**callee {
                     Expr::Member(MemberExpr {
-                        obj: ExprOrSuper::Expr(tag_callee_object),
-                        prop: tag_callee_property,
-                        computed: false,
+                        obj: tag_callee_object,
+                        prop: MemberProp::Ident(tag_callee_property),
                         ..
                     }) => match &**tag_callee_object {
                         Expr::Ident(tag_callee_object) => {
-                            if tag_callee_property.is_ident_ref_to(js_word!("default"))
+                            if tag_callee_property.sym == js_word!("default")
                                 && tag_callee_object.to_id() == style_required
                             {
                                 return true;
@@ -165,18 +161,17 @@ impl State {
         if let Some(import_local_name) = self.import_local_name("default", None) {
             match tag {
                 Expr::Member(MemberExpr {
-                    obj: ExprOrSuper::Expr(obj),
-                    computed: false,
+                    obj,
+                    prop: MemberProp::Ident(..),
                     ..
                 }) => match &**obj {
                     Expr::Member(MemberExpr {
-                        obj: ExprOrSuper::Expr(obj_of_obj),
-                        prop,
-                        computed: false,
+                        obj: obj_of_obj,
+                        prop: MemberProp::Ident(prop),
                         ..
                     }) => match &**obj_of_obj {
                         Expr::Ident(obj_of_obj) => {
-                            if prop.is_ident_ref_to(js_word!("default"))
+                            if prop.sym == js_word!("default")
                                 && obj_of_obj.to_id() == import_local_name
                             {
                                 return true;
@@ -188,17 +183,16 @@ impl State {
                 },
 
                 Expr::Call(CallExpr {
-                    callee: ExprOrSuper::Expr(callee),
+                    callee: Callee::Expr(callee),
                     ..
                 }) => match &**callee {
                     Expr::Member(MemberExpr {
-                        obj: ExprOrSuper::Expr(tag_callee_object),
-                        prop: tag_callee_property,
-                        computed: false,
+                        obj: tag_callee_object,
+                        prop: MemberProp::Ident(tag_callee_property),
                         ..
                     }) => match &**tag_callee_object {
                         Expr::Ident(tag_callee_object) => {
-                            if tag_callee_property.is_ident_ref_to(js_word!("default"))
+                            if tag_callee_property.sym == js_word!("default")
                                 && tag_callee_object.to_id() == import_local_name
                             {
                                 return true;
