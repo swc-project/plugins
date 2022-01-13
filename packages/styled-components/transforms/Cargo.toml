@@ -21,4 +21,4 @@ tracing = "0.1.29"
 serde_json = "1.0.69"
 swc_ecma_transforms_testing = "0.58.0"
 swc_ecmascript = {version = "0.108.1", features = ["parser", "transforms"]}
-testing = "0.17.0"
+testing = "0.18.0"
