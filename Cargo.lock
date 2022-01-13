@@ -1238,7 +1238,7 @@ checksum = "6446ced80d6c486436db5c078dde11a9f73d42b57fb273121e160b84f63d894c"
 
 [[package]]
 name = "styled_components"
-version = "0.10.0"
+version = "0.11.0"
 dependencies = [
  "Inflector",
  "once_cell",
@@ -1344,9 +1344,9 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_parser"
-version = "0.86.1"
+version = "0.86.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ce38f353b5495e31782b6eec62e2c8c3a4eb09dbef5e9caae9b83af8526fd1cb"
+checksum = "abc12ba96d2f6b4487869ccd4194a679e0dd09260dcec483189b2eda6a035496"
 dependencies = [
  "either",
  "enum_kind",
@@ -1451,9 +1451,9 @@ dependencies = [
 
 [[package]]
 name = "swc_ecmascript"
-version = "0.107.1"
+version = "0.107.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "65c0b3a2c9cf53ba0ccb2cc1728613ebbc35b0d62f252654e04436d2c32fcd2c"
+checksum = "c57f67284f0a195882748f1b23e7776608e7b6cfb566dac6ce178f06796aae01"
 dependencies = [
  "swc_ecma_ast",
  "swc_ecma_parser",
@@ -1516,7 +1516,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_styled_components"
-version = "0.9.0"
+version = "0.10.0"
 dependencies = [
  "styled_components",
 ]
