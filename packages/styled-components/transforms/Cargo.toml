@@ -3,7 +3,7 @@ description = "AST Transforms for styled-components, without dependency on plugi
 edition = "2018"
 license = "Apache-2.0"
 name = "styled_components"
-version = "0.12.0"
+version = "0.13.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -14,11 +14,11 @@ regex = {version = "1.5.4", features = ["std", "perf"], default-features = false
 serde = {version = "1.0.130", features = ["derive"]}
 swc_atoms = "0.2.9"
 swc_common = {version = "0.17.0", features = ["concurrent"]}
-swc_ecmascript = { version = "0.110.9", features = ["utils", "visit"] }
+swc_ecmascript = { version = "0.111.2", features = ["utils", "visit"] }
 tracing = "0.1.29"
 
 [dev-dependencies]
 serde_json = "1.0.69"
 swc_ecma_transforms_testing = "0.59.0"
-swc_ecmascript = { version = "0.110.9", features = ["parser", "transforms"] }
+swc_ecmascript = { version = "0.111.2", features = ["parser", "transforms"] }
 testing = "0.18.0"
