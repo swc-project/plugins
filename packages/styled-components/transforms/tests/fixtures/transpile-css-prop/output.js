@@ -121,8 +121,7 @@ const ObjectPropWithSpread = ()=>{
     return <_StyledDiv $_css13={css} $_css14={playing ? {
         opacity: 0,
         bottom: "-100px"
-    } : {
-    }}/>;
+    } : {}}/>;
 };
 var _StyledP = _styled("p")`flex: 1;`;
 var _StyledP2 = _styled("p")`
