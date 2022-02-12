@@ -42,7 +42,7 @@ jobs:
       - name: List files
         shell: bash
         run: |
-          ls -alR target/wasm32-wasi/release
+          ls -al target/wasm32-wasi/release
 
       - name: Publish main packages
         run: |
