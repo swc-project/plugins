@@ -39,6 +39,11 @@ jobs:
         env:
           MACOSX_DEPLOYMENT_TARGET: "10.13"
 
+      - name: List files
+        shell: bash
+        run: |
+          ls -alR target/
+
       - name: Publish main packages
         run: |
           echo "WIP"
