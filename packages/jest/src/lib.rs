@@ -4,8 +4,9 @@ use swc_common::util::take::Take;
 use swc_ecmascript::{
     ast::*,
     utils::{prepend_stmts, StmtLike},
-    visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith},
+    visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
 };
+use swc_plugin::plugin_transform;
 
 // swc_plugin::define_js_plugin!(jest);
 
@@ -17,8 +18,11 @@ static HOIST_METHODS: phf::Set<&str> = phf_set![
     "deepUnmock"
 ];
 
-fn jest(_: Config) -> impl Fold + VisitMut {
-    as_folder(Jest)
+#[plugin_transform]
+fn jest(mut program: Program, _plugin_config: String) -> Program {
+    program.visit_mut_with(&mut Jest);
+
+    program
 }
 
 #[derive(Deserialize)]
