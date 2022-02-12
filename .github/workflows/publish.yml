@@ -12,13 +12,8 @@ env:
 
 jobs:
   build:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-18.04, macos-latest, windows-latest]
-
-    name: Build - ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    name: Build
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
@@ -43,16 +38,6 @@ jobs:
         run: swc-dev plugin build --package --release
         env:
           MACOSX_DEPLOYMENT_TARGET: "10.13"
-
-      # - name: Strip (linux)
-      #   shell: bash
-      #   if: matrix.os == 'ubuntu-18.04'
-      #   run: strip swc.*.node
-
-      # - name: Strip (mac os x)
-      #   shell: bash
-      #   if: matrix.os == 'macos-latest'
-      #   run: strip -x swc.*.node
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
