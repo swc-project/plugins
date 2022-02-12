@@ -44,7 +44,7 @@ jobs:
         run: |
           ls -al target/wasm32-wasi/release
 
-      - name: Publish main packages
+      - name: Publish npm packages
         run: |
           echo "WIP"
           # npm publish --workspaces --access public
