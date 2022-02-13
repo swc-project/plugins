@@ -3,3 +3,8 @@ members = [
   "packages/jest",
   "packages/styled-components",
 ]
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"

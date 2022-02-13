@@ -3,7 +3,5 @@
 .DS_Store
 *.html
 
-*.swc-pkg.tgz
-*.swc-pkg.zip
-
 node_modules
+*.wasm
