@@ -1,0 +1,20 @@
+{
+  "name": "@swc/plugin-jest",
+  "version": "0.1.11",
+  "description": "Jest transform plugin for https://swc.rs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "homepage": "https://swc.rs",
+  "repository": {
+    "type": "git",
+    "url": "+https://github.com/swc-project/plugins.git"
+  },
+  "bugs": {
+    "url": "https://github.com/swc-project/plugins/issues"
+  },
+  "author": "강동윤 <kdy1997.dev@gmail.com>",
+  "keywords": [],
+  "license": "Apache-2.0"
+}
