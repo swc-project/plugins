@@ -46,8 +46,7 @@ jobs:
 
       - name: Publish npm packages
         run: |
-          echo "WIP"
-          # npm publish --workspaces --access public
+          npm publish --dry-run --workspaces --access public
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
