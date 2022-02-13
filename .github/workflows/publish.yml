@@ -44,6 +44,12 @@ jobs:
         run: |
           ls -al target/wasm32-wasi/release
 
+      - name: Configure npm
+        run: |
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Publish npm packages
         run: |
           npm publish --workspaces --access public
