@@ -14,8 +14,7 @@ use swc_common::{
 use swc_ecmascript::{
     ast::*,
     utils::{
-        id, ident::IdentLike, prepend, private_ident, quote_ident, quote_str, ExprExt, ExprFactory,
-        Id,
+        ident::IdentLike, prepend, private_ident, quote_ident, quote_str, ExprExt, ExprFactory, Id,
     },
     visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith},
 };
@@ -390,7 +389,12 @@ impl VisitMut for TranspileCssProp {
         }
         n.body = serialized_body;
 
-        std::mem::replace(&mut self.interleaved_injections, Default::default())
+        let mut remaining = std::mem::replace(&mut self.interleaved_injections, Default::default())
+            .into_iter()
+            .collect::<Vec<_>>();
+        remaining.sort_by_key(|x| x.0.clone());
+
+        remaining
             .into_iter()
             .for_each(|(_, stmts)| n.body.extend(stmts.into_iter().map(ModuleItem::Stmt)));
 
