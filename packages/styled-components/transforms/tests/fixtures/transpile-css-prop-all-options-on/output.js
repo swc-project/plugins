@@ -102,6 +102,29 @@ const Thing3 = styled.div.withConfig({
 })`
   color: blue;
 `;
+var _StyledThing6 = _styled(Thing3)((p)=>({
+        [p.$_css19]: {
+            color: "red"
+        }
+    })
+);
+var _StyledThing5 = _styled(Thing3)((p)=>({
+        [p.$_css18]: {
+            color: "red"
+        }
+    })
+);
+var _StyledThing4 = _styled(Thing3)((p)=>({
+        [p.$_css17]: {
+            color: "red"
+        }
+    })
+);
+var _StyledThing3 = _styled(Thing3)((p)=>({
+        color: p.$_css16
+    })
+);
+var _StyledThing = _styled(Thing3)`color: red;`;
 const EarlyUsageComponent2 = (p)=><_StyledThing2 />
 ;
 function Thing4(props) {
@@ -161,6 +184,9 @@ const ObjectPropWithSpread = ()=>{
         bottom: "-100px"
     } : {}}/>;
 };
+var _StyledThing2 = _styled(Thing4)`color: red;`;
+var _StyledSomeOtherComponent = _styled(SomeOtherComponent)`color: red;`;
+var _StyledSomeComponent = _styled(SomeComponent)`color: red;`;
 var _StyledP = _styled("p")`flex: 1;`;
 var _StyledP2 = _styled("p")`
       flex: 1;
@@ -237,34 +263,8 @@ var _StyledP13 = _styled("p")((p)=>({
         }
     })
 );
-var _StyledThing = _styled(Thing3)`color: red;`;
-var _StyledThing2 = _styled(Thing4)`color: red;`;
-var _StyledSomeComponent = _styled(SomeComponent)`color: red;`;
-var _StyledSomeOtherComponent = _styled(SomeOtherComponent)`color: red;`;
 var _StyledP14 = _styled("p")((p)=>({
         color: p.$_css15
-    })
-);
-var _StyledThing3 = _styled(Thing3)((p)=>({
-        color: p.$_css16
-    })
-);
-var _StyledThing4 = _styled(Thing3)((p)=>({
-        [p.$_css17]: {
-            color: "red"
-        }
-    })
-);
-var _StyledThing5 = _styled(Thing3)((p)=>({
-        [p.$_css18]: {
-            color: "red"
-        }
-    })
-);
-var _StyledThing6 = _styled(Thing3)((p)=>({
-        [p.$_css19]: {
-            color: "red"
-        }
     })
 );
 var _StyledDiv = _styled("div")((p)=>({

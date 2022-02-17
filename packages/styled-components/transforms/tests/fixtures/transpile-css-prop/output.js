@@ -65,6 +65,29 @@ const EarlyUsageComponent = (p)=><_StyledThing />
 const Thing3 = styled.div`
   color: blue;
 `;
+var _StyledThing5 = _styled(Thing3)((p)=>({
+        [p.$_css8]: {
+            color: "red"
+        }
+    })
+);
+var _StyledThing4 = _styled(Thing3)((p)=>({
+        [p.$_css7]: {
+            color: "red"
+        }
+    })
+);
+var _StyledThing3 = _styled(Thing3)((p)=>({
+        [p.$_css6]: {
+            color: "red"
+        }
+    })
+);
+var _StyledThing2 = _styled(Thing3)((p)=>({
+        color: p.$_css5
+    })
+);
+var _StyledThing = _styled(Thing3)`color: red;`;
 const ObjectInterpolation = (p)=>{
     const theme = useTheme();
     return <_StyledP12 $_css4={theme.colors.red}>
@@ -160,31 +183,8 @@ var _StyledButtonGhost = _styled(Button.Ghost)`flex: 1`;
 var _StyledButtonGhostNew = _styled(Button.Ghost.New)`flex: 1`;
 var _StyledButtonGhost2 = _styled(button.ghost)`flex: 1`;
 var _StyledButtonGhost3 = _styled("button-ghost")`flex: 1`;
-var _StyledThing = _styled(Thing3)`color: red;`;
 var _StyledP12 = _styled("p")((p)=>({
         color: p.$_css4
-    })
-);
-var _StyledThing2 = _styled(Thing3)((p)=>({
-        color: p.$_css5
-    })
-);
-var _StyledThing3 = _styled(Thing3)((p)=>({
-        [p.$_css6]: {
-            color: "red"
-        }
-    })
-);
-var _StyledThing4 = _styled(Thing3)((p)=>({
-        [p.$_css7]: {
-            color: "red"
-        }
-    })
-);
-var _StyledThing5 = _styled(Thing3)((p)=>({
-        [p.$_css8]: {
-            color: "red"
-        }
     })
 );
 var _StyledP13 = _styled("p")((p)=>({

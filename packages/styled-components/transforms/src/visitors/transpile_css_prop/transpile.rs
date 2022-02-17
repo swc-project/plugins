@@ -6,10 +6,17 @@ use inflector::Inflector;
 use once_cell::sync::Lazy;
 use regex::Regex;
 use swc_atoms::{js_word, JsWord};
-use swc_common::{collections::AHashSet, util::take::Take, Spanned, DUMMY_SP};
+use swc_common::{
+    collections::{AHashMap, AHashSet},
+    util::take::Take,
+    Spanned, DUMMY_SP,
+};
 use swc_ecmascript::{
     ast::*,
-    utils::{id, prepend, private_ident, quote_ident, quote_str, ExprExt, ExprFactory, Id},
+    utils::{
+        id, ident::IdentLike, prepend, private_ident, quote_ident, quote_str, ExprExt, ExprFactory,
+        Id,
+    },
     visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith},
 };
 
@@ -28,6 +35,7 @@ pub fn transpile_css_prop() -> impl Fold + VisitMut {
 struct TranspileCssProp {
     import_name: Option<Ident>,
     injected_nodes: Vec<Stmt>,
+    interleaved_injections: AHashMap<Id, Vec<Stmt>>,
 
     identifier_idx: usize,
     styled_idx: HashMap<JsWord, usize>,
@@ -43,7 +51,7 @@ impl TranspileCssProp {
     fn is_top_level_ident(&mut self, ident: &Ident) -> bool {
         self.top_level_decls
             .as_ref()
-            .map(|decls| decls.contains(&id(ident)))
+            .map(|decls| decls.contains(&ident.to_id()))
             .unwrap_or(false)
     }
 }
@@ -68,8 +76,8 @@ impl VisitMut for TranspileCssProp {
                         .get_or_insert_with(|| private_ident!("_styled"))
                         .clone();
 
-                    let name = get_name(&elem.opening.name);
-                    let id_sym = name.to_class_case();
+                    let name = get_name_ident(&elem.opening.name);
+                    let id_sym = name.sym.to_class_case();
 
                     // Match the original plugin's behavior.
                     let id_sym = id_sym.trim_end_matches(char::is_numeric);
@@ -81,21 +89,21 @@ impl VisitMut for TranspileCssProp {
                         append_if_gt_one(&format!("_Styled{}", id_sym), styled_idx)
                     );
 
-                    let (styled, inject_after) = if TAG_NAME_REGEX.is_match(&name) {
+                    let (styled, inject_after) = if TAG_NAME_REGEX.is_match(&name.sym) {
                         (
                             (Expr::Call(CallExpr {
                                 span: DUMMY_SP,
                                 callee: import_name.as_callee(),
                                 args: vec![Lit::Str(Str {
                                     span: DUMMY_SP,
-                                    value: name.into(),
+                                    value: name.sym.into(),
                                     has_escape: false,
                                     kind: Default::default(),
                                 })
                                 .as_arg()],
                                 type_args: Default::default(),
                             })),
-                            None::<()>,
+                            None::<Ident>,
                         )
                     } else {
                         let name_expr = get_name_expr(&elem.opening.name);
@@ -107,7 +115,11 @@ impl VisitMut for TranspileCssProp {
                                 args: vec![name_expr.as_arg()],
                                 type_args: Default::default(),
                             }),
-                            None,
+                            if self.is_top_level_ident(&name) {
+                                Some(name)
+                            } else {
+                                None
+                            },
                         )
                     };
 
@@ -284,15 +296,22 @@ impl VisitMut for TranspileCssProp {
                         }),
                         definite: false,
                     };
+                    let stmt = Stmt::Decl(Decl::Var(VarDecl {
+                        span: DUMMY_SP,
+                        kind: VarDeclKind::Var,
+                        declare: false,
+                        decls: vec![var],
+                    }));
                     match inject_after {
-                        Some(_injector) => todo!("Use injector"),
+                        Some(injector) => {
+                            let id = injector.to_id();
+                            self.interleaved_injections
+                                .entry(id)
+                                .or_default()
+                                .push(stmt);
+                        }
                         None => {
-                            self.injected_nodes.push(Stmt::Decl(Decl::Var(VarDecl {
-                                span: DUMMY_SP,
-                                kind: VarDeclKind::Var,
-                                declare: false,
-                                decls: vec![var],
-                            })));
+                            self.injected_nodes.push(stmt);
                         }
                     }
                 }
@@ -348,6 +367,32 @@ impl VisitMut for TranspileCssProp {
                 })),
             );
         }
+
+        let mut serialized_body: Vec<ModuleItem> = vec![];
+        let body = std::mem::replace(&mut n.body, vec![]);
+        for item in body {
+            serialized_body.push(item.clone());
+            match &item {
+                ModuleItem::Stmt(Stmt::Decl(Decl::Var(vd))) => {
+                    for decl in &vd.decls {
+                        if let Pat::Ident(ident) = &decl.name {
+                            let id = ident.to_id();
+                            let stmts = self.interleaved_injections.remove(&id);
+                            if let Some(stmts) = stmts {
+                                serialized_body
+                                    .extend(stmts.into_iter().rev().map(ModuleItem::Stmt));
+                            }
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+        n.body = serialized_body;
+
+        std::mem::replace(&mut self.interleaved_injections, Default::default())
+            .into_iter()
+            .for_each(|(_, stmts)| n.body.extend(stmts.into_iter().map(ModuleItem::Stmt)));
 
         n.body
             .extend(self.injected_nodes.take().into_iter().map(ModuleItem::Stmt));
@@ -552,14 +597,16 @@ fn append_if_gt_one(s: &str, suffix: usize) -> Cow<str> {
     }
 }
 
-fn get_name(el: &JSXElementName) -> JsWord {
+fn get_name_ident(el: &JSXElementName) -> Ident {
     match el {
-        JSXElementName::Ident(v) => v.sym.clone(),
-        JSXElementName::JSXMemberExpr(e) => {
-            format!("{}_{}", get_name_of_jsx_obj(&e.obj), e.prop.sym).into()
-        }
+        JSXElementName::Ident(v) => v.clone(),
+        JSXElementName::JSXMemberExpr(e) => Ident {
+            sym: format!("{}_{}", get_name_of_jsx_obj(&e.obj), e.prop.sym).into(),
+            span: e.prop.span,
+            optional: false,
+        },
         _ => {
-            unimplemented!("get_name for namespaced jsx element")
+            unimplemented!("get_name_ident for namespaced jsx element")
         }
     }
 }
