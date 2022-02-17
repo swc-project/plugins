@@ -184,9 +184,9 @@ const ObjectPropWithSpread = ()=>{
         bottom: "-100px"
     } : {}}/>;
 };
-var _StyledThing2 = _styled(Thing4)`color: red;`;
-var _StyledSomeOtherComponent = _styled(SomeOtherComponent)`color: red;`;
 var _StyledSomeComponent = _styled(SomeComponent)`color: red;`;
+var _StyledSomeOtherComponent = _styled(SomeOtherComponent)`color: red;`;
+var _StyledThing2 = _styled(Thing4)`color: red;`;
 var _StyledP = _styled("p")`flex: 1;`;
 var _StyledP2 = _styled("p")`
       flex: 1;
