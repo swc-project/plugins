@@ -43,6 +43,17 @@ pub(crate) fn get_prop_name(p: &Prop) -> Option<&PropName> {
     }
 }
 
+pub(crate) fn get_prop_name2(p: &Prop) -> PropName {
+    match p {
+        Prop::Shorthand(ident) => PropName::Ident(ident.clone()),
+        Prop::KeyValue(p) => p.key.clone(),
+        Prop::Assign(x) => PropName::Ident(x.key.clone()),
+        Prop::Getter(p) => p.key.clone(),
+        Prop::Setter(p) => p.key.clone(),
+        Prop::Method(p) => p.key.clone(),
+    }
+}
+
 /// This is created once per file.
 #[derive(Debug, Default)]
 pub struct State {
