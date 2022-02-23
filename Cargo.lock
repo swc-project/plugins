@@ -91,6 +91,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b41b7ea54a0c9d92199de89e20e58d49f02f8e699814ef3fdf266f6f748d15c7"
 
 [[package]]
+name = "better_scoped_tls"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b73e8ecdec39e98aa3b19e8cd0b8ed8f77ccb86a6b0b2dc7cd86d105438a2123"
+dependencies = [
+ "scoped-tls",
+]
+
+[[package]]
 name = "bitflags"
 version = "1.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1170,6 +1179,21 @@ checksum = "ff1aefdc512c8dfefa1de793c0e62a192bd74a7fa7e5affe3f08885751c127ee"
 dependencies = [
  "is-macro",
  "num-bigint",
+ "serde",
+ "string_enum",
+ "swc_atoms",
+ "swc_common",
+ "unicode-xid",
+]
+
+[[package]]
+name = "swc_ecma_ast"
+version = "0.68.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "334167a0854d2929fcd2138f4250b03a5bad6be3fcdd51eec4748186b7eb28ea"
+dependencies = [
+ "is-macro",
+ "num-bigint",
  "rkyv",
  "serde",
  "string_enum",
@@ -1191,9 +1215,9 @@ dependencies = [
  "sourcemap",
  "swc_atoms",
  "swc_common",
- "swc_ecma_ast",
+ "swc_ecma_ast 0.65.3",
  "swc_ecma_codegen_macros",
- "swc_ecma_parser",
+ "swc_ecma_parser 0.88.2",
  "tracing",
 ]
 
@@ -1224,7 +1248,27 @@ dependencies = [
  "smallvec",
  "swc_atoms",
  "swc_common",
- "swc_ecma_ast",
+ "swc_ecma_ast 0.65.3",
+ "tracing",
+ "typed-arena",
+ "unicode-xid",
+]
+
+[[package]]
+name = "swc_ecma_parser"
+version = "0.91.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "59fd8235309bc3ed58938fe19c16570eea150dea1bde5280535d2fdc174500dd"
+dependencies = [
+ "either",
+ "enum_kind",
+ "lexical",
+ "num-bigint",
+ "serde",
+ "smallvec",
+ "swc_atoms",
+ "swc_common",
+ "swc_ecma_ast 0.68.0",
  "tracing",
  "typed-arena",
  "unicode-xid",
@@ -1232,17 +1276,17 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_transforms"
-version = "0.116.0"
+version = "0.120.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "21b241185b1151013793aafe2365fa6139afed855be4ef75a6512ed3ed72ac58"
+checksum = "601d7c379db77dd148760d03f032f8a6551974dff69e20dbdc5983763e5b0d51"
 dependencies = [
  "swc_atoms",
  "swc_common",
- "swc_ecma_ast",
- "swc_ecma_parser",
- "swc_ecma_transforms_base",
- "swc_ecma_utils",
- "swc_ecma_visit",
+ "swc_ecma_ast 0.68.0",
+ "swc_ecma_parser 0.91.0",
+ "swc_ecma_transforms_base 0.61.0",
+ "swc_ecma_utils 0.68.0",
+ "swc_ecma_visit 0.54.0",
  "unicode-xid",
 ]
 
@@ -1259,10 +1303,30 @@ dependencies = [
  "smallvec",
  "swc_atoms",
  "swc_common",
- "swc_ecma_ast",
- "swc_ecma_parser",
- "swc_ecma_utils",
- "swc_ecma_visit",
+ "swc_ecma_ast 0.65.3",
+ "swc_ecma_parser 0.88.2",
+ "swc_ecma_utils 0.65.0",
+ "swc_ecma_visit 0.51.1",
+ "tracing",
+]
+
+[[package]]
+name = "swc_ecma_transforms_base"
+version = "0.61.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e0f5bef08c09969473e7d71f8d7606a14cc661633965084ad21584562e70fd7a"
+dependencies = [
+ "better_scoped_tls",
+ "once_cell",
+ "phf 0.8.0",
+ "serde",
+ "smallvec",
+ "swc_atoms",
+ "swc_common",
+ "swc_ecma_ast 0.68.0",
+ "swc_ecma_parser 0.91.0",
+ "swc_ecma_utils 0.68.0",
+ "swc_ecma_visit 0.54.0",
  "tracing",
 ]
 
@@ -1279,12 +1343,12 @@ dependencies = [
  "serde_json",
  "sha-1",
  "swc_common",
- "swc_ecma_ast",
+ "swc_ecma_ast 0.65.3",
  "swc_ecma_codegen",
- "swc_ecma_parser",
- "swc_ecma_transforms_base",
- "swc_ecma_utils",
- "swc_ecma_visit",
+ "swc_ecma_parser 0.88.2",
+ "swc_ecma_transforms_base 0.58.2",
+ "swc_ecma_utils 0.65.0",
+ "swc_ecma_visit 0.51.1",
  "tempfile",
  "testing",
 ]
@@ -1299,8 +1363,23 @@ dependencies = [
  "once_cell",
  "swc_atoms",
  "swc_common",
- "swc_ecma_ast",
- "swc_ecma_visit",
+ "swc_ecma_ast 0.65.3",
+ "swc_ecma_visit 0.51.1",
+ "tracing",
+]
+
+[[package]]
+name = "swc_ecma_utils"
+version = "0.68.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b07c304cc98f721e25d510ae048284c559cb2c34e6b478c90428cd4fba6f258a"
+dependencies = [
+ "indexmap",
+ "once_cell",
+ "swc_atoms",
+ "swc_common",
+ "swc_ecma_ast 0.68.0",
+ "swc_ecma_visit 0.54.0",
  "tracing",
 ]
 
@@ -1313,22 +1392,36 @@ dependencies = [
  "num-bigint",
  "swc_atoms",
  "swc_common",
- "swc_ecma_ast",
+ "swc_ecma_ast 0.65.3",
+ "swc_visit",
+ "tracing",
+]
+
+[[package]]
+name = "swc_ecma_visit"
+version = "0.54.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "768c7cb86162cb2538a188586909b5499740da73b2eb80b258210cf147652c84"
+dependencies = [
+ "num-bigint",
+ "swc_atoms",
+ "swc_common",
+ "swc_ecma_ast 0.68.0",
  "swc_visit",
  "tracing",
 ]
 
 [[package]]
 name = "swc_ecmascript"
-version = "0.113.2"
+version = "0.118.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e04f88d1c97cd98d840eed9f055db85883fc60f9e7d40a026130349d79dc3067"
+checksum = "531d51658f266e8dd9d960a66f0a27b93cb67ea813b73b65345d1daafe495f56"
 dependencies = [
- "swc_ecma_ast",
- "swc_ecma_parser",
+ "swc_ecma_ast 0.68.0",
+ "swc_ecma_parser 0.91.0",
  "swc_ecma_transforms",
- "swc_ecma_utils",
- "swc_ecma_visit",
+ "swc_ecma_utils 0.68.0",
+ "swc_ecma_visit 0.54.0",
 ]
 
 [[package]]
@@ -1357,15 +1450,14 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin"
-version = "0.26.1"
+version = "0.30.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "636ba4c6688926f3ef3c1daec054cc2ed0fbcabda848907388551c2448e6b967"
+checksum = "460b354c5b2148cd7724c4f03b5f8f9ae1a42615e6010ab1df0b9ce65fbd3725"
 dependencies = [
- "once_cell",
  "swc_atoms",
  "swc_common",
- "swc_ecma_ast",
- "swc_ecma_visit",
+ "swc_ecma_ast 0.68.0",
+ "swc_ecma_visit 0.54.0",
  "swc_plugin_macro",
 ]
 
@@ -1383,9 +1475,9 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_macro"
-version = "0.2.1"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "31789f975ce509a1b10444612ce4c6b13176badc0fd201402dde8013c2a4c3d4"
+checksum = "9b719a4ff08c9088ef443d69ae42d85c7878c640ad21df2e065d6ccc4fae5f2b"
 dependencies = [
  "proc-macro2",
  "quote",
