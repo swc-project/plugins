@@ -19,7 +19,7 @@ static HOIST_METHODS: phf::Set<&str> = phf_set![
 ];
 
 #[plugin_transform]
-fn jest(mut program: Program, _plugin_config: String) -> Program {
+fn jest(mut program: Program, _plugin_config: String, _: String) -> Program {
     program.visit_mut_with(&mut Jest);
 
     program
