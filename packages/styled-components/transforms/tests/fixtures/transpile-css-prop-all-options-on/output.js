@@ -2,7 +2,9 @@ import _styled from "styled-components";
 import styled from "styled-components";
 import SomeComponent from "../SomeComponentPath";
 const { SomeOtherComponent  } = require("../SomeOtherComponentPath");
-const Thing = styled.div.withConfig({
+/**
+ * control
+ */ const Thing = styled.div.withConfig({
     displayName: "code__Thing",
     componentId: "sc-867225be-0"
 })`
@@ -14,7 +16,9 @@ const Thing2 = styled(Thing).withConfig({
 })`
   background: blue;
 `;
-const StaticString = (p)=><_StyledP >A</_StyledP>
+/*
+ * Basic fixtures
+ */ const StaticString = (p)=><_StyledP >A</_StyledP>
 ;
 const StaticTemplate = (p)=><_StyledP2 >
 
@@ -32,7 +36,9 @@ const CssHelperProp = (p)=><_StyledP5 >
 
   </_StyledP5>
 ;
-const CustomComp = (p)=><_StyledParagraph >H</_StyledParagraph>
+/*
+ * Dynamic prop
+ */ const CustomComp = (p)=><_StyledParagraph >H</_StyledParagraph>
 ;
 const DynamicProp = (p)=><_StyledP6 $_css={props.cssText}>H</_StyledP6>
 ;
@@ -94,7 +100,7 @@ const SpreadObjectPropMixedInputs = (p)=>{
 
     </_StyledP13>;
 };
-const EarlyUsageComponent = (p)=><_StyledThing />
+/* styled component defined after function it's used in */ const EarlyUsageComponent = (p)=><_StyledThing />
 ;
 const Thing3 = styled.div.withConfig({
     displayName: "code__Thing3",
@@ -130,7 +136,7 @@ const EarlyUsageComponent2 = (p)=><_StyledThing2 />
 function Thing4(props) {
     return <div {...props}/>;
 }
-const ImportedComponentUsage = (p)=><_StyledSomeComponent />
+/* insert before usage for non-local scope styled HOC targets */ const ImportedComponentUsage = (p)=><_StyledSomeComponent />
 ;
 const RequiredComponentUsage = (p)=><_StyledSomeOtherComponent />
 ;

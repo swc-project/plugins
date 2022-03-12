@@ -10,4 +10,4 @@ version = "0.15.0"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-styled_components = {path = "./transforms/", version = "0.17.0"}
+styled_components = {path = "./transforms/", version = "0.18.0"}

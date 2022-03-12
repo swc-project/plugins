@@ -31,7 +31,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 16
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
@@ -50,8 +50,6 @@ jobs:
         with:
           path: |
             ~/.cargo/
-            target
-            Cargo.lock
           key: cargo-dev-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             cargo-dev-${{ runner.os }}

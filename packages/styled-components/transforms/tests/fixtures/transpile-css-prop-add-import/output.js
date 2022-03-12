@@ -1,4 +1,5 @@
 import _styled from "styled-components";
+// @flow
 import React from "react";
 import Card from "../../shared/components/Card";
 import config from "../../../config";
