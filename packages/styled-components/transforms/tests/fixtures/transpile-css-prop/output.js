@@ -1,5 +1,7 @@
 import _styled from "styled-components";
-const StaticString = (p)=><_StyledP >A</_StyledP>
+/*
+ * Basic fixtures
+ */ const StaticString = (p)=><_StyledP >A</_StyledP>
 ;
 const StaticTemplate = (p)=><_StyledP2 >
 
@@ -17,7 +19,9 @@ const CssHelperProp = (p)=><_StyledP5 >
 
   </_StyledP5>
 ;
-const CustomComp = (p)=><_StyledParagraph >H</_StyledParagraph>
+/*
+ * Dynamic prop
+ */ const CustomComp = (p)=><_StyledParagraph >H</_StyledParagraph>
 ;
 const DynamicProp = (p)=><_StyledP6 $_css={props.cssText}>H</_StyledP6>
 ;
@@ -60,7 +64,7 @@ const CustomCompWithDotLowerCase = (p)=><_StyledButtonGhost2 >H</_StyledButtonGh
 ;
 const CustomElement = (p)=><_StyledButtonGhost3 >H</_StyledButtonGhost3>
 ;
-const EarlyUsageComponent = (p)=><_StyledThing />
+/* styled component defined after function it's used in */ const EarlyUsageComponent = (p)=><_StyledThing />
 ;
 const Thing3 = styled.div`
   color: blue;
