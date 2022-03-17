@@ -4,7 +4,7 @@ description = "Jest plugin for https://swc.rs"
 edition = "2018"
 license = "Apache-2.0"
 name = "swc_plugin_jest"
-version = "0.10.0"
+version = "0.11.0"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
@@ -13,6 +13,6 @@ crate-type = ["cdylib", "rlib"]
 phf = {version = "0.10.0", features = ["macros"]}
 serde = {version = "1.0.130", features = ["derive"]}
 swc_atoms = "0.2.9"
-swc_common = {version = "0.17.15", features = ["concurrent"]}
-swc_ecmascript = {features = ["utils", "visit"], version = "0.132.0"}
-swc_plugin = "0.33.0"
+swc_common = { version = "0.17.17", features = ["concurrent"] }
+swc_ecmascript = { features = ["utils", "visit"], version = "0.136.0" }
+swc_plugin = "0.35.0"
