@@ -13,9 +13,7 @@ use swc_common::{
 };
 use swc_ecmascript::{
     ast::*,
-    utils::{
-        ident::IdentLike, prepend, private_ident, quote_ident, quote_str, ExprExt, ExprFactory, Id,
-    },
+    utils::{ident::IdentLike, prepend, private_ident, quote_ident, ExprExt, ExprFactory, Id},
     visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith},
 };
 
@@ -96,8 +94,7 @@ impl VisitMut for TranspileCssProp {
                                 args: vec![Lit::Str(Str {
                                     span: DUMMY_SP,
                                     value: name.sym.into(),
-                                    has_escape: false,
-                                    kind: Default::default(),
+                                    raw: None,
                                 })
                                 .as_arg()],
                                 type_args: Default::default(),
@@ -134,7 +131,7 @@ impl VisitMut for TranspileCssProp {
                                         span: DUMMY_SP,
                                         tail: true,
                                         cooked: None,
-                                        raw: v.clone(),
+                                        raw: v.value.clone(),
                                     }],
                                 }),
                                 JSXAttrValue::JSXExprContainer(JSXExprContainer {
@@ -154,13 +151,13 @@ impl VisitMut for TranspileCssProp {
                                                 span: DUMMY_SP,
                                                 tail: false,
                                                 cooked: None,
-                                                raw: quote_str!(""),
+                                                raw: "".into(),
                                             },
                                             TplElement {
                                                 span: DUMMY_SP,
                                                 tail: true,
                                                 cooked: None,
-                                                raw: quote_str!(""),
+                                                raw: "".into(),
                                             },
                                         ],
                                     }),
@@ -358,8 +355,7 @@ impl VisitMut for TranspileCssProp {
                     src: Str {
                         span: DUMMY_SP,
                         value: "styled-components".into(),
-                        has_escape: Default::default(),
-                        kind: Default::default(),
+                        raw: None,
                     },
                     type_only: Default::default(),
                     asserts: Default::default(),
