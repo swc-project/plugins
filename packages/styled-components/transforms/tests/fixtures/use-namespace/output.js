@@ -1,4 +1,4 @@
-import * as styled from "styled-components";
+import * as styled from 'styled-components';
 const css = styled.css`
   background: black;
 `;

@@ -1,4 +1,4 @@
-const styled_default = require("styled-components/native");
+const styled_default = require('styled-components/native');
 const TestNormal = styled.div.withConfig({
     displayName: "code__TestNormal",
     componentId: "sc-1f1c6df5-0"

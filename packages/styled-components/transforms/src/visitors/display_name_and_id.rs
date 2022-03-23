@@ -122,8 +122,7 @@ impl DisplayNameAndId {
                 value: Box::new(Expr::Lit(Lit::Str(Str {
                     span: DUMMY_SP,
                     value: display_name,
-                    has_escape: false,
-                    kind: Default::default(),
+                    raw: None,
                 }))),
             }))))
         }
@@ -134,8 +133,7 @@ impl DisplayNameAndId {
                 value: Box::new(Expr::Lit(Lit::Str(Str {
                     span: DUMMY_SP,
                     value: component_id,
-                    has_escape: false,
-                    kind: Default::default(),
+                    raw: None,
                 }))),
             }))))
         }

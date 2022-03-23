@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 const Test = styled.div.withConfig({
     displayName: "Test",
     componentId: "sc-e0d5b7ad-0"
@@ -30,52 +30,42 @@ const WrappedComponent = styled(Inner).withConfig({
 const WrappedComponent2 = styled.div.withConfig({
     displayName: "WrappedComponent2",
     componentId: "sc-e0d5b7ad-6"
-})({
-});
+})({});
 const WrappedComponent3 = styled(Inner).withConfig({
     displayName: "WrappedComponent3",
     componentId: "sc-e0d5b7ad-7"
-})({
-});
+})({});
 const WrappedComponent4 = styled(Inner).attrs(()=>({
-        something: "else"
+        something: 'else'
     })
-)({
-});
+)({});
 const WrappedComponent5 = styled.div.attrs(()=>({
-        something: "else"
+        something: 'else'
     })
-)({
-});
+)({});
 const WrappedComponent6 = styled.div.attrs(()=>({
-        something: "else"
+        something: 'else'
     })
 ).withConfig({
     displayName: "WrappedComponent6",
     componentId: "sc-e0d5b7ad-8"
 })``;
 const WrappedComponent7 = styled.div.withConfig({
-    shouldForwardProp: ()=>{
-    },
+    shouldForwardProp: ()=>{},
     displayName: "WrappedComponent7",
     componentId: "sc-e0d5b7ad-9"
-})({
-});
+})({});
 const WrappedComponent8 = styled.div.withConfig({
-    shouldForwardProp: ()=>{
-    }
+    shouldForwardProp: ()=>{}
 }).attrs(()=>({
-        something: "else"
+        something: 'else'
     })
-)({
-});
+)({});
 const WrappedComponent9 = styled.div.attrs(()=>({
-        something: "else"
+        something: 'else'
     })
 ).withConfig({
-    shouldForwardProp: ()=>{
-    },
+    shouldForwardProp: ()=>{},
     displayName: "WrappedComponent9",
     componentId: "sc-e0d5b7ad-10"
-})({
-});
+})({});
