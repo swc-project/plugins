@@ -71,19 +71,19 @@ const Thing3 = styled.div`
 `;
 var _StyledThing5 = _styled(Thing3)((p)=>({
         [p.$_css8]: {
-            color: "red"
+            color: 'red'
         }
     })
 );
 var _StyledThing4 = _styled(Thing3)((p)=>({
         [p.$_css7]: {
-            color: "red"
+            color: 'red'
         }
     })
 );
 var _StyledThing3 = _styled(Thing3)((p)=>({
         [p.$_css6]: {
-            color: "red"
+            color: 'red'
         }
     })
 );
@@ -125,7 +125,7 @@ const ObjectFnInterpolationInKey = (p)=>{
     </_StyledThing4>;
 };
 const ObjectFnSimpleInterpolationInKey = (p)=>{
-    const foo = "@media screen and (max-width: 600px)";
+    const foo = '@media screen and (max-width: 600px)';
     return <_StyledThing5 $_css8={foo}>
 
       H
@@ -133,7 +133,7 @@ const ObjectFnSimpleInterpolationInKey = (p)=>{
     </_StyledThing5>;
 };
 const ObjectPropMixedInputs = (p)=>{
-    const color = "red";
+    const color = 'red';
     return <_StyledP13 $_css9={p.background} $_css10={color} $_css11={globalVar} $_css12={getAfterValue()}>
 
       A
@@ -142,12 +142,12 @@ const ObjectPropMixedInputs = (p)=>{
 };
 const ObjectPropWithSpread = ()=>{
     const css = {
-        color: "red"
+        color: 'red'
     };
     const playing = true;
     return <_StyledDiv $_css13={css} $_css14={playing ? {
         opacity: 0,
-        bottom: "-100px"
+        bottom: '-100px'
     } : {}}/>;
 };
 var _StyledP = _styled("p")`flex: 1;`;
@@ -155,7 +155,7 @@ var _StyledP2 = _styled("p")`
       flex: 1;
     `;
 var _StyledP3 = _styled("p")({
-    color: "blue"
+    color: 'blue'
 });
 var _StyledP4 = _styled("p")`flex: 1;`;
 var _StyledP5 = _styled("p")`
@@ -194,11 +194,11 @@ var _StyledP12 = _styled("p")((p)=>({
 var _StyledP13 = _styled("p")((p)=>({
         background: p.$_css9,
         color: p.$_css10,
-        textAlign: "left",
-        "::before": {
+        textAlign: 'left',
+        '::before': {
             content: p.$_css11
         },
-        "::after": {
+        '::after': {
             content: p.$_css12
         }
     })

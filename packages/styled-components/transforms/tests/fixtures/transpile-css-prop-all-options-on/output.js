@@ -1,7 +1,7 @@
 import _styled from "styled-components";
-import styled from "styled-components";
-import SomeComponent from "../SomeComponentPath";
-const { SomeOtherComponent  } = require("../SomeOtherComponentPath");
+import styled from 'styled-components';
+import SomeComponent from '../SomeComponentPath';
+const { SomeOtherComponent  } = require('../SomeOtherComponentPath');
 /**
  * control
  */ const Thing = styled.div.withConfig({
@@ -81,11 +81,11 @@ const CustomCompWithDotLowerCase = (p)=><_StyledButtonGhost2 >H</_StyledButtonGh
 ;
 const CustomElement = (p)=><_StyledButtonGhost3 >H</_StyledButtonGhost3>
 ;
-const globalVar = "\"foo\"";
-const getAfterValue = ()=>"\"bar\""
+const globalVar = '"foo"';
+const getAfterValue = ()=>'"bar"'
 ;
 const ObjectPropMixedInputs = (p)=>{
-    const color = "red";
+    const color = 'red';
     return <_StyledP12 $_css4={p.background} $_css5={color} $_css6={globalVar} $_css7={getAfterValue()}>
 
       A
@@ -93,7 +93,7 @@ const ObjectPropMixedInputs = (p)=>{
     </_StyledP12>;
 };
 const SpreadObjectPropMixedInputs = (p)=>{
-    const color = "red";
+    const color = 'red';
     return <_StyledP13 $_css8={globalVar} $_css9={getAfterValue()} $_css10={globalVar} $_css11={getAfterValue()} $_css12={p.background} $_css13={globalVar} $_css14={getAfterValue()}>
 
       A
@@ -110,19 +110,19 @@ const Thing3 = styled.div.withConfig({
 `;
 var _StyledThing6 = _styled(Thing3)((p)=>({
         [p.$_css19]: {
-            color: "red"
+            color: 'red'
         }
     })
 );
 var _StyledThing5 = _styled(Thing3)((p)=>({
         [p.$_css18]: {
-            color: "red"
+            color: 'red'
         }
     })
 );
 var _StyledThing4 = _styled(Thing3)((p)=>({
         [p.$_css17]: {
-            color: "red"
+            color: 'red'
         }
     })
 );
@@ -173,7 +173,7 @@ const ObjectFnInterpolationInKey = (p)=>{
     </_StyledThing5>;
 };
 const ObjectFnSimpleInterpolationInKey = (p)=>{
-    const foo = "@media screen and (max-width: 600px)";
+    const foo = '@media screen and (max-width: 600px)';
     return <_StyledThing6 $_css19={foo}>
 
       H
@@ -182,12 +182,12 @@ const ObjectFnSimpleInterpolationInKey = (p)=>{
 };
 const ObjectPropWithSpread = ()=>{
     const css = {
-        color: "red"
+        color: 'red'
     };
     const playing = true;
     return <_StyledDiv $_css20={css} $_css21={playing ? {
         opacity: 0,
-        bottom: "-100px"
+        bottom: '-100px'
     } : {}}/>;
 };
 var _StyledSomeComponent = _styled(SomeComponent)`color: red;`;
@@ -198,7 +198,7 @@ var _StyledP2 = _styled("p")`
       flex: 1;
     `;
 var _StyledP3 = _styled("p")({
-    color: "blue"
+    color: 'blue'
 });
 var _StyledP4 = _styled("p")`flex: 1;`;
 var _StyledP5 = _styled("p")`
@@ -233,38 +233,38 @@ var _StyledButtonGhost3 = _styled("button-ghost")`flex: 1`;
 var _StyledP12 = _styled("p")((p)=>({
         background: p.$_css4,
         color: p.$_css5,
-        textAlign: "left",
-        "::before": {
+        textAlign: 'left',
+        '::before': {
             content: p.$_css6
         },
-        "::after": {
+        '::after': {
             content: p.$_css7
         }
     })
 );
 var _StyledP13 = _styled("p")((p)=>({
         ...{
-            "::before": {
+            '::before': {
                 content: p.$_css8
             },
-            "::after": {
+            '::after': {
                 content: p.$_css9
             },
             ...{
-                "::before": {
+                '::before': {
                     content: p.$_css10
                 },
-                "::after": {
+                '::after': {
                     content: p.$_css11
                 }
             }
         },
         background: p.$_css12,
-        textAlign: "left",
-        "::before": {
+        textAlign: 'left',
+        '::before': {
             content: p.$_css13
         },
-        "::after": {
+        '::after': {
             content: p.$_css14
         }
     })

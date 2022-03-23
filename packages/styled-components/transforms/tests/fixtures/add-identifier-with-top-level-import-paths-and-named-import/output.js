@@ -1,4 +1,4 @@
-import { styled } from "@example/example";
+import { styled } from '@example/example';
 const Test = styled.div.withConfig({
     displayName: "Test",
     componentId: "sc-bd3b1624-0"

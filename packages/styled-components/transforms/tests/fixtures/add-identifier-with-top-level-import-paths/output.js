@@ -1,4 +1,4 @@
-import styled from "@xstyled/styled-components";
+import styled from '@xstyled/styled-components';
 const Test = styled.div.withConfig({
     componentId: "sc-2fd35b87-0"
 })`
