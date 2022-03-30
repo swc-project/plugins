@@ -1590,6 +1590,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "swc_plugin"
+version = "0.39.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "83b96672e5fc506bebf089792b1456e9f8b4eb49694c01a2e4d5788d81337736"
+dependencies = [
+ "swc_atoms",
+ "swc_common",
+ "swc_ecma_ast",
+ "swc_ecma_visit",
+ "swc_plugin_macro",
+]
+
+[[package]]
 name = "swc_plugin_jest"
 version = "0.11.0"
 dependencies = [
@@ -1598,7 +1611,7 @@ dependencies = [
  "swc_atoms",
  "swc_common",
  "swc_ecmascript",
- "swc_plugin",
+ "swc_plugin 0.37.0",
 ]
 
 [[package]]
@@ -1617,6 +1630,7 @@ name = "swc_plugin_styled_components"
 version = "0.19.0"
 dependencies = [
  "styled_components",
+ "swc_plugin 0.39.0",
 ]
 
 [[package]]
