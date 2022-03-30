@@ -1,8 +1,8 @@
 [workspace]
 members = [
-  "packages/emotion",
   "packages/jest",
   "packages/styled-components",
+  "packages/styled-jsx",
 ]
 
 [profile.release]
