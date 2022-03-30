@@ -13,6 +13,7 @@ function bumpNpm {
     (cd ./packages/$1 && yarn version)
 }
 
+up swc_atoms
 up swc_common
 up tesitng
 up swc_ecmascript
