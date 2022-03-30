@@ -10,7 +10,7 @@ function bump {
 }
 
 function bumpNpm {
-    (cd $1 && yarn version)
+    (cd ./packages/$1 && yarn version)
 }
 
 up swc_common
