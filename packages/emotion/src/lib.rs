@@ -1,8 +1,2 @@
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
-    }
-}
+#[path = "../../../vendor/next.js/packages/next-swc/crates/core/src/emotion/mod.rs"]
+mod imp;
