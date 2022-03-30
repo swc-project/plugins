@@ -1452,6 +1452,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "swc_plugin_emotion"
+version = "0.1.0"
+dependencies = [
+ "swc_atoms",
+ "swc_common",
+ "swc_ecmascript",
+ "swc_plugin",
+]
+
+[[package]]
 name = "swc_plugin_jest"
 version = "0.11.0"
 dependencies = [
