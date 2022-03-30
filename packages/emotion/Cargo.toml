@@ -1,8 +1,16 @@
 [package]
+authors = ["강동윤 <kdy1997.dev@gmail.com>"]
+description = "Emotion plugin for https://swc.rs"
+edition = "2021"
+license = "Apache-2.0"
 name = "swc_plugin_emotion"
 version = "0.1.0"
-edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
+swc_atoms = "0.2.11"
+swc_common = {version = "0.17.18", features = ["concurrent"]}
+swc_ecmascript = {features = ["utils", "visit"], version = "0.140.0"}
+swc_plugin = "0.39.0"
