@@ -2,7 +2,6 @@
   "name": "swc-plugins",
   "private": true,
   "workspaces": [
-    "packages/jest",
-    "packages/styled-components"
+    "packages/*"
   ]
 }
