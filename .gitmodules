@@ -1,0 +1,4 @@
+[submodule "vendor/next.js"]
+	path = vendor/next.js
+	url = https://github.com/kdy1/next.js
+	branch = "swc-plugins"
