@@ -3,7 +3,7 @@ use swc_ecmascript::{ast::Program, visit::FoldWith};
 use swc_plugin::plugin_transform;
 
 #[plugin_transform]
-fn emotion(program: Program, _plugin_config: String, _: String) -> Program {
+fn styled_jsx(program: Program, _plugin_config: String, _: String) -> Program {
     // TODO(kdy1): This is wrong, but it does not use cm
     let cm = Lrc::new(SourceMap::default());
 
