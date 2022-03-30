@@ -10,5 +10,6 @@ version = "0.19.0"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
+serde_json = "1.0.79"
 styled_components = {path = "./transforms/", version = "0.22.0"}
 swc_plugin = "0.39.0"
