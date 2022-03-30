@@ -3,7 +3,7 @@ description = "styled-components plugin for https://swc.rs"
 edition = "2018"
 license = "Apache-2.0"
 name = "swc_plugin_styled_components"
-version = "0.20.0"
+version = "0.21.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
@@ -11,5 +11,5 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 serde_json = "1.0.79"
-styled_components = {path = "./transforms/", version = "0.23.0"}
+styled_components = {path = "./transforms/", version = "0.24.0"}
 swc_plugin = "0.39.0"
