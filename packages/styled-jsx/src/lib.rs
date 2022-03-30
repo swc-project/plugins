@@ -1,12 +1,13 @@
-use swc_ecmascript::{
-    ast::Program,
-    visit::{FoldWith, VisitMutWith},
-};
+use swc_common::{sync::Lrc, FileName, SourceMap};
+use swc_ecmascript::{ast::Program, visit::FoldWith};
 use swc_plugin::plugin_transform;
 
 #[plugin_transform]
 fn emotion(program: Program, _plugin_config: String, _: String) -> Program {
-    let program = program.fold_with(&mut imp::styled_jsx());
+    // TODO(kdy1): This is wrong, but it does not use cm
+    let cm = Lrc::new(SourceMap::default());
+
+    let program = program.fold_with(&mut imp::styled_jsx(cm, FileName::Anon));
 
     program
 }
