@@ -27,6 +27,8 @@ jobs:
           git config --system core.eol lf
 
       - uses: actions/checkout@v2
+        with:
+          submodules: true
 
       - name: Setup node
         uses: actions/setup-node@v2
