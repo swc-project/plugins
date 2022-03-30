@@ -20,11 +20,14 @@ up swc_ecmascript
 up swc_ecma_transforms_testing
 up swc_plugin
 
-bump jest
+bump swc_plugin_jest
 bump styled_components
+bump swc_plugin_styled_jsx
 
 bumpNpm jest
 bumpNpm styled-components
+bumpNpm styled-jsx
+
 
 # Ensure that Cargo.lock is up-to-date
 cargo metadata --offline --format-version 1 > /dev/null
