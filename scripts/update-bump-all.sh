@@ -15,7 +15,7 @@ function bumpNpm {
 
 up swc_atoms
 up swc_common
-up tesitng
+up testing
 up swc_ecmascript
 up swc_ecma_transforms_testing
 up swc_plugin
