@@ -1,10 +1,10 @@
 {
-  "name": "@swc/plugin-jest",
-  "version": "0.5.0",
-  "description": "SWC plugin for jest",
-  "main": "swc_plugin_jest.wasm",
+  "name": "@swc/plugin-styled-components",
+  "version": "0.1.0",
+  "description": "SWC plugin for styled-components",
+  "main": "swc_plugin_styled_components.wasm",
   "scripts": {
-    "prepack": "cp ../../target/wasm32-wasi/release/swc_plugin_jest.wasm ."
+    "prepack": "cp ../../target/wasm32-wasi/release/swc_plugin_styled_components.wasm ."
   },
   "homepage": "https://swc.rs",
   "repository": {
