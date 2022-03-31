@@ -6,7 +6,7 @@ use swc_ecmascript::{
     utils::{prepend_stmts, StmtLike},
     visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
 };
-use swc_plugin::plugin_transform;
+use swc_plugin::{plugin_transform, TransformPluginProgramMetadata};
 
 // swc_plugin::define_js_plugin!(jest);
 
@@ -19,7 +19,7 @@ static HOIST_METHODS: phf::Set<&str> = phf_set![
 ];
 
 #[plugin_transform]
-fn jest(mut program: Program, _plugin_config: String, _: String) -> Program {
+fn jest(mut program: Program, _: TransformPluginProgramMetadata) -> Program {
     program.visit_mut_with(&mut Jest);
 
     program

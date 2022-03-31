@@ -1371,9 +1371,9 @@ dependencies = [
 
 [[package]]
 name = "swc_common"
-version = "0.17.18"
+version = "0.17.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "278ad1cbb3fb3b2686c86a7dd5f307ef791918d249a6da60fa6cd3388f4c6a78"
+checksum = "00edee63ed3957d0842ac91f04010b04a5c240c752924fa53e6ebe72888b523a"
 dependencies = [
  "ahash",
  "anyhow",
@@ -1773,9 +1773,9 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin"
-version = "0.40.0"
+version = "0.41.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2b4bfbde22561ade7e8eccd7ab6640ed1110491f27e4befe56399b527ebc90e7"
+checksum = "52630b9786f53d12965212cd945cf687bb9e3fe2a648b566c2bada0112f35fc3"
 dependencies = [
  "swc_atoms",
  "swc_common",
@@ -1810,9 +1810,9 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_macro"
-version = "0.3.1"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d71f555a832e23668286bf17d3c9a8f4b2c382a8c4673ad72e61b059dfd3199e"
+checksum = "e67f4d2260d6ec5375fe1c7705eb2e47a3c2db369f86a81203c993964999bd88"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1846,6 +1846,11 @@ dependencies = [
 [[package]]
 name = "swc_plugin_transform_imports"
 version = "0.1.0"
+dependencies = [
+ "swc_common",
+ "swc_ecmascript",
+ "swc_plugin",
+]
 
 [[package]]
 name = "swc_timer"

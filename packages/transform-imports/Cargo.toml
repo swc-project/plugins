@@ -10,3 +10,6 @@ version = "0.1.0"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
+swc_common = "0.17.19"
+swc_ecmascript = "0.140.0"
+swc_plugin = "0.41.0"
