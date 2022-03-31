@@ -1995,6 +1995,7 @@ dependencies = [
  "once_cell",
  "regex",
  "serde",
+ "serde_json",
  "swc_cached",
  "swc_common",
  "swc_ecmascript",
