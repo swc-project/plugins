@@ -3,7 +3,7 @@ description = "AST Transforms for styled-components, without dependency on plugi
 edition = "2018"
 license = "Apache-2.0"
 name = "styled_components"
-version = "0.24.0"
+version = "0.25.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

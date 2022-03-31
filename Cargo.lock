@@ -1080,9 +1080,9 @@ checksum = "8c31b5c4033f8fdde8700e4657be2c497e7288f01515be52168c631e2e4d4086"
 
 [[package]]
 name = "rkyv"
-version = "0.7.35"
+version = "0.7.37"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2cdcf5caf69bcc87b1e3f5427b4f21a32fdd53c2847687bdf9861abb1cdaa0d8"
+checksum = "1f08c8062c1fe1253064043b8fc07bfea1b9702b71b4a86c11ea3588183b12e1"
 dependencies = [
  "bytecheck",
  "hashbrown 0.12.0",
@@ -1094,9 +1094,9 @@ dependencies = [
 
 [[package]]
 name = "rkyv_derive"
-version = "0.7.35"
+version = "0.7.37"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a6cf557da1f81b8c7e889c59c9c3abaf6978f7feb156b9579e4f8bf6d7a2bada"
+checksum = "e289706df51226e84814bf6ba1a9e1013112ae29bc7a9878f73fce360520c403"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1301,7 +1301,7 @@ checksum = "6446ced80d6c486436db5c078dde11a9f73d42b57fb273121e160b84f63d894c"
 
 [[package]]
 name = "styled_components"
-version = "0.24.0"
+version = "0.25.0"
 dependencies = [
  "Inflector",
  "once_cell",
@@ -1773,20 +1773,32 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin"
-version = "0.39.0"
+version = "0.40.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "83b96672e5fc506bebf089792b1456e9f8b4eb49694c01a2e4d5788d81337736"
+checksum = "2b4bfbde22561ade7e8eccd7ab6640ed1110491f27e4befe56399b527ebc90e7"
 dependencies = [
  "swc_atoms",
  "swc_common",
  "swc_ecma_ast",
  "swc_ecma_visit",
+ "swc_plugin_comments",
  "swc_plugin_macro",
 ]
 
 [[package]]
+name = "swc_plugin_comments"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9c85955fcb3bbebff46ddce5aa6ee45227f04704dd2e436a41f0ad8f27805c40"
+dependencies = [
+ "better_scoped_tls",
+ "rkyv",
+ "swc_common",
+]
+
+[[package]]
 name = "swc_plugin_jest"
-version = "0.12.0"
+version = "0.13.0"
 dependencies = [
  "phf",
  "serde",
@@ -1809,7 +1821,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_styled_components"
-version = "0.21.0"
+version = "0.22.0"
 dependencies = [
  "serde_json",
  "styled_components",
@@ -1818,7 +1830,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_styled_jsx"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "easy-error",
