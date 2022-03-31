@@ -23,10 +23,12 @@ up swc_plugin
 bump swc_plugin_jest
 bump styled_components
 bump swc_plugin_styled_jsx
+bump swc_plugin_transform_imports
 
 bumpNpm jest
 bumpNpm styled-components
 bumpNpm styled-jsx
+bumpNpm transform-imports
 
 
 # Ensure that Cargo.lock is up-to-date
