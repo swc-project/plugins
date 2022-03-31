@@ -1,9 +1,9 @@
 use swc_common::{sync::Lrc, FileName, SourceMap};
 use swc_ecmascript::{ast::Program, visit::FoldWith};
-use swc_plugin::plugin_transform;
+use swc_plugin::{plugin_transform, TransformPluginProgramMetadata};
 
 #[plugin_transform]
-fn styled_jsx(program: Program, _plugin_config: String, _: String) -> Program {
+fn styled_jsx(program: Program, _: TransformPluginProgramMetadata) -> Program {
     // TODO(kdy1): This is wrong, but it does not use cm
     let cm = Lrc::new(SourceMap::default());
 
