@@ -3,6 +3,7 @@ members = [
   "packages/jest",
   "packages/styled-components",
   "packages/styled-jsx",
+  "packages/transform-imports",
 ]
 
 [profile.release]
