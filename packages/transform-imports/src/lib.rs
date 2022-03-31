@@ -1,8 +1,8 @@
 use swc_ecmascript::{ast::Program, visit::FoldWith};
-use swc_plugin::plugin_transform;
+use swc_plugin::{plugin_transform, TransformPluginProgramMetadata};
 
 #[plugin_transform]
-fn transform_imports(program: Program, _plugin_config: String, _: String) -> Program {
+fn transform_imports(program: Program, data: TransformPluginProgramMetadata) -> Program {
     let program = program.fold_with(&mut imp::modularize_imports(imp::Config {}));
 
     program
