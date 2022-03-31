@@ -13,6 +13,9 @@ function bumpNpm {
     (cd ./packages/$1 && yarn version)
 }
 
+# Delete tags
+git tag -d $(git tag -l)
+
 up swc_atoms
 up swc_common
 up testing
