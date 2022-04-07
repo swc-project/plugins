@@ -11,6 +11,7 @@ function bump {
 
 function bumpNpm {
     (cd ./packages/$1 && yarn version)
+    git tag -d $(git tag -l)
 }
 
 # Delete tags
