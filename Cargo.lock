@@ -559,6 +559,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "modularize_imports"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d9b39c2a4d947d12bfdcc4dd5d973247d4a28c7b5d85da400d7d6962a7cb5dbd"
+dependencies = [
+ "handlebars",
+ "once_cell",
+ "regex",
+ "serde",
+ "swc_cached",
+ "swc_ecmascript",
+]
+
+[[package]]
 name = "new_debug_unreachable"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1150,6 +1164,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "styled_jsx"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2b6a087fc3bff6cbc6980053145f515c1ba450178e7cea00c3082df7c65168b7"
+dependencies = [
+ "easy-error",
+ "swc_common",
+ "swc_css",
+ "swc_css_prefixer",
+ "swc_ecmascript",
+ "tracing",
+]
+
+[[package]]
 name = "swc_atoms"
 version = "0.2.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1195,6 +1223,7 @@ dependencies = [
  "rustc-hash",
  "serde",
  "siphasher",
+ "sourcemap",
  "string_cache",
  "swc_eq_ignore_macros",
  "swc_visit",
@@ -1205,9 +1234,9 @@ dependencies = [
 
 [[package]]
 name = "swc_css"
-version = "0.103.0"
+version = "0.104.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "35b5f2bb2b2845da367ce7343e8c4821849694d4294fd54cdd8663bb08d04ac0"
+checksum = "9835ebfd7815b71f9b8f2ae95f65defe06692f96b26ef39acbe7d64bd33aa1c4"
 dependencies = [
  "swc_css_ast",
  "swc_css_codegen",
@@ -1218,9 +1247,9 @@ dependencies = [
 
 [[package]]
 name = "swc_css_ast"
-version = "0.91.0"
+version = "0.92.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f124ebd2d7588bb68e7902485a497a7f0e7e9876f113cd3f9f366a7bbb5bf7b4"
+checksum = "8ee9ad91b962d5713f41a8d2222d1f4c78ee3e1a8f7529427bb7289277e52509"
 dependencies = [
  "is-macro",
  "serde",
@@ -1231,9 +1260,9 @@ dependencies = [
 
 [[package]]
 name = "swc_css_codegen"
-version = "0.100.0"
+version = "0.101.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "895cfa7ee88d809ecefb9af9da2c1c8c2f45e58e303967cfe0aaa96d319064d7"
+checksum = "b2bfa5fef9aa88ad90c643d17cfab1ab88d3bf32b351b4307e96ea3feae9aa65"
 dependencies = [
  "auto_impl",
  "bitflags",
@@ -1258,9 +1287,9 @@ dependencies = [
 
 [[package]]
 name = "swc_css_parser"
-version = "0.99.0"
+version = "0.100.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c7b306eb9375370f47c252d4f41068e0ca9e8d3f0d365142ba44be95287db149"
+checksum = "63ba20eb665492621fee54b67432c29f58a8f440541d2c68f549d212cd595dea"
 dependencies = [
  "bitflags",
  "lexical",
@@ -1271,9 +1300,9 @@ dependencies = [
 
 [[package]]
 name = "swc_css_prefixer"
-version = "0.99.3"
+version = "0.100.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "301926ee69de04a6643f9c4ac8dcc67c6a5de3edd9fe218c6c2cf99f8c934652"
+checksum = "6d2f68f0beb6ae804149d5aed2f6e791fc0c7a03bb2c5035dd57585b5a33780b"
 dependencies = [
  "swc_atoms",
  "swc_common",
@@ -1284,9 +1313,9 @@ dependencies = [
 
 [[package]]
 name = "swc_css_utils"
-version = "0.88.2"
+version = "0.89.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e57af5708496f58a8777f1e23b82fcb8745404a480fb5588a9ed57baf48c5bbe"
+checksum = "1590d47d3d254226c4561b31e72347b5ac75ea7a49531d032fda65415b8990f3"
 dependencies = [
  "swc_atoms",
  "swc_common",
@@ -1296,9 +1325,9 @@ dependencies = [
 
 [[package]]
 name = "swc_css_visit"
-version = "0.90.0"
+version = "0.91.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c60ac83b8c5ffc8e3ff1c2fb60036f30d7a747534df55d2f05bb01c66ed83427"
+checksum = "7713c4d8255be1b7d5e93580fd2f32bfbb3c832a60be2941948e62442a207b04"
 dependencies = [
  "swc_atoms",
  "swc_common",
@@ -1588,28 +1617,18 @@ dependencies = [
 name = "swc_plugin_styled_jsx"
 version = "0.3.0"
 dependencies = [
- "anyhow",
- "easy-error",
- "swc_atoms",
+ "styled_jsx",
  "swc_common",
- "swc_css",
- "swc_css_prefixer",
  "swc_ecmascript",
  "swc_plugin",
- "tracing",
 ]
 
 [[package]]
 name = "swc_plugin_transform_imports"
 version = "0.2.0"
 dependencies = [
- "handlebars",
- "once_cell",
- "regex",
- "serde",
+ "modularize_imports",
  "serde_json",
- "swc_cached",
- "swc_common",
  "swc_ecmascript",
  "swc_plugin",
 ]
