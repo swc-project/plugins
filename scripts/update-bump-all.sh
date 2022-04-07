@@ -23,10 +23,15 @@ up swc_ecmascript
 up swc_ecma_transforms_testing
 up swc_plugin
 
+up styled_jsx
+up styled_components
+up modularize_imports
+up swc_emotion
+
 bump swc_plugin_jest
-bump styled_components
 bump swc_plugin_styled_jsx
 bump swc_plugin_transform_imports
+bump swc_plugin_styled_components
 
 bumpNpm jest
 bumpNpm styled-components
