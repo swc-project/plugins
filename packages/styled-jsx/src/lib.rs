@@ -12,5 +12,5 @@ fn styled_jsx(program: Program, _: TransformPluginProgramMetadata) -> Program {
     program
 }
 
-#[path = "../../../vendor/next.js/packages/next-swc/crates/core/src/styled_jsx/mod.rs"]
+#[path = "../../../vendor/next.js/packages/next-swc/crates/styled_jsx/src/lib.rs"]
 mod imp;

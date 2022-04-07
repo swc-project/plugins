@@ -9,5 +9,5 @@ fn transform_imports(program: Program, data: TransformPluginProgramMetadata) -> 
     program
 }
 
-#[path = "../../../vendor/next.js/packages/next-swc/crates/core/src/modularize_imports.rs"]
+#[path = "../../../vendor/next.js/packages/next-swc/crates/modularize_imports/src/lib.rs"]
 mod imp;
