@@ -10,7 +10,7 @@ version = "0.3.0"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-styled_jsx = "0.1.0"
-swc_common = "0.17.19"
-swc_ecmascript = "0.143.0"
-swc_plugin = "0.45.0"
+styled_jsx = "0.2.0"
+swc_common = "0.17.21"
+swc_ecmascript = "0.147.0"
+swc_plugin = "0.47.0"
