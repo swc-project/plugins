@@ -1247,9 +1247,9 @@ dependencies = [
 
 [[package]]
 name = "swc_css_ast"
-version = "0.92.0"
+version = "0.92.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8ee9ad91b962d5713f41a8d2222d1f4c78ee3e1a8f7529427bb7289277e52509"
+checksum = "8ec94a0dd1482161701854ea96ff1b89c91ce0e2ec73236cbf4fed76f3a4f53b"
 dependencies = [
  "is-macro",
  "serde",
