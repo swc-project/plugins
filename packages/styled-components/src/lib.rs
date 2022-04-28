@@ -1,19 +1,15 @@
-use std::{cell::RefCell, rc::Rc};
-
 use serde::Deserialize;
-use styled_components::{analyzer, transpile_css_prop, Config, State};
+use styled_components::Config;
 use swc_common::FileName;
 use swc_plugin::{
     ast::{Program, VisitMutWith},
-    chain, plugin_transform, TransformPluginProgramMetadata,
+    plugin_transform, TransformPluginProgramMetadata,
 };
 
 #[plugin_transform]
 fn styled_components(mut program: Program, data: TransformPluginProgramMetadata) -> Program {
     let config = serde_json::from_str::<Config>(&data.plugin_config)
         .expect("invalid config for styled-components");
-
-    let state: Rc<RefCell<State>> = Default::default();
 
     let ctx = serde_json::from_str::<SwcContext>(&data.transform_context).expect("invalid context");
     let file_name = match ctx.filename {
