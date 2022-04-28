@@ -1615,8 +1615,10 @@ dependencies = [
 name = "swc_plugin_styled_components"
 version = "0.23.0"
 dependencies = [
+ "serde",
  "serde_json",
  "styled_components",
+ "swc_common",
  "swc_plugin",
 ]
 
