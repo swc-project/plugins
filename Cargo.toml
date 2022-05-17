@@ -4,6 +4,7 @@ members = [
   "packages/styled-components",
   "packages/styled-jsx",
   "packages/transform-imports",
+  "packages/relay"
 ]
 
 [profile.release]
