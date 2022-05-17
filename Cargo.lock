@@ -1215,7 +1215,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "766ad22c1cb8586c038ccba7371a4903a6074b53ee4ba8980a52f502413f120e"
 dependencies = [
  "ahash",
- "anyhow",
  "ast_node",
  "better_scoped_tls",
  "cfg-if",
@@ -1225,7 +1224,6 @@ dependencies = [
  "num-bigint",
  "once_cell",
  "parking_lot",
- "rkyv",
  "rustc-hash",
  "serde",
  "siphasher",
@@ -1254,6 +1252,7 @@ dependencies = [
  "from_variant",
  "num-bigint",
  "once_cell",
+ "parking_lot",
  "rkyv",
  "rustc-hash",
  "serde",
@@ -1377,7 +1376,6 @@ checksum = "87eb325cc3e9bcf93dd9fcf14586e56fc502a5c7a9cc80e36c00bfd7c833b189"
 dependencies = [
  "is-macro",
  "num-bigint",
- "rkyv",
  "serde",
  "string_enum",
  "swc_atoms",
@@ -1669,21 +1667,6 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin"
-version = "0.49.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "73fc4a72ed1d16041470f67087bbfec8ffc5f5faf5f77571b826ff298af72735"
-dependencies = [
- "swc_atoms",
- "swc_common 0.17.25",
- "swc_ecma_ast 0.76.2",
- "swc_ecma_utils 0.82.0",
- "swc_ecma_visit 0.62.0",
- "swc_plugin_macro",
- "swc_plugin_proxy 0.2.1",
-]
-
-[[package]]
-name = "swc_plugin"
 version = "0.54.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "09004e5ea45b9fc330be54a63115723834093cf69562e1c99462b6cd411e8cb6"
@@ -1692,7 +1675,7 @@ dependencies = [
  "swc_common 0.18.4",
  "swc_ecmascript 0.157.0",
  "swc_plugin_macro",
- "swc_plugin_proxy 0.3.0",
+ "swc_plugin_proxy",
 ]
 
 [[package]]
@@ -1702,9 +1685,9 @@ dependencies = [
  "phf",
  "serde",
  "swc_atoms",
- "swc_common 0.17.25",
- "swc_ecmascript 0.150.0",
- "swc_plugin 0.49.0",
+ "swc_common 0.18.4",
+ "swc_ecmascript 0.157.0",
+ "swc_plugin",
 ]
 
 [[package]]
@@ -1716,17 +1699,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "swc_plugin_proxy"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2fa47a7a06c7a05106264a5edd9acdce4441d130ab603c41b5ffc1d1bc49fa20"
-dependencies = [
- "better_scoped_tls",
- "rkyv",
- "swc_common 0.17.25",
 ]
 
 [[package]]
@@ -1751,7 +1723,7 @@ dependencies = [
  "swc_atoms",
  "swc_common 0.18.4",
  "swc_ecmascript 0.157.0",
- "swc_plugin 0.54.0",
+ "swc_plugin",
 ]
 
 [[package]]
@@ -1761,8 +1733,8 @@ dependencies = [
  "serde",
  "serde_json",
  "styled_components",
- "swc_common 0.17.25",
- "swc_plugin 0.49.0",
+ "swc_common 0.18.4",
+ "swc_plugin",
 ]
 
 [[package]]
@@ -1770,9 +1742,9 @@ name = "swc_plugin_styled_jsx"
 version = "0.3.0"
 dependencies = [
  "styled_jsx",
- "swc_common 0.17.25",
- "swc_ecmascript 0.150.0",
- "swc_plugin 0.49.0",
+ "swc_common 0.18.4",
+ "swc_ecmascript 0.157.0",
+ "swc_plugin",
 ]
 
 [[package]]
@@ -1781,8 +1753,8 @@ version = "0.2.0"
 dependencies = [
  "modularize_imports",
  "serde_json",
- "swc_ecmascript 0.150.0",
- "swc_plugin 0.49.0",
+ "swc_ecmascript 0.157.0",
+ "swc_plugin",
 ]
 
 [[package]]
