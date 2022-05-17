@@ -38,6 +38,7 @@ bumpNpm jest
 bumpNpm styled-components
 bumpNpm styled-jsx
 bumpNpm transform-imports
+bumpNpm relay
 
 # Delete tags
 git tag -d $(git tag -l)
