@@ -12,6 +12,6 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 serde = {version = "1.0.136", features = ["derive"]}
 serde_json = "1.0.79"
-styled_components = "0.28.0"
+styled_components = "0.29.0"
 swc_common = "0.18.4"
 swc_plugin = "0.54.0"
