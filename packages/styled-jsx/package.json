@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-styled-jsx",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "SWC plugin for styled-jsx",
   "main": "swc_plugin_styled_jsx.wasm",
   "scripts": {
