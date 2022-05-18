@@ -7,13 +7,13 @@ use regex::Regex;
 use serde::Deserialize;
 use serde_json::Value;
 use swc_atoms::JsWord;
-use swc_common::{errors::HANDLER, FileName};
+use swc_common::FileName;
 use swc_ecmascript::{
     ast::*,
     utils::{quote_ident, ExprFactory},
     visit::{Fold, FoldWith},
 };
-use swc_plugin::{plugin_transform, TransformPluginProgramMetadata};
+use swc_plugin::{errors::HANDLER, plugin_transform, TransformPluginProgramMetadata};
 
 #[derive(Copy, Clone, Debug, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -210,7 +210,20 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
             .expect("pages_dir is expected."),
     );
 
-    let src = PathBuf::from((&plugin_config["src"]).as_str().expect("src is expected"));
+    // Unlike native env, we can't use env::current_dir
+    // as well as `/cwd` alias. current_dir cannot resolve to actual path,
+    // `/cwd` alias won't expand to `real` path but only gives access to the cwd as
+    // mounted path, which we can't use in this case.
+    let root_dir = PathBuf::from(
+        (&plugin_config["rootDir"])
+            .as_str()
+            .expect("src is expected"),
+    );
+    let src = PathBuf::from(
+        (&plugin_config["src"])
+            .as_str()
+            .expect("rootDir is expected"),
+    );
     let artifact_directory = (&plugin_config["artifactDirectory"])
         .as_str()
         .map(|v| PathBuf::from(v));
@@ -229,7 +242,7 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
         language,
     };
 
-    let mut relay = relay(&config, filename, Some(pages_dir), PathBuf::from("/cwd"));
+    let mut relay = relay(&config, filename, Some(pages_dir), root_dir);
     let program = program.fold_with(&mut relay);
 
     program
