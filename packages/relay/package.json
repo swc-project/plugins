@@ -3,8 +3,15 @@
   "version": "0.1.2",
   "description": "SWC plugin for relay",
   "main": "swc_plugin_relay.wasm",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.js",
+    "default": "./dist/index.js"
+  },
   "scripts": {
-    "prepack": "cp ../../target/wasm32-wasi/release/swc_plugin_relay.wasm ."
+    "build": "tsup index.ts --format cjs,esm --dts",
+    "prepack": "yarn build && cp ../../target/wasm32-wasi/release/swc_plugin_relay.wasm ."
   },
   "homepage": "https://swc.rs",
   "repository": {
@@ -16,5 +23,9 @@
   },
   "author": "강동윤 <kdy1997.dev@gmail.com>",
   "keywords": [],
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "tsup": "^5.12.8",
+    "typescript": "^4.6.4"
+  }
 }

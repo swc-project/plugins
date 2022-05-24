@@ -1,3 +1,4 @@
+dist/
 /target
 *.node
 .DS_Store
