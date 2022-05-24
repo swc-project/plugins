@@ -1,3 +1,5 @@
+import * as path from "node:path";
+
 export interface RelayPluginOptions {
   rootDir: string;
   language: "typescript" | "flow";
@@ -8,5 +10,11 @@ export interface RelayPluginOptions {
 export default function relay(
   options: RelayPluginOptions
 ): [string, Record<string, any>] {
-  return ["@swc/plugin-relay", options];
+  return [
+    "@swc/plugin-relay",
+    {
+      ...options,
+      rootDir: path.resolve(options.rootDir),
+    },
+  ];
 }
