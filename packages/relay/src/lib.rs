@@ -30,7 +30,7 @@ impl Default for RelayLanguageConfig {
 
 struct Relay<'a> {
     root_dir: PathBuf,
-    pages_dir: PathBuf,
+    pages_dir: Option<PathBuf>,
     file_name: FileName,
     config: &'a Config,
 }
@@ -38,7 +38,6 @@ struct Relay<'a> {
 #[derive(Deserialize, Debug, Default, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Config {
-    pub src: PathBuf,
     pub artifact_directory: Option<PathBuf>,
     #[serde(default)]
     pub language: RelayLanguageConfig,
@@ -106,18 +105,20 @@ impl<'a> Relay<'a> {
         };
 
         if let Some(artifact_directory) = &self.config.artifact_directory {
-            Ok(self.root_dir.join(artifact_directory).join(filename))
-        } else if real_file_name.starts_with(&self.pages_dir) {
-            Err(BuildRequirePathError::ArtifactDirectoryExpected {
-                file_name: real_file_name.display().to_string(),
-            })
-        } else {
-            Ok(real_file_name
-                .parent()
-                .unwrap()
-                .join("__generated__")
-                .join(filename))
+            return Ok(self.root_dir.join(artifact_directory).join(filename));
+        } else if let Some(pages_dir) = &self.pages_dir {
+            if real_file_name.starts_with(pages_dir) {
+                return Err(BuildRequirePathError::ArtifactDirectoryExpected {
+                    file_name: real_file_name.display().to_string(),
+                });
+            }
         }
+
+        Ok(real_file_name
+            .parent()
+            .unwrap()
+            .join("__generated__")
+            .join(filename))
     }
 
     fn build_require_path(
@@ -148,10 +149,9 @@ impl<'a> Relay<'a> {
                 Err(err) => {
                     let base_error = "Could not transform GraphQL template to a Relay import.";
                     let error_message = match err {
-                        BuildRequirePathError::FileNameNotReal => "Source file was not a real \
-                                                                   file. This is likely a bug and \
-                                                                   should be reported to Next.js"
-                            .to_string(),
+                        BuildRequirePathError::FileNameNotReal => {
+                            "Source file was not a real file.".to_string()
+                        }
                         BuildRequirePathError::ArtifactDirectoryExpected { file_name } => {
                             format!(
                                 "The generated file for `{}` will be created in `pages` \
@@ -186,7 +186,7 @@ pub fn relay<'a>(
     Relay {
         root_dir,
         file_name,
-        pages_dir: pages_dir.unwrap_or_else(|| panic!("pages_dir is expected.")),
+        pages_dir,
         config,
     }
 }
@@ -204,11 +204,7 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
     let plugin_config: Value =
         serde_json::from_str(&metadata.plugin_config).expect("Should provide plugin config");
 
-    let pages_dir = PathBuf::from(
-        (&plugin_config["pagesDir"])
-            .as_str()
-            .expect("pages_dir is expected."),
-    );
+    let pages_dir = (&plugin_config["pagesDir"]).as_str().map(PathBuf::from);
 
     // Unlike native env, we can't use env::current_dir
     // as well as `/cwd` alias. current_dir cannot resolve to actual path,
@@ -216,11 +212,6 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
     // mounted path, which we can't use in this case.
     let root_dir = PathBuf::from(
         (&plugin_config["rootDir"])
-            .as_str()
-            .expect("src is expected"),
-    );
-    let src = PathBuf::from(
-        (&plugin_config["src"])
             .as_str()
             .expect("rootDir is expected"),
     );
@@ -237,12 +228,11 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
     );
 
     let config = Config {
-        src,
         artifact_directory,
         language,
     };
 
-    let mut relay = relay(&config, filename, Some(pages_dir), root_dir);
+    let mut relay = relay(&config, filename, pages_dir, root_dir);
     let program = program.fold_with(&mut relay);
 
     program
