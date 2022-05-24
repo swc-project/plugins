@@ -30,7 +30,6 @@ impl Default for RelayLanguageConfig {
 
 struct Relay<'a> {
     root_dir: PathBuf,
-    pages_dir: Option<PathBuf>,
     file_name: FileName,
     config: &'a Config,
 }
@@ -88,7 +87,6 @@ impl<'a> Fold for Relay<'a> {
 #[derive(Debug)]
 enum BuildRequirePathError {
     FileNameNotReal,
-    ArtifactDirectoryExpected { file_name: String },
 }
 
 impl<'a> Relay<'a> {
@@ -105,20 +103,14 @@ impl<'a> Relay<'a> {
         };
 
         if let Some(artifact_directory) = &self.config.artifact_directory {
-            return Ok(self.root_dir.join(artifact_directory).join(filename));
-        } else if let Some(pages_dir) = &self.pages_dir {
-            if real_file_name.starts_with(pages_dir) {
-                return Err(BuildRequirePathError::ArtifactDirectoryExpected {
-                    file_name: real_file_name.display().to_string(),
-                });
-            }
+            Ok(self.root_dir.join(artifact_directory).join(filename))
+        } else {
+            Ok(real_file_name
+                .parent()
+                .unwrap()
+                .join("__generated__")
+                .join(filename))
         }
-
-        Ok(real_file_name
-            .parent()
-            .unwrap()
-            .join("__generated__")
-            .join(filename))
     }
 
     fn build_require_path(
@@ -152,15 +144,6 @@ impl<'a> Relay<'a> {
                         BuildRequirePathError::FileNameNotReal => {
                             "Source file was not a real file.".to_string()
                         }
-                        BuildRequirePathError::ArtifactDirectoryExpected { file_name } => {
-                            format!(
-                                "The generated file for `{}` will be created in `pages` \
-                                 directory, which will break production builds. Try moving the \
-                                 file outside of `pages` or set the `artifactDirectory` in the \
-                                 Relay config file.",
-                                file_name
-                            )
-                        }
                     };
 
                     HANDLER.with(|handler| {
@@ -177,16 +160,10 @@ impl<'a> Relay<'a> {
     }
 }
 
-pub fn relay<'a>(
-    config: &'a Config,
-    file_name: FileName,
-    pages_dir: Option<PathBuf>,
-    root_dir: PathBuf,
-) -> impl Fold + '_ {
+pub fn relay<'a>(config: &'a Config, file_name: FileName, root_dir: PathBuf) -> impl Fold + '_ {
     Relay {
         root_dir,
         file_name,
-        pages_dir,
         config,
     }
 }
@@ -203,8 +180,6 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
 
     let plugin_config: Value =
         serde_json::from_str(&metadata.plugin_config).expect("Should provide plugin config");
-
-    let pages_dir = (&plugin_config["pagesDir"]).as_str().map(PathBuf::from);
 
     // Unlike native env, we can't use env::current_dir
     // as well as `/cwd` alias. current_dir cannot resolve to actual path,
@@ -232,7 +207,7 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
         language,
     };
 
-    let mut relay = relay(&config, filename, pages_dir, root_dir);
+    let mut relay = relay(&config, filename, root_dir);
     let program = program.fold_with(&mut relay);
 
     program
