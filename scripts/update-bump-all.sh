@@ -2,7 +2,7 @@
 set -eu
 
 function up {
-    cargo upgrade --workspace $1
+    cargo upgrade --workspace $@
 }
 
 function bump {
