@@ -566,9 +566,9 @@ dependencies = [
 
 [[package]]
 name = "modularize_imports"
-version = "0.4.0"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1da71bd22bec461d451aa1e4c31141ed3101f198f683c3ca69f956550aeffdbb"
+checksum = "57a7d6c8a01a9e0d1fdcaaa1aaa2762facd98c37f0aef1db5e4641dc08fc0165"
 dependencies = [
  "handlebars",
  "once_cell",
@@ -1155,9 +1155,9 @@ checksum = "6446ced80d6c486436db5c078dde11a9f73d42b57fb273121e160b84f63d894c"
 
 [[package]]
 name = "styled_components"
-version = "0.29.0"
+version = "0.31.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3b04668e201a53b9f063b6dde09777ce919dfa8da369b454ddaf41b29a02787c"
+checksum = "b198a93fe457b00a4c16e5259e8a781a81715691b5923f9c83ef9342d01ca47f"
 dependencies = [
  "Inflector",
  "once_cell",
@@ -1171,9 +1171,9 @@ dependencies = [
 
 [[package]]
 name = "styled_jsx"
-version = "0.4.0"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "260a0b34577341154a3e7b1e6b25293514d035d5c30436d75156daebff4d4e91"
+checksum = "6d9455f9079d0946151e3d3ede36a80847f4952a6f4192c85984a682d3c0dc34"
 dependencies = [
  "easy-error",
  "swc_common",
