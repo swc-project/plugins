@@ -3,6 +3,7 @@
   "version": "0.1.2",
   "description": "SWC plugin for relay",
   "main": "swc_plugin_relay.wasm",
+  "types": "./index.d.ts",
   "scripts": {
     "prepack": "cp ../../target/wasm32-wasi/release/swc_plugin_relay.wasm ."
   },
