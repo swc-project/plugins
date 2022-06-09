@@ -4,10 +4,11 @@ members = [
   "packages/styled-components",
   "packages/styled-jsx",
   "packages/transform-imports",
-  "packages/relay"
+  "packages/relay",
 ]
 
 [profile.release]
 codegen-units = 1
+debug = true
 lto = true
 opt-level = "s"
