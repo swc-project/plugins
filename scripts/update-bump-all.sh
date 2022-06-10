@@ -26,11 +26,7 @@ bump swc_plugin_styled_jsx
 bump swc_plugin_transform_imports
 bump swc_plugin_styled_components
 
-bumpNpm jest
-bumpNpm styled-components
-bumpNpm styled-jsx
-bumpNpm transform-imports
-bumpNpm relay
+./scritps/bump-all.sh
 
 # Delete tags
 git tag -d $(git tag -l)
