@@ -13,7 +13,7 @@ use swc_ecmascript::{
     utils::{quote_ident, ExprFactory},
     visit::{Fold, FoldWith},
 };
-use swc_plugin::{errors::HANDLER, plugin_transform, TransformPluginProgramMetadata};
+use swc_plugin::{plugin_transform, TransformPluginProgramMetadata};
 
 #[derive(Copy, Clone, Debug, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -138,20 +138,20 @@ impl<'a> Relay<'a> {
             None => None,
             Some(operation_name) => match self.build_require_path(operation_name.as_str()) {
                 Ok(final_path) => Some(build_require_expr_from_path(final_path.to_str().unwrap())),
-                Err(err) => {
-                    let base_error = "Could not transform GraphQL template to a Relay import.";
-                    let error_message = match err {
-                        BuildRequirePathError::FileNameNotReal => {
-                            "Source file was not a real file.".to_string()
-                        }
-                    };
+                Err(_err) => {
+                    // let base_error = "Could not transform GraphQL template to a Relay import.";
+                    // let error_message = match err {
+                    //     BuildRequirePathError::FileNameNotReal => {
+                    //         "Source file was not a real file.".to_string()
+                    //     }
+                    // };
 
-                    HANDLER.with(|handler| {
-                        handler.span_err(
-                            tpl.span,
-                            format!("{} {}", base_error, error_message).as_str(),
-                        );
-                    });
+                    // HANDLER.with(|handler| {
+                    //     handler.span_err(
+                    //         tpl.span,
+                    //         format!("{} {}", base_error, error_message).as_str(),
+                    //     );
+                    // });
 
                     None
                 }
