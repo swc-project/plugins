@@ -17,6 +17,3 @@ bumpNpm relay
 
 # Delete tags
 git tag -d $(git tag -l)
-
-# Ensure that Cargo.lock is up-to-date
-cargo metadata --offline --format-version 1 > /dev/null
