@@ -10,7 +10,7 @@ version = "0.2.0"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-modularize_imports = "0.6.0"
+modularize_imports = "0.7.0"
 serde_json = "1.0.79"
-swc_ecmascript = { version = "0.157.0", features = ["visit"] }
-swc_plugin = "0.54.0"
+swc_ecmascript = { version = "0.163.0", features = ["visit"] }
+swc_plugin = "0.59.0"
