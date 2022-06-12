@@ -10,10 +10,10 @@ name = "swc_plugin_relay"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-swc_atoms = "0.2.11"
-swc_common = "0.18.7"
-swc_ecmascript = "0.157.0"
-swc_plugin = "0.54.0"
+swc_atoms = "0.2.12"
+swc_common = "0.18.9"
+swc_ecmascript = "0.163.0"
+swc_plugin = "0.59.0"
 serde = "1"
 serde_json = "1"
 regex = "1.5"
