@@ -14,7 +14,7 @@ use swc_core::{
         ast::*,
         atoms::JsWord,
         utils::{quote_ident, ExprFactory},
-        visit::{Fold, FoldWith},
+        visit::{VisitMut, VisitMutWith},
     },
     plugin::{
         metadata::TransformPluginMetadataContextKind, plugin_transform,
@@ -39,6 +39,7 @@ struct Relay<'a> {
     root_dir: PathBuf,
     file_name: FileName,
     config: &'a Config,
+    module_items: Vec<ModuleItem>,
 }
 
 #[derive(Deserialize, Debug, Default, Clone)]
@@ -60,33 +61,20 @@ fn pull_first_operation_name_from_tpl(tpl: &TaggedTpl) -> Option<String> {
     })
 }
 
-fn build_require_expr_from_path(path: &str) -> Expr {
-    Expr::Call(CallExpr {
-        span: Default::default(),
-        callee: quote_ident!("require").as_callee(),
-        args: vec![Lit::Str(Str {
-            span: Default::default(),
-            value: JsWord::from(path),
-            raw: None,
-        })
-        .as_arg()],
-        type_args: None,
-    })
-}
+impl<'a> VisitMut for Relay<'a> {
+    fn visit_mut_module_items(&mut self, n: &mut Vec<ModuleItem>) {
+        n.visit_mut_children_with(self);
 
-impl<'a> Fold for Relay<'a> {
-    fn fold_expr(&mut self, expr: Expr) -> Expr {
-        let expr = expr.fold_children_with(self);
+        n.append(&mut self.module_items);
+    }
 
-        match &expr {
-            Expr::TaggedTpl(tpl) => {
-                if let Some(built_expr) = self.build_call_expr_from_tpl(tpl) {
-                    built_expr
-                } else {
-                    expr
-                }
+    fn visit_mut_expr(&mut self, expr: &mut Expr) {
+        expr.visit_mut_children_with(self);
+
+        if let Expr::TaggedTpl(tpl) = expr {
+            if let Some(built_expr) = self.build_call_expr_from_tpl(tpl) {
+                *expr = built_expr
             }
-            _ => expr,
         }
     }
 }
@@ -144,7 +132,25 @@ impl<'a> Relay<'a> {
         match operation_name {
             None => None,
             Some(operation_name) => match self.build_require_path(operation_name.as_str()) {
-                Ok(final_path) => Some(build_require_expr_from_path(final_path.to_str().unwrap())),
+                Ok(final_path) => {
+                    let target_ident = Ident::new(JsWord::from(operation_name), Default::default());
+                    self.module_items
+                        .push(ModuleItem::ModuleDecl(ModuleDecl::Import(ImportDecl {
+                            span: Default::default(),
+                            specifiers: vec![ImportSpecifier::Default(ImportDefaultSpecifier {
+                                span: Default::default(),
+                                local: target_ident.clone(),
+                            })],
+                            src: Box::new(Str {
+                                span: Default::default(),
+                                value: JsWord::from(final_path.to_str().unwrap()),
+                                raw: None,
+                            }),
+                            type_only: false,
+                            asserts: None,
+                        })));
+                    Some(Expr::Ident(target_ident))
+                }
                 Err(_err) => {
                     // let base_error = "Could not transform GraphQL template to a Relay import.";
                     // let error_message = match err {
@@ -167,16 +173,20 @@ impl<'a> Relay<'a> {
     }
 }
 
-pub fn relay(config: &Config, file_name: FileName, root_dir: PathBuf) -> impl Fold + '_ {
+pub fn relay(config: &Config, file_name: FileName, root_dir: PathBuf) -> impl VisitMut + '_ {
     Relay {
         root_dir,
         file_name,
         config,
+        module_items: Vec::new(),
     }
 }
 
 #[plugin_transform]
-fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMetadata) -> Program {
+fn relay_plugin_transform(
+    mut program: Program,
+    metadata: TransformPluginProgramMetadata,
+) -> Program {
     let filename = if let Some(filename) =
         metadata.get_context(&TransformPluginMetadataContextKind::Filename)
     {
@@ -219,6 +229,7 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
     };
 
     let mut relay = relay(&config, filename, root_dir);
+    program.visit_mut_with(&mut relay);
 
-    program.fold_with(&mut relay)
+    program
 }
