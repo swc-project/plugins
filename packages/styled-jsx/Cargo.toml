@@ -11,6 +11,6 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 styled_jsx = "0.10.0"
-swc_common = "0.21.0"
-swc_ecmascript = "0.177.0"
-swc_plugin = "0.73.0"
+swc_common = "0.22.0"
+swc_ecmascript = "0.178.0"
+swc_plugin = "0.74.0"
