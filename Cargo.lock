@@ -1630,6 +1630,7 @@ dependencies = [
 name = "swc_plugin_emotion"
 version = "0.2.0"
 dependencies = [
+ "serde",
  "serde_json",
  "swc_ecmascript",
  "swc_plugin",
