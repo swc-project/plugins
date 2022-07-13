@@ -12,7 +12,7 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 serde = "1"
 serde_json = "1.0.79"
-swc_common = "0.24.0"
-swc_ecmascript = {version = "0.181.0", features = ["visit"]}
+swc_common = "0.24.1"
+swc_ecmascript = { version = "0.181.0", features = ["visit"] }
 swc_emotion = "0.13.0"
-swc_plugin = "0.79.0"
+swc_plugin = "0.80.1"
