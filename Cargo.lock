@@ -1613,9 +1613,9 @@ dependencies = [
 
 [[package]]
 name = "swc_emotion"
-version = "0.13.0"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d148831589237b6ccbc7ec4d9ac98e22b3561610e034ead08a72730901e97e1a"
+checksum = "60b49d8827c8e6ea81c4d491a95f2427a8252cf22b84ad3e38305a2fb784891c"
 dependencies = [
  "base64 0.13.0",
  "byteorder",
@@ -1658,9 +1658,9 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin"
-version = "0.80.0"
+version = "0.80.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f85e131e217b90c5895a46219fc73bdb8411d5017843854e5d68898505c2d1fc"
+checksum = "c43505606704465492ab14fccdd74f7102b1d4f865484c79288a973dd8de1977"
 dependencies = [
  "swc_atoms",
  "swc_common",
@@ -1706,9 +1706,9 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_proxy"
-version = "0.12.0"
+version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "af3b37642f4049bb74e1a9f85aed276e4fb72c5b7da6a25f261b8a7ed2ce8e73"
+checksum = "5b852bf0bc0330134bbac3f146a3fc23fd30064c9c2ad738162a3ebc86267082"
 dependencies = [
  "better_scoped_tls",
  "bytecheck",
