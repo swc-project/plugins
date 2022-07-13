@@ -9,6 +9,7 @@ function bumpNpm {
 # Delete tags
 git tag -d $(git tag -l)
 
+bumpNpm emotion
 bumpNpm jest
 bumpNpm styled-components
 bumpNpm styled-jsx
