@@ -1,0 +1,7 @@
+# emotion
+
+## Config
+
+```json
+["emotion", {}]
+```
