@@ -1675,6 +1675,7 @@ version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
+ "swc_common",
  "swc_ecmascript",
  "swc_emotion",
  "swc_plugin",
