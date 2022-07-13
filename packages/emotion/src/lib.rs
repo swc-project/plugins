@@ -27,6 +27,8 @@ struct EmotionJsOptions {
     source_map: Option<bool>,
     auto_label: Option<EmotionJsAutoLabel>,
     label_format: Option<String>,
+    #[serde(flatten)]
+    extra: swc_emotion::EmotionOptions,
 }
 
 // This config transformation has to be the same as https://github.com/vercel/next.js/blob/9fe2f2637c8384ae7939d5a4a30f1557a4262acb/packages/next/build/swc/options.js#L115-L140
@@ -49,6 +51,7 @@ impl EmotionJsOptions {
                 },
             ),
             label_format: Some(self.label_format.unwrap_or("[local]".to_string())),
+            ..self.extra
         }
     }
 }
