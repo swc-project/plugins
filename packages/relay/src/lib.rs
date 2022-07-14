@@ -11,9 +11,22 @@ use swc_common::FileName;
 use swc_ecmascript::{
     ast::*,
     utils::{quote_ident, ExprFactory},
-    visit::{Fold, FoldWith},
+    visit::{VisitMut, VisitMutWith},
 };
 use swc_plugin::{plugin_transform, TransformPluginProgramMetadata};
+
+#[derive(Copy, Clone, Debug, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum RelayModuleConfig {
+    CommonJS,
+    ESM,
+}
+
+impl Default for RelayModuleConfig {
+    fn default() -> Self {
+        Self::CommonJS
+    }
+}
 
 #[derive(Copy, Clone, Debug, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -32,12 +45,15 @@ struct Relay<'a> {
     root_dir: PathBuf,
     file_name: FileName,
     config: &'a Config,
+    module_items: Vec<ModuleItem>,
 }
 
 #[derive(Deserialize, Debug, Default, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Config {
     pub artifact_directory: Option<PathBuf>,
+    #[serde(default)]
+    pub module: RelayModuleConfig,
     #[serde(default)]
     pub language: RelayLanguageConfig,
 }
@@ -67,19 +83,20 @@ fn build_require_expr_from_path(path: &str) -> Expr {
     })
 }
 
-impl<'a> Fold for Relay<'a> {
-    fn fold_expr(&mut self, expr: Expr) -> Expr {
-        let expr = expr.fold_children_with(self);
+impl<'a> VisitMut for Relay<'a> {
+    fn visit_mut_module_items(&mut self, n: &mut Vec<ModuleItem>) {
+        n.visit_mut_children_with(self);
 
-        match &expr {
-            Expr::TaggedTpl(tpl) => {
-                if let Some(built_expr) = self.build_call_expr_from_tpl(tpl) {
-                    built_expr
-                } else {
-                    expr
-                }
+        n.append(&mut self.module_items);
+    }
+
+    fn visit_mut_expr(&mut self, expr: &mut Expr) {
+        expr.visit_mut_children_with(self);
+
+        if let Expr::TaggedTpl(tpl) = expr {
+            if let Some(built_expr) = self.build_call_expr_from_tpl(tpl) {
+                *expr = built_expr
             }
-            _ => expr,
         }
     }
 }
@@ -137,7 +154,33 @@ impl<'a> Relay<'a> {
         match operation_name {
             None => None,
             Some(operation_name) => match self.build_require_path(operation_name.as_str()) {
-                Ok(final_path) => Some(build_require_expr_from_path(final_path.to_str().unwrap())),
+                Ok(final_path) => match self.config.module {
+                    RelayModuleConfig::CommonJS => {
+                        Some(build_require_expr_from_path(final_path.to_str().unwrap()))
+                    }
+                    RelayModuleConfig::ESM => {
+                        let target_ident =
+                            Ident::new(JsWord::from(operation_name), Default::default());
+                        self.module_items
+                            .push(ModuleItem::ModuleDecl(ModuleDecl::Import(ImportDecl {
+                                span: Default::default(),
+                                specifiers: vec![ImportSpecifier::Default(
+                                    ImportDefaultSpecifier {
+                                        span: Default::default(),
+                                        local: target_ident.clone(),
+                                    },
+                                )],
+                                src: Str {
+                                    span: Default::default(),
+                                    value: JsWord::from(final_path.to_str().unwrap()),
+                                    raw: None,
+                                },
+                                type_only: false,
+                                asserts: None,
+                            })));
+                        Some(Expr::Ident(target_ident))
+                    }
+                },
                 Err(_err) => {
                     // let base_error = "Could not transform GraphQL template to a Relay import.";
                     // let error_message = match err {
@@ -160,16 +203,17 @@ impl<'a> Relay<'a> {
     }
 }
 
-pub fn relay<'a>(config: &'a Config, file_name: FileName, root_dir: PathBuf) -> impl Fold + '_ {
+pub fn relay<'a>(config: &'a Config, file_name: FileName, root_dir: PathBuf) -> impl VisitMut + '_ {
     Relay {
         root_dir,
         file_name,
         config,
+        module_items: Vec::new(),
     }
 }
 
 #[plugin_transform]
-fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMetadata) -> Program {
+fn relay_plugin_transform(mut program: Program, metadata: TransformPluginProgramMetadata) {
     let context: Value = serde_json::from_str(&metadata.transform_context)
         .expect("Should able to deserialize context");
     let filename = if let Some(filename) = (&context["filename"]).as_str() {
@@ -193,22 +237,28 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
     let artifact_directory = (&plugin_config["artifactDirectory"])
         .as_str()
         .map(|v| PathBuf::from(v));
-    let language = (&plugin_config["language"]).as_str().map_or(
-        RelayLanguageConfig::TypeScript,
-        |v| match v {
-            "typescript" => RelayLanguageConfig::TypeScript,
-            "flow" => RelayLanguageConfig::Flow,
-            _ => panic!("Unexpected language config value"),
-        },
-    );
+    let module = (&plugin_config["module"])
+        .as_str()
+        .map_or(RelayModuleConfig::default(), |v| match v {
+            "commonjs" => RelayModuleConfig::CommonJS,
+            "esm" => RelayModuleConfig::ESM,
+            _ => panic!("Unexpected module config value"),
+        });
+    let language =
+        (&plugin_config["language"])
+            .as_str()
+            .map_or(RelayLanguageConfig::default(), |v| match v {
+                "typescript" => RelayLanguageConfig::TypeScript,
+                "flow" => RelayLanguageConfig::Flow,
+                _ => panic!("Unexpected language config value"),
+            });
 
     let config = Config {
         artifact_directory,
+        module,
         language,
     };
 
     let mut relay = relay(&config, filename, root_dir);
-    let program = program.fold_with(&mut relay);
-
-    program
+    program.visit_mut_with(&mut relay);
 }
