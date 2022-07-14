@@ -581,9 +581,9 @@ dependencies = [
 
 [[package]]
 name = "modularize_imports"
-version = "0.12.0"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f910ce230a6bb1b43546203655167de686ff96da7bc677d0f18ca3fb728f26db"
+checksum = "4f4b43ee395d694ae21672b6d0693ea307f4ee25b7e6edcfe79c930a187774dc"
 dependencies = [
  "handlebars",
  "once_cell",
@@ -1176,9 +1176,9 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
 name = "styled_components"
-version = "0.37.0"
+version = "0.38.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6f8fe2538658f5d1ca28ef20f4c1fa871eba66f6ef4d4cbeea08aa1ffd018cc7"
+checksum = "d33036347608ca02b922a84490de43f848ff13a880cbb721ec4f7ea0f5d0d326"
 dependencies = [
  "Inflector",
  "once_cell",
@@ -1192,9 +1192,9 @@ dependencies = [
 
 [[package]]
 name = "styled_jsx"
-version = "0.12.0"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "15a0e89a1b55800189f9eec15933c40e5e33e6833f1ebec03538f2770c848fa4"
+checksum = "5644a589408f9f3faad6d76b2e412726c85da0d8091b0eff810a8dbe78976297"
 dependencies = [
  "easy-error",
  "swc_common",
@@ -1613,9 +1613,9 @@ dependencies = [
 
 [[package]]
 name = "swc_emotion"
-version = "0.14.0"
+version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "60b49d8827c8e6ea81c4d491a95f2427a8252cf22b84ad3e38305a2fb784891c"
+checksum = "9488d77514962ae2946564c26ef723b32e138e72af73f34dd2cb45e044143ee7"
 dependencies = [
  "base64 0.13.0",
  "byteorder",
