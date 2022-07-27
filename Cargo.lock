@@ -1839,9 +1839,9 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_macro"
-version = "0.8.0"
+version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0c25444dadf4b88d17724c2bada445b0e4d751ca92fb2b2f090bfcaed50c96a3"
+checksum = "f851f2e2f996434083b8684e4e7825a16a45e4754ab013399ef56adfb75804fc"
 dependencies = [
  "proc-macro2",
  "quote",
