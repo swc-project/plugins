@@ -13,7 +13,10 @@ use swc_ecmascript::{
     utils::{quote_ident, ExprFactory},
     visit::{Fold, FoldWith},
 };
-use swc_plugin::{metadata::TransformPluginProgramMetadata, plugin_transform};
+use swc_plugin::{
+    metadata::{TransformPluginMetadataContextKind, TransformPluginProgramMetadata},
+    plugin_transform,
+};
 
 #[derive(Copy, Clone, Debug, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -170,9 +173,9 @@ pub fn relay<'a>(config: &'a Config, file_name: FileName, root_dir: PathBuf) -> 
 
 #[plugin_transform]
 fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMetadata) -> Program {
-    let context: Value = serde_json::from_str(&metadata.transform_context)
-        .expect("Should able to deserialize context");
-    let filename = if let Some(filename) = (&context["filename"]).as_str() {
+    let filename = if let Some(filename) =
+        metadata.get_context(&TransformPluginMetadataContextKind::Filename)
+    {
         FileName::Real(PathBuf::from(filename))
     } else {
         FileName::Anon
