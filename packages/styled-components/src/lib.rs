@@ -3,13 +3,15 @@ use styled_components::Config;
 use swc_common::FileName;
 use swc_plugin::{
     ast::{Program, VisitMutWith},
-    plugin_transform, metadata::TransformPluginProgramMetadata,
+    metadata::TransformPluginProgramMetadata,
+    plugin_transform,
 };
 
 #[plugin_transform]
 fn styled_components(mut program: Program, data: TransformPluginProgramMetadata) -> Program {
-    let config = serde_json::from_str::<Config>(&data.plugin_config)
-        .expect("invalid config for styled-components");
+    let config =
+        serde_json::from_str::<Config>(&data.get_transform_plugin_config().unwrap_or_default())
+            .expect("invalid config for styled-components");
 
     let ctx = serde_json::from_str::<SwcContext>(&data.transform_context).expect("invalid context");
     let file_name = match ctx.filename {

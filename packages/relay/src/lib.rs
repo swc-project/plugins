@@ -13,7 +13,7 @@ use swc_ecmascript::{
     utils::{quote_ident, ExprFactory},
     visit::{Fold, FoldWith},
 };
-use swc_plugin::{plugin_transform, metadata::TransformPluginProgramMetadata};
+use swc_plugin::{metadata::TransformPluginProgramMetadata, plugin_transform};
 
 #[derive(Copy, Clone, Debug, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -178,8 +178,8 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
         FileName::Anon
     };
 
-    let plugin_config: Value =
-        serde_json::from_str(&metadata.plugin_config).expect("Should provide plugin config");
+    let plugin_config: Value = serde_json::from_str(&metadata.get_transform_plugin_config())
+        .expect("Should provide plugin config");
 
     // Unlike native env, we can't use env::current_dir
     // as well as `/cwd` alias. current_dir cannot resolve to actual path,
