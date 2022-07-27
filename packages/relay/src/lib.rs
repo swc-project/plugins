@@ -13,7 +13,7 @@ use swc_ecmascript::{
     utils::{quote_ident, ExprFactory},
     visit::{Fold, FoldWith},
 };
-use swc_plugin::{plugin_transform, TransformPluginProgramMetadata};
+use swc_plugin::{plugin_transform, metadata::TransformPluginProgramMetadata};
 
 #[derive(Copy, Clone, Debug, Deserialize)]
 #[serde(rename_all = "lowercase")]

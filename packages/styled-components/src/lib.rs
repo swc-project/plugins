@@ -3,7 +3,7 @@ use styled_components::Config;
 use swc_common::FileName;
 use swc_plugin::{
     ast::{Program, VisitMutWith},
-    plugin_transform, TransformPluginProgramMetadata,
+    plugin_transform, metadata::TransformPluginProgramMetadata,
 };
 
 #[plugin_transform]
