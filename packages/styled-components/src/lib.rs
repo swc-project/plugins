@@ -1,18 +1,21 @@
-use serde::Deserialize;
 use styled_components::Config;
 use swc_common::FileName;
 use swc_plugin::{
     ast::{Program, VisitMutWith},
-    plugin_transform, TransformPluginProgramMetadata,
+    metadata::{TransformPluginMetadataContextKind, TransformPluginProgramMetadata},
+    plugin_transform,
 };
 
 #[plugin_transform]
 fn styled_components(mut program: Program, data: TransformPluginProgramMetadata) -> Program {
-    let config = serde_json::from_str::<Config>(&data.plugin_config)
-        .expect("invalid config for styled-components");
+    let config = serde_json::from_str::<Config>(
+        &data
+            .get_transform_plugin_config()
+            .expect("failed to get plugin config for styled-components"),
+    )
+    .expect("invalid config for styled-components");
 
-    let ctx = serde_json::from_str::<SwcContext>(&data.transform_context).expect("invalid context");
-    let file_name = match ctx.filename {
+    let file_name = match data.get_context(&TransformPluginMetadataContextKind::Filename) {
         Some(s) => FileName::Real(s.into()),
         None => FileName::Anon,
     };
@@ -25,10 +28,4 @@ fn styled_components(mut program: Program, data: TransformPluginProgramMetadata)
     program.visit_mut_with(&mut pass);
 
     program
-}
-
-#[derive(Debug, Deserialize)]
-struct SwcContext {
-    #[serde(default)]
-    filename: Option<String>,
 }

@@ -13,7 +13,10 @@ use swc_ecmascript::{
     utils::{quote_ident, ExprFactory},
     visit::{Fold, FoldWith},
 };
-use swc_plugin::{plugin_transform, TransformPluginProgramMetadata};
+use swc_plugin::{
+    metadata::{TransformPluginMetadataContextKind, TransformPluginProgramMetadata},
+    plugin_transform,
+};
 
 #[derive(Copy, Clone, Debug, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -170,16 +173,20 @@ pub fn relay<'a>(config: &'a Config, file_name: FileName, root_dir: PathBuf) -> 
 
 #[plugin_transform]
 fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMetadata) -> Program {
-    let context: Value = serde_json::from_str(&metadata.transform_context)
-        .expect("Should able to deserialize context");
-    let filename = if let Some(filename) = (&context["filename"]).as_str() {
+    let filename = if let Some(filename) =
+        metadata.get_context(&TransformPluginMetadataContextKind::Filename)
+    {
         FileName::Real(PathBuf::from(filename))
     } else {
         FileName::Anon
     };
 
-    let plugin_config: Value =
-        serde_json::from_str(&metadata.plugin_config).expect("Should provide plugin config");
+    let plugin_config: Value = serde_json::from_str(
+        &metadata
+            .get_transform_plugin_config()
+            .expect("failed to get plugin config for relay"),
+    )
+    .expect("Should provide plugin config");
 
     // Unlike native env, we can't use env::current_dir
     // as well as `/cwd` alias. current_dir cannot resolve to actual path,

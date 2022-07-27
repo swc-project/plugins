@@ -2,16 +2,13 @@ use std::path::Path;
 
 use serde::Deserialize;
 use swc_emotion::EmotionOptions;
-use swc_plugin::{ast::*, plugin_transform, TransformPluginProgramMetadata};
+use swc_plugin::{
+    ast::*,
+    metadata::{TransformPluginMetadataContextKind, TransformPluginProgramMetadata},
+    plugin_transform,
+};
 
 pub struct TransformVisitor;
-
-#[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct PluginContext {
-    filename: Option<String>,
-    env_name: String,
-}
 
 #[derive(Deserialize)]
 #[serde(rename_all = "kebab-case")]
@@ -58,14 +55,21 @@ impl EmotionJsOptions {
 
 #[plugin_transform]
 pub fn process_transform(program: Program, data: TransformPluginProgramMetadata) -> Program {
-    let config = serde_json::from_str::<EmotionJsOptions>(&data.plugin_config)
-        .expect("invalid config for emotion");
+    let config = serde_json::from_str::<EmotionJsOptions>(
+        &data
+            .get_transform_plugin_config()
+            .expect("failed to get plugin config for emotion"),
+    )
+    .expect("invalid config for emotion");
 
-    let context = serde_json::from_str::<PluginContext>(&data.transform_context)
-        .expect("Invalid plugin context");
-
-    let config = config.to_emotion_options(&context.env_name);
-    let file_name = context.filename.unwrap_or_else(String::new);
+    let config = config.to_emotion_options(
+        &data
+            .get_context(&TransformPluginMetadataContextKind::Env)
+            .unwrap_or_default(),
+    );
+    let file_name = data
+        .get_context(&TransformPluginMetadataContextKind::Filename)
+        .unwrap_or_default();
     let path = Path::new(&file_name);
     let source_map = std::sync::Arc::new(data.source_map);
 

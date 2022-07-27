@@ -6,7 +6,7 @@ use swc_ecmascript::{
     utils::{prepend_stmts, StmtLike},
     visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
 };
-use swc_plugin::{plugin_transform, TransformPluginProgramMetadata};
+use swc_plugin::{plugin_transform, metadata::TransformPluginProgramMetadata};
 
 // swc_plugin::define_js_plugin!(jest);
 
