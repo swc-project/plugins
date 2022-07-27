@@ -15,4 +15,4 @@ serde_json = "1.0.79"
 swc_common = "0.26.0"
 swc_ecmascript = { version = "0.186.0", features = ["visit"] }
 swc_emotion = "0.16.0"
-swc_plugin = "0.88.0"
+swc_plugin = "0.88.1"
