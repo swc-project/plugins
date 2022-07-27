@@ -9,9 +9,12 @@ use swc_plugin::{
 
 #[plugin_transform]
 fn styled_components(mut program: Program, data: TransformPluginProgramMetadata) -> Program {
-    let config =
-        serde_json::from_str::<Config>(&data.get_transform_plugin_config().unwrap_or_default())
-            .expect("invalid config for styled-components");
+    let config = serde_json::from_str::<Config>(
+        &data
+            .get_transform_plugin_config()
+            .expect("failed to get plugin config for styled-components"),
+    )
+    .expect("invalid config for styled-components");
 
     let ctx = serde_json::from_str::<SwcContext>(&data.transform_context).expect("invalid context");
     let file_name = match ctx.filename {

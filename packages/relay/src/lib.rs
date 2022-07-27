@@ -178,8 +178,12 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
         FileName::Anon
     };
 
-    let plugin_config: Value = serde_json::from_str(&metadata.get_transform_plugin_config())
-        .expect("Should provide plugin config");
+    let plugin_config: Value = serde_json::from_str(
+        &metadata
+            .get_transform_plugin_config()
+            .expect("failed to get plugin config for relay"),
+    )
+    .expect("Should provide plugin config");
 
     // Unlike native env, we can't use env::current_dir
     // as well as `/cwd` alias. current_dir cannot resolve to actual path,

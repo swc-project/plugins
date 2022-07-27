@@ -56,7 +56,9 @@ impl EmotionJsOptions {
 #[plugin_transform]
 pub fn process_transform(program: Program, data: TransformPluginProgramMetadata) -> Program {
     let config = serde_json::from_str::<EmotionJsOptions>(
-        &data.get_transform_plugin_config().unwrap_or_default(),
+        &data
+            .get_transform_plugin_config()
+            .expect("failed to get plugin config for emotion"),
     )
     .expect("invalid config for emotion");
 
