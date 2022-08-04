@@ -12,8 +12,8 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 swc_atoms = "0.3.1"
 swc_common = "0.26.0"
-swc_ecmascript = "0.186.0"
-swc_plugin = "0.88.1"
+swc_ecmascript = "0.186.1"
+swc_plugin = "0.89.0"
 serde = "1"
 serde_json = "1"
 regex = "1.5"
