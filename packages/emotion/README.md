@@ -11,7 +11,7 @@ The plugin uses the same config as described in [Next emotion documentation](htt
   jsc: {
     ...
    experimental: {
-     plugins: [ ['emotion-swc-plugin', {
+     plugins: [ ['@swc/plugin-emotion', {
       // default is true. It will be disabled when build type is production.
       sourceMap?: boolean,
       // default is 'dev-only'.
