@@ -10,9 +10,12 @@ version = "0.14.0"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-phf = {version = "0.10.0", features = ["macros"]}
-serde = {version = "1.0.130", features = ["derive"]}
-swc_atoms = "0.3.1"
-swc_common = { version = "0.26.0", features = ["concurrent"] }
-swc_ecmascript = { features = ["utils", "visit"], version = "0.186.0" }
-swc_plugin = "0.88.1"
+phf = { version = "0.10.0", features = ["macros"] }
+serde = { version = "1.0.130", features = ["derive"] }
+swc_core = { version = "0.5.1", features = [
+  "plugin_transform",
+  "utils",
+  "visit",
+  "ast",
+  "common",
+] }
