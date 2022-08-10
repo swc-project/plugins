@@ -6,16 +6,16 @@ use once_cell::sync::Lazy;
 use regex::Regex;
 use serde::Deserialize;
 use serde_json::Value;
-use swc_atoms::JsWord;
-use swc_common::FileName;
-use swc_ecmascript::{
+use swc_core::{
     ast::*,
+    atoms::JsWord,
+    common::FileName,
+    plugin::{
+        metadata::TransformPluginMetadataContextKind, plugin_transform,
+        proxies::TransformPluginProgramMetadata,
+    },
     utils::{quote_ident, ExprFactory},
     visit::{Fold, FoldWith},
-};
-use swc_plugin::{
-    metadata::{TransformPluginMetadataContextKind, TransformPluginProgramMetadata},
-    plugin_transform,
 };
 
 #[derive(Copy, Clone, Debug, Deserialize)]
