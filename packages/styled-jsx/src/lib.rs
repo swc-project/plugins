@@ -1,6 +1,9 @@
-use swc_common::{sync::Lrc, FileName, SourceMap};
-use swc_ecmascript::{ast::Program, visit::FoldWith};
-use swc_plugin::{metadata::TransformPluginProgramMetadata, plugin_transform};
+use swc_core::{
+    ast::Program,
+    common::{sync::Lrc, FileName, SourceMap},
+    plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
+    visit::FoldWith,
+};
 
 #[plugin_transform]
 fn styled_jsx_plugin(program: Program, _: TransformPluginProgramMetadata) -> Program {

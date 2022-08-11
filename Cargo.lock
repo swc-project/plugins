@@ -2151,7 +2151,6 @@ version = "0.1.0"
 dependencies = [
  "serde",
  "serde_json",
- "swc_common",
  "swc_core",
  "swc_emotion",
 ]

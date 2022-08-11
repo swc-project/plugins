@@ -1,6 +1,3 @@
-use swc_ecmascript::{ast::Program, visit::FoldWith};
-use swc_plugin::{metadata::TransformPluginProgramMetadata, plugin_transform};
-
 #[plugin_transform]
 fn transform_imports_plugin(program: Program, data: TransformPluginProgramMetadata) -> Program {
     let packages = serde_json::from_str(
