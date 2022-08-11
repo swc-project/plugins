@@ -1,5 +1,8 @@
-use swc_ecmascript::{ast::Program, visit::FoldWith};
-use swc_plugin::{metadata::TransformPluginProgramMetadata, plugin_transform};
+use swc_core::{
+    ast::Program,
+    plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
+    visit::FoldWith,
+};
 
 #[plugin_transform]
 fn transform_imports_plugin(program: Program, data: TransformPluginProgramMetadata) -> Program {

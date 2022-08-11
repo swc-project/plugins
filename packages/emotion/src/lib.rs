@@ -1,12 +1,15 @@
 use std::path::Path;
 
 use serde::Deserialize;
-use swc_emotion::EmotionOptions;
-use swc_plugin::{
-    ast::*,
-    metadata::{TransformPluginMetadataContextKind, TransformPluginProgramMetadata},
-    plugin_transform,
+use swc_core::{
+    ast::Program,
+    plugin::{
+        metadata::TransformPluginMetadataContextKind, plugin_transform,
+        proxies::TransformPluginProgramMetadata,
+    },
+    visit::FoldWith,
 };
+use swc_emotion::EmotionOptions;
 
 pub struct TransformVisitor;
 

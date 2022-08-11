@@ -1,9 +1,12 @@
 use styled_components::Config;
-use swc_common::FileName;
-use swc_plugin::{
-    ast::{Program, VisitMutWith},
-    metadata::{TransformPluginMetadataContextKind, TransformPluginProgramMetadata},
-    plugin_transform,
+use swc_core::{
+    ast::Program,
+    common::FileName,
+    plugin::{
+        metadata::TransformPluginMetadataContextKind, plugin_transform,
+        proxies::TransformPluginProgramMetadata,
+    },
+    visit::VisitMutWith,
 };
 
 #[plugin_transform]
