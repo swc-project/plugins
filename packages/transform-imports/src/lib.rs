@@ -1,3 +1,9 @@
+use swc_core::{
+    ast::Program,
+    plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
+    visit::FoldWith,
+};
+
 #[plugin_transform]
 fn transform_imports_plugin(program: Program, data: TransformPluginProgramMetadata) -> Program {
     let packages = serde_json::from_str(
