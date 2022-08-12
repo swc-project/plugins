@@ -12,7 +12,7 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 phf = { version = "0.10.0", features = ["macros"] }
 serde = { version = "1.0.130", features = ["derive"] }
-swc_core = { version = "0.6.2", features = [
+swc_core = { version = "0.6.5", features = [
   "plugin_transform",
   "utils",
   "visit",
