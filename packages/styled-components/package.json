@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-styled-components",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "SWC plugin for styled-components",
   "main": "swc_plugin_styled_components.wasm",
   "scripts": {
