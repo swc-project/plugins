@@ -2,7 +2,7 @@
 set -eu
 
 function bumpNpm {
-    (cd ./packages/$1 && yarn version minor)
+    (cd ./packages/$1 && yarn version patch)
     git tag -d $(git tag -l)
 }
 
