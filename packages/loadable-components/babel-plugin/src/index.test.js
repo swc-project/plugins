@@ -13,14 +13,6 @@ const testPlugin = code => {
 
 describe('plugin', () => {
   describe('simple import', () => {
-    it('should work with * in name', () => {
-      const result = testPlugin(`
-        loadable(() => import(\`./foo*\`))
-      `)
-
-      expect(result).toMatchSnapshot()
-    })
-
     it('should transform path into "chunk-friendly" name', () => {
       const result = testPlugin(`
         loadable(() => import('../foo/bar'))
