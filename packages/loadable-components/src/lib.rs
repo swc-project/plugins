@@ -9,9 +9,13 @@ fn loadable_components_plugin(
     mut program: Program,
     data: TransformPluginProgramMetadata,
 ) -> Program {
-    program.visit_mut_with(&mut Loadable {});
+    program.visit_mut_with(&mut loadable_transform());
 
     program
+}
+
+pub fn loadable_transform() -> impl VisitMut {
+    Loadable {}
 }
 
 struct Loadable {}
