@@ -110,14 +110,6 @@ export default function chunkNameProperty({ types: t }) {
     return t.stringLiteral(moduleToChunk(importArg.node.value))
   }
 
-
-  function chunkNameFromTemplateLiteral(node) {
-    const [q1] = node.quasis
-    const v1 = q1 ? q1.value.cooked : ''
-    if (!node.expressions.length) return v1
-    return `${v1}[request]`
-  }
-
   function getChunkNamePrefix(chunkName) {
     if (typeof chunkName !== 'string') return ''
     const match = chunkName.match(/(.+?)\[(request|index)\]$/)

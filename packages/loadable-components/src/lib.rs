@@ -165,6 +165,20 @@ where
         self.get_raw_chunk_name_from_comments(import)
     }
 
+    fn chunk_name_from_template_literal(node: &Expr) -> String {
+        match node {
+            Expr::Tpl(t) => {
+                let v1 = t.quasis[0].cooked.clone().unwrap_or_default();
+                if t.exprs.is_empty() {
+                    return v1.to_string();
+                }
+
+                format!("{}[request]", v1)
+            }
+            _ => unreachable!(),
+        }
+    }
+
     fn addOrReplaceChunkNameComment(&self, import: &CallExpr, values: Option<String>) {
         let import_arg = get_import_arg(import);
 
