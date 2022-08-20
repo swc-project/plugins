@@ -169,17 +169,29 @@ where
             })
     }
 
-    fn read_webpack_comment_values(&self, v: String) -> String {
-        // TODO?
-        v
+    fn read_webpack_comment_values(&self, v: String) -> serde_json::Value {
+        serde_json::Value::Object(
+            v.split(",")
+                .map(|v| v.trim())
+                .filter_map(|v| {
+                    let s = v.split(",").collect::<Vec<_>>();
+                    if s.len() >= 2 {
+                        return Some((
+                            s[0].to_string(),
+                            serde_json::Value::String(s[1].to_string()),
+                        ));
+                    }
+
+                    None
+                })
+                .collect::<serde_json::Map<_, _>>(),
+        )
     }
 
     fn get_raw_chunk_name_from_comments(&self, import_arg: &Expr) -> Option<serde_json::Value> {
         let chunk_name_comment = self.get_chunk_name_content(import_arg);
 
-        chunk_name_comment
-            .map(|v| self.read_webpack_comment_values(v))
-            .map(|s| serde_json::Value::from_str(&s).unwrap())
+        chunk_name_comment.map(|v| self.read_webpack_comment_values(v))
     }
 
     fn get_existing_chunk_name_comment(&self, import: &CallExpr) -> Option<serde_json::Value> {
