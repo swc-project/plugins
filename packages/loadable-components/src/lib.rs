@@ -157,12 +157,16 @@ where
             .map(|v| v.text.to_string())
     }
 
-    fn get_raw_chunk_name_from_comments(&self, import: &CallExpr) -> Option<JsWord> {}
+    fn get_raw_chunk_name_from_comments(&self, import_arg: &Expr) -> Option<JsWord> {
+        let chunk_name_comment = self.get_chunk_name_content(import_arg);
+
+        chunk_name_comment.map(|v| self.readWebpackCommentValues(v))
+    }
 
     fn get_existing_chunk_name_comment(&self, import: &CallExpr) -> Option<JsWord> {
-        let arg = get_import_arg(import);
+        let import_arg = get_import_arg(import);
 
-        self.get_raw_chunk_name_from_comments(import)
+        self.get_raw_chunk_name_from_comments(import_arg)
     }
 
     fn chunk_name_from_template_literal(node: &Expr) -> String {

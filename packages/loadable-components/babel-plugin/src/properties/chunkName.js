@@ -29,11 +29,6 @@ function writeWebpackCommentValues(values) {
     )
   }
 }
-function getRawChunkNameFromCommments(importArg) {
-  const chunkNameComment = getChunkNameComment(importArg)
-  if (!chunkNameComment) return null
-  return readWebpackCommentValues(chunkNameComment.node.value)
-}
 
 function moduleToChunk(str) {
   if (typeof str !== 'string') return ''
