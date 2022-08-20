@@ -39,13 +39,6 @@ export default function chunkNameProperty({ types: t }) {
     )
   }
 
-  function sanitizeChunkNameTemplateLiteral(node) {
-    return t.callExpression(t.memberExpression(node, t.identifier('replace')), [
-      t.regExpLiteral(WEBPACK_PATH_NAME_NORMALIZE_REPLACE_REGEX.source, 'g'),
-      t.stringLiteral('-'),
-    ])
-  }
-
   function combineExpressions(node) {
     const { expressions } = node
     const { length } = expressions

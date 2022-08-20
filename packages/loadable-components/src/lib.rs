@@ -224,11 +224,11 @@ where
         }
 
         let mut chunk_name_node =
-            self.generate_chunk_name_node(import, self.get_chunk_name_prefix(values));
+            self.generate_chunk_name_node(import, self.get_chunk_name_prefix(values.as_ref()));
 
         if chunk_name_node.is_tpl() {
             webpack_chunk_name = Some(self.chunk_name_from_template_literal(chunk_name_node));
-            chunk_name_node = self.sanitizeChunkNameTemplateLiteral(chunk_name_node);
+            chunk_name_node = self.sanitize_chunk_name_template_literal(chunk_name_node);
         } else if let Expr::Lit(Lit::Str(s)) = &chunk_name_node {
             webpack_chunk_name = Some(s.value.to_string());
         }
@@ -421,8 +421,8 @@ where
             .join(", ")
     }
 
-    fn get_chunk_name_prefix(&self, chunk_name: Option<serde_json::Value>) -> String {
-        let chunk_name = match chunk_name.as_ref() {
+    fn get_chunk_name_prefix(&self, chunk_name: Option<&serde_json::Value>) -> String {
+        let chunk_name = match chunk_name {
             Some(serde_json::Value::String(s)) => s,
             _ => return Default::default(),
         };
@@ -446,7 +446,9 @@ where
                 .map(|prefix| {
                     prefix.make_bin(
                         op!(bin, "+"),
-                        self.sanitizeChunkNameTemplateLiteral(self.combine_expression(import_arg)),
+                        self.sanitize_chunk_name_template_literal(
+                            self.combine_expression(import_arg),
+                        ),
                     )
                 })
                 .unwrap_or_else(|| {
@@ -472,6 +474,23 @@ where
             }
         };
         self.module_to_chunk(value)
+    }
+
+    fn sanitize_chunk_name_template_literal(&self, node: Expr) -> Expr {
+        Expr::Call(CallExpr {
+            span: DUMMY_SP,
+            callee: node.make_member(quote_ident!("replace")).as_callee(),
+            args: vec![
+                Lit::Regex(Regex {
+                    span: DUMMY_SP,
+                    exp: "[^a-zA-Z0-9_!§$()=\\-^°]+".into(),
+                    flags: "g".into(),
+                })
+                .as_arg(),
+                "-".as_arg(),
+            ],
+            type_args: Default::default(),
+        })
     }
 }
 
