@@ -13,24 +13,6 @@ const testPlugin = code => {
 
 describe('plugin', () => {
   describe('simple import', () => {
-    describe('with "webpackChunkName" comment', () => {
-      it('should use it', () => {
-        const result = testPlugin(`
-          loadable(() => import(/* webpackChunkName: "ChunkA" */ './ModA'))
-        `)
-
-        expect(result).toMatchSnapshot()
-      })
-
-      it('should use it even if comment is separated by ","', () => {
-        const result = testPlugin(`
-          loadable(() => import(/* webpackPrefetch: true, webpackChunkName: "ChunkA" */ './ModA'))
-        `)
-
-        expect(result).toMatchSnapshot()
-      })
-    })
-
     describe('without "webpackChunkName" comment', () => {
       it('should add it', () => {
         const result = testPlugin(`
