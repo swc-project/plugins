@@ -1,7 +1,6 @@
-use swc_common::{collections::AHashMap, comments::Comments, DUMMY_SP};
+use swc_common::{comments::Comments, DUMMY_SP};
 use swc_core::{
     ast::*,
-    atoms::JsWord,
     common::Spanned,
     plugin::{
         plugin_transform,
