@@ -2,7 +2,7 @@ use swc_common::DUMMY_SP;
 use swc_core::{
     ast::*,
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
-    utils::ExprFactory,
+    utils::{quote_ident, ExprFactory},
     visit::{Visit, VisitMut, VisitMutWith, VisitWith},
 };
 
@@ -74,9 +74,152 @@ impl Loadable {
     fn create_object_from(&mut self, import: &CallExpr, func: &Expr) -> Expr {
         ObjectLit {
             span: DUMMY_SP,
-            props: vec![],
+            props: vec![
+                PropOrSpread::Prop(Box::new(Prop::KeyValue(
+                    self.create_resolved_property(import, func),
+                ))),
+                PropOrSpread::Prop(Box::new(Prop::Method(
+                    self.create_chunk_name_method(import, func),
+                ))),
+                PropOrSpread::Prop(Box::new(Prop::Method(
+                    self.create_is_ready_method(import, func),
+                ))),
+                PropOrSpread::Prop(Box::new(Prop::KeyValue(
+                    self.create_import_async_property(import, func),
+                ))),
+                PropOrSpread::Prop(Box::new(Prop::Method(
+                    self.create_require_async_method(import, func),
+                ))),
+                PropOrSpread::Prop(Box::new(Prop::Method(
+                    self.create_require_sync_method(import, func),
+                ))),
+                PropOrSpread::Prop(Box::new(Prop::Method(
+                    self.create_resolve_method(import, func),
+                ))),
+            ],
         }
         .into()
+    }
+
+    fn create_resolved_property(&mut self, import: &CallExpr, func: &Expr) -> KeyValueProp {
+        KeyValueProp {
+            key: PropName::Ident(quote_ident!("resolved")),
+            value: Box::new(
+                ObjectLit {
+                    span: DUMMY_SP,
+                    props: Default::default(),
+                }
+                .into(),
+            ),
+        }
+    }
+
+    fn create_chunk_name_method(&mut self, import: &CallExpr, func: &Expr) -> MethodProp {
+        MethodProp {
+            key: PropName::Ident(quote_ident!("")),
+            function: Function {
+                params: Default::default(),
+                decorators: Default::default(),
+                span: DUMMY_SP,
+                body: Some(BlockStmt {
+                    span: DUMMY_SP,
+                    stmts: vec![],
+                }),
+                is_generator: false,
+                is_async: false,
+                type_params: Default::default(),
+                return_type: Default::default(),
+            },
+        }
+    }
+
+    fn create_is_ready_method(&mut self, import: &CallExpr, func: &Expr) -> MethodProp {
+        MethodProp {
+            key: PropName::Ident(quote_ident!("")),
+            function: Function {
+                params: Default::default(),
+                decorators: Default::default(),
+                span: DUMMY_SP,
+                body: Some(BlockStmt {
+                    span: DUMMY_SP,
+                    stmts: vec![],
+                }),
+                is_generator: false,
+                is_async: false,
+                type_params: Default::default(),
+                return_type: Default::default(),
+            },
+        }
+    }
+
+    fn create_import_async_property(&mut self, import: &CallExpr, func: &Expr) -> KeyValueProp {
+        KeyValueProp {
+            key: PropName::Ident(quote_ident!("importAsync")),
+            value: Box::new(
+                ObjectLit {
+                    span: DUMMY_SP,
+                    props: Default::default(),
+                }
+                .into(),
+            ),
+        }
+    }
+
+    fn create_require_async_method(&mut self, import: &CallExpr, func: &Expr) -> MethodProp {
+        MethodProp {
+            key: PropName::Ident(quote_ident!("requiredAsync")),
+            function: Function {
+                params: Default::default(),
+                decorators: Default::default(),
+                span: DUMMY_SP,
+                body: Some(BlockStmt {
+                    span: DUMMY_SP,
+                    stmts: vec![],
+                }),
+                is_generator: false,
+                is_async: false,
+                type_params: Default::default(),
+                return_type: Default::default(),
+            },
+        }
+    }
+
+    fn create_require_sync_method(&mut self, import: &CallExpr, func: &Expr) -> MethodProp {
+        MethodProp {
+            key: PropName::Ident(quote_ident!("requireSync")),
+            function: Function {
+                params: Default::default(),
+                decorators: Default::default(),
+                span: DUMMY_SP,
+                body: Some(BlockStmt {
+                    span: DUMMY_SP,
+                    stmts: vec![],
+                }),
+                is_generator: false,
+                is_async: false,
+                type_params: Default::default(),
+                return_type: Default::default(),
+            },
+        }
+    }
+
+    fn create_resolve_method(&mut self, import: &CallExpr, func: &Expr) -> MethodProp {
+        MethodProp {
+            key: PropName::Ident(quote_ident!("resolve")),
+            function: Function {
+                params: Default::default(),
+                decorators: Default::default(),
+                span: DUMMY_SP,
+                body: Some(BlockStmt {
+                    span: DUMMY_SP,
+                    stmts: vec![],
+                }),
+                is_generator: false,
+                is_async: false,
+                type_params: Default::default(),
+                return_type: Default::default(),
+            },
+        }
     }
 }
 
