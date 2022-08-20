@@ -58,30 +58,4 @@ export default function chunkNameProperty({ types: t }) {
       .slice(1)
       .reduce((r, p) => t.binaryExpression('+', r, p), expressions[0])
   }
-
-  function generateChunkNameNode(callPath, prefix) {
-    const importArg = getImportArg(callPath)
-    if (importArg.isTemplateLiteral()) {
-      return prefix
-        ? t.binaryExpression(
-          '+',
-          t.stringLiteral(prefix),
-          sanitizeChunkNameTemplateLiteral(
-            combineExpressions(importArg.node),
-          ),
-        )
-        : t.templateLiteral(
-          importArg.node.quasis.map((quasi, index) =>
-            transformQuasi(
-              quasi,
-              index === 0,
-              importArg.node.quasis.length === 1,
-            ),
-          ),
-          importArg.node.expressions,
-        )
-    }
-    return t.stringLiteral(moduleToChunk(importArg.node.value))
-  }
-
 }

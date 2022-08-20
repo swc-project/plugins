@@ -224,7 +224,7 @@ where
         }
 
         let mut chunk_name_node =
-            self.generateChunkNameNode(import, self.get_chunk_name_prefix(values));
+            self.generate_chunk_name_node(import, self.get_chunk_name_prefix(values));
 
         if chunk_name_node.is_tpl() {
             webpack_chunk_name = Some(self.chunk_name_from_template_literal(chunk_name_node));
@@ -436,6 +436,42 @@ where
         }
 
         Default::default()
+    }
+
+    fn generate_chunk_name_node(&self, import: &CallExpr, prefix: Option<String>) -> Expr {
+        let import_arg = get_import_arg(import);
+
+        if let Expr::Tpl(import_arg) = import_arg {
+            return prefix
+                .map(|prefix| {
+                    prefix.make_bin(
+                        op!(bin, "+"),
+                        self.sanitizeChunkNameTemplateLiteral(self.combine_expression(import_arg)),
+                    )
+                })
+                .unwrap_or_else(|| {
+                    Expr::Tpl(Tpl {
+                        span: DUMMY_SP,
+                        exprs: import_arg.exprs.clone(),
+                        quasis: import_arg
+                            .quasis
+                            .iter()
+                            .enumerate()
+                            .map(|(idx, quasi)| {
+                                self.transformQuasi(quasi, idx == 0, import_arg.quasis.len() == 1)
+                            })
+                            .collect(),
+                    })
+                });
+        }
+
+        let value = match import_arg.clone().expect_lit() {
+            Lit::Str(s) => s.value,
+            _ => {
+                unreachable!()
+            }
+        };
+        self.module_to_chunk(value)
     }
 }
 
