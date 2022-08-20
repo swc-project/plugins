@@ -217,6 +217,9 @@ where
     fn replace_chunk_name(&self, import: &CallExpr) -> Expr {
         let aggressive_import = self.is_aggressive_import(import);
         let values = self.get_existing_chunk_name_comment(import);
+
+        debug!("Values: {:#?}", values);
+
         let mut webpack_chunk_name = values
             .as_ref()
             .map(|map| map["webpackChunkName"].as_str().map(|v| v.to_string()))
