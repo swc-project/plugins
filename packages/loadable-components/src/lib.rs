@@ -1,7 +1,10 @@
-use swc_common::DUMMY_SP;
+use swc_common::{comments::Comments, DUMMY_SP};
 use swc_core::{
     ast::*,
-    plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
+    plugin::{
+        plugin_transform,
+        proxies::{PluginCommentsProxy, TransformPluginProgramMetadata},
+    },
     quote,
     utils::{quote_ident, ExprFactory},
     visit::{Visit, VisitMut, VisitMutWith, VisitWith},
@@ -16,18 +19,29 @@ fn loadable_components_plugin(
     mut program: Program,
     data: TransformPluginProgramMetadata,
 ) -> Program {
-    program.visit_mut_with(&mut loadable_transform());
+    program.visit_mut_with(&mut loadable_transform(PluginCommentsProxy));
 
     program
 }
 
-pub fn loadable_transform() -> impl VisitMut {
-    Loadable {}
+pub fn loadable_transform<C>(comments: C) -> impl VisitMut
+where
+    C: Comments,
+{
+    Loadable { comments }
 }
 
-struct Loadable {}
+struct Loadable<C>
+where
+    C: Comments,
+{
+    comments: C,
+}
 
-impl Loadable {
+impl<C> Loadable<C>
+where
+    C: Comments,
+{
     fn is_valid_identifier(e: &Expr) -> bool {
         match e {
             Expr::Ident(i) => &*i.sym == "loadable",
@@ -289,7 +303,10 @@ impl Loadable {
     }
 }
 
-impl VisitMut for Loadable {
+impl<C> VisitMut for Loadable<C>
+where
+    C: Comments,
+{
     fn visit_mut_call_expr(&mut self, call: &mut CallExpr) {
         match &call.callee {
             Callee::Expr(callee) if Self::is_valid_identifier(callee) => {}

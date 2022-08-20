@@ -9,7 +9,7 @@ fn fixture(input: PathBuf) {
 
     test_fixture(
         Default::default(),
-        &|_| as_folder(loadable_transform()),
+        &|t| as_folder(loadable_transform(t.comments.clone())),
         &input,
         &output,
     );
