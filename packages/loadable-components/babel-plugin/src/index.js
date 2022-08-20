@@ -1,4 +1,3 @@
-import syntaxDynamicImport from '@babel/plugin-syntax-dynamic-import'
 import chunkNameProperty from './properties/chunkName'
 import isReadyProperty from './properties/isReady'
 import importAsyncProperty from './properties/importAsync'
@@ -33,20 +32,6 @@ const loadablePlugin = api => {
   }
 
   const propertyFactories = properties.map(init => init(api))
-
-  function isValidIdentifier(path) {
-    // `loadable()`
-    if (path.get('callee').isIdentifier({ name: 'loadable' })) {
-      return true
-    }
-
-    // `loadable.lib()`
-    return (
-      path.get('callee').isMemberExpression() &&
-      path.get('callee.object').isIdentifier({ name: 'loadable' }) &&
-      path.get('callee.property').isIdentifier({ name: 'lib' })
-    )
-  }
 
   function hasLoadableComment(path) {
     const comments = path.get('leadingComments')
