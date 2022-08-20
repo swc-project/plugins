@@ -155,8 +155,8 @@ where
                 comments
                     .iter()
                     .find(|c| c.text.contains("webpackChunkName   "))
+                    .map(|v| v.text.to_string())
             })
-            .map(|v| v.text.to_string())
     }
 
     fn read_webpack_comment_values(&self, v: String) -> String {
@@ -213,10 +213,11 @@ where
 
     fn replace_chunk_name(&self, import: &CallExpr) -> Expr {
         let aggressive_import = self.is_aggressive_import(import);
-        let mut values = self.get_existing_chunk_name_comment(import);
-        let mut webpack_chunk_name = values.unwrap_or_default()["webpackChunkName"]
-            .as_str()
-            .map(|v| v.to_string());
+        let values = self.get_existing_chunk_name_comment(import);
+        let mut webpack_chunk_name = values
+            .as_ref()
+            .map(|map| map["webpackChunkName"].as_str().map(|v| v.to_string()))
+            .unwrap_or_default();
 
         if aggressive_import && values.is_some() {
             self.add_or_replace_chunk_name_comment(import, values.unwrap());
