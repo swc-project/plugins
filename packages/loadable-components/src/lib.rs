@@ -1,7 +1,9 @@
+use swc_common::DUMMY_SP;
 use swc_core::{
     ast::*,
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
-    visit::{VisitMut, VisitMutWith},
+    utils::ExprFactory,
+    visit::{Visit, VisitMut, VisitMutWith, VisitWith},
 };
 
 #[plugin_transform]
@@ -41,6 +43,41 @@ impl Loadable {
             _ => false,
         }
     }
+
+    fn is_supported(&self, e: &Expr) -> bool {
+        match e {
+            Expr::Paren(e) => self.is_supported(&e.expr),
+            Expr::Fn(..) | Expr::Arrow(..) => true,
+            _ => false,
+        }
+    }
+
+    fn transform_import(&mut self, call: &mut CallExpr) {
+        let import = {
+            let mut v = ImportFinder::default();
+            call.visit_with(&mut v);
+            match v.res {
+                Some(v) => v,
+                None => return,
+            }
+        };
+
+        match call.args.get(0) {
+            Some(arg) if self.is_supported(&arg.expr) => {}
+            _ => return,
+        }
+
+        let object = self.create_object_from(&import, &call.args[0].expr);
+        call.args[0] = object.as_arg();
+    }
+
+    fn create_object_from(&mut self, import: &CallExpr, func: &Expr) -> Expr {
+        ObjectLit {
+            span: DUMMY_SP,
+            props: vec![],
+        }
+        .into()
+    }
 }
 
 impl VisitMut for Loadable {
@@ -55,5 +92,29 @@ impl VisitMut for Loadable {
 
         // Transform imports
         self.transform_import(call)
+    }
+}
+
+#[derive(Default)]
+struct ImportFinder {
+    res: Option<CallExpr>,
+}
+
+impl Visit for ImportFinder {
+    fn visit_call_expr(&mut self, call: &CallExpr) {
+        match &call.callee {
+            Callee::Import(..) => {
+                if self.res.is_some() {
+                    panic!(
+                        "loadable: multiple import calls inside `loadable()` function are not \
+                         supported."
+                    );
+                }
+                self.res = Some(call.clone());
+            }
+            _ => {
+                call.visit_children_with(self);
+            }
+        }
     }
 }

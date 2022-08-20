@@ -21,16 +21,6 @@ const LOADABLE_COMMENT = '#__LOADABLE__'
 const loadablePlugin = api => {
   const { types: t } = api
 
-  function collectImportCallPaths(startPath) {
-    const imports = []
-    startPath.traverse({
-      Import(importPath) {
-        imports.push(importPath.parentPath)
-      },
-    })
-    return imports
-  }
-
   const propertyFactories = properties.map(init => init(api))
 
   function hasLoadableComment(path) {
@@ -70,11 +60,6 @@ const loadablePlugin = api => {
     }
 
     const [callPath] = callPaths
-
-    const funcPath = getFuncPath(path)
-    if (!funcPath) return
-
-    funcPath.node.params = funcPath.node.params || []
 
     const object = t.objectExpression(
       propertyFactories.map(getProperty =>
