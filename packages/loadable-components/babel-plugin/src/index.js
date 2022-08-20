@@ -1,12 +1,10 @@
 import chunkNameProperty from './properties/chunkName'
-import isReadyProperty from './properties/isReady'
 import importAsyncProperty from './properties/importAsync'
 import resolvedProperty from './properties/state'
 
 const properties = [
   resolvedProperty,
   chunkNameProperty,
-  isReadyProperty,
   importAsyncProperty,
 ]
 

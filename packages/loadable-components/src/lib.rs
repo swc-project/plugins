@@ -142,13 +142,32 @@ impl Loadable {
         MethodProp {
             key: PropName::Ident(quote_ident!("isReady")),
             function: Function {
-                params: Default::default(),
+                params: vec![Param {
+                    span: DUMMY_SP,
+                    decorators: Default::default(),
+                    pat: Pat::Ident(quote_ident!("props").into()),
+                }],
                 decorators: Default::default(),
                 span: DUMMY_SP,
-                body: Some(BlockStmt {
-                    span: DUMMY_SP,
-                    stmts: vec![],
-                }),
+                body: Some(
+                    quote!(
+                        "
+                        {
+                            const key=this.resolve(props)
+                            if (this.resolved[key] !== true) {
+                                return false
+                            }
+
+                            if (typeof __webpack_modules__ !== 'undefined') {
+                                return !!(__webpack_modules__[key])
+                            }
+
+                            return false
+                        }
+                      " as Stmt
+                    )
+                    .expect_block(),
+                ),
                 is_generator: false,
                 is_async: false,
                 type_params: Default::default(),
