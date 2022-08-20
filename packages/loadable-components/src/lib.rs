@@ -1,5 +1,6 @@
 use std::str::FromStr;
 
+use once_cell::sync::Lazy;
 use swc_common::{
     comments::{Comment, CommentKind, Comments},
     DUMMY_SP,
@@ -20,6 +21,9 @@ use tracing::debug;
 use crate::util::get_import_arg;
 
 mod util;
+
+static JS_PATH_REGEXP: Lazy<regex::Regex> =
+    Lazy::new(|| regex::Regex::new(r"^[./]+|(\.js$)").unwrap());
 
 #[plugin_transform]
 fn loadable_components_plugin(
@@ -530,7 +534,8 @@ where
     fn module_to_chunk(&self, s: &str) -> String {
         debug!("module_to_chunk: `{}`", s);
         // TODO
-        s.into()
+
+        JS_PATH_REGEXP.replace(s, "").into_owned()
     }
 
     fn combine_expression(&self, node: &Tpl) -> Box<Expr> {
