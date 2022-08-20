@@ -3,10 +3,10 @@ import isReadyProperty from './properties/isReady'
 import importAsyncProperty from './properties/importAsync'
 import requireAsyncProperty from './properties/requireAsync'
 import requireSyncProperty from './properties/requireSync'
-import stateProperty from './properties/state'
+import resolvedProperty from './properties/state'
 
 const properties = [
-  stateProperty,
+  resolvedProperty,
   chunkNameProperty,
   isReadyProperty,
   importAsyncProperty,
