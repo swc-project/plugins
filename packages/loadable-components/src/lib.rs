@@ -1,3 +1,5 @@
+use std::fmt::format;
+
 use swc_common::{comments::Comments, DUMMY_SP};
 use swc_core::{
     ast::*,
@@ -189,7 +191,7 @@ where
         }
     }
 
-    fn add_or_replace_chunk_name_comment(&self, import: &CallExpr, values: Option<String>) {
+    fn add_or_replace_chunk_name_comment(&self, import: &CallExpr, values: serde_json::Value) {
         let import_arg = get_import_arg(import);
 
         let chunk_name_content = self.get_chunk_name_content(import_arg);
@@ -198,8 +200,10 @@ where
             let comments = self.comments.take_leading(import_arg.span_lo());
         }
 
-        self.comments
-            .add_leading(import_arg.span_lo(), self.writeWebpackCommentValues(values))
+        self.comments.add_leading(
+            import_arg.span_lo(),
+            self.write_webpack_comment_values(values),
+        )
     }
 
     fn replace_chunk_name(&self, import: &CallExpr) -> Expr {
@@ -211,7 +215,7 @@ where
 
         if aggressive_import && values.is_some() {
             self.add_or_replace_chunk_name_comment(import, values.unwrap());
-            return webpack_chunk_name.as_str().unwrap().into();
+            return webpack_chunk_name.unwrap().into();
         }
 
         let mut chunk_name_node =
@@ -400,6 +404,16 @@ where
                 return_type: Default::default(),
             },
         }
+    }
+
+    fn write_webpack_comment_values(&self, values: serde_json::Value) -> String {
+        values
+            .as_object()
+            .unwrap()
+            .iter()
+            .map(|(k, v)| format!("{}: {}", k, v))
+            .collect::<Vec<_>>()
+            .join(", ")
     }
 }
 
