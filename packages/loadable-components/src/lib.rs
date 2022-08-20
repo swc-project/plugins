@@ -189,17 +189,33 @@ impl Loadable {
         }
     }
 
-    fn create_require_sync_method(&mut self, import: &CallExpr, func: &Expr) -> MethodProp {
+    fn create_require_sync_method(&mut self, _import: &CallExpr, _func: &Expr) -> MethodProp {
         MethodProp {
             key: PropName::Ident(quote_ident!("requireSync")),
             function: Function {
-                params: Default::default(),
+                params: vec![Param {
+                    span: DUMMY_SP,
+                    decorators: Default::default(),
+                    pat: Pat::Ident(quote_ident!("props").into()),
+                }],
                 decorators: Default::default(),
                 span: DUMMY_SP,
-                body: Some(BlockStmt {
-                    span: DUMMY_SP,
-                    stmts: vec![],
-                }),
+                body: Some(
+                    quote!(
+                        "
+                    {
+                        const id = this.resolve(props)
+
+                        if (typeof __webpack_require__ !== 'undefined') {
+                        return __webpack_require__(id)
+                        }
+
+                        return eval('module.require')(id)
+                    }
+                    " as Stmt
+                    )
+                    .expect_block(),
+                ),
                 is_generator: false,
                 is_async: false,
                 type_params: Default::default(),
