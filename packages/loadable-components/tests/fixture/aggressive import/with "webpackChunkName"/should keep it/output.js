@@ -2,7 +2,7 @@ loadable({
     resolved: {},
 
     chunkName(props) {
-        return \\"pages/\\" + props.path.replace(/[^a-zA-Z0-9_!§$()=\\\\-^°]+/g, \\"-\\");
+        return "pages/" + props.path.replace(/[^a-zA-Z0-9_!§$()=\\-^°]+/g, "-");
     },
 
     isReady(props) {
