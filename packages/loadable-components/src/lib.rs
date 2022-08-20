@@ -25,6 +25,15 @@ mod util;
 static JS_PATH_REGEXP: Lazy<regex::Regex> =
     Lazy::new(|| regex::Regex::new(r"^[./]+|(\.js$)").unwrap());
 
+static WEBPACK_PATH_NAME_NORMALIZE_REPLACE_REGEX: Lazy<regex::Regex> =
+    Lazy::new(|| regex::Regex::new(r"[^a-zA-Z0-9_!§$()=\-^°]+").unwrap());
+
+static WEBPACK_MATCH_PADDED_HYPHENS_REPLACE_REGEX: Lazy<regex::Regex> =
+    Lazy::new(|| regex::Regex::new(r"^-|-$").unwrap());
+
+static MATCH_LEFT_HYPHENS_REPLACE_REGEX: Lazy<regex::Regex> =
+    Lazy::new(|| regex::Regex::new(r"^-").unwrap());
+
 #[plugin_transform]
 fn loadable_components_plugin(
     mut program: Program,
@@ -527,15 +536,25 @@ where
 
     fn replace_quasi(&self, s: &str) -> String {
         debug!("replace_quasi: `{}`", s);
-        // TODO
+
+        if s.is_empty() {
+            return Default::default();
+        }
+        let s = WEBPACK_PATH_NAME_NORMALIZE_REPLACE_REGEX.replace(s, "-");
+
+        let s = MATCH_LEFT_HYPHENS_REPLACE_REGEX.replace(&s, "");
+
         s.into()
     }
 
     fn module_to_chunk(&self, s: &str) -> String {
         debug!("module_to_chunk: `{}`", s);
-        // TODO
 
-        JS_PATH_REGEXP.replace(s, "").into_owned()
+        let s = JS_PATH_REGEXP.replace(s, "");
+        let s = WEBPACK_PATH_NAME_NORMALIZE_REPLACE_REGEX.replace(&s, "-");
+        let s = WEBPACK_MATCH_PADDED_HYPHENS_REPLACE_REGEX.replace(&s, "");
+
+        s.into_owned()
     }
 
     fn combine_expression(&self, node: &Tpl) -> Box<Expr> {
