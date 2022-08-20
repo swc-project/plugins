@@ -1,5 +1,3 @@
-use std::fmt::format;
-
 use swc_common::{comments::Comments, DUMMY_SP};
 use swc_core::{
     ast::*,
@@ -229,7 +227,7 @@ where
         }
         let mut values = values.unwrap_or_default();
 
-        values["webpackChunkName"] = webpack_chunk_name;
+        values["webpackChunkName"] = serde_json::Value::String(webpack_chunk_name.unwrap());
         self.add_or_replace_chunk_name_comment(import, values);
         chunk_name_node
     }
