@@ -14,14 +14,6 @@ const testPlugin = code => {
 describe('plugin', () => {
   describe('aggressive import', () => {
     describe('without "webpackChunkName"', () => {
-      it('should support simple request', () => {
-        const result = testPlugin(`
-          loadable(props => import(\`./\${props.foo}\`))
-        `)
-
-        expect(result).toMatchSnapshot()
-      })
-
       it('should support complex request', () => {
         const result = testPlugin(`
           loadable(props => import(\`./dir/\${props.foo}/test\`))
