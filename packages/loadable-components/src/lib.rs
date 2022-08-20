@@ -134,15 +134,20 @@ where
     }
 
     fn create_chunk_name_method(&mut self, import: &CallExpr, func: &Expr) -> MethodProp {
+        fn replace_chunk_name(import: &CallExpr) -> Expr {}
+
         MethodProp {
             key: PropName::Ident(quote_ident!("chunkName")),
             function: Function {
-                params: Default::default(),
+                params: clone_params(func),
                 decorators: Default::default(),
                 span: DUMMY_SP,
                 body: Some(BlockStmt {
                     span: DUMMY_SP,
-                    stmts: vec![],
+                    stmts: vec![Stmt::Return(ReturnStmt {
+                        span: DUMMY_SP,
+                        arg: Some(Box::new(replace_chunk_name(import))),
+                    })],
                 }),
                 is_generator: false,
                 is_async: false,

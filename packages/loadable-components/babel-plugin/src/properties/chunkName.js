@@ -98,22 +98,22 @@ export default function chunkNameProperty({ types: t }) {
     if (importArg.isTemplateLiteral()) {
       return prefix
         ? t.binaryExpression(
-            '+',
-            t.stringLiteral(prefix),
-            sanitizeChunkNameTemplateLiteral(
-              combineExpressions(importArg.node),
-            ),
-          )
+          '+',
+          t.stringLiteral(prefix),
+          sanitizeChunkNameTemplateLiteral(
+            combineExpressions(importArg.node),
+          ),
+        )
         : t.templateLiteral(
-            importArg.node.quasis.map((quasi, index) =>
-              transformQuasi(
-                quasi,
-                index === 0,
-                importArg.node.quasis.length === 1,
-              ),
+          importArg.node.quasis.map((quasi, index) =>
+            transformQuasi(
+              quasi,
+              index === 0,
+              importArg.node.quasis.length === 1,
             ),
-            importArg.node.expressions,
-          )
+          ),
+          importArg.node.expressions,
+        )
     }
     return t.stringLiteral(moduleToChunk(importArg.node.value))
   }
@@ -178,16 +178,5 @@ export default function chunkNameProperty({ types: t }) {
 
     addOrReplaceChunkNameComment(callPath, { ...values, webpackChunkName })
     return chunkNameNode
-  }
-
-  return ({ callPath, funcPath }) => {
-    const chunkName = replaceChunkName(callPath)
-
-    return t.objectMethod(
-      'method',
-      t.identifier('chunkName'),
-      funcPath.node.params,
-      t.blockStatement([t.returnStatement(chunkName)]),
-    )
   }
 }
