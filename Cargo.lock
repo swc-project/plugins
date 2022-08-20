@@ -2117,6 +2117,7 @@ dependencies = [
  "serde_json",
  "swc_common",
  "swc_core",
+ "testing",
 ]
 
 [[package]]

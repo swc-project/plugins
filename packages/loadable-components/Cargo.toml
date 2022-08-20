@@ -19,3 +19,6 @@ swc_core = {version = "0.7.16", features = [
   "ast",
   "common",
 ]}
+
+[dev-dependencies]
+testing = "0.29.4"
