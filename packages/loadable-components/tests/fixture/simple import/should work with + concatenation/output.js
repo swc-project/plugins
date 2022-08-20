@@ -2,7 +2,7 @@ loadable({
     resolved: {},
 
     chunkName() {
-        return `ModA`.replace(/[^a-zA-Z0-9_!§$()=\\-^°]+/g, "-");
+        return "";
     },
 
     isReady(props) {
@@ -20,8 +20,8 @@ loadable({
     },
 
     importAsync: () => import(
-        /* webpackChunkName: "ModA" */
-        `./ModA`),
+        /* webpackChunkName: "" */
+        './Mod' + 'A'),
 
     requireAsync(props) {
         const key = this.resolve(props);
@@ -44,10 +44,10 @@ loadable({
 
     resolve() {
         if (require.resolveWeak) {
-            return require.resolveWeak(`./ModA`);
+            return require.resolveWeak('./Mod' + 'A');
         }
 
-        return eval('require.resolve')(`./ModA`);
+        return eval('require.resolve')('./Mod' + 'A');
     }
 
 });
