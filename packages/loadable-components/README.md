@@ -1,17 +1,7 @@
-# transform-imports
+# loadable-components
 
 ## Config
 
 ```json
-[
-  "transform-imports",
-  {
-    "react-bootstrap": {
-      "transform": "react-bootstrap/lib/{{member}}"
-    },
-    "lodash": {
-      "transform": "lodash/{{member}}"
-    }
-  }
-]
+["loadable-components", {}]
 ```
