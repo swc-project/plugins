@@ -13,13 +13,6 @@ const testPlugin = code => {
 
 describe('plugin', () => {
   describe('aggressive import', () => {
-    it('should work with destructuration', () => {
-      const result = testPlugin(`
-        loadable(({ foo }) => import(/* webpackChunkName: "Pages" */ \`./\${foo}\`))
-      `)
-      expect(result).toMatchSnapshot()
-    })
-
     describe('with "webpackChunkName"', () => {
       it('should replace it', () => {
         const result = testPlugin(`
