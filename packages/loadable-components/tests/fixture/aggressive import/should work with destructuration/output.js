@@ -4,7 +4,7 @@ loadable({
     chunkName({
         foo
     }) {
-        return `\${foo}`.replace(/[^a-zA-Z0-9_!§$()=\\-^°]+/g, \\"-");
+        return `\${foo}`.replace(/[^a-zA-Z0-9_!§$()=\\-^°]+/g, "-");
     },
 
     isReady(props) {
