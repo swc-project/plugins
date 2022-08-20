@@ -531,18 +531,18 @@ where
                 if single {
                     self.module_to_chunk(cooked).into()
                 } else {
-                    self.replace_quasi(cooked).into()
+                    self.replace_quasi(cooked, first).into()
                 }
             }),
             raw: if single {
                 self.module_to_chunk(&quasi.raw).into()
             } else {
-                self.replace_quasi(&quasi.raw).into()
+                self.replace_quasi(&quasi.raw, first).into()
             },
         }
     }
 
-    fn replace_quasi(&self, s: &str) -> String {
+    fn replace_quasi(&self, s: &str, strip_left_hyphen: bool) -> String {
         debug!("replace_quasi: `{}`", s);
 
         if s.is_empty() {
@@ -550,9 +550,13 @@ where
         }
         let s = WEBPACK_PATH_NAME_NORMALIZE_REPLACE_REGEX.replace(s, "-");
 
-        let s = MATCH_LEFT_HYPHENS_REPLACE_REGEX.replace(&s, "");
+        if strip_left_hyphen {
+            let s = MATCH_LEFT_HYPHENS_REPLACE_REGEX.replace(&s, "");
 
-        s.into()
+            s.into()
+        } else {
+            s.into()
+        }
     }
 
     fn module_to_chunk(&self, s: &str) -> String {
