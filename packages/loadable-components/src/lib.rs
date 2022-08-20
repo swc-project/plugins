@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use swc_common::{
     comments::{Comment, CommentKind, Comments},
     DUMMY_SP,
@@ -170,7 +172,7 @@ where
 
         chunk_name_comment
             .map(|v| self.read_webpack_comment_values(v))
-            .map(From::from)
+            .map(|s| serde_json::Value::from_str(&s).unwrap())
     }
 
     fn get_existing_chunk_name_comment(&self, import: &CallExpr) -> Option<serde_json::Value> {
