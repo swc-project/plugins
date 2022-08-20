@@ -473,8 +473,8 @@ where
                 });
         }
 
-        let value = match import_arg.clone().expect_lit() {
-            Lit::Str(s) => s.value,
+        let value = match import_arg {
+            Expr::Lit(Lit::Str(s)) => s.value.clone(),
             _ => return "".into(),
         };
         self.module_to_chunk(&value).into()
