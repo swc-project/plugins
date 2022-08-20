@@ -34,13 +34,5 @@ describe('plugin', () => {
       expect(result).toMatchSnapshot()
     })
 
-    it('should transpile function expression', () => {
-      const result = testPlugin(`
-        const load = /* #__LOADABLE__ */ function () {
-          return import('moment')
-        }
-      `)
-      expect(result).toMatchSnapshot()
-    })
   })
 })
