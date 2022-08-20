@@ -106,7 +106,7 @@ impl Loadable {
         .into()
     }
 
-    fn create_resolved_property(&mut self, import: &CallExpr, func: &Expr) -> KeyValueProp {
+    fn create_resolved_property(&mut self, _import: &CallExpr, _func: &Expr) -> KeyValueProp {
         KeyValueProp {
             key: PropName::Ident(quote_ident!("resolved")),
             value: Box::new(

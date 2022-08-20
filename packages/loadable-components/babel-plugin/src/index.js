@@ -1,9 +1,7 @@
 import chunkNameProperty from './properties/chunkName'
 import importAsyncProperty from './properties/importAsync'
-import resolvedProperty from './properties/state'
 
 const properties = [
-  resolvedProperty,
   chunkNameProperty,
   importAsyncProperty,
 ]
