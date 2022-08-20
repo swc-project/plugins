@@ -1,6 +1,7 @@
 use swc_common::{comments::Comments, DUMMY_SP};
 use swc_core::{
     ast::*,
+    atoms::JsWord,
     plugin::{
         plugin_transform,
         proxies::{PluginCommentsProxy, TransformPluginProgramMetadata},
@@ -135,9 +136,9 @@ where
 
     fn is_aggressive_import(&self, import: &CallExpr) -> bool {}
 
-    fn get_raw_chunk_name_from_comments(&self, import: &CallExpr) -> Option<String> {}
+    fn get_raw_chunk_name_from_comments(&self, import: &CallExpr) -> Option<JsWord> {}
 
-    fn get_existing_chunk_name_comment(&self, import: &CallExpr) -> Option<String> {
+    fn get_existing_chunk_name_comment(&self, import: &CallExpr) -> Option<JsWord> {
         let arg = get_import_arg(import);
 
         self.get_raw_chunk_name_from_comments(import)
@@ -145,12 +146,25 @@ where
 
     fn replace_chunk_name(&self, import: &CallExpr) -> Expr {
         let aggressive_import = self.is_aggressive_import(import);
-        let values = self.get_existing_chunk_name_comment(import);
+        let mut values = self.get_existing_chunk_name_comment(import);
 
         if aggressive_import && values.is_some() {
             self.addOrReplaceChunkNameComment(import, values.clone().unwrap());
             return values.unwrap().into();
         }
+
+        let mut chunk_name_node =
+            self.generateChunkNameNode(import, self.getChunkNamePrefix(values));
+
+        if chunk_name_node.is_tpl() {
+            values = self.chunkNameFromTemplateLiteral(chunkNameNode);
+            chunk_name_node = self.sanitizeChunkNameTemplateLiteral(chunkNameNode);
+        } else if let Expr::Lit(Lit::Str(s)) = &chunk_name_node {
+            values = Some(s.value.clone());
+        }
+
+        self.addOrReplaceChunkNameComment(import, values.clone().unwrap());
+        chunk_name_node
     }
 
     fn create_chunk_name_method(&mut self, import: &CallExpr, func: &Expr) -> MethodProp {

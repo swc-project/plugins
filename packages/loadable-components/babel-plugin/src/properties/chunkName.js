@@ -148,20 +148,5 @@ export default function chunkNameProperty({ types: t }) {
     return match ? match[1] : ''
   }
 
-  function replaceChunkName(callPath) {
-    let chunkNameNode = generateChunkNameNode(
-      callPath,
-      getChunkNamePrefix(webpackChunkName),
-    )
 
-    if (t.isTemplateLiteral(chunkNameNode)) {
-      webpackChunkName = chunkNameFromTemplateLiteral(chunkNameNode)
-      chunkNameNode = sanitizeChunkNameTemplateLiteral(chunkNameNode)
-    } else if (t.isStringLiteral(chunkNameNode)) {
-      webpackChunkName = chunkNameNode.value
-    }
-
-    addOrReplaceChunkNameComment(callPath, { ...values, webpackChunkName })
-    return chunkNameNode
-  }
 }
