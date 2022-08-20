@@ -169,7 +169,7 @@ where
         self.get_raw_chunk_name_from_comments(import_arg)
     }
 
-    fn chunk_name_from_template_literal(node: &Expr) -> String {
+    fn chunk_name_from_template_literal(&self, node: &Expr) -> String {
         match node {
             Expr::Tpl(t) => {
                 let v1 = t.quasis[0].cooked.clone().unwrap_or_default();
@@ -209,7 +209,7 @@ where
             self.generateChunkNameNode(import, self.getChunkNamePrefix(values));
 
         if chunk_name_node.is_tpl() {
-            values = self.chunkNameFromTemplateLiteral(chunk_name_node);
+            values = self.chunk_name_from_template_literal(chunk_name_node);
             chunk_name_node = self.sanitizeChunkNameTemplateLiteral(chunk_name_node);
         } else if let Expr::Lit(Lit::Str(s)) = &chunk_name_node {
             values = Some(s.value.clone());
