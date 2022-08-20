@@ -22,7 +22,7 @@ mod util;
 #[plugin_transform]
 fn loadable_components_plugin(
     mut program: Program,
-    data: TransformPluginProgramMetadata,
+    _data: TransformPluginProgramMetadata,
 ) -> Program {
     program.visit_mut_with(&mut loadable_transform(PluginCommentsProxy));
 
@@ -236,7 +236,11 @@ where
         }
         let mut values = values.unwrap_or_default();
 
-        values["webpackChunkName"] = serde_json::Value::String(webpack_chunk_name.unwrap());
+        if let Some(webpack_chunk_name) = webpack_chunk_name.clone() {
+            values["webpackChunkName"] = serde_json::Value::String(webpack_chunk_name);
+        } else {
+            values["webpackChunkName"] = serde_json::Value::Null;
+        }
         self.add_or_replace_chunk_name_comment(import, values);
         chunk_name_node
     }
