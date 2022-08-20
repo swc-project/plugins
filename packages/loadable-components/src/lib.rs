@@ -512,9 +512,15 @@ where
         }
     }
 
-    fn replace_quasi(&self, s: &str) -> String {}
+    fn replace_quasi(&self, s: &str) -> String {
+        // TODO
+        s.into()
+    }
 
-    fn module_to_chunk(&self, s: &str) -> String {}
+    fn module_to_chunk(&self, s: &str) -> String {
+        // TODO
+        s.into()
+    }
 
     fn combine_expression(&self, node: &Tpl) -> Box<Expr> {
         if node.exprs.len() == 1 {
