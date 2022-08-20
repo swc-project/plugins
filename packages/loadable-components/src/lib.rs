@@ -164,7 +164,7 @@ where
             .with_leading(import_arg.span_lo(), |comments| {
                 comments
                     .iter()
-                    .find(|c| c.text.contains("webpackChunkName   "))
+                    .find(|c| c.text.contains("webpackChunkName"))
                     .map(|v| v.text.to_string())
             })
     }
