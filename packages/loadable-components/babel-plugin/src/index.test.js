@@ -14,14 +14,6 @@ const testPlugin = code => {
 describe('plugin', () => {
   describe('aggressive import', () => {
     describe('with "webpackChunkName"', () => {
-      it('should replace it', () => {
-        const result = testPlugin(`
-          loadable(props => import(/* webpackChunkName: "Pages" */ \`./\${props.foo}\`))
-        `)
-
-        expect(result).toMatchSnapshot()
-      })
-
       it('should keep it', () => {
         const result = testPlugin(`
           loadable(props => import(/* webpackChunkName: "pages/[request]" */ \`./pages/\${props.path}\`))
