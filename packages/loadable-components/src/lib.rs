@@ -1,4 +1,7 @@
-use swc_common::{comments::Comments, DUMMY_SP};
+use swc_common::{
+    comments::{Comment, CommentKind, Comments},
+    DUMMY_SP,
+};
 use swc_core::{
     ast::*,
     common::Spanned,
@@ -200,7 +203,11 @@ where
 
         self.comments.add_leading(
             import_arg.span_lo(),
-            self.write_webpack_comment_values(values),
+            Comment {
+                kind: CommentKind::Block,
+                span: DUMMY_SP,
+                text: self.write_webpack_comment_values(values).into(),
+            },
         )
     }
 
