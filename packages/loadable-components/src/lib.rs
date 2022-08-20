@@ -7,6 +7,10 @@ use swc_core::{
     visit::{Visit, VisitMut, VisitMutWith, VisitWith},
 };
 
+use crate::util::get_import_arg;
+
+mod util;
+
 #[plugin_transform]
 fn loadable_components_plugin(
     mut program: Program,
@@ -205,7 +209,11 @@ impl Loadable {
     }
 
     fn create_resolve_method(&mut self, import: &CallExpr, func: &Expr) -> MethodProp {
-        fn get_call_value(import: &CallExpr) -> Expr {}
+        fn get_call_value(import: &CallExpr) -> Expr {
+            let import_arg = get_import_arg(import);
+
+            import_arg.clone()
+        }
 
         MethodProp {
             key: PropName::Ident(quote_ident!("resolve")),
