@@ -12,18 +12,6 @@ const testPlugin = code => {
 }
 
 describe('plugin', () => {
-  describe('aggressive import', () => {
-    describe('without "webpackChunkName"', () => {
-      it('should support destructuring', () => {
-        const result = testPlugin(`
-          loadable(({ foo }) => import(\`./dir/\${foo}/test\`))
-        `)
-
-        expect(result).toMatchSnapshot()
-      })
-    })
-  })
-
   describe('Magic comment', () => {
     it('should transpile shortand properties', () => {
       const result = testPlugin(`
