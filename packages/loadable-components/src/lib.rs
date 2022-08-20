@@ -165,7 +165,7 @@ where
         self.get_raw_chunk_name_from_comments(import)
     }
 
-    fn addOrReplaceChunkNameComment(&self, import: &CallExpr) {
+    fn addOrReplaceChunkNameComment(&self, import: &CallExpr, values: Option<String>) {
         let import_arg = get_import_arg(import);
 
         let chunk_name_content = self.get_chunk_name_content(import_arg);
@@ -174,7 +174,8 @@ where
             let comments = self.comments.take_leading(import_arg.span_lo());
         }
 
-        self.comments.add_leading(import_arg.span_lo(), cmt)
+        self.comments
+            .add_leading(import_arg.span_lo(), self.writeWebpackCommentValues(values))
     }
 
     fn replace_chunk_name(&self, import: &CallExpr) -> Expr {
