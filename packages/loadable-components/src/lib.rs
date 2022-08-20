@@ -206,7 +206,9 @@ where
     fn replace_chunk_name(&self, import: &CallExpr) -> Expr {
         let aggressive_import = self.is_aggressive_import(import);
         let mut values = self.get_existing_chunk_name_comment(import);
-        let mut webpack_chunk_name = values.unwrap_or_default()["webpackChunkName"];
+        let mut webpack_chunk_name = values.unwrap_or_default()["webpackChunkName"]
+            .as_str()
+            .map(|v| v.to_string());
 
         if aggressive_import && values.is_some() {
             self.add_or_replace_chunk_name_comment(import, values.unwrap());
