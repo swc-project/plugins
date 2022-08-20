@@ -222,7 +222,7 @@ where
             webpack_chunk_name = Some(self.chunk_name_from_template_literal(chunk_name_node));
             chunk_name_node = self.sanitizeChunkNameTemplateLiteral(chunk_name_node);
         } else if let Expr::Lit(Lit::Str(s)) = &chunk_name_node {
-            values = Some(s.value.clone());
+            webpack_chunk_name = Some(s.value.to_string());
         }
         let mut values = values.unwrap_or_default();
 
