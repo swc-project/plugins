@@ -1,1 +1,1 @@
-loadable(props => import(/* webpackChunkName: "Pages" */ `./\${props.foo}`))
+loadable(props => import(/* webpackChunkName: "Pages" */ `./${props.foo}`))

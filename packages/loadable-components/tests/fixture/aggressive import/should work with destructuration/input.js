@@ -1,1 +1,1 @@
-loadable(({ foo }) => import(/* webpackChunkName: "Pages" */ `./\${foo}`))
+loadable(({ foo }) => import(/* webpackChunkName: "Pages" */ `./${foo}`))
