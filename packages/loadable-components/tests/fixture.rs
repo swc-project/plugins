@@ -5,7 +5,7 @@ use swc_plugin_loadable_components::loadable_transform;
 
 #[testing::fixture("tests/fixture/**/input.js")]
 fn fixture(input: PathBuf) {
-    let output = input.parent().unwrap().join("ouput.js");
+    let output = input.parent().unwrap().join("output.js");
 
     test_fixture(
         Default::default(),
