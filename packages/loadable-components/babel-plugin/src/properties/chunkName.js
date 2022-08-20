@@ -9,19 +9,6 @@ const WEBPACK_PATH_NAME_NORMALIZE_REPLACE_REGEX = /[^a-zA-Z0-9_!§$()=\-^°]+/g
 const WEBPACK_MATCH_PADDED_HYPHENS_REPLACE_REGEX = /^-|-$/g
 
 
-function writeWebpackCommentValues(values) {
-  try {
-    const str = Object.keys(values)
-      .map(key => `${key}: ${JSON.stringify(values[key])}`)
-      .join(', ')
-    return ` ${str} `
-  } catch (e) {
-    throw Error(
-      `compilation error while processing: /*${values}*/: ${e.message}`,
-    )
-  }
-}
-
 function moduleToChunk(str) {
   if (typeof str !== 'string') return ''
   return str
