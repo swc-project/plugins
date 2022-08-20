@@ -461,7 +461,7 @@ where
                             .iter()
                             .enumerate()
                             .map(|(idx, quasi)| {
-                                self.transformQuasi(quasi, idx == 0, import_arg.quasis.len() == 1)
+                                self.transform_quasi(quasi, idx == 0, import_arg.quasis.len() == 1)
                             })
                             .collect(),
                     })
@@ -494,7 +494,7 @@ where
         })
     }
 
-    fn transformQuasi(&self, quasi: &TplElement, first: bool, single: bool) -> TplElement {
+    fn transform_quasi(&self, quasi: &TplElement, first: bool, single: bool) -> TplElement {
         TplElement {
             span: quasi.span,
             tail: quasi.tail,
