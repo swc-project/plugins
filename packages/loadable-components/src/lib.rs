@@ -220,7 +220,7 @@ where
             .map(|map| map["webpackChunkName"].as_str().map(|v| v.to_string()))
             .unwrap_or_default();
 
-        if aggressive_import && values.is_some() {
+        if !aggressive_import && values.is_some() {
             self.add_or_replace_chunk_name_comment(import, values.unwrap());
             return webpack_chunk_name.unwrap().into();
         }
