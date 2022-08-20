@@ -1692,9 +1692,9 @@ dependencies = [
 
 [[package]]
 name = "swc_core"
-version = "0.8.1"
+version = "0.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9db80d8d791718a4395b27e69e6e165c9886ffd82ae0389c8e57e20fc8978be5"
+checksum = "59c9e65e4817d8a9b517b00b54c908206644e8a1c90a09454079456a0070f2d8"
 dependencies = [
  "once_cell",
  "swc_atoms",
@@ -1929,23 +1929,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "swc_ecma_quote"
-version = "0.32.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "44b25dbf7c2aea524b5cc27ab36959c27a68d3b4c8a9c5072fda9f2c38706708"
-dependencies = [
- "swc_atoms",
- "swc_common",
- "swc_ecma_ast",
- "swc_ecma_quote_macros",
- "swc_ecma_utils",
-]
-
-[[package]]
 name = "swc_ecma_quote_macros"
-version = "0.28.5"
+version = "0.28.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7c651d204d48323c3461441d465f22c1f2d8142a27ed5589818ccdb54b980b26"
+checksum = "181fdcfd37712f6d4a6412840b9f6f32872884a4bba7358a76e62961a1ee641b"
 dependencies = [
  "anyhow",
  "pmutil",
@@ -2197,7 +2184,6 @@ dependencies = [
  "serde_json",
  "swc_common",
  "swc_core",
- "swc_ecma_quote",
  "testing",
 ]
 

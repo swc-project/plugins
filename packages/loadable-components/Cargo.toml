@@ -20,7 +20,6 @@ swc_core = {version = "0.8.1", features = [
   "common",
   "quote",
 ]}
-swc_ecma_quote = "0.32.6"
 
 [dev-dependencies]
 testing = "0.29.4"
