@@ -2182,6 +2182,7 @@ name = "swc_plugin_loadable_components"
 version = "0.1.0"
 dependencies = [
  "once_cell",
+ "regex",
  "serde_json",
  "swc_common",
  "swc_core",
