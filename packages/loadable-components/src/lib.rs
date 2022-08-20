@@ -116,7 +116,7 @@ impl Loadable {
 
     fn create_chunk_name_method(&mut self, import: &CallExpr, func: &Expr) -> MethodProp {
         MethodProp {
-            key: PropName::Ident(quote_ident!("")),
+            key: PropName::Ident(quote_ident!("chunkName")),
             function: Function {
                 params: Default::default(),
                 decorators: Default::default(),
@@ -135,7 +135,7 @@ impl Loadable {
 
     fn create_is_ready_method(&mut self, import: &CallExpr, func: &Expr) -> MethodProp {
         MethodProp {
-            key: PropName::Ident(quote_ident!("")),
+            key: PropName::Ident(quote_ident!("isReady")),
             function: Function {
                 params: Default::default(),
                 decorators: Default::default(),
