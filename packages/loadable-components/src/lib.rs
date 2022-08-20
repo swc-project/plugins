@@ -2,6 +2,7 @@ use swc_common::DUMMY_SP;
 use swc_core::{
     ast::*,
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
+    quote,
     utils::{quote_ident, ExprFactory},
     visit::{Visit, VisitMut, VisitMutWith, VisitWith},
 };
@@ -204,16 +205,29 @@ impl Loadable {
     }
 
     fn create_resolve_method(&mut self, import: &CallExpr, func: &Expr) -> MethodProp {
+        fn get_call_value(import: &CallExpr) -> Expr {}
+
         MethodProp {
             key: PropName::Ident(quote_ident!("resolve")),
             function: Function {
                 params: clone_params(func),
                 decorators: Default::default(),
                 span: DUMMY_SP,
-                body: Some(BlockStmt {
-                    span: DUMMY_SP,
-                    stmts: vec![],
-                }),
+                body: Some(
+                    quote!(
+                        "
+                        {
+                            if (require.resolveWeak) {
+                                return require.resolveWeak($id)
+                              }
+                          
+                              return eval('require.resolve')($id)
+                        }
+                        " as Stmt,
+                        id: Expr = get_call_value(import)
+                    )
+                    .expect_block(),
+                ),
                 is_generator: false,
                 is_async: false,
                 type_params: Default::default(),

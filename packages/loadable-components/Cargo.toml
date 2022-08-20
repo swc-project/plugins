@@ -18,6 +18,7 @@ swc_core = {version = "0.7.16", features = [
   "visit",
   "ast",
   "common",
+  "quote",
 ]}
 
 [dev-dependencies]
