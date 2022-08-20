@@ -118,12 +118,6 @@ export default function chunkNameProperty({ types: t }) {
     return t.stringLiteral(moduleToChunk(importArg.node.value))
   }
 
-  function getExistingChunkNameComment(callPath) {
-    const importArg = getImportArg(callPath)
-    const values = getRawChunkNameFromCommments(importArg)
-    return values
-  }
-
   function isAgressiveImport(callPath) {
     const importArg = getImportArg(callPath)
     return (

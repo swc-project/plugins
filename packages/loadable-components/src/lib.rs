@@ -133,9 +133,21 @@ where
         }
     }
 
-    fn create_chunk_name_method(&mut self, import: &CallExpr, func: &Expr) -> MethodProp {
-        fn replace_chunk_name(import: &CallExpr) -> Expr {}
+    fn is_aggressive_import(&self, import: &CallExpr) -> bool {}
 
+    fn get_raw_chunk_name_from_comments(&self, import: &CallExpr) -> Option<String> {}
+
+    fn get_existing_chunk_name_comment(&self, import: &CallExpr) -> Option<String> {
+        let arg = get_import_arg(import);
+
+        self.get_raw_chunk_name_from_comments(import)
+    }
+
+    fn replace_chunk_name(&self, import: &CallExpr) -> Expr {
+        let aggressive_import = self.is_aggressive_import(import);
+    }
+
+    fn create_chunk_name_method(&mut self, import: &CallExpr, func: &Expr) -> MethodProp {
         MethodProp {
             key: PropName::Ident(quote_ident!("chunkName")),
             function: Function {
@@ -146,7 +158,7 @@ where
                     span: DUMMY_SP,
                     stmts: vec![Stmt::Return(ReturnStmt {
                         span: DUMMY_SP,
-                        arg: Some(Box::new(replace_chunk_name(import))),
+                        arg: Some(Box::new(self.replace_chunk_name(import))),
                     })],
                 }),
                 is_generator: false,
