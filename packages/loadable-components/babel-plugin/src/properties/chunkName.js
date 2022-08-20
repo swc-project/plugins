@@ -29,14 +29,6 @@ function writeWebpackCommentValues(values) {
     )
   }
 }
-
-function getChunkNameComment(importArg) {
-  if (!importArg.has('leadingComments')) return null
-  return importArg
-    .get('leadingComments')
-    .find(comment => comment.node.value.match(WEBPACK_CHUNK_NAME_REGEXP))
-}
-
 function getRawChunkNameFromCommments(importArg) {
   const chunkNameComment = getChunkNameComment(importArg)
   if (!chunkNameComment) return null

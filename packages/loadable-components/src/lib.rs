@@ -143,6 +143,20 @@ where
         }
     }
 
+    fn get_chunk_name_content(&self, import_arg: &Expr) -> Option<String> {
+        if !self.comments.has_leading(import_arg.span_lo()) {
+            return None;
+        }
+
+        self.comments
+            .with_leading(import_arg.span_lo(), |comments| {
+                comments
+                    .iter()
+                    .find(|c| c.text.contains("webpackChunkName   "))
+            })
+            .map(|v| v.text.to_string())
+    }
+
     fn get_raw_chunk_name_from_comments(&self, import: &CallExpr) -> Option<JsWord> {}
 
     fn get_existing_chunk_name_comment(&self, import: &CallExpr) -> Option<JsWord> {
@@ -176,8 +190,8 @@ where
             self.generateChunkNameNode(import, self.getChunkNamePrefix(values));
 
         if chunk_name_node.is_tpl() {
-            values = self.chunkNameFromTemplateLiteral(chunkNameNode);
-            chunk_name_node = self.sanitizeChunkNameTemplateLiteral(chunkNameNode);
+            values = self.chunkNameFromTemplateLiteral(chunk_name_node);
+            chunk_name_node = self.sanitizeChunkNameTemplateLiteral(chunk_name_node);
         } else if let Expr::Lit(Lit::Str(s)) = &chunk_name_node {
             values = Some(s.value.clone());
         }
