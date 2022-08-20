@@ -8,14 +8,6 @@ const WEBPACK_CHUNK_NAME_REGEXP = /webpackChunkName/
 const WEBPACK_PATH_NAME_NORMALIZE_REPLACE_REGEX = /[^a-zA-Z0-9_!§$()=\-^°]+/g
 const WEBPACK_MATCH_PADDED_HYPHENS_REPLACE_REGEX = /^-|-$/g
 
-function readWebpackCommentValues(str) {
-  try {
-    const values = vm.runInNewContext(`(function(){return {${str}};})()`)
-    return values
-  } catch (e) {
-    throw Error(`compilation error while processing: /*${str}*/: ${e.message}`)
-  }
-}
 
 function writeWebpackCommentValues(values) {
   try {

@@ -157,10 +157,15 @@ where
             .map(|v| v.text.to_string())
     }
 
+    fn read_webpack_comment_values(&self, v: String) -> String {
+        // TODO?
+        v
+    }
+
     fn get_raw_chunk_name_from_comments(&self, import_arg: &Expr) -> Option<JsWord> {
         let chunk_name_comment = self.get_chunk_name_content(import_arg);
 
-        chunk_name_comment.map(|v| self.readWebpackCommentValues(v))
+        chunk_name_comment.map(|v| self.read_webpack_comment_values(v))
     }
 
     fn get_existing_chunk_name_comment(&self, import: &CallExpr) -> Option<JsWord> {
@@ -209,7 +214,7 @@ where
             self.generateChunkNameNode(import, self.getChunkNamePrefix(values));
 
         if chunk_name_node.is_tpl() {
-            values = self.chunk_name_from_template_literal(chunk_name_node);
+            values = Some(self.chunk_name_from_template_literal(chunk_name_node));
             chunk_name_node = self.sanitizeChunkNameTemplateLiteral(chunk_name_node);
         } else if let Expr::Lit(Lit::Str(s)) = &chunk_name_node {
             values = Some(s.value.clone());
