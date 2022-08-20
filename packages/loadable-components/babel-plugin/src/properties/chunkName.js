@@ -25,19 +25,6 @@ function replaceQuasi(str, stripLeftHyphen) {
 }
 
 export default function chunkNameProperty({ types: t }) {
-  function transformQuasi(quasi, first, single) {
-    return t.templateElement(
-      {
-        raw: single
-          ? moduleToChunk(quasi.value.raw)
-          : replaceQuasi(quasi.value.raw, first),
-        cooked: single
-          ? moduleToChunk(quasi.value.cooked)
-          : replaceQuasi(quasi.value.cooked, first),
-      },
-      quasi.tail,
-    )
-  }
 
   function combineExpressions(node) {
     const { expressions } = node

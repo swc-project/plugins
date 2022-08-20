@@ -227,7 +227,7 @@ where
             self.generate_chunk_name_node(import, self.get_chunk_name_prefix(values.as_ref()));
 
         if chunk_name_node.is_tpl() {
-            webpack_chunk_name = Some(self.chunk_name_from_template_literal(chunk_name_node));
+            webpack_chunk_name = Some(self.chunk_name_from_template_literal(&chunk_name_node));
             chunk_name_node = self.sanitize_chunk_name_template_literal(chunk_name_node);
         } else if let Expr::Lit(Lit::Str(s)) = &chunk_name_node {
             webpack_chunk_name = Some(s.value.to_string());
@@ -491,6 +491,25 @@ where
             ],
             type_args: Default::default(),
         })
+    }
+
+    fn transformQuasi(&self, quasi: &TplElement, first: bool, single: bool) -> TplElement {
+        TplElement {
+            span: quasi.span,
+            tail: quasi.tail,
+            cooked: quasi.cooked.as_ref().map(|cooked| {
+                if single {
+                    self.module_to_chunk(cooked)
+                } else {
+                    self.replace_quasi(cooked)
+                }
+            }),
+            raw: if single {
+                self.module_to_chunk(&quasi.raw)
+            } else {
+                self.replace_quasi(&quasi.raw)
+            },
+        }
     }
 }
 
