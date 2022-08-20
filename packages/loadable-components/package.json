@@ -1,10 +1,10 @@
 {
-  "name": "@swc/plugin-transform-imports",
-  "version": "1.2.5",
-  "description": "SWC plugin for https://www.npmjs.com/package/babel-plugin-transform-imports",
-  "main": "swc_plugin_transform_imports.wasm",
+  "name": "@swc/plugin-loadable-components",
+  "version": "0.1.0",
+  "description": "SWC plugin for `@loadable/components`",
+  "main": "swc_plugin_loadable_components.wasm",
   "scripts": {
-    "prepack": "cp ../../target/wasm32-wasi/release/swc_plugin_transform_imports.wasm ."
+    "prepack": "cp ../../target/wasm32-wasi/release/swc_plugin_loadable_components.wasm ."
   },
   "homepage": "https://swc.rs",
   "repository": {
