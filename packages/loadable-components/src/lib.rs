@@ -145,6 +145,12 @@ where
 
     fn replace_chunk_name(&self, import: &CallExpr) -> Expr {
         let aggressive_import = self.is_aggressive_import(import);
+        let values = self.get_existing_chunk_name_comment(import);
+
+        if aggressive_import && values.is_some() {
+            self.addOrReplaceChunkNameComment(import, values.clone().unwrap());
+            return values.unwrap().into();
+        }
     }
 
     fn create_chunk_name_method(&mut self, import: &CallExpr, func: &Expr) -> MethodProp {

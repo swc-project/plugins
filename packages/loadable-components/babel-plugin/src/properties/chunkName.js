@@ -149,15 +149,6 @@ export default function chunkNameProperty({ types: t }) {
   }
 
   function replaceChunkName(callPath) {
-    const agressiveImport = isAgressiveImport(callPath)
-    const values = getExistingChunkNameComment(callPath)
-    let { webpackChunkName } = values || {}
-
-    if (!agressiveImport && values) {
-      addOrReplaceChunkNameComment(callPath, values)
-      return t.stringLiteral(webpackChunkName)
-    }
-
     let chunkNameNode = generateChunkNameNode(
       callPath,
       getChunkNamePrefix(webpackChunkName),
