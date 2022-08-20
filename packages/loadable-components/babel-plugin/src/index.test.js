@@ -12,18 +12,6 @@ const testPlugin = code => {
 }
 
 describe('plugin', () => {
-  describe('simple import', () => {
-    describe('in a complex promise', () => {
-      it('should work', () => {
-        const result = testPlugin(`
-          loadable(() => timeout(import('./ModA'), 2000))
-        `)
-
-        expect(result).toMatchSnapshot()
-      })
-    })
-  })
-
   describe('aggressive import', () => {
     it('should work with destructuration', () => {
       const result = testPlugin(`
