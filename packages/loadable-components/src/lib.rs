@@ -4,6 +4,7 @@ use swc_common::{
 };
 use swc_core::{
     ast::*,
+    atoms::Atom,
     common::Spanned,
     plugin::{
         plugin_transform,
@@ -499,18 +500,22 @@ where
             tail: quasi.tail,
             cooked: quasi.cooked.as_ref().map(|cooked| {
                 if single {
-                    self.module_to_chunk(cooked)
+                    self.module_to_chunk(cooked).into()
                 } else {
-                    self.replace_quasi(cooked)
+                    self.replace_quasi(cooked).into()
                 }
             }),
             raw: if single {
-                self.module_to_chunk(&quasi.raw)
+                self.module_to_chunk(&quasi.raw).into()
             } else {
-                self.replace_quasi(&quasi.raw)
+                self.replace_quasi(&quasi.raw).into()
             },
         }
     }
+
+    fn replace_quasi(&self, s: &str) -> String {}
+
+    fn module_to_chunk(&self, s: &str) -> String {}
 }
 
 impl<C> VisitMut for Loadable<C>
