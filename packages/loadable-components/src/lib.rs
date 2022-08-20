@@ -165,7 +165,9 @@ where
     fn get_raw_chunk_name_from_comments(&self, import_arg: &Expr) -> Option<JsWord> {
         let chunk_name_comment = self.get_chunk_name_content(import_arg);
 
-        chunk_name_comment.map(|v| self.read_webpack_comment_values(v))
+        chunk_name_comment
+            .map(|v| self.read_webpack_comment_values(v))
+            .map(From::from)
     }
 
     fn get_existing_chunk_name_comment(&self, import: &CallExpr) -> Option<JsWord> {
@@ -188,7 +190,7 @@ where
         }
     }
 
-    fn addOrReplaceChunkNameComment(&self, import: &CallExpr, values: Option<String>) {
+    fn add_or_replace_chunk_name_comment(&self, import: &CallExpr, values: Option<String>) {
         let import_arg = get_import_arg(import);
 
         let chunk_name_content = self.get_chunk_name_content(import_arg);
@@ -206,7 +208,7 @@ where
         let mut values = self.get_existing_chunk_name_comment(import);
 
         if aggressive_import && values.is_some() {
-            self.addOrReplaceChunkNameComment(import, values.clone().unwrap());
+            self.add_or_replace_chunk_name_comment(import, values.clone().unwrap());
             return values.unwrap().into();
         }
 
@@ -220,7 +222,7 @@ where
             values = Some(s.value.clone());
         }
 
-        self.addOrReplaceChunkNameComment(import, values.clone().unwrap());
+        self.add_or_replace_chunk_name_comment(import, values.clone().unwrap());
         chunk_name_node
     }
 
