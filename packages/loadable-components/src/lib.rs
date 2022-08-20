@@ -496,7 +496,7 @@ where
             args: vec![
                 Lit::Regex(Regex {
                     span: DUMMY_SP,
-                    exp: "[^a-zA-Z0-9_!§$()=\\-^°]+".into(),
+                    exp: "[^a-zA-Z0-9_!§$()=\\\\-^°]+".into(),
                     flags: "g".into(),
                 })
                 .as_arg(),
