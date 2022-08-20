@@ -4,7 +4,6 @@ use swc_common::{
 };
 use swc_core::{
     ast::*,
-    atoms::Atom,
     common::Spanned,
     plugin::{
         plugin_transform,
@@ -224,12 +223,12 @@ where
             return webpack_chunk_name.unwrap().into();
         }
 
-        let mut chunk_name_node =
-            self.generate_chunk_name_node(import, self.get_chunk_name_prefix(values.as_ref()));
+        let mut chunk_name_node = self
+            .generate_chunk_name_node(import, Some(self.get_chunk_name_prefix(values.as_ref())));
 
         if chunk_name_node.is_tpl() {
             webpack_chunk_name = Some(self.chunk_name_from_template_literal(&chunk_name_node));
-            chunk_name_node = self.sanitize_chunk_name_template_literal(chunk_name_node);
+            chunk_name_node = self.sanitize_chunk_name_template_literal(Box::new(chunk_name_node));
         } else if let Expr::Lit(Lit::Str(s)) = &chunk_name_node {
             webpack_chunk_name = Some(s.value.to_string());
         }
