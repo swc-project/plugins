@@ -173,9 +173,9 @@ where
         serde_json::Value::Object(
             v.split(",")
                 .map(|v| v.trim())
-                .filter_map(|v| {
-                    let s = v.split(",").collect::<Vec<_>>();
-                    if s.len() >= 2 {
+                .filter_map(|item| {
+                    let s = item.split(":").map(|s| s.trim()).collect::<Vec<_>>();
+                    if s.len() == 2 {
                         return Some((
                             s[0].to_string(),
                             serde_json::Value::String(s[1].to_string()),
