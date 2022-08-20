@@ -475,9 +475,7 @@ where
 
         let value = match import_arg.clone().expect_lit() {
             Lit::Str(s) => s.value,
-            _ => {
-                unreachable!()
-            }
+            _ => return "".into(),
         };
         self.module_to_chunk(&value).into()
     }
