@@ -1,4 +1,4 @@
-use swc_common::{comments::Comments, DUMMY_SP};
+use swc_common::{collections::AHashMap, comments::Comments, DUMMY_SP};
 use swc_core::{
     ast::*,
     atoms::JsWord,
@@ -162,7 +162,7 @@ where
         v
     }
 
-    fn get_raw_chunk_name_from_comments(&self, import_arg: &Expr) -> Option<JsWord> {
+    fn get_raw_chunk_name_from_comments(&self, import_arg: &Expr) -> Option<serde_json::Value> {
         let chunk_name_comment = self.get_chunk_name_content(import_arg);
 
         chunk_name_comment
@@ -170,7 +170,7 @@ where
             .map(From::from)
     }
 
-    fn get_existing_chunk_name_comment(&self, import: &CallExpr) -> Option<JsWord> {
+    fn get_existing_chunk_name_comment(&self, import: &CallExpr) -> Option<serde_json::Value> {
         let import_arg = get_import_arg(import);
 
         self.get_raw_chunk_name_from_comments(import_arg)
@@ -206,23 +206,26 @@ where
     fn replace_chunk_name(&self, import: &CallExpr) -> Expr {
         let aggressive_import = self.is_aggressive_import(import);
         let mut values = self.get_existing_chunk_name_comment(import);
+        let mut webpack_chunk_name = values.unwrap_or_default()["webpackChunkName"];
 
         if aggressive_import && values.is_some() {
-            self.add_or_replace_chunk_name_comment(import, values.clone().unwrap());
-            return values.unwrap().into();
+            self.add_or_replace_chunk_name_comment(import, values.unwrap());
+            return webpack_chunk_name.as_str().unwrap().into();
         }
 
         let mut chunk_name_node =
             self.generateChunkNameNode(import, self.getChunkNamePrefix(values));
 
         if chunk_name_node.is_tpl() {
-            values = Some(self.chunk_name_from_template_literal(chunk_name_node));
+            webpack_chunk_name = Some(self.chunk_name_from_template_literal(chunk_name_node));
             chunk_name_node = self.sanitizeChunkNameTemplateLiteral(chunk_name_node);
         } else if let Expr::Lit(Lit::Str(s)) = &chunk_name_node {
             values = Some(s.value.clone());
         }
+        let mut values = values.unwrap_or_default();
 
-        self.add_or_replace_chunk_name_comment(import, values.clone().unwrap());
+        values["webpackChunkName"] = webpack_chunk_name;
+        self.add_or_replace_chunk_name_comment(import, values);
         chunk_name_node
     }
 
