@@ -42,13 +42,5 @@ describe('plugin', () => {
       `)
       expect(result).toMatchSnapshot()
     })
-
-    it('should remove only needed comments', () => {
-      const result = testPlugin(`
-        const load = /* #__LOADABLE__ */ /* IMPORTANT! */ () => import('moment')
-      `)
-
-      expect(result).toMatchSnapshot()
-    })
   })
 })
