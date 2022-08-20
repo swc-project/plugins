@@ -176,16 +176,10 @@ impl Loadable {
         }
     }
 
-    fn create_import_async_property(&mut self, import: &CallExpr, func: &Expr) -> KeyValueProp {
+    fn create_import_async_property(&mut self, _import: &CallExpr, func: &Expr) -> KeyValueProp {
         KeyValueProp {
             key: PropName::Ident(quote_ident!("importAsync")),
-            value: Box::new(
-                ObjectLit {
-                    span: DUMMY_SP,
-                    props: Default::default(),
-                }
-                .into(),
-            ),
+            value: Box::new(func.clone()),
         }
     }
 

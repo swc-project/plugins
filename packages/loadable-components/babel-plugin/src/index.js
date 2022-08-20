@@ -1,9 +1,7 @@
 import chunkNameProperty from './properties/chunkName'
-import importAsyncProperty from './properties/importAsync'
 
 const properties = [
   chunkNameProperty,
-  importAsyncProperty,
 ]
 
 const LOADABLE_COMMENT = '#__LOADABLE__'
