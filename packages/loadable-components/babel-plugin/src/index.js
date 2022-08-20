@@ -3,7 +3,6 @@ import isReadyProperty from './properties/isReady'
 import importAsyncProperty from './properties/importAsync'
 import requireAsyncProperty from './properties/requireAsync'
 import requireSyncProperty from './properties/requireSync'
-import resolveProperty from './properties/resolve'
 import stateProperty from './properties/state'
 
 const properties = [
@@ -13,7 +12,6 @@ const properties = [
   importAsyncProperty,
   requireAsyncProperty,
   requireSyncProperty,
-  resolveProperty,
 ]
 
 const LOADABLE_COMMENT = '#__LOADABLE__'
