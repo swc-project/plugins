@@ -13,6 +13,7 @@ use swc_core::{
     utils::{quote_ident, ExprFactory},
     visit::{Visit, VisitMut, VisitMutWith, VisitWith},
 };
+use tracing::debug;
 
 use crate::util::get_import_arg;
 
@@ -514,11 +515,13 @@ where
     }
 
     fn replace_quasi(&self, s: &str) -> String {
+        debug!("replace_quasi: `{}`", s);
         // TODO
         s.into()
     }
 
     fn module_to_chunk(&self, s: &str) -> String {
+        debug!("module_to_chunk: `{}`", s);
         // TODO
         s.into()
     }
