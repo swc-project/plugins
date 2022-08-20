@@ -1,7 +1,6 @@
 import chunkNameProperty from './properties/chunkName'
 import isReadyProperty from './properties/isReady'
 import importAsyncProperty from './properties/importAsync'
-import requireAsyncProperty from './properties/requireAsync'
 import resolvedProperty from './properties/state'
 
 const properties = [
@@ -9,7 +8,6 @@ const properties = [
   chunkNameProperty,
   isReadyProperty,
   importAsyncProperty,
-  requireAsyncProperty,
 ]
 
 const LOADABLE_COMMENT = '#__LOADABLE__'

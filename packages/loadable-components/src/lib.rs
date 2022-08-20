@@ -172,15 +172,30 @@ impl Loadable {
 
     fn create_require_async_method(&mut self, import: &CallExpr, func: &Expr) -> MethodProp {
         MethodProp {
-            key: PropName::Ident(quote_ident!("requiredAsync")),
+            key: PropName::Ident(quote_ident!("requireAsync")),
             function: Function {
-                params: Default::default(),
+                params: vec![Param {
+                    span: DUMMY_SP,
+                    decorators: Default::default(),
+                    pat: Pat::Ident(quote_ident!("props").into()),
+                }],
                 decorators: Default::default(),
                 span: DUMMY_SP,
-                body: Some(BlockStmt {
-                    span: DUMMY_SP,
-                    stmts: vec![],
-                }),
+                body: Some(
+                    quote!(
+                        "
+                        {
+                            const key = this.resolve(props)
+                            this.resolved[key] = false
+                            return this.importAsync(props).then(resolved => {
+                                this.resolved[key] = true
+                                return resolved;
+                            });
+                        }
+                        " as Stmt
+                    )
+                    .expect_block(),
+                ),
                 is_generator: false,
                 is_async: false,
                 type_params: Default::default(),
