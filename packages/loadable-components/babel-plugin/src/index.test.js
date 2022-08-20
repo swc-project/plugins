@@ -13,16 +13,6 @@ const testPlugin = code => {
 
 describe('plugin', () => {
   describe('simple import', () => {
-    describe('without "webpackChunkName" comment', () => {
-      it('should add it', () => {
-        const result = testPlugin(`
-          loadable(() => import('./ModA'))
-        `)
-
-        expect(result).toMatchSnapshot()
-      })
-    })
-
     describe('in a complex promise', () => {
       it('should work', () => {
         const result = testPlugin(`
