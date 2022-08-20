@@ -13,14 +13,6 @@ const testPlugin = code => {
 
 describe('plugin', () => {
   describe('simple import', () => {
-    it('should work with template literal', () => {
-      const result = testPlugin(`
-        loadable(() => import(\`./ModA\`))
-      `)
-
-      expect(result).toMatchSnapshot()
-    })
-
     it('should work with + concatenation', () => {
       const result = testPlugin(`
         loadable(() => import('./Mod' + 'A'))
