@@ -65,18 +65,12 @@ where
     fn is_valid_identifier(e: &Expr) -> bool {
         match e {
             Expr::Ident(i) => &*i.sym == "loadable",
-            Expr::Call(CallExpr {
-                callee: Callee::Expr(callee),
+            Expr::Member(MemberExpr {
+                obj,
+                prop: MemberProp::Ident(prop),
                 ..
-            }) => match &**callee {
-                Expr::Member(MemberExpr {
-                    obj,
-                    prop: MemberProp::Ident(prop),
-                    ..
-                }) => match &**obj {
-                    Expr::Ident(i) => &*i.sym == "loadable" && &*prop.sym == "lib",
-                    _ => false,
-                },
+            }) => match &**obj {
+                Expr::Ident(i) => &*i.sym == "loadable" && &*prop.sym == "lib",
                 _ => false,
             },
             _ => false,
