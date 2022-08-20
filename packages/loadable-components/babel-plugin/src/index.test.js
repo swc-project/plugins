@@ -13,19 +13,6 @@ const testPlugin = code => {
 
 describe('plugin', () => {
   describe('Magic comment', () => {
-    it('should transpile shortand properties', () => {
-      const result = testPlugin(`
-        const obj = {
-          /* #__LOADABLE__ */
-          load() {
-            return import('moment')
-          }
-        }
-      `)
-
-      expect(result).toMatchSnapshot()
-    })
-
     it('should transpile arrow functions', () => {
       const result = testPlugin(`
         const load = /* #__LOADABLE__ */ () => import('moment')
