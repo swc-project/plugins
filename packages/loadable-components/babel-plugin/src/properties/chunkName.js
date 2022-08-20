@@ -125,16 +125,6 @@ export default function chunkNameProperty({ types: t }) {
     )
   }
 
-  function addOrReplaceChunkNameComment(callPath, values) {
-    const importArg = getImportArg(callPath)
-    const chunkNameComment = getChunkNameComment(importArg)
-    if (chunkNameComment) {
-      chunkNameComment.remove()
-    }
-
-    importArg.addComment('leading', writeWebpackCommentValues(values))
-  }
-
   function chunkNameFromTemplateLiteral(node) {
     const [q1] = node.quasis
     const v1 = q1 ? q1.value.cooked : ''

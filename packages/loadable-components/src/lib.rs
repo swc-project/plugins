@@ -2,6 +2,7 @@ use swc_common::{comments::Comments, DUMMY_SP};
 use swc_core::{
     ast::*,
     atoms::JsWord,
+    common::Spanned,
     plugin::{
         plugin_transform,
         proxies::{PluginCommentsProxy, TransformPluginProgramMetadata},
@@ -142,6 +143,18 @@ where
         let arg = get_import_arg(import);
 
         self.get_raw_chunk_name_from_comments(import)
+    }
+
+    fn addOrReplaceChunkNameComment(&self, import: &CallExpr) {
+        let import_arg = get_import_arg(import);
+
+        let chunk_name_content = self.get_chunk_name_content(import_arg);
+        if chunk_name_content.is_some() {
+            // TODO: Restore unrelated comments
+            let comments = self.comments.take_leading(import_arg.span_lo());
+        }
+
+        self.comments.add_leading(import_arg.span_lo(), cmt)
     }
 
     fn replace_chunk_name(&self, import: &CallExpr) -> Expr {
