@@ -43,4 +43,17 @@ impl Loadable {
     }
 }
 
-impl VisitMut for Loadable {}
+impl VisitMut for Loadable {
+    fn visit_mut_call_expr(&mut self, call: &mut CallExpr) {
+        match &call.callee {
+            Callee::Expr(callee) if Self::is_valid_identifier(callee) => {}
+            _ => {
+                call.visit_mut_children_with(self);
+                return;
+            }
+        }
+
+        // Transform imports
+        self.transform_import(call)
+    }
+}

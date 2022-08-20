@@ -97,10 +97,6 @@ const loadablePlugin = api => {
       Program: {
         enter(programPath) {
           programPath.traverse({
-            CallExpression(path) {
-              if (!isValidIdentifier(path)) return
-              transformImport(path)
-            },
             'ArrowFunctionExpression|FunctionExpression|ObjectMethod': path => {
               if (!hasLoadableComment(path)) return
               transformImport(path)
