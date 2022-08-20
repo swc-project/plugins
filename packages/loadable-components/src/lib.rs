@@ -224,7 +224,7 @@ where
         }
 
         let mut chunk_name_node =
-            self.generateChunkNameNode(import, self.getChunkNamePrefix(values));
+            self.generateChunkNameNode(import, self.get_chunk_name_prefix(values));
 
         if chunk_name_node.is_tpl() {
             webpack_chunk_name = Some(self.chunk_name_from_template_literal(chunk_name_node));
@@ -419,6 +419,23 @@ where
             .map(|(k, v)| format!("{}: {}", k, v))
             .collect::<Vec<_>>()
             .join(", ")
+    }
+
+    fn get_chunk_name_prefix(&self, chunk_name: Option<serde_json::Value>) -> String {
+        let chunk_name = match chunk_name.as_ref() {
+            Some(serde_json::Value::String(s)) => s,
+            _ => return Default::default(),
+        };
+
+        if let Some(idx) = chunk_name.find("[request]") {
+            return chunk_name[..idx].into();
+        }
+
+        if let Some(idx) = chunk_name.find("[index]") {
+            return chunk_name[..idx].into();
+        }
+
+        Default::default()
     }
 }
 

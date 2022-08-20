@@ -84,11 +84,4 @@ export default function chunkNameProperty({ types: t }) {
     return t.stringLiteral(moduleToChunk(importArg.node.value))
   }
 
-  function getChunkNamePrefix(chunkName) {
-    if (typeof chunkName !== 'string') return ''
-    const match = chunkName.match(/(.+?)\[(request|index)\]$/)
-    return match ? match[1] : ''
-  }
-
-
 }
