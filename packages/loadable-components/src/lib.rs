@@ -135,7 +135,13 @@ where
         }
     }
 
-    fn is_aggressive_import(&self, import: &CallExpr) -> bool {}
+    fn is_aggressive_import(&self, import: &CallExpr) -> bool {
+        let import_arg = get_import_arg(import);
+        match import_arg {
+            Expr::Tpl(t) => !t.exprs.is_empty(),
+            _ => false,
+        }
+    }
 
     fn get_raw_chunk_name_from_comments(&self, import: &CallExpr) -> Option<JsWord> {}
 

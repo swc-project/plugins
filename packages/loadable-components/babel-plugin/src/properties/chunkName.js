@@ -118,12 +118,6 @@ export default function chunkNameProperty({ types: t }) {
     return t.stringLiteral(moduleToChunk(importArg.node.value))
   }
 
-  function isAgressiveImport(callPath) {
-    const importArg = getImportArg(callPath)
-    return (
-      importArg.isTemplateLiteral() && importArg.node.expressions.length > 0
-    )
-  }
 
   function chunkNameFromTemplateLiteral(node) {
     const [q1] = node.quasis
