@@ -13,14 +13,6 @@ const testPlugin = code => {
 
 describe('plugin', () => {
   describe('simple import', () => {
-    it('should transform path into "chunk-friendly" name', () => {
-      const result = testPlugin(`
-        loadable(() => import('../foo/bar'))
-      `)
-
-      expect(result).toMatchSnapshot()
-    })
-
     describe('with "webpackChunkName" comment', () => {
       it('should use it', () => {
         const result = testPlugin(`
