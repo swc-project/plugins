@@ -26,16 +26,5 @@ function replaceQuasi(str, stripLeftHyphen) {
 
 export default function chunkNameProperty({ types: t }) {
 
-  function combineExpressions(node) {
-    const { expressions } = node
-    const { length } = expressions
 
-    if (length === 1) {
-      return expressions[0]
-    }
-
-    return expressions
-      .slice(1)
-      .reduce((r, p) => t.binaryExpression('+', r, p), expressions[0])
-  }
 }

@@ -474,10 +474,10 @@ where
                 unreachable!()
             }
         };
-        self.module_to_chunk(value)
+        self.module_to_chunk(&value).into()
     }
 
-    fn sanitize_chunk_name_template_literal(&self, node: Expr) -> Expr {
+    fn sanitize_chunk_name_template_literal(&self, node: Box<Expr>) -> Expr {
         Expr::Call(CallExpr {
             span: DUMMY_SP,
             callee: node.make_member(quote_ident!("replace")).as_callee(),
@@ -516,6 +516,20 @@ where
     fn replace_quasi(&self, s: &str) -> String {}
 
     fn module_to_chunk(&self, s: &str) -> String {}
+
+    fn combine_expression(&self, node: &Tpl) -> Box<Expr> {
+        if node.exprs.len() == 1 {
+            return node.exprs[0].clone();
+        }
+
+        node.exprs
+            .iter()
+            .cloned()
+            .skip(1)
+            .fold(node.exprs[0].clone(), |r, p| {
+                Box::new(r.make_bin(op!(bin, "+"), *p))
+            })
+    }
 }
 
 impl<C> VisitMut for Loadable<C>
