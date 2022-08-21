@@ -553,8 +553,12 @@ where
         if strip_left_hyphen {
             let s = MATCH_LEFT_HYPHENS_REPLACE_REGEX.replace(&s, "");
 
+            debug!("replace_quasi: result: `{}`", s);
+
             s.into()
         } else {
+            debug!("replace_quasi: result: `{}`", s);
+
             s.into()
         }
     }
@@ -565,6 +569,8 @@ where
         let s = JS_PATH_REGEXP.replace(s, "");
         let s = WEBPACK_PATH_NAME_NORMALIZE_REPLACE_REGEX.replace(&s, "-");
         let s = WEBPACK_MATCH_PADDED_HYPHENS_REPLACE_REGEX.replace(&s, "");
+
+        debug!("module_to_chunk: result: `{}`", s);
 
         s.into_owned()
     }
