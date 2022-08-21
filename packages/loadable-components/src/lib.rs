@@ -548,10 +548,10 @@ where
         if s.is_empty() {
             return Default::default();
         }
-        let s = WEBPACK_PATH_NAME_NORMALIZE_REPLACE_REGEX.replace(s, "-");
+        let s = WEBPACK_PATH_NAME_NORMALIZE_REPLACE_REGEX.replace_all(s, "-");
 
         if strip_left_hyphen {
-            let s = MATCH_LEFT_HYPHENS_REPLACE_REGEX.replace(&s, "");
+            let s = MATCH_LEFT_HYPHENS_REPLACE_REGEX.replace_all(&s, "");
 
             debug!("replace_quasi: result: `{}`", s);
 
@@ -566,9 +566,9 @@ where
     fn module_to_chunk(&self, s: &str) -> String {
         debug!("module_to_chunk: `{}`", s);
 
-        let s = JS_PATH_REGEXP.replace(s, "");
-        let s = WEBPACK_PATH_NAME_NORMALIZE_REPLACE_REGEX.replace(&s, "-");
-        let s = WEBPACK_MATCH_PADDED_HYPHENS_REPLACE_REGEX.replace(&s, "");
+        let s = JS_PATH_REGEXP.replace_all(s, "");
+        let s = WEBPACK_PATH_NAME_NORMALIZE_REPLACE_REGEX.replace_all(&s, "-");
+        let s = WEBPACK_MATCH_PADDED_HYPHENS_REPLACE_REGEX.replace_all(&s, "");
 
         debug!("module_to_chunk: result: `{}`", s);
 
