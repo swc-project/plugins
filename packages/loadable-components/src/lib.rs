@@ -1,7 +1,7 @@
 use once_cell::sync::Lazy;
 use swc_common::{
     comments::{Comment, CommentKind, Comments},
-    DUMMY_SP,
+    BytePos, DUMMY_SP,
 };
 use swc_core::{
     ast::*,
@@ -83,7 +83,15 @@ where
         }
     }
 
-    fn transform_import(&mut self, call: &mut CallExpr) {
+    fn has_loadable_comment(&self, lo: BytePos) -> bool {
+        self.comments.with_leading(lo, |comments| {
+            comments
+                .iter()
+                .any(|comment| comment.text.contains("#__LOADABLE__"))
+        })
+    }
+
+    fn transform_import_inner(&mut self, call: &mut CallExpr) {
         let import = {
             let mut v = ImportFinder::default();
             call.visit_with(&mut v);
@@ -602,7 +610,7 @@ where
         }
 
         // Transform imports
-        self.transform_import(call)
+        self.transform_import_inner(call)
     }
 }
 
