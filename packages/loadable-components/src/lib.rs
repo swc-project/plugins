@@ -601,16 +601,40 @@ where
     C: Comments,
 {
     fn visit_mut_call_expr(&mut self, call: &mut CallExpr) {
+        call.visit_mut_children_with(self);
+
         match &call.callee {
             Callee::Expr(callee) if Self::is_valid_identifier(callee) => {}
-            _ => {
-                call.visit_mut_children_with(self);
-                return;
-            }
+            _ => return,
         }
 
         // Transform imports
         self.transform_import_expr(call)
+    }
+
+    fn visit_mut_expr(&mut self, e: &mut Expr) {
+        e.visit_mut_children_with(self);
+
+        match e {
+            Expr::Arrow(..) | Expr::Fn(..) => {
+                if !self.has_loadable_comment(e.span_lo()) {
+                    return;
+                }
+
+                let import = {
+                    let mut v = ImportFinder::default();
+                    e.visit_with(&mut v);
+                    match v.res {
+                        Some(v) => v,
+                        None => return,
+                    }
+                };
+
+                let object = self.create_object_from(&import, e);
+                *e = object;
+            }
+            _ => {}
+        }
     }
 }
 
