@@ -1,5 +1,3 @@
-use std::str::FromStr;
-
 use once_cell::sync::Lazy;
 use swc_common::{
     comments::{Comment, CommentKind, Comments},
@@ -293,7 +291,7 @@ where
         }
     }
 
-    fn create_is_ready_method(&mut self, import: &CallExpr, func: &Expr) -> MethodProp {
+    fn create_is_ready_method(&mut self, _import: &CallExpr, _func: &Expr) -> MethodProp {
         MethodProp {
             key: PropName::Ident(quote_ident!("isReady")),
             function: Function {
@@ -338,7 +336,7 @@ where
         }
     }
 
-    fn create_require_async_method(&mut self, import: &CallExpr, func: &Expr) -> MethodProp {
+    fn create_require_async_method(&mut self, _import: &CallExpr, _func: &Expr) -> MethodProp {
         MethodProp {
             key: PropName::Ident(quote_ident!("requireAsync")),
             function: Function {
