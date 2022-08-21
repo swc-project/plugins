@@ -235,8 +235,13 @@ where
 
         let chunk_name_content = self.get_chunk_name_content(import_arg);
         if chunk_name_content.is_some() {
-            // TODO: Restore unrelated comments
             let comments = self.comments.take_leading(import_arg.span_lo());
+
+            if let Some(mut comments) = comments {
+                comments.retain(|c| !c.text.contains("webpackChunkName"));
+                self.comments
+                    .add_leading_comments(import_arg.span_lo(), comments)
+            }
         }
 
         self.comments.add_leading(
