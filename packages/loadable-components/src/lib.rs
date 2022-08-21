@@ -91,7 +91,7 @@ where
         })
     }
 
-    fn transform_import_inner(&mut self, call: &mut CallExpr) {
+    fn transform_import_expr(&mut self, call: &mut CallExpr) {
         let import = {
             let mut v = ImportFinder::default();
             call.visit_with(&mut v);
@@ -610,7 +610,7 @@ where
         }
 
         // Transform imports
-        self.transform_import_inner(call)
+        self.transform_import_expr(call)
     }
 }
 
