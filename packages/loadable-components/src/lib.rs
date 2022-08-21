@@ -1,6 +1,7 @@
 use once_cell::sync::Lazy;
 use swc_common::{
     comments::{Comment, CommentKind, Comments},
+    util::take::Take,
     BytePos, DUMMY_SP,
 };
 use swc_core::{
@@ -647,6 +648,40 @@ where
 
                 let object = self.create_object_from(&import, e);
                 *e = object;
+            }
+            _ => {}
+        }
+    }
+
+    fn visit_mut_prop(&mut self, n: &mut Prop) {
+        n.visit_mut_children_with(self);
+
+        match n {
+            Prop::Method(m) => {
+                if !self.has_loadable_comment(m.span_lo()) {
+                    return;
+                }
+
+                let import = {
+                    let mut v = ImportFinder::default();
+                    m.visit_with(&mut v);
+                    match v.res {
+                        Some(v) => v,
+                        None => return,
+                    }
+                };
+
+                let object = self.create_object_from(
+                    &import,
+                    &Expr::Fn(FnExpr {
+                        ident: None,
+                        function: m.function.take(),
+                    }),
+                );
+                *n = Prop::KeyValue(KeyValueProp {
+                    key: m.key.take(),
+                    value: Box::new(object),
+                });
             }
             _ => {}
         }
