@@ -11,6 +11,7 @@ git tag -d $(git tag -l)
 
 bumpNpm emotion
 bumpNpm jest
+bumpNpm loadable-components
 bumpNpm styled-components
 bumpNpm styled-jsx
 bumpNpm transform-imports

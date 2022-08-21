@@ -16,6 +16,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@swc/plugin-loadable-components@workspace:packages/loadable-components":
+  version: 0.0.0-use.local
+  resolution: "@swc/plugin-loadable-components@workspace:packages/loadable-components"
+  languageName: unknown
+  linkType: soft
+
 "@swc/plugin-relay@workspace:packages/relay":
   version: 0.0.0-use.local
   resolution: "@swc/plugin-relay@workspace:packages/relay"

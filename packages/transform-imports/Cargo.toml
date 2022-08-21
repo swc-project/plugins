@@ -12,8 +12,8 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 modularize_imports = "0.15.0"
 serde_json = "1.0.79"
-swc_common = { version = "0.27.9", features = ["concurrent"] }
-swc_core = { version = "0.7.16", features = [
+swc_common = { version = "0.27.12", features = ["concurrent"] }
+swc_core = { version = "0.8.1", features = [
   "plugin_transform",
   "utils",
   "visit",
