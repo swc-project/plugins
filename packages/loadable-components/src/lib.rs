@@ -84,11 +84,21 @@ where
     }
 
     fn has_loadable_comment(&self, lo: BytePos) -> bool {
-        self.comments.with_leading(lo, |comments| {
+        if self.comments.with_leading(lo, |comments| {
             comments
                 .iter()
                 .any(|comment| comment.text.contains("#__LOADABLE__"))
-        })
+        }) {
+            // Remove this comment
+            let comments = self.comments.take_leading(lo);
+            if let Some(mut comments) = comments {
+                comments.retain(|c| !c.text.contains("#__LOADABLE__"));
+                self.comments.add_leading_comments(lo, comments)
+            }
+            return true;
+        }
+
+        false
     }
 
     fn transform_import_expr(&mut self, call: &mut CallExpr) {
