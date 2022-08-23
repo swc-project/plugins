@@ -10,7 +10,7 @@ version = "0.3.0"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-styled_jsx = "0.15.0"
+styled_jsx = "0.16.0"
 swc_common = { version = "0.27.13", features = ["concurrent"] }
 swc_core = { version = "0.11.4", features = [
   "plugin_transform",

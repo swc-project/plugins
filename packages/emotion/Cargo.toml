@@ -20,4 +20,4 @@ swc_core = { version = "0.11.4", features = [
   "ast",
   "common",
 ] }
-swc_emotion = "0.17.0"
+swc_emotion = "0.18.0"
