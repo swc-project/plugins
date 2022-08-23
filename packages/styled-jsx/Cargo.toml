@@ -11,12 +11,12 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 styled_jsx = "0.15.0"
-swc_common = { version = "0.27.12", features = ["concurrent"] }
-swc_core = { version = "0.8.1", features = [
+swc_common = { version = "0.27.13", features = ["concurrent"] }
+swc_core = { version = "0.11.4", features = [
   "plugin_transform",
   "utils",
   "visit",
   "ast",
   "common",
 ] }
-swc_plugin = "0.89.1"
+swc_plugin = "0.90.0"
