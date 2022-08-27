@@ -16,7 +16,7 @@ regex = "1.5"
 serde = "1"
 serde_json = "1"
 swc_common = { version = "0.27.13", features = ["concurrent"] }
-swc_core = { version = "0.11.4", features = [
+swc_core = { version = "0.14.0", features = [
   "plugin_transform",
   "utils",
   "visit",
