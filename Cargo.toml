@@ -13,4 +13,6 @@ members = [
 codegen-units = 1
 # debug = true
 lto = true
-opt-level = "s"
+
+# Strip debug symbols
+strip = "symbols"
