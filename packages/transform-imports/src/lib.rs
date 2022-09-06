@@ -1,7 +1,6 @@
 use swc_core::{
-    ast::Program,
+    ecma::{ast::Program, visit::FoldWith},
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
-    visit::FoldWith,
 };
 
 #[plugin_transform]
