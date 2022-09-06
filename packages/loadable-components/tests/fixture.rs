@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use swc_core::{testing_transform::test_fixture, visit::as_folder};
+use swc_core::ecma::{transforms::testing::test_fixture, visit::as_folder};
 use swc_plugin_loadable_components::loadable_transform;
 
 #[testing::fixture("tests/fixture/**/input.js")]

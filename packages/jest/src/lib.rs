@@ -1,11 +1,13 @@
 use phf::phf_set;
 use serde::Deserialize;
 use swc_core::{
-    ast::{Program, *},
     common::util::take::Take,
+    ecma::{
+        ast::{Program, *},
+        utils::{prepend_stmts, StmtLike},
+        visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
+    },
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
-    utils::{prepend_stmts, StmtLike},
-    visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
 };
 
 // swc_plugin::define_js_plugin!(jest);

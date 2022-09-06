@@ -7,15 +7,17 @@ use regex::Regex;
 use serde::Deserialize;
 use serde_json::Value;
 use swc_core::{
-    ast::*,
-    atoms::JsWord,
     common::FileName,
+    ecma::{
+        ast::*,
+        atoms::JsWord,
+        utils::{quote_ident, ExprFactory},
+        visit::{Fold, FoldWith},
+    },
     plugin::{
         metadata::TransformPluginMetadataContextKind, plugin_transform,
         proxies::TransformPluginProgramMetadata,
     },
-    utils::{quote_ident, ExprFactory},
-    visit::{Fold, FoldWith},
 };
 
 #[derive(Copy, Clone, Debug, Deserialize)]

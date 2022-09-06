@@ -1,12 +1,11 @@
 use styled_components::Config;
 use swc_core::{
-    ast::Program,
     common::FileName,
+    ecma::{ast::Program, visit::VisitMutWith},
     plugin::{
         metadata::TransformPluginMetadataContextKind, plugin_transform,
         proxies::TransformPluginProgramMetadata,
     },
-    visit::VisitMutWith,
 };
 
 #[plugin_transform]

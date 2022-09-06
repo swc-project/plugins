@@ -1,8 +1,7 @@
 use swc_core::{
-    ast::Program,
     common::{sync::Lrc, FileName, SourceMap},
+    ecma::{ast::Program, visit::FoldWith},
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
-    visit::FoldWith,
 };
 
 #[plugin_transform]
