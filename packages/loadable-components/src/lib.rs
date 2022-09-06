@@ -5,15 +5,17 @@ use swc_common::{
     BytePos, DUMMY_SP,
 };
 use swc_core::{
-    ast::*,
     common::Spanned,
+    ecma::{
+        ast::*,
+        utils::{quote_ident, ExprFactory},
+        visit::{Visit, VisitMut, VisitMutWith, VisitWith},
+    },
     plugin::{
         plugin_transform,
         proxies::{PluginCommentsProxy, TransformPluginProgramMetadata},
     },
     quote,
-    utils::{quote_ident, ExprFactory},
-    visit::{Visit, VisitMut, VisitMutWith, VisitWith},
 };
 use tracing::debug;
 

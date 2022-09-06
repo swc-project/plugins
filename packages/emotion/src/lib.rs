@@ -2,12 +2,11 @@ use std::path::Path;
 
 use serde::Deserialize;
 use swc_core::{
-    ast::Program,
+    ecma::{ast::Program, visit::FoldWith},
     plugin::{
         metadata::TransformPluginMetadataContextKind, plugin_transform,
         proxies::TransformPluginProgramMetadata,
     },
-    visit::FoldWith,
 };
 use swc_emotion::EmotionOptions;
 
