@@ -298,7 +298,7 @@ where
     fn create_chunk_name_method(&mut self, import: &CallExpr, func: &Expr) -> MethodProp {
         MethodProp {
             key: PropName::Ident(quote_ident!("chunkName")),
-            function: Function {
+            function: Box::new(Function {
                 params: clone_params(func),
                 decorators: Default::default(),
                 span: DUMMY_SP,
@@ -313,14 +313,14 @@ where
                 is_async: false,
                 type_params: Default::default(),
                 return_type: Default::default(),
-            },
+            }),
         }
     }
 
     fn create_is_ready_method(&mut self, _import: &CallExpr, _func: &Expr) -> MethodProp {
         MethodProp {
             key: PropName::Ident(quote_ident!("isReady")),
-            function: Function {
+            function: Box::new(Function {
                 params: vec![Param {
                     span: DUMMY_SP,
                     decorators: Default::default(),
@@ -351,7 +351,7 @@ where
                 is_async: false,
                 type_params: Default::default(),
                 return_type: Default::default(),
-            },
+            }),
         }
     }
 
@@ -365,7 +365,7 @@ where
     fn create_require_async_method(&mut self, _import: &CallExpr, _func: &Expr) -> MethodProp {
         MethodProp {
             key: PropName::Ident(quote_ident!("requireAsync")),
-            function: Function {
+            function: Box::new(Function {
                 params: vec![Param {
                     span: DUMMY_SP,
                     decorators: Default::default(),
@@ -392,14 +392,14 @@ where
                 is_async: false,
                 type_params: Default::default(),
                 return_type: Default::default(),
-            },
+            }),
         }
     }
 
     fn create_require_sync_method(&mut self, _import: &CallExpr, _func: &Expr) -> MethodProp {
         MethodProp {
             key: PropName::Ident(quote_ident!("requireSync")),
-            function: Function {
+            function: Box::new(Function {
                 params: vec![Param {
                     span: DUMMY_SP,
                     decorators: Default::default(),
@@ -427,7 +427,7 @@ where
                 is_async: false,
                 type_params: Default::default(),
                 return_type: Default::default(),
-            },
+            }),
         }
     }
 
@@ -440,7 +440,7 @@ where
 
         MethodProp {
             key: PropName::Ident(quote_ident!("resolve")),
-            function: Function {
+            function: Box::new(Function {
                 params: clone_params(func),
                 decorators: Default::default(),
                 span: DUMMY_SP,
@@ -463,7 +463,7 @@ where
                 is_async: false,
                 type_params: Default::default(),
                 return_type: Default::default(),
-            },
+            }),
         }
     }
 
