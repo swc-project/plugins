@@ -820,16 +820,16 @@ dependencies = [
 
 [[package]]
 name = "modularize_imports"
-version = "0.21.0"
+version = "0.22.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1f152c64952b7c5615d59a0810c454315595ddc2ab41e223a90d0c52c4da0d40"
+checksum = "f39efa8308d769f19c1886590c03ad90bbf43518433bcf1a306558fd79e46201"
 dependencies = [
  "convert_case",
  "handlebars",
  "once_cell",
  "regex",
  "serde",
- "swc_core 0.28.20",
+ "swc_core",
 ]
 
 [[package]]
@@ -1560,15 +1560,15 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
 name = "styled_components"
-version = "0.46.0"
+version = "0.47.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5bea3af84a13e414d1efed16d554a501ba1e3f70b428c5ce386e74e8c00c9edf"
+checksum = "9a67c7452b928b1d78141c9ec2f4a920b42d1c1daa01630d157e7c44d161c712"
 dependencies = [
  "Inflector",
  "once_cell",
  "regex",
  "serde",
- "swc_core 0.28.20",
+ "swc_core",
  "tracing",
 ]
 
@@ -1690,30 +1690,13 @@ dependencies = [
 
 [[package]]
 name = "swc_core"
-version = "0.28.20"
+version = "0.29.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "45dcdeb9f834737660f5a0a9623dd1cda5cff95b540c375630d51ba4bdd9b7e5"
-dependencies = [
- "swc_atoms",
- "swc_cached",
- "swc_common",
- "swc_ecma_ast",
- "swc_ecma_codegen",
- "swc_ecma_transforms_base",
- "swc_ecma_utils",
- "swc_ecma_visit",
- "swc_trace_macro",
- "vergen",
-]
-
-[[package]]
-name = "swc_core"
-version = "0.29.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c52c5a0b09b5a073e8f05b7a609ba5e2f0581d100c1ae6ecf4d945788bc71096"
+checksum = "1558db1129ed0c6eb363434fbfc717fc2ba64059e3e4e26a2ea68256ad493a03"
 dependencies = [
  "once_cell",
  "swc_atoms",
+ "swc_cached",
  "swc_common",
  "swc_css_ast",
  "swc_css_codegen",
@@ -1721,6 +1704,7 @@ dependencies = [
  "swc_css_prefixer",
  "swc_css_visit",
  "swc_ecma_ast",
+ "swc_ecma_codegen",
  "swc_ecma_minifier",
  "swc_ecma_parser",
  "swc_ecma_quote_macros",
@@ -1731,6 +1715,7 @@ dependencies = [
  "swc_plugin",
  "swc_plugin_macro",
  "swc_plugin_proxy",
+ "swc_trace_macro",
  "vergen",
 ]
 
@@ -1888,9 +1873,9 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_minifier"
-version = "0.158.7"
+version = "0.158.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e2d07ae4fe94729cdc7cae2b844bde0e3f8e478cc7f1172d763701c4c65dad0b"
+checksum = "d3929bf41ba1f036df08452375ad9932025223de145f0edc23fd1764af6dffd1"
 dependencies = [
  "ahash",
  "arrayvec",
@@ -2089,9 +2074,9 @@ dependencies = [
 
 [[package]]
 name = "swc_emotion"
-version = "0.23.0"
+version = "0.24.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "51b92378e12479769cc438e6bd0b4981055c086f6be3e89b06a55dc7b2a6e41c"
+checksum = "54a9024a249fa99faaef6bdda573bddcf11a141c83704b4ce0a253f0cf8f5a76"
 dependencies = [
  "base64",
  "byteorder",
@@ -2101,7 +2086,7 @@ dependencies = [
  "regex",
  "serde",
  "sourcemap",
- "swc_core 0.28.20",
+ "swc_core",
  "tracing",
 ]
 
@@ -2170,7 +2155,7 @@ dependencies = [
  "serde",
  "serde_json",
  "swc_common",
- "swc_core 0.29.9",
+ "swc_core",
  "swc_emotion",
 ]
 
@@ -2181,7 +2166,7 @@ dependencies = [
  "phf",
  "serde",
  "swc_common",
- "swc_core 0.29.9",
+ "swc_core",
 ]
 
 [[package]]
@@ -2192,7 +2177,7 @@ dependencies = [
  "regex",
  "serde_json",
  "swc_common",
- "swc_core 0.29.9",
+ "swc_core",
  "testing",
  "tracing",
 ]
@@ -2231,7 +2216,7 @@ dependencies = [
  "serde",
  "serde_json",
  "swc_common",
- "swc_core 0.29.9",
+ "swc_core",
 ]
 
 [[package]]
@@ -2242,7 +2227,7 @@ dependencies = [
  "serde_json",
  "styled_components",
  "swc_common",
- "swc_core 0.29.9",
+ "swc_core",
 ]
 
 [[package]]
@@ -2250,7 +2235,7 @@ name = "swc_plugin_styled_jsx"
 version = "0.3.0"
 dependencies = [
  "easy-error",
- "swc_core 0.29.9",
+ "swc_core",
  "testing",
  "tracing",
 ]
@@ -2262,7 +2247,7 @@ dependencies = [
  "modularize_imports",
  "serde_json",
  "swc_common",
- "swc_core 0.29.9",
+ "swc_core",
 ]
 
 [[package]]
