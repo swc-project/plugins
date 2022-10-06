@@ -9,14 +9,23 @@ version = "0.3.0"
 [lib]
 crate-type = ["cdylib", "rlib"]
 
+[features]
+plugin = ["swc_core/plugin_transform"]
+custom_transform = ["swc_core/common_concurrent"]
+
 [dependencies]
-styled_jsx = "0.21.0"
-swc_common = { version = "0.29.3", features = ["concurrent"] }
+easy-error = "1.0.0"
+tracing = "0.1.32"
+
 swc_core = { version = "0.28.10", features = [
-  "plugin_transform",
-  "ecma_utils",
-  "ecma_visit",
-  "ecma_ast",
   "common",
+  "css_ast",
+  "css_codegen",
+  "css_parser",
+  "css_prefixer",
+  "css_visit",
+  "ecma_parser",
+  "ecma_minifier",
+  "ecma_utils",
+  "ecma_visit"
 ] }
-swc_plugin = "0.90.0"
