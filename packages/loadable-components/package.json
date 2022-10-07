@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-loadable-components",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "SWC plugin for `@loadable/components`",
   "main": "swc_plugin_loadable_components.wasm",
   "scripts": {

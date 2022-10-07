@@ -2194,6 +2194,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "swc_plugin_noop"
+version = "0.1.0"
+dependencies = [
+ "swc_common",
+ "swc_core",
+]
+
+[[package]]
 name = "swc_plugin_proxy"
 version = "0.22.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
