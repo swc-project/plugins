@@ -1,10 +1,10 @@
 {
-  "name": "@swc/plugin-jest",
-  "version": "1.5.1",
-  "description": "SWC plugin for jest",
-  "main": "swc_plugin_jest.wasm",
+  "name": "@swc/plugin-noop",
+  "version": "1.5.0",
+  "description": "Noop SWC plugin, for debugging",
+  "main": "swc_plugin_noop.wasm",
   "scripts": {
-    "prepack": "cp ../../target/wasm32-wasi/release/swc_plugin_jest.wasm ."
+    "prepack": "cp ../../target/wasm32-wasi/release/swc_plugin_noop.wasm ."
   },
   "homepage": "https://swc.rs",
   "repository": {
