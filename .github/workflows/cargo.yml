@@ -86,5 +86,7 @@ jobs:
           locked: true
 
       - name: Publish
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
         run: |
           cargo mono publish --no-verify
