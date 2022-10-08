@@ -9,13 +9,15 @@ function bumpCargo {
     cargo mono bump $1 --breaking
 }
 
+CRATES="$(cargo metadata --format-version 1 \
+    | jq -r '.packages[] | select(.source == null) | .name')"
+
+
 for PKG in ./packages/*; do
     bumpNpm $PKG
 done
 
-
-bumpCargo swc_plugin_jest
-bumpCargo swc_plugin_styled_jsx
-bumpCargo swc_plugin_transform_imports
-bumpCargo swc_plugin_styled_components
-bumpCargo swc_plugin_emotion
+for CRATE in $CRATES
+do
+   bumpCargo $CRATE
+done
