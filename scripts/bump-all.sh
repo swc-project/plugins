@@ -2,16 +2,11 @@
 set -eu
 
 function bumpNpm {
-    (cd ./packages/$1 && yarn version --no-git-tag-version --patch)
+    (cd $1 && yarn version --no-git-tag-version --patch)
     git tag -d $(git tag -l)
 }
 
-bumpNpm emotion
-bumpNpm jest
-bumpNpm loadable-components
-bumpNpm styled-components
-bumpNpm styled-jsx
-bumpNpm transform-imports
-bumpNpm relay
-bumpNpm noop
+for PKG in ./packages/*; do
+    bumpNpm $PKG
+done
 
