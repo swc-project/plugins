@@ -6,9 +6,6 @@ function bumpNpm {
     git tag -d $(git tag -l)
 }
 
-# Delete tags
-git tag -d $(git tag -l)
-
 bumpNpm emotion
 bumpNpm jest
 bumpNpm loadable-components
@@ -17,5 +14,3 @@ bumpNpm styled-jsx
 bumpNpm transform-imports
 bumpNpm relay
 
-# Delete tags
-git tag -d $(git tag -l)
