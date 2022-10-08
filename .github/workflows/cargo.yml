@@ -47,14 +47,10 @@ jobs:
         run: |
           echo 'C:\\npm\\prefix' >> $GITHUB_PATH
 
-      - name: Cache
-        uses: actions/cache@v2
+      - uses: Swatinem/rust-cache@v2
         with:
-          path: |
-            ~/.cargo/
-          key: cargo-dev-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            cargo-dev-${{ runner.os }}
+          shared-key: "cargo-test"
+          cache-on-failure: true
 
       - name: Run cargo test
         run: |
