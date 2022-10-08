@@ -2,20 +2,22 @@
 set -eu
 
 function bumpNpm {
-    (cd ./packages/$1 && yarn version)
-    git tag -d $(git tag -l)
+    (cd $1 && yarn version --no-git-tag-version --patch)
 }
 
-# Delete tags
-git tag -d $(git tag -l)
+function bumpCargo {
+    cargo mono bump $1 --breaking
+}
 
-bumpNpm emotion
-bumpNpm jest
-bumpNpm loadable-components
-bumpNpm styled-components
-bumpNpm styled-jsx
-bumpNpm transform-imports
-bumpNpm relay
+CRATES="$(cargo metadata --format-version 1 \
+    | jq -r '.packages[] | select(.source == null) | .name')"
 
-# Delete tags
-git tag -d $(git tag -l)
+
+for PKG in ./packages/*; do
+    bumpNpm $PKG
+done
+
+for CRATE in $CRATES
+do
+   bumpCargo $CRATE
+done

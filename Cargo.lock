@@ -2150,7 +2150,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_emotion"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -2161,7 +2161,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_jest"
-version = "0.14.0"
+version = "0.15.0"
 dependencies = [
  "phf",
  "serde",
@@ -2171,7 +2171,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_loadable_components"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "once_cell",
  "regex",
@@ -2195,7 +2195,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_noop"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "swc_common",
  "swc_core",
@@ -2229,7 +2229,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_styled_components"
-version = "0.23.0"
+version = "0.24.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -2240,7 +2240,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_styled_jsx"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "easy-error",
  "swc_core",
@@ -2250,7 +2250,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_transform_imports"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "modularize_imports",
  "serde_json",
