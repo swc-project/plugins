@@ -13,4 +13,5 @@ bumpNpm styled-components
 bumpNpm styled-jsx
 bumpNpm transform-imports
 bumpNpm relay
+bumpNpm noop
 
