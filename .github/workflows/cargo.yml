@@ -59,3 +59,32 @@ jobs:
       - name: Run cargo test
         run: |
           cargo test --all --color always
+
+  publish:
+    name: "Publish"
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs:
+      - test
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          override: true
+
+      - name: Install cargo-mono
+        uses: baptiste0928/cargo-install@v1.1.0
+        with:
+          crate: cargo-mono
+          version: "0.3.1"
+          locked: true
+
+      - name: Publish
+        run: |
+          cargo mono publish --no-verify
