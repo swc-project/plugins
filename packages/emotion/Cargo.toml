@@ -4,7 +4,7 @@ description = "SWC plugin for https://www.npmjs.com/package/babel-plugin-transfo
 edition = "2021"
 license = "Apache-2.0"
 name = "swc_plugin_emotion"
-version = "0.2.0"
+version = "0.3.0"
 
 [lib]
 crate-type = ["cdylib", "rlib"]

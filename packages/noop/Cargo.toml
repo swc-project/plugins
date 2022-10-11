@@ -4,13 +4,13 @@ description = "Noop plugin for debugging."
 edition = "2018"
 license = "Apache-2.0"
 name = "swc_plugin_noop"
-version = "0.2.0"
+version = "0.3.0"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-swc_common = {version = "0.29.3", features = ["concurrent"]}
+swc_common = { version = "0.29.5", features = ["concurrent"] }
 swc_core = {version = "0.29.10", features = [
   "plugin_transform",
   "ecma_utils",
