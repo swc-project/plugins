@@ -11,10 +11,10 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 swc_common = { version = "0.29.5", features = ["concurrent"] }
-swc_core = {version = "0.29.10", features = [
+swc_core = { version = "0.32.8", features = [
   "plugin_transform",
   "ecma_utils",
   "ecma_visit",
   "ecma_ast",
   "common",
-]}
+] }
