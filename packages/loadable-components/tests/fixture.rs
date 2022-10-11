@@ -12,5 +12,6 @@ fn fixture(input: PathBuf) {
         &|t| as_folder(loadable_transform(t.comments.clone())),
         &input,
         &output,
+        Default::default(),
     );
 }

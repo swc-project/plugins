@@ -4,10 +4,7 @@ use swc_core::{
     common::{chain, FileName, Mark, Span, DUMMY_SP},
     ecma::{
         parser::{EsConfig, Syntax},
-        transforms::{
-            base::resolver,
-            testing::{test_fixture, test_fixture_allowing_error},
-        },
+        transforms::{base::resolver, testing::test_fixture},
     },
 };
 use swc_plugin_styled_jsx::visitor::styled_jsx;
@@ -36,6 +33,7 @@ fn styled_jsx_fixture(input: PathBuf) {
         },
         &input,
         &output,
+        Default::default(),
     );
 
     test_fixture(
@@ -60,6 +58,7 @@ fn styled_jsx_fixture(input: PathBuf) {
         },
         &input,
         &output,
+        Default::default(),
     );
 }
 
@@ -78,10 +77,14 @@ fn styled_jsx_errors(input: PathBuf) {
         false => FileName::Real(PathBuf::from("/some-project/src/some-file.js")),
     };
 
-    test_fixture_allowing_error(
+    test_fixture(
         syntax(),
         &|t| styled_jsx(t.cm.clone(), file_name.clone()),
         &input,
         &output,
+        FixtureTestConfig {
+            allow_error: true,
+            ..Default::default()
+        },
     );
 }
