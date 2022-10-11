@@ -4,7 +4,10 @@ use swc_core::{
     common::{chain, FileName, Mark, Span, DUMMY_SP},
     ecma::{
         parser::{EsConfig, Syntax},
-        transforms::{base::resolver, testing::test_fixture},
+        transforms::{
+            base::resolver,
+            testing::{test_fixture, FixtureTestConfig},
+        },
     },
 };
 use swc_plugin_styled_jsx::visitor::styled_jsx;
