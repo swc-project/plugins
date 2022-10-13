@@ -1,3 +1,5 @@
+#![allow(clippy::not_unsafe_ptr_arg_deref)]
+
 use std::path::Path;
 
 use serde::Deserialize;
@@ -43,13 +45,10 @@ impl EmotionJsOptions {
                 match self.auto_label.unwrap_or(EmotionJsAutoLabel::DevOnly) {
                     EmotionJsAutoLabel::Always => true,
                     EmotionJsAutoLabel::Never => false,
-                    EmotionJsAutoLabel::DevOnly => match env_name {
-                        "development" => true,
-                        _ => false,
-                    },
+                    EmotionJsAutoLabel::DevOnly => matches!(env_name, "development"),
                 },
             ),
-            label_format: Some(self.label_format.unwrap_or("[local]".to_string())),
+            label_format: Some(self.label_format.unwrap_or_else(|| "[local]".to_string())),
             ..self.extra
         }
     }
@@ -75,12 +74,10 @@ pub fn process_transform(program: Program, data: TransformPluginProgramMetadata)
     let path = Path::new(&file_name);
     let source_map = std::sync::Arc::new(data.source_map);
 
-    let program = program.fold_with(&mut swc_emotion::emotion(
+    program.fold_with(&mut swc_emotion::emotion(
         config,
         path,
         source_map,
         data.comments,
-    ));
-
-    program
+    ))
 }

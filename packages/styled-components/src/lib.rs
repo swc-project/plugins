@@ -1,3 +1,5 @@
+#![allow(clippy::not_unsafe_ptr_arg_deref)]
+
 use styled_components::Config;
 use swc_core::{
     common::FileName,
