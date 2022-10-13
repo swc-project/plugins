@@ -193,7 +193,7 @@ where
 
     fn read_webpack_comment_values(&self, v: String) -> serde_json::Value {
         serde_json::Value::Object(
-            v.split(",")
+            v.split(',')
                 .map(|v| v.trim())
                 .filter_map(|item| {
                     let s = item.split(":").map(|s| s.trim()).collect::<Vec<_>>();
