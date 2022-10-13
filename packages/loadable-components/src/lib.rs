@@ -1,4 +1,6 @@
+#![allow(clippy::boxed_local)]
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
+
 use once_cell::sync::Lazy;
 use swc_common::{
     comments::{Comment, CommentKind, Comments},
@@ -287,7 +289,7 @@ where
         }
         let mut values = values.unwrap_or_default();
 
-        if let Some(webpack_chunk_name) = webpack_chunk_name.clone() {
+        if let Some(webpack_chunk_name) = webpack_chunk_name {
             values["webpackChunkName"] = serde_json::Value::String(webpack_chunk_name);
         } else {
             values["webpackChunkName"] = serde_json::Value::Null;
@@ -607,8 +609,8 @@ where
 
         node.exprs
             .iter()
-            .cloned()
             .skip(1)
+            .cloned()
             .fold(node.exprs[0].clone(), |r, p| {
                 Box::new(r.make_bin(op!(bin, "+"), *p))
             })
