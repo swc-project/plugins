@@ -1,3 +1,4 @@
+#![allow(clippy::not_unsafe_ptr_arg_deref)]
 use once_cell::sync::Lazy;
 use swc_common::{
     comments::{Comment, CommentKind, Comments},

@@ -1,3 +1,5 @@
+#![allow(clippy::not_unsafe_ptr_arg_deref)]
+
 //! TODO: Once refactoring next-swc is done, remove duplicated codes and import
 //! packages directly
 use std::path::{Path, PathBuf};
