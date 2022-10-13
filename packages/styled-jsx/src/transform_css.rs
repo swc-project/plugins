@@ -12,7 +12,10 @@ use swc_core::{
             writer::basic::{BasicCssWriter, BasicCssWriterConfig},
             CodeGenerator, CodegenConfig, Emit,
         },
-        parser::{parse_str, parse_tokens, parser::ParserConfig},
+        parser::{
+            parse_str, parse_tokens,
+            parser::{input::Tokens, ParserConfig},
+        },
         prefixer::prefixer,
         visit::{VisitMut, VisitMutWith},
     },
@@ -235,6 +238,7 @@ impl Namespacer {
                             PseudoClassSelectorChildren::ForgivingRelativeSelectorList(v) => {
                                 to_tokens(v).tokens
                             }
+                            PseudoClassSelectorChildren::ComplexSelector(v) => to_tokens(v).tokens,
                         })
                         .collect::<Vec<_>>();
 
@@ -525,6 +529,7 @@ where
         StringInput::new(&s, span.lo, span.hi),
         ParserConfig {
             allow_wrong_line_comments: true,
+            ..Default::default()
         },
     );
 

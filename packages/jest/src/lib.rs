@@ -65,7 +65,6 @@ impl Jest {
                                 Expr::Ident(i) if i.sym == *"jest" => match prop {
                                     _ if HOIST_METHODS.contains(&*prop.sym) => {
                                         hoisted.push(T::from_stmt(stmt));
-                                        return;
                                     }
                                     _ => new.push(T::from_stmt(stmt)),
                                 },
