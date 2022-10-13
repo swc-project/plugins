@@ -197,21 +197,21 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
     // `/cwd` alias won't expand to `real` path but only gives access to the cwd as
     // mounted path, which we can't use in this case.
     let root_dir = PathBuf::from(
-        (&plugin_config["rootDir"])
+        plugin_config["rootDir"]
             .as_str()
             .expect("rootDir is expected"),
     );
-    let artifact_directory = (&plugin_config["artifactDirectory"])
+    let artifact_directory = plugin_config["artifactDirectory"]
         .as_str()
-        .map(|v| PathBuf::from(v));
-    let language = (&plugin_config["language"]).as_str().map_or(
-        RelayLanguageConfig::TypeScript,
-        |v| match v {
-            "typescript" => RelayLanguageConfig::TypeScript,
-            "flow" => RelayLanguageConfig::Flow,
-            _ => panic!("Unexpected language config value"),
-        },
-    );
+        .map(PathBuf::from);
+    let language =
+        plugin_config["language"]
+            .as_str()
+            .map_or(RelayLanguageConfig::TypeScript, |v| match v {
+                "typescript" => RelayLanguageConfig::TypeScript,
+                "flow" => RelayLanguageConfig::Flow,
+                _ => panic!("Unexpected language config value"),
+            });
 
     let config = Config {
         artifact_directory,
@@ -219,7 +219,6 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
     };
 
     let mut relay = relay(&config, filename, root_dir);
-    let program = program.fold_with(&mut relay);
 
-    program
+    program.fold_with(&mut relay)
 }

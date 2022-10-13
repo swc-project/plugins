@@ -659,34 +659,31 @@ where
     fn visit_mut_prop(&mut self, n: &mut Prop) {
         n.visit_mut_children_with(self);
 
-        match n {
-            Prop::Method(m) => {
-                if !self.has_loadable_comment(m.span_lo()) {
-                    return;
-                }
-
-                let import = {
-                    let mut v = ImportFinder::default();
-                    m.visit_with(&mut v);
-                    match v.res {
-                        Some(v) => v,
-                        None => return,
-                    }
-                };
-
-                let object = self.create_object_from(
-                    &import,
-                    &Expr::Fn(FnExpr {
-                        ident: None,
-                        function: m.function.take(),
-                    }),
-                );
-                *n = Prop::KeyValue(KeyValueProp {
-                    key: m.key.take(),
-                    value: Box::new(object),
-                });
+        if let Prop::Method(m) = n {
+            if !self.has_loadable_comment(m.span_lo()) {
+                return;
             }
-            _ => {}
+
+            let import = {
+                let mut v = ImportFinder::default();
+                m.visit_with(&mut v);
+                match v.res {
+                    Some(v) => v,
+                    None => return,
+                }
+            };
+
+            let object = self.create_object_from(
+                &import,
+                &Expr::Fn(FnExpr {
+                    ident: None,
+                    function: m.function.take(),
+                }),
+            );
+            *n = Prop::KeyValue(KeyValueProp {
+                key: m.key.take(),
+                value: Box::new(object),
+            });
         }
     }
 }

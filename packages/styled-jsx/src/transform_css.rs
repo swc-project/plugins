@@ -42,6 +42,7 @@ pub fn transform_css(
         style_info.css_span.hi,
         ParserConfig {
             allow_wrong_line_comments: true,
+            ..Default::default()
         },
         // We ignore errors because we inject placeholders for expressions which is
         // not a valid css.
@@ -286,6 +287,7 @@ impl Namespacer {
                         &args,
                         ParserConfig {
                             allow_wrong_line_comments: true,
+                            ..Default::default()
                         },
                         // TODO(kdy1): We might be able to report syntax errors.
                         &mut vec![],
