@@ -38,7 +38,7 @@ jobs:
       - name: Build plugins
         shell: bash
         run: |
-          cargo build --all --release --features plugin --target wasm32-wasi
+          cargo build --all --release --target wasm32-wasi
         env:
           MACOSX_DEPLOYMENT_TARGET: "10.13"
 

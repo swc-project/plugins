@@ -1,13 +1,10 @@
 [package]
 authors = ["강동윤 <kdy1997.dev@gmail.com>"]
-description = "SWC Plugin for styled-jsx"
+description = "AST transforms visitor for styled-jsx"
 edition = "2021"
 license = "Apache-2.0"
-name = "swc_plugin_styled_jsx"
-version = "0.8.0"
-
-[lib]
-crate-type = ["cdylib", "rlib"]
+name = "styled_jsx"
+version = "0.23.0"
 
 [features]
 custom_transform = ["swc_core/common_concurrent"]
@@ -16,7 +13,7 @@ custom_transform = ["swc_core/common_concurrent"]
 easy-error = "1.0.0"
 tracing = "0.1.32"
 
-swc_core = {version = "0.38.1", features = [
+swc_core = { version = "0.38.1", features = [
   "common",
   "ecma_ast",
   "css_ast",
@@ -27,13 +24,11 @@ swc_core = {version = "0.38.1", features = [
   "ecma_parser",
   "ecma_minifier",
   "ecma_utils",
-  "ecma_visit",
-]}
-
-styled_jsx = {version = "0.23.0", path = "./transform"}
+  "ecma_visit"
+] }
 
 [dev-dependencies]
-swc_core = {features = [
-  "testing_transform",
-], version = "0.38.1"}
 testing = "0.31.8"
+swc_core = { features = [
+  "testing_transform"
+], version = "0.38.1" }
