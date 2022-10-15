@@ -12,9 +12,8 @@ fn transform_imports_plugin(program: Program, data: TransformPluginProgramMetada
             .expect("failed to get plugin config for transform-imports"),
     )
     .expect("invalid packages");
-    let program = program.fold_with(&mut modularize_imports::modularize_imports(
-        modularize_imports::Config { packages },
-    ));
 
-    program
+    program.fold_with(&mut modularize_imports::modularize_imports(
+        modularize_imports::Config { packages },
+    ))
 }

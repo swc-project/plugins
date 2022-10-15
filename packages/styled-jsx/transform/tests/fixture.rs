@@ -1,5 +1,6 @@
 use std::path::PathBuf;
 
+use styled_jsx::visitor::styled_jsx;
 use swc_core::{
     common::{chain, FileName, Mark, Span, DUMMY_SP},
     ecma::{
@@ -10,7 +11,6 @@ use swc_core::{
         },
     },
 };
-use swc_plugin_styled_jsx::visitor::styled_jsx;
 use testing::fixture;
 
 fn syntax() -> Syntax {

@@ -1,4 +1,6 @@
+#![allow(clippy::not_unsafe_ptr_arg_deref)]
 #![feature(box_patterns)]
+
 use styled_jsx::visitor;
 use swc_core::{
     common::{sync::Lrc, FileName, SourceMap},
