@@ -13,7 +13,5 @@ fn styled_jsx_plugin(program: Program, _: TransformPluginProgramMetadata) -> Pro
     // TODO(kdy1): This is wrong, but it does not use cm
     let cm = Lrc::new(SourceMap::default());
 
-    let program = program.fold_with(&mut visitor::styled_jsx(cm, FileName::Anon));
-
-    program
+    program.fold_with(&mut visitor::styled_jsx(cm, FileName::Anon))
 }
