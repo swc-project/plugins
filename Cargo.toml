@@ -5,7 +5,6 @@ members = [
   "packages/loadable-components",
   "packages/styled-components",
   "packages/styled-jsx",
-  "packages/plugin-styled-jsx",
   "packages/transform-imports",
   "packages/relay",
   "packages/noop",
