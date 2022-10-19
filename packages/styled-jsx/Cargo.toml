@@ -4,7 +4,7 @@ description = "SWC Plugin for styled-jsx"
 edition = "2021"
 license = "Apache-2.0"
 name = "swc_plugin_styled_jsx"
-version = "0.9.0"
+version = "0.10.0"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
@@ -16,7 +16,7 @@ custom_transform = ["swc_core/common_concurrent"]
 easy-error = "1.0.0"
 tracing = "0.1.32"
 
-swc_core = { version = "0.39.7", features = [
+swc_core = { version = "0.40.0", features = [
   "common",
   "ecma_ast",
   "css_ast",
@@ -30,10 +30,10 @@ swc_core = { version = "0.39.7", features = [
   "ecma_visit",
 ] }
 
-styled_jsx = {version = "0.24.0", path = "./transform"}
+styled_jsx = {version = "0.25.0", path = "./transform"}
 
 [dev-dependencies]
 swc_core = { features = [
   "testing_transform",
-], version = "0.39.7" }
-testing = "0.31.9"
+], version = "0.40.0" }
+testing = "0.31.10"
