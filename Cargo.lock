@@ -820,16 +820,16 @@ dependencies = [
 
 [[package]]
 name = "modularize_imports"
-version = "0.22.0"
+version = "0.24.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f39efa8308d769f19c1886590c03ad90bbf43518433bcf1a306558fd79e46201"
+checksum = "1d00c3a3c643d483d0c528610a897bf1094523e50a67aff60f470142524c906b"
 dependencies = [
  "convert_case",
  "handlebars",
  "once_cell",
  "regex",
  "serde",
- "swc_core 0.29.14",
+ "swc_core",
 ]
 
 [[package]]
@@ -1571,24 +1571,24 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
 name = "styled_components"
-version = "0.47.0"
+version = "0.49.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9a67c7452b928b1d78141c9ec2f4a920b42d1c1daa01630d157e7c44d161c712"
+checksum = "61a4eb3675c8cd84f83efe73439fe06c31f31d18cd31da523c05b66dda813793"
 dependencies = [
  "Inflector",
  "once_cell",
  "regex",
  "serde",
- "swc_core 0.29.14",
+ "swc_core",
  "tracing",
 ]
 
 [[package]]
 name = "styled_jsx"
-version = "0.25.0"
+version = "0.26.0"
 dependencies = [
  "easy-error",
- "swc_core 0.40.0",
+ "swc_core",
  "testing",
  "tracing",
 ]
@@ -1710,30 +1710,13 @@ dependencies = [
 
 [[package]]
 name = "swc_core"
-version = "0.29.14"
+version = "0.40.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8043c53651190b8e3dfc8777d652a47126ac229d90f496f2159a98805e60039a"
-dependencies = [
- "swc_atoms",
- "swc_cached",
- "swc_common",
- "swc_ecma_ast",
- "swc_ecma_codegen",
- "swc_ecma_transforms_base",
- "swc_ecma_utils",
- "swc_ecma_visit",
- "swc_trace_macro",
- "vergen",
-]
-
-[[package]]
-name = "swc_core"
-version = "0.40.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "17c0eeba442669331f0720ea0a1cd8d816dd55320bf244fb4eb2a70f74ebc99d"
+checksum = "2badd4e0d044d0b8fe4e5043c5ca96a688171876e4d2dbd1aef6dfd8f4f980e8"
 dependencies = [
  "once_cell",
  "swc_atoms",
+ "swc_cached",
  "swc_common",
  "swc_css_ast",
  "swc_css_codegen",
@@ -1741,6 +1724,7 @@ dependencies = [
  "swc_css_prefixer",
  "swc_css_visit",
  "swc_ecma_ast",
+ "swc_ecma_codegen",
  "swc_ecma_minifier",
  "swc_ecma_parser",
  "swc_ecma_quote_macros",
@@ -1751,6 +1735,7 @@ dependencies = [
  "swc_plugin",
  "swc_plugin_macro",
  "swc_plugin_proxy",
+ "swc_trace_macro",
  "vergen",
 ]
 
@@ -1908,9 +1893,9 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_minifier"
-version = "0.159.36"
+version = "0.159.37"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4af7a047ab3cc3d589a21ba282c9a235e8935fbcc99fd5d8d10488e9af2f76f2"
+checksum = "88d04e051bef5c121e54717571ec3e3127ddb9c1ec6001988f29e09947ce9fcf"
 dependencies = [
  "ahash",
  "arrayvec",
@@ -2029,9 +2014,9 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_transforms_optimization"
-version = "0.167.19"
+version = "0.167.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "354300aa402f038de5a88196a5ba1c83099b8b5e2f7f99e140bcc5dd3fddca60"
+checksum = "0f366f8bd5847a8705642dc332b1d48d7358f3fb72df11b06e9a2a9c7e774727"
 dependencies = [
  "ahash",
  "dashmap",
@@ -2111,9 +2096,9 @@ dependencies = [
 
 [[package]]
 name = "swc_emotion"
-version = "0.24.0"
+version = "0.26.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "54a9024a249fa99faaef6bdda573bddcf11a141c83704b4ce0a253f0cf8f5a76"
+checksum = "5fdcb3fdf7bc7b5444037935d95c8122c12a61c507c4b4bc458c28f3599a700e"
 dependencies = [
  "base64",
  "byteorder",
@@ -2123,7 +2108,7 @@ dependencies = [
  "regex",
  "serde",
  "sourcemap",
- "swc_core 0.29.14",
+ "swc_core",
  "tracing",
 ]
 
@@ -2187,34 +2172,34 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_emotion"
-version = "0.8.0"
+version = "0.9.0"
 dependencies = [
  "serde",
  "serde_json",
  "swc_common",
- "swc_core 0.40.0",
+ "swc_core",
  "swc_emotion",
 ]
 
 [[package]]
 name = "swc_plugin_jest"
-version = "0.21.0"
+version = "0.22.0"
 dependencies = [
  "phf",
  "serde",
  "swc_common",
- "swc_core 0.40.0",
+ "swc_core",
 ]
 
 [[package]]
 name = "swc_plugin_loadable_components"
-version = "0.8.0"
+version = "0.9.0"
 dependencies = [
  "once_cell",
  "regex",
  "serde_json",
  "swc_common",
- "swc_core 0.40.0",
+ "swc_core",
  "testing",
  "tracing",
 ]
@@ -2232,10 +2217,10 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_noop"
-version = "0.8.0"
+version = "0.9.0"
 dependencies = [
  "swc_common",
- "swc_core 0.40.0",
+ "swc_core",
 ]
 
 [[package]]
@@ -2261,39 +2246,39 @@ dependencies = [
  "serde",
  "serde_json",
  "swc_common",
- "swc_core 0.40.0",
+ "swc_core",
 ]
 
 [[package]]
 name = "swc_plugin_styled_components"
-version = "0.30.0"
+version = "0.31.0"
 dependencies = [
  "serde",
  "serde_json",
  "styled_components",
  "swc_common",
- "swc_core 0.40.0",
+ "swc_core",
 ]
 
 [[package]]
 name = "swc_plugin_styled_jsx"
-version = "0.10.0"
+version = "0.11.0"
 dependencies = [
  "easy-error",
  "styled_jsx",
- "swc_core 0.40.0",
+ "swc_core",
  "testing",
  "tracing",
 ]
 
 [[package]]
 name = "swc_plugin_transform_imports"
-version = "0.9.0"
+version = "0.10.0"
 dependencies = [
  "modularize_imports",
  "serde_json",
  "swc_common",
- "swc_core 0.40.0",
+ "swc_core",
 ]
 
 [[package]]
