@@ -820,7 +820,7 @@ dependencies = [
 
 [[package]]
 name = "modularize_imports"
-version = "0.24.0"
+version = "0.25.0"
 dependencies = [
  "convert_case",
  "handlebars",
@@ -2299,7 +2299,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_transform_imports"
-version = "0.12.0"
+version = "0.13.0"
 dependencies = [
  "modularize_imports",
  "serde_json",
