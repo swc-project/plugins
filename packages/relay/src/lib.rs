@@ -167,7 +167,7 @@ impl<'a> Relay<'a> {
     }
 }
 
-pub fn relay<'a>(config: &'a Config, file_name: FileName, root_dir: PathBuf) -> impl Fold + '_ {
+pub fn relay(config: &Config, file_name: FileName, root_dir: PathBuf) -> impl Fold + '_ {
     Relay {
         root_dir,
         file_name,
