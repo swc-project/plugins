@@ -214,3 +214,66 @@ const ObjectPropWithSpread = () => {
     />
   )
 }
+
+const id = (x) => x;
+
+const LocalCallInterpolation = (p) => {
+  const color = "red";
+
+  return (
+    <p
+      css={`
+        color: ${id(color)};
+      `}
+    >
+      H
+    </p>
+  );
+};
+
+const LocalCallInterpolation2 = () => {
+  return (
+    <p
+      css={`
+        /* direct call */
+        color: ${id("red")};
+      `}
+    >
+      H
+    </p>
+  );
+};
+
+const LocalCallCssHelperProp = (p) => {
+  const color = "red";
+
+  return (
+    <p
+      css={css`
+        color: ${id(color)};
+      `}
+    >
+      H
+    </p>
+  );
+};
+
+// https://github.com/vercel/next.js/issues/38914
+function Home() {
+  const { x } = { x: 4 };
+
+  return (
+    <div
+      css={css`
+        /* direct */
+        ${myCss(2)}
+        /* indirect */
+      ${myCss(x)}
+      `}
+    />
+  );
+}
+
+const myCss = (x) => css`
+  margin: ${x}px;
+`;
