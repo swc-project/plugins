@@ -2300,7 +2300,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_transform_imports"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "modularize_imports",
  "serde_json",
