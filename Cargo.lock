@@ -820,9 +820,7 @@ dependencies = [
 
 [[package]]
 name = "modularize_imports"
-version = "0.24.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1d00c3a3c643d483d0c528610a897bf1094523e50a67aff60f470142524c906b"
+version = "0.25.0"
 dependencies = [
  "convert_case",
  "handlebars",
@@ -830,6 +828,7 @@ dependencies = [
  "regex",
  "serde",
  "swc_core",
+ "testing",
 ]
 
 [[package]]
@@ -1571,7 +1570,7 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
 name = "styled_components"
-version = "0.51.0"
+version = "0.52.0"
 dependencies = [
  "Inflector",
  "once_cell",
@@ -1585,7 +1584,7 @@ dependencies = [
 
 [[package]]
 name = "styled_jsx"
-version = "0.28.0"
+version = "0.29.0"
 dependencies = [
  "easy-error",
  "swc_core",
@@ -2123,7 +2122,7 @@ dependencies = [
 
 [[package]]
 name = "swc_emotion"
-version = "0.27.0"
+version = "0.28.0"
 dependencies = [
  "base64",
  "byteorder",
@@ -2199,7 +2198,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_emotion"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -2210,7 +2209,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_jest"
-version = "0.24.0"
+version = "0.25.0"
 dependencies = [
  "phf",
  "serde",
@@ -2220,7 +2219,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_loadable_components"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "once_cell",
  "regex",
@@ -2244,7 +2243,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_noop"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "swc_common",
  "swc_core",
@@ -2278,7 +2277,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_styled_components"
-version = "0.33.0"
+version = "0.34.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -2289,7 +2288,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_styled_jsx"
-version = "0.13.0"
+version = "0.14.0"
 dependencies = [
  "easy-error",
  "styled_jsx",
@@ -2300,7 +2299,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_transform_imports"
-version = "0.12.0"
+version = "0.13.0"
 dependencies = [
  "modularize_imports",
  "serde_json",
