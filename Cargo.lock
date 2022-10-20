@@ -2122,7 +2122,7 @@ dependencies = [
 
 [[package]]
 name = "swc_emotion"
-version = "0.27.0"
+version = "0.28.0"
 dependencies = [
  "base64",
  "byteorder",
@@ -2198,7 +2198,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_emotion"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "serde",
  "serde_json",
