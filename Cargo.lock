@@ -1729,6 +1729,7 @@ dependencies = [
  "swc_ecma_parser",
  "swc_ecma_quote_macros",
  "swc_ecma_transforms_base",
+ "swc_ecma_transforms_react",
  "swc_ecma_transforms_testing",
  "swc_ecma_utils",
  "swc_ecma_visit",
@@ -2038,6 +2039,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "swc_ecma_transforms_react"
+version = "0.155.16"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e2282df08e7e591658f4e3eedd134ea8a0321b7bdfb4f59cbc10940407396a45"
+dependencies = [
+ "ahash",
+ "base64",
+ "dashmap",
+ "indexmap",
+ "once_cell",
+ "regex",
+ "serde",
+ "sha-1",
+ "string_enum",
+ "swc_atoms",
+ "swc_common",
+ "swc_config",
+ "swc_ecma_ast",
+ "swc_ecma_parser",
+ "swc_ecma_transforms_base",
+ "swc_ecma_transforms_macros",
+ "swc_ecma_utils",
+ "swc_ecma_visit",
+]
+
+[[package]]
 name = "swc_ecma_transforms_testing"
 version = "0.114.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2097,8 +2124,6 @@ dependencies = [
 [[package]]
 name = "swc_emotion"
 version = "0.26.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5fdcb3fdf7bc7b5444037935d95c8122c12a61c507c4b4bc458c28f3599a700e"
 dependencies = [
  "base64",
  "byteorder",
@@ -2107,8 +2132,10 @@ dependencies = [
  "radix_fmt",
  "regex",
  "serde",
+ "serde_json",
  "sourcemap",
  "swc_core",
+ "testing",
  "tracing",
 ]
 
