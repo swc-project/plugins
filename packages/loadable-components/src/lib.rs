@@ -196,7 +196,7 @@ where
             v.split(',')
                 .map(|v| v.trim())
                 .filter_map(|item| {
-                    let s = item.split(":").map(|s| s.trim()).collect::<Vec<_>>();
+                    let s = item.split(':').map(|s| s.trim()).collect::<Vec<_>>();
                     if s.len() == 2 {
                         return Some((
                             s[0].to_string(),
