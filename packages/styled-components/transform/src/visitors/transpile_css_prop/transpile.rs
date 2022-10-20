@@ -1,10 +1,7 @@
 //! Port of https://github.com/styled-components/babel-plugin-styled-components/blob/a20c3033508677695953e7a434de4746168eeb4e/src/visitors/transpileCssProp.js
 
-use std::cell::RefCell;
-use std::rc::Rc;
-use std::{borrow::Cow, collections::HashMap};
+use std::{borrow::Cow, cell::RefCell, collections::HashMap, rc::Rc};
 
-use crate::State;
 use inflector::Inflector;
 use once_cell::sync::Lazy;
 use regex::Regex;
@@ -14,15 +11,19 @@ use swc_core::{
         util::take::Take,
         Spanned, DUMMY_SP,
     },
-    ecma::ast::*,
-    ecma::atoms::{js_word, JsWord},
-    ecma::utils::{prepend_stmt, private_ident, quote_ident, ExprFactory},
-    ecma::visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith},
+    ecma::{
+        ast::*,
+        atoms::{js_word, JsWord},
+        utils::{prepend_stmt, private_ident, quote_ident, ExprFactory},
+        visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith},
+    },
 };
 
-use crate::utils::{get_prop_key_as_expr, get_prop_name, get_prop_name2};
-
 use super::top_level_binding_collector::collect_top_level_decls;
+use crate::{
+    utils::{get_prop_key_as_expr, get_prop_name, get_prop_name2},
+    State,
+};
 
 static TAG_NAME_REGEX: Lazy<Regex> =
     Lazy::new(|| Regex::new("^[a-z][a-z\\d]*(\\-[a-z][a-z\\d]*)?$").unwrap());
@@ -53,8 +54,9 @@ impl TranspileCssProp {
         *idx += 1;
         *idx
     }
+
     #[allow(clippy::wrong_self_convention)]
-    fn is_top_level_ident(&mut self, ident: &Ident) -> bool {
+    fn is_top_level_ident(&self, ident: &Ident) -> bool {
         self.top_level_decls
             .as_ref()
             .map(|decls| decls.contains(&ident.to_id()))
@@ -248,19 +250,14 @@ impl VisitMut for TranspileCssProp {
                                 .take()
                                 .into_iter()
                                 .fold(vec![], |mut acc, mut expr| {
-                                    if expr.is_fn_expr() || expr.is_arrow() {
+                                    if expr.is_fn_expr()
+                                        || expr.is_arrow()
+                                        || is_direct_access(&expr, &|id| {
+                                            self.is_top_level_ident(id)
+                                        })
+                                    {
                                         acc.push(expr);
                                         return acc;
-                                    } else if let Some(root) = trace_root_value(&mut expr) {
-                                        let direct_access = match root {
-                                            Expr::Lit(_) => true,
-                                            Expr::Ident(id) if self.is_top_level_ident(id) => true,
-                                            _ => false,
-                                        };
-                                        if direct_access {
-                                            acc.push(expr);
-                                            return acc;
-                                        }
                                     }
 
                                     let identifier =
@@ -639,15 +636,37 @@ fn get_name_of_jsx_obj(el: &JSXObject) -> JsWord {
     }
 }
 
-fn trace_root_value(e: &mut Expr) -> Option<&mut Expr> {
+fn trace_root_value(e: &Expr) -> Option<&Expr> {
     match e {
-        Expr::Member(e) => trace_root_value(&mut e.obj),
-        Expr::Call(e) => match &mut e.callee {
-            Callee::Expr(e) => trace_root_value(e),
+        Expr::Member(e) => trace_root_value(&e.obj),
+        Expr::Call(e) => match &e.callee {
+            Callee::Expr(e) => trace_root_value(&**e),
             _ => None,
         },
         Expr::Ident(_) => Some(e),
         Expr::Lit(_) => Some(e),
         _ => None,
+    }
+}
+
+fn is_direct_access<F>(expr: &Expr, is_top_level_ident: &F) -> bool
+where
+    F: Fn(&Ident) -> bool,
+{
+    if let Some(root) = trace_root_value(expr) {
+        match root {
+            Expr::Lit(_) => true,
+            Expr::Ident(id) if is_top_level_ident(id) => {
+                if let Expr::Call(CallExpr { args, .. }) = expr {
+                    args.iter()
+                        .all(|arg| -> bool { is_direct_access(&*arg.expr, is_top_level_ident) })
+                } else {
+                    true
+                }
+            }
+            _ => false,
+        }
+    } else {
+        false
     }
 }

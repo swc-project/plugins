@@ -120,15 +120,49 @@ const ObjectPropMixedInputs = (p)=>{
     </_StyledP13>;
 };
 const ObjectPropWithSpread = ()=>{
-    const css = {
+    const css1 = {
         color: 'red'
     };
     const playing = true;
-    return <_StyledDiv $_css13={css} $_css14={playing ? {
+    return <_StyledDiv $_css13={css1} $_css14={playing ? {
         opacity: 0,
         bottom: '-100px'
     } : {}}/>;
 };
+const id = (x)=>x;
+const LocalCallInterpolation = (p)=>{
+    const color = "red";
+    return <_StyledP14 $_css15={id(color)}>
+
+      H
+
+    </_StyledP14>;
+};
+const LocalCallInterpolation2 = ()=>{
+    return <_StyledP15 >
+
+      H
+
+    </_StyledP15>;
+};
+const LocalCallCssHelperProp = (p)=>{
+    const color = "red";
+    return <_StyledP16 $_css16={id(color)}>
+
+      H
+
+    </_StyledP16>;
+};
+// https://github.com/vercel/next.js/issues/38914
+function Home() {
+    const { x  } = {
+        x: 4
+    };
+    return <_StyledDiv2 $_css17={myCss(x)}/>;
+}
+const myCss = (x)=>css`
+  margin: ${x}px;
+`;
 var _StyledP = _styled("p")`flex: 1;`;
 var _StyledP2 = _styled("p")`
       flex: 1;
@@ -179,3 +213,19 @@ var _StyledDiv = _styled("div")((p)=>({
         ...p.$_css13,
         ...p.$_css14
     }));
+var _StyledP14 = _styled("p")`
+        color: ${(p)=>p.$_css15};
+      `;
+var _StyledP15 = _styled("p")`
+        /* direct call */
+        color: ${id("red")};
+      `;
+var _StyledP16 = _styled("p")`
+        color: ${(p)=>p.$_css16};
+      `;
+var _StyledDiv2 = _styled("div")`
+        /* direct */
+        ${myCss(2)}
+        /* indirect */
+      ${(p)=>p.$_css17}
+      `;
