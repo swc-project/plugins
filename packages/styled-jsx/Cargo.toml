@@ -30,7 +30,7 @@ swc_core = { version = "0.40.2", features = [
   "ecma_visit",
 ] }
 
-styled_jsx = {version = "0.26.0", path = "./transform"}
+styled_jsx = {version = "0.27.0", path = "./transform"}
 
 [dev-dependencies]
 swc_core = { features = [
