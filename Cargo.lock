@@ -821,8 +821,6 @@ dependencies = [
 [[package]]
 name = "modularize_imports"
 version = "0.24.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1d00c3a3c643d483d0c528610a897bf1094523e50a67aff60f470142524c906b"
 dependencies = [
  "convert_case",
  "handlebars",
@@ -830,6 +828,7 @@ dependencies = [
  "regex",
  "serde",
  "swc_core",
+ "testing",
 ]
 
 [[package]]
