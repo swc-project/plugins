@@ -7,7 +7,7 @@ function up {
 
 up swc_atoms swc_common testing swc_ecmascript swc_ecma_transforms_testing swc_plugin swc_core
 
-up styled_jsx styled_components modularize_imports swc_emotion
+up styled_jsx modularize_imports swc_emotion
 
 ./scripts/bump-all.sh
 
