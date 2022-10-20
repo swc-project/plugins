@@ -2277,7 +2277,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_styled_components"
-version = "0.34.0"
+version = "0.34.1"
 dependencies = [
  "serde",
  "serde_json",
