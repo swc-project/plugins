@@ -2288,7 +2288,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_styled_jsx"
-version = "0.14.1"
+version = "0.14.2"
 dependencies = [
  "easy-error",
  "styled_jsx",
