@@ -2243,7 +2243,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_noop"
-version = "0.12.1"
+version = "0.12.2"
 dependencies = [
  "swc_common",
  "swc_core",
