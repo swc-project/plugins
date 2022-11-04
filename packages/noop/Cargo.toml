@@ -4,7 +4,7 @@ description = "Noop plugin for debugging."
 edition = "2021"
 license = "Apache-2.0"
 name = "swc_plugin_noop"
-version = "0.12.2"
+version = "0.12.3"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
