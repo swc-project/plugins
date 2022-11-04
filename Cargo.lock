@@ -2280,7 +2280,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_styled_jsx"
-version = "0.14.2"
+version = "0.14.3"
 dependencies = [
  "easy-error",
  "styled_jsx",
@@ -2291,7 +2291,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_transform_imports"
-version = "0.13.2"
+version = "0.13.3"
 dependencies = [
  "modularize_imports",
  "serde_json",
