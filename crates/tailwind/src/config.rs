@@ -61,6 +61,12 @@ pub struct ThemeConfig {
 
     #[serde(default)]
     pub transition_timing_function: AHashMap<JsWord, String>,
+
+    #[serde(default)]
+    pub container: AHashMap<JsWord, String>,
+
+    #[serde(default)]
+    pub supports: AHashMap<JsWord, String>,
 }
 
 #[derive(Debug, Deserialize)]
