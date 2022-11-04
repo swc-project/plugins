@@ -29,7 +29,7 @@ fn transform(input: PathBuf) {
 
         if !errors.is_empty() {
             for err in errors {
-                err.to_diagnostics(&handler).emit();
+                err.to_diagnostics(handler).emit();
             }
 
             return Err(());
