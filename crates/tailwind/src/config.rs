@@ -9,6 +9,7 @@ pub struct Config {
     #[serde(default)]
     pub theme: ThemeConfig,
 
+    #[serde(default)]
     pub core_plugins: CorePluginsConfig,
 }
 
@@ -41,4 +42,12 @@ pub enum Content {
 
 const fn true_by_default() -> bool {
     true
+}
+
+impl Default for CorePluginsConfig {
+    fn default() -> Self {
+        Self {
+            preflight: true_by_default(),
+        }
+    }
 }
