@@ -11,6 +11,7 @@ version = "0.1.2"
 
 [dependencies]
 serde = {version = "1", features = ["derive"]}
+swc_atoms = "0.4.24"
 swc_core = {version = "0.40.46", features = [
   "common",
   "css_ast",
