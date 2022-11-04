@@ -18,3 +18,6 @@ swc_core = {version = "0.40.46", features = [
   "css_visit",
   "ecma_visit",
 ]}
+
+[dev-dependencies]
+testing = "0.31.13"
