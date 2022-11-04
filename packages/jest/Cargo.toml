@@ -4,6 +4,7 @@ description = "Jest plugin for https://swc.rs"
 edition = "2021"
 license = "Apache-2.0"
 name = "swc_plugin_jest"
+publish = false
 version = "0.25.3"
 
 [lib]
@@ -12,11 +13,11 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 phf = {version = "0.10.0", features = ["macros"]}
 serde = {version = "1.0.130", features = ["derive"]}
-swc_common = { version = "0.29.13", features = ["concurrent"] }
-swc_core = { version = "0.40.46", features = [
+swc_common = {version = "0.29.13", features = ["concurrent"]}
+swc_core = {version = "0.40.46", features = [
   "plugin_transform",
   "ecma_utils",
   "ecma_visit",
   "ecma_ast",
   "common",
-] }
+]}
