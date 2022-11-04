@@ -59,7 +59,7 @@ fn transform(input: PathBuf) {
             }
 
             NormalizedOutput::from(buf)
-                .compare_to_file(input.with_extension("output.css"))
+                .compare_to_file(input.with_file_name("output.css"))
                 .unwrap();
         }
         Err(stderr) => {
