@@ -1,4 +1,5 @@
 use serde::Deserialize;
+use swc_atoms::JsWord;
 use swc_core::common::collections::AHashMap;
 
 #[derive(Debug, Deserialize)]
@@ -12,6 +13,10 @@ pub struct Config {
 
     #[serde(default)]
     pub core_plugins: CorePluginsConfig,
+
+    /// TODO(kdy1): Support? Not sure
+    #[serde(default)]
+    pub plugins: Vec<Option<String>>,
 
     #[serde(default = "default_prefix")]
     pub prefix: String,
@@ -34,10 +39,13 @@ pub struct ThemeConfig {
     pub extend: Option<Box<ThemeConfig>>,
 
     #[serde(default)]
-    pub screens: AHashMap<String, String>,
+    pub screens: AHashMap<JsWord, String>,
 
     #[serde(default)]
-    pub keyframes: AHashMap<String, String>,
+    pub keyframes: AHashMap<JsWord, String>,
+
+    #[serde(default)]
+    pub opacity: AHashMap<JsWord, String>,
 }
 
 #[derive(Debug, Deserialize)]
