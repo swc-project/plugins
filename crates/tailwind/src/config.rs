@@ -26,20 +26,18 @@ pub enum ContentConfig {
     Raw { files: Vec<Content> },
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Default, Deserialize)]
 #[serde(rename_all = "camelCase")]
 #[serde(deny_unknown_fields)]
 pub struct ThemeConfig {
     #[serde(default)]
-    pub screens: AHashMap<String, String>,
-}
+    pub extend: Option<Box<ThemeConfig>>,
 
-impl Default for ThemeConfig {
-    fn default() -> Self {
-        Self {
-            screens: Default::default(),
-        }
-    }
+    #[serde(default)]
+    pub screens: AHashMap<String, String>,
+
+    #[serde(default)]
+    pub keyframes: AHashMap<String, String>,
 }
 
 #[derive(Debug, Deserialize)]
