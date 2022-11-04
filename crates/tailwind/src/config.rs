@@ -9,7 +9,7 @@ pub struct Config {
     pub content: ContentConfig,
 
     #[serde(default)]
-    pub theme: ThemeConfig,
+    pub theme: Box<ThemeConfig>,
 
     #[serde(default)]
     pub core_plugins: CorePluginsConfig,
@@ -46,6 +46,21 @@ pub struct ThemeConfig {
 
     #[serde(default)]
     pub opacity: AHashMap<JsWord, String>,
+
+    #[serde(default)]
+    pub margin: AHashMap<JsWord, String>,
+
+    #[serde(default)]
+    pub padding: AHashMap<JsWord, String>,
+
+    #[serde(default)]
+    pub transition_property: AHashMap<JsWord, String>,
+
+    #[serde(default)]
+    pub transition_duration: AHashMap<JsWord, String>,
+
+    #[serde(default)]
+    pub transition_timing_function: AHashMap<JsWord, String>,
 }
 
 #[derive(Debug, Deserialize)]
