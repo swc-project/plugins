@@ -1,4 +1,5 @@
 use serde::Deserialize;
+use swc_core::common::collections::AHashMap;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -28,20 +29,29 @@ pub enum ContentConfig {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 #[serde(deny_unknown_fields)]
-pub struct ThemeConfig {}
+pub struct ThemeConfig {
+    #[serde(default)]
+    pub screens: AHashMap<String, String>,
+}
 
 impl Default for ThemeConfig {
     fn default() -> Self {
-        Self {}
+        Self {
+            screens: Default::default(),
+        }
     }
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 #[serde(deny_unknown_fields)]
-pub struct CorePluginsConfig {
-    #[serde(default = "true_by_default")]
-    pub preflight: bool,
+#[serde(untagged)]
+pub enum CorePluginsConfig {
+    Map {
+        #[serde(default = "true_by_default")]
+        preflight: bool,
+    },
+    List(Vec<String>),
 }
 
 #[derive(Debug, Deserialize)]
@@ -66,7 +76,7 @@ fn default_prefix() -> String {
 
 impl Default for CorePluginsConfig {
     fn default() -> Self {
-        Self {
+        CorePluginsConfig::Map {
             preflight: true_by_default(),
         }
     }
