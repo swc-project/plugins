@@ -98,7 +98,7 @@ const fn true_by_default() -> bool {
 }
 
 fn default_prefix() -> String {
-    "tw-".into()
+    "--tw-".into()
 }
 
 impl Default for CorePluginsConfig {
