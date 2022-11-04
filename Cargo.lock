@@ -2303,6 +2303,8 @@ dependencies = [
 name = "swc_tailwind"
 version = "0.1.2"
 dependencies = [
+ "serde",
+ "serde_json",
  "swc_core",
  "testing",
 ]
