@@ -2363,6 +2363,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "tailwind"
+version = "0.1.1"
+
+[[package]]
 name = "tempfile"
 version = "3.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
