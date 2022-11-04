@@ -2211,7 +2211,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_loadable_components"
-version = "0.12.2"
+version = "0.12.3"
 dependencies = [
  "once_cell",
  "regex",
