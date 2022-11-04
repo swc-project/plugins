@@ -1,1 +1,1 @@
-{"content":["/Users/kdy1/projects/lab/tailwindcss/tests/import-syntax.test.html"],"corePlugins":{"preflight":false},"plugins":[null]}
+{"content":[{"raw":"<h1>Hello world!</h1>\n<div class=\"container\"></div>\n<div class=\"mt-6\"></div>\n<div class=\"bg-black\"></div>\n<div class=\"md:hover:text-center\"></div>\n"}],"corePlugins":{"preflight":false},"plugins":[null]}

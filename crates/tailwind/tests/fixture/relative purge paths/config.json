@@ -1,1 +1,1 @@
-{"content":["./tests/relative-purge-paths.test.html"],"corePlugins":{"preflight":false}}
+{"content":["<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <link rel=\"icon\" href=\"/favicon.ico\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>Title</title>\n    <link rel=\"stylesheet\" href=\"./tailwind.css\" />\n  </head>\n  <body>\n    <div class=\"font-bold\"></div>\n  </body>\n</html>\n"],"corePlugins":{"preflight":false}}

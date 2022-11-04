@@ -1,1 +1,1 @@
-{"important":true,"content":["/Users/kdy1/projects/lab/tailwindcss/tests/important-boolean-duplicates.test.html"]}
+{"important":true,"content":[{"raw":"\n        <div class=\"ml-2\"></div>\n        <div class=\"ml-4\"></div>\n      "}]}
