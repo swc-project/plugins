@@ -9,7 +9,7 @@ use swc_core::{
 };
 
 /// Emits error for `@tailwind` directives in nested rules.
-pub fn detect_nesting(ss: &Stylesheet) {
+pub(crate) fn detect_nesting(ss: &Stylesheet) {
     // ss.visit_with(&mut Detector {
     //     in_nested_rule: false,
     //     found: false,
