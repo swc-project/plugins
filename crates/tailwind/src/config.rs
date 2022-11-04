@@ -4,7 +4,7 @@ use serde::Deserialize;
 #[serde(rename_all = "camelCase")]
 #[serde(deny_unknown_fields)]
 pub struct Config {
-    pub content: Vec<Content>,
+    pub content: ContentConfig,
 
     #[serde(default)]
     pub theme: ThemeConfig,
@@ -14,6 +14,15 @@ pub struct Config {
 
     #[serde(default = "default_prefix")]
     pub prefix: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+#[serde(deny_unknown_fields)]
+#[serde(untagged)]
+pub enum ContentConfig {
+    Files(Vec<Content>),
+    Raw { files: Vec<Content> },
 }
 
 #[derive(Debug, Deserialize)]
@@ -40,7 +49,11 @@ pub struct CorePluginsConfig {
 #[serde(deny_unknown_fields)]
 #[serde(untagged)]
 pub enum Content {
-    Raw { raw: String },
+    Raw {
+        raw: String,
+        #[serde(default)]
+        extension: String,
+    },
 }
 
 const fn true_by_default() -> bool {
