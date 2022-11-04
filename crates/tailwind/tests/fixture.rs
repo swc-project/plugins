@@ -12,7 +12,8 @@ use testing::NormalizedOutput;
 fn transform(input: PathBuf) {
     let dir = input.parent().unwrap();
     let config_path = dir.join("config.json");
-    let config = serde_json::from_str(&std::fs::read_to_string(&config_path).unwrap()).unwrap();
+    let config = serde_json::from_str(&std::fs::read_to_string(&config_path).unwrap())
+        .expect("failed to deserialize config.json");
 
     let result = testing::run_test(false, |cm, handler| {
         let fm = cm.load_file(&input).expect("failed to load input css file");
