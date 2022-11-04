@@ -2201,7 +2201,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_jest"
-version = "0.25.2"
+version = "0.25.3"
 dependencies = [
  "phf",
  "serde",
