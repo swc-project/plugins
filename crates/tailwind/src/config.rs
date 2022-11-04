@@ -11,6 +11,9 @@ pub struct Config {
 
     #[serde(default)]
     pub core_plugins: CorePluginsConfig,
+
+    #[serde(default = "default_prefix")]
+    pub prefix: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -42,6 +45,10 @@ pub enum Content {
 
 const fn true_by_default() -> bool {
     true
+}
+
+fn default_prefix() -> String {
+    "tw-".into()
 }
 
 impl Default for CorePluginsConfig {
