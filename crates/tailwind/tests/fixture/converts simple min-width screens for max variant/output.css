@@ -1,0 +1,34 @@
+.font-bold {
+    font-weight: 700
+}
+@media not all and (min-width: 1024px) {
+    .max-lg\:font-bold {
+        font-weight: 700
+    }
+}
+@media (max-width: 700px) {
+    .max-\[700px\]\:font-bold {
+        font-weight: 700
+    }
+}
+@media not all and (min-width: 640px) {
+    .max-sm\:font-bold {
+        font-weight: 700
+    }
+}
+@media (max-width: 300px) {
+    .max-\[300px\]\:font-bold {
+        font-weight: 700
+    }
+}
+@media (min-width: 640px) {
+    .sm\:font-bold {
+        font-weight: 700
+    }
+}
+@media (min-width: 768px) {
+    .md\:font-bold {
+        font-weight: 700
+    }
+}
+  

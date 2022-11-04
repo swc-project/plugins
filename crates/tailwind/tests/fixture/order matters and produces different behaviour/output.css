@@ -1,0 +1,8 @@
+.hover\:file\:bg-pink-600::file-selector-button:hover {
+    --tw-bg-opacity: 1;
+    background-color: rgb(219 39 119 / var(--tw-bg-opacity))
+}
+.file\:hover\:bg-pink-600:hover::file-selector-button {
+    --tw-bg-opacity: 1;
+    background-color: rgb(219 39 119 / var(--tw-bg-opacity))
+}

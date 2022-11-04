@@ -1,0 +1,7 @@
+input[type='range']::-moz-range-thumb {
+    border-width: 1px
+}
+    .border {
+    border-width: 1px
+}
+  

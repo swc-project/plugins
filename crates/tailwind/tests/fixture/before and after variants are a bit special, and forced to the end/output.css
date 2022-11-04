@@ -1,0 +1,8 @@
+.before\:hover\:text-center:hover::before {
+    content: var(--tw-content);
+    text-align: center
+}
+.hover\:before\:text-center:hover::before {
+    content: var(--tw-content);
+    text-align: center
+}

@@ -1,0 +1,20 @@
+
+    .foo + .foo {
+      color: blue;
+    }
+    .bar + .bar {
+      color: fuchsia;
+    }
+    header + .foo {
+      color: blue;
+    }
+    main + .foo {
+      color: blue;
+    }
+    main + .bar {
+      color: fuchsia;
+    }
+    footer + .bar {
+      color: fuchsia;
+    }
+  

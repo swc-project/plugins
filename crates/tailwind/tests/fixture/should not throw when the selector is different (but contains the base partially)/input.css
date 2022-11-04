@@ -1,0 +1,8 @@
+
+    @tailwind components;
+    @tailwind utilities;
+
+    .focus\:bg-gray-500 {
+      @apply bg-gray-500;
+    }
+  

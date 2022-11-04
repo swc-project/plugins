@@ -1,0 +1,8 @@
+@keyframes one {
+    to {
+        transform: rotate(360deg)
+    }
+}
+.animate-one {
+    animation: one 2s
+}

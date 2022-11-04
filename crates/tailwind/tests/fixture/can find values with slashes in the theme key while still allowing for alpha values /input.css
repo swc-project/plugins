@@ -1,0 +1,17 @@
+
+    .foo00 {
+      color: theme(colors.foo-5);
+    }
+    .foo01 {
+      color: theme(colors.foo-5/10);
+    }
+    .foo02 {
+      color: theme(colors.foo-5/10/25);
+    }
+    .foo03 {
+      color: theme(colors.foo-5 / 10);
+    }
+    .foo04 {
+      color: theme(colors.foo-5/10 / 25);
+    }
+  

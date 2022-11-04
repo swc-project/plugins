@@ -1,0 +1,7 @@
+.tooltip-bottom\:mt-2[data-location="bottom"] {
+    margin-top: 0.5rem
+}
+.tooltip-top\:mb-2[data-location="top"] {
+    margin-bottom: 0.5rem
+}
+  

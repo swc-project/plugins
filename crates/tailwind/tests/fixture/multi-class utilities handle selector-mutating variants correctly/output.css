@@ -1,0 +1,56 @@
+
+      .hover\:foo.bar.baz:hover {
+        color: red;
+      }
+      .hover\:bar.foo.baz:hover {
+        color: red;
+      }
+      .hover\:baz.foo.bar:hover {
+        color: red;
+      }
+      .hover\:foo1:hover .bar1 .baz1 {
+        color: red;
+      }
+      .foo1 .hover\:bar1:hover .baz1 {
+        color: red;
+      }
+      .foo1 .bar1 .hover\:baz1:hover {
+        color: red;
+      }
+      .group:hover .group-hover\:foo.bar.baz {
+        color: red;
+      }
+      .group:hover .group-hover\:bar.foo.baz {
+        color: red;
+      }
+      .group:hover .group-hover\:baz.foo.bar {
+        color: red;
+      }
+      .group:hover .group-hover\:foo1 .bar1 .baz1 {
+        color: red;
+      }
+      .foo1 .group:hover .group-hover\:bar1 .baz1 {
+        color: red;
+      }
+      .foo1 .bar1 .group:hover .group-hover\:baz1 {
+        color: red;
+      }
+      .peer:checked ~ .peer-checked\:foo.bar.baz {
+        color: red;
+      }
+      .peer:checked ~ .peer-checked\:bar.foo.baz {
+        color: red;
+      }
+      .peer:checked ~ .peer-checked\:baz.foo.bar {
+        color: red;
+      }
+      .peer:checked ~ .peer-checked\:foo1 .bar1 .baz1 {
+        color: red;
+      }
+      .foo1 .peer:checked ~ .peer-checked\:bar1 .baz1 {
+        color: red;
+      }
+      .foo1 .bar1 .peer:checked ~ .peer-checked\:baz1 {
+        color: red;
+      }
+  

@@ -1,0 +1,1 @@
+{"content":[{"raw":"<div class=\"banana sm:banana apple sm:apple\"></div>"}],"corePlugins":[],"theme":{"screens":{"sm":"400px"}},"plugins":[{"__options":{"className":"apple"},"config":{}}]}

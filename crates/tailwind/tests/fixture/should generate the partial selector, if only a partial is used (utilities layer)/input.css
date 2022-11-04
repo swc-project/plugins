@@ -1,0 +1,16 @@
+
+    @tailwind utilities;
+
+    @layer utilities {
+      :root {
+        font-weight: bold;
+      }
+
+      /* --- */
+
+      :root,
+      .a {
+        color: black;
+      }
+    }
+  

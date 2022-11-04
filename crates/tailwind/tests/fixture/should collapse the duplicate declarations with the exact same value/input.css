@@ -1,0 +1,11 @@
+
+    @tailwind utilities;
+
+    @layer utilities {
+      .example {
+        height: var(--value);
+        color: blue;
+        height: var(--value);
+      }
+    }
+  

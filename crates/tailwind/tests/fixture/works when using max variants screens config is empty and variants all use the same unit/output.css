@@ -1,0 +1,14 @@
+.font-bold {
+    font-weight: 700
+}
+@media (max-width: 800px) {
+    .max-\[800px\]\:font-bold {
+        font-weight: 700
+    }
+}
+@media (max-width: 700px) {
+    .max-\[700px\]\:font-bold {
+        font-weight: 700
+    }
+}
+  

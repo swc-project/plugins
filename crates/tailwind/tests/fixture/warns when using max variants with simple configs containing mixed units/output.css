@@ -1,0 +1,14 @@
+.font-bold {
+    font-weight: 700
+}
+@media (min-width: 640px) {
+    .sm\:font-bold {
+        font-weight: 700
+    }
+}
+@media (min-width: 48rem) {
+    .md\:font-bold {
+        font-weight: 700
+    }
+}
+  

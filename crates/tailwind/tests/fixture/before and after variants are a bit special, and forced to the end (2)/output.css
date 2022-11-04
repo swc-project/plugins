@@ -1,0 +1,8 @@
+:where(.before\:prose-headings\:text-center) :is(h1, h2, h3, h4)::before {
+    content: var(--tw-content);
+    text-align: center
+}
+:where(.prose-headings\:before\:text-center) :is(h1, h2, h3, h4)::before {
+    content: var(--tw-content);
+    text-align: center
+}

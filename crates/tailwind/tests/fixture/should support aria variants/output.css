@@ -1,0 +1,40 @@
+.aria-checked\:underline[aria-checked="true"] {
+    text-decoration-line: underline
+}
+.aria-\[sort\=ascending\]\:underline[aria-sort=ascending] {
+    text-decoration-line: underline
+}
+.aria-\[labelledby\=a_b\]\:underline[aria-labelledby=a b] {
+    text-decoration-line: underline
+}
+.group[aria-checked="true"] .group-aria-checked\:underline {
+    text-decoration-line: underline
+}
+.group\/foo[aria-checked="true"] .group-aria-checked\/foo\:underline {
+    text-decoration-line: underline
+}
+.group[aria-sort=ascending] .group-aria-\[sort\=ascending\]\:underline {
+    text-decoration-line: underline
+}
+.group[aria-labelledby=a b] .group-aria-\[labelledby\=a_b\]\:underline {
+    text-decoration-line: underline
+}
+.group\/foo[aria-sort=ascending] .group-aria-\[sort\=ascending\]\/foo\:underline {
+    text-decoration-line: underline
+}
+.peer[aria-checked="true"] ~ .peer-aria-checked\:underline {
+    text-decoration-line: underline
+}
+.peer\/foo[aria-checked="true"] ~ .peer-aria-checked\/foo\:underline {
+    text-decoration-line: underline
+}
+.peer[aria-sort=ascending] ~ .peer-aria-\[sort\=ascending\]\:underline {
+    text-decoration-line: underline
+}
+.peer[aria-labelledby=a b] ~ .peer-aria-\[labelledby\=a_b\]\:underline {
+    text-decoration-line: underline
+}
+.peer\/foo[aria-sort=ascending] ~ .peer-aria-\[sort\=ascending\]\/foo\:underline {
+    text-decoration-line: underline
+}
+  

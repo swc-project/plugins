@@ -1,0 +1,18 @@
+@keyframes abc {
+    25.001% {
+        color: black
+    }
+}
+.foo-\[abc\] {
+    animation: abc 1s infinite
+}
+@media (min-width: 768px) {
+    @keyframes def {
+        25.001% {
+            color: black
+        }
+    }
+    .md\:foo-\[def\] {
+        animation: def 1s infinite
+    }
+}

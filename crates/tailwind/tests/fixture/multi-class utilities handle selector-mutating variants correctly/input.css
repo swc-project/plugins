@@ -1,0 +1,11 @@
+
+    @tailwind utilities;
+    @layer utilities {
+      .foo.bar.baz {
+        color: red;
+      }
+      .foo1 .bar1 .baz1 {
+        color: red;
+      }
+    }
+  

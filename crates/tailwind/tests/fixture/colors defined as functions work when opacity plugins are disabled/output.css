@@ -1,0 +1,15 @@
+.divide-primary > :not([hidden]) ~ :not([hidden]) {
+    border-color: rgb(var(--color-primary))
+}
+.border-primary {
+    border-color: rgb(var(--color-primary))
+}
+.bg-primary {
+    background-color: rgb(var(--color-primary))
+}
+.text-primary {
+    color: rgb(var(--color-primary))
+}
+.placeholder-primary::placeholder {
+    color: rgb(var(--color-primary))
+}

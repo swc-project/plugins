@@ -1,0 +1,19 @@
+
+    @tailwind utilities;
+
+    .a {
+      @apply hover:tw--top-1;
+    }
+    .b {
+      @apply hover:-tw-top-1;
+    }
+    .c {
+      @apply hover:-tw-top-[1px];
+    }
+    .d {
+      @apply hover:tw--top-[1px];
+    }
+    .e {
+      @apply hover:tw-top-[-1px];
+    }
+  

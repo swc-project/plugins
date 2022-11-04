@@ -1,0 +1,7 @@
+@supports (hover: hover) {
+    @media print {
+        .magic\:text-center:disabled {
+            text-align: center
+        }
+    }
+}

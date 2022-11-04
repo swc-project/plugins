@@ -1,0 +1,9 @@
+
+    @tailwind components;
+    @layer components {
+      .input-text {
+        @apply bg-white;
+        background-color: red;
+      }
+    }
+  

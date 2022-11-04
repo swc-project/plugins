@@ -1,0 +1,78 @@
+.divide-blue-300 > :not([hidden]) ~ :not([hidden]) {
+    --tw-divide-opacity: 1;
+    border-color: rgb(147 197 253 / var(--tw-divide-opacity))
+}
+.divide-blue-300\/50 > :not([hidden]) ~ :not([hidden]) {
+    border-color: rgb(147 197 253 / 0.5)
+}
+.divide-blue-300\/\[var\(--my-opacity\)\] > :not([hidden]) ~ :not([hidden]) {
+    border-color: rgb(147 197 253 / var(--my-opacity))
+}
+.divide-opacity-50 > :not([hidden]) ~ :not([hidden]) {
+    --tw-divide-opacity: 0.5
+}
+.border-blue-300 {
+    --tw-border-opacity: 1;
+    border-color: rgb(147 197 253 / var(--tw-border-opacity))
+}
+.border-blue-300\/50 {
+    border-color: rgb(147 197 253 / 0.5)
+}
+.border-blue-300\/\[var\(--my-opacity\)\] {
+    border-color: rgb(147 197 253 / var(--my-opacity))
+}
+.border-opacity-50 {
+    --tw-border-opacity: 0.5
+}
+.bg-blue-300 {
+    --tw-bg-opacity: 1;
+    background-color: rgb(147 197 253 / var(--tw-bg-opacity))
+}
+.bg-blue-300\/50 {
+    background-color: rgb(147 197 253 / 0.5)
+}
+.bg-blue-300\/\[var\(--my-opacity\)\] {
+    background-color: rgb(147 197 253 / var(--my-opacity))
+}
+.bg-opacity-50 {
+    --tw-bg-opacity: 0.5
+}
+.text-blue-300 {
+    --tw-text-opacity: 1;
+    color: rgb(147 197 253 / var(--tw-text-opacity))
+}
+.text-blue-300\/50 {
+    color: rgb(147 197 253 / 0.5)
+}
+.text-blue-300\/\[var\(--my-opacity\)\] {
+    color: rgb(147 197 253 / var(--my-opacity))
+}
+.text-opacity-50 {
+    --tw-text-opacity: 0.5
+}
+.placeholder-blue-300::placeholder {
+    --tw-placeholder-opacity: 1;
+    color: rgb(147 197 253 / var(--tw-placeholder-opacity))
+}
+.placeholder-blue-300\/50::placeholder {
+    color: rgb(147 197 253 / 0.5)
+}
+.placeholder-blue-300\/\[var\(--my-opacity\)\]::placeholder {
+    color: rgb(147 197 253 / var(--my-opacity))
+}
+.placeholder-opacity-50::placeholder {
+    --tw-placeholder-opacity: 0.5
+}
+.ring-blue-300 {
+    --tw-ring-opacity: 1;
+    --tw-ring-color: rgb(147 197 253 / var(--tw-ring-opacity))
+}
+.ring-blue-300\/50 {
+    --tw-ring-color: rgb(147 197 253 / 0.5)
+}
+.ring-blue-300\/\[var\(--my-opacity\)\] {
+    --tw-ring-color: rgb(147 197 253 / var(--my-opacity))
+}
+.ring-opacity-50 {
+    --tw-ring-opacity: 0.5
+}

@@ -1,0 +1,6 @@
+.w-\[calc\(100\%-theme\(\'spacing\.1\'\)\)\] {
+    width: calc(100% - calc(1 * .25rem))
+}
+.w-\[calc\(100\%-theme\(\'spacing\[0\.5\]\'\)\)\] {
+    width: calc(100% - calc(.5 * .25rem))
+}

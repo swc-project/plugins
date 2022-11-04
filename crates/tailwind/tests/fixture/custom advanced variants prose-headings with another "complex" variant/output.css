@@ -1,0 +1,6 @@
+.group:hover :where(.group-hover\:prose-headings\:text-center) :is(h1, h2, h3, h4) {
+    text-align: center
+}
+:where(.group:hover .prose-headings\:group-hover\:text-center) :is(h1, h2, h3, h4) {
+    text-align: center
+}

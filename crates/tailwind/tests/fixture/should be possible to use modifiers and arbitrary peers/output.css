@@ -1,0 +1,43 @@
+.peer:hover ~ .peer-hover\:underline {
+    text-decoration-line: underline
+}
+.peer\/foo:hover ~ .peer-hover\/foo\:underline {
+    text-decoration-line: underline
+}
+.peer:focus ~ .peer-\[\&\:focus\]\:underline {
+    text-decoration-line: underline
+}
+.peer:hover ~ .peer-\[\:hover\]\:underline {
+    text-decoration-line: underline
+}
+.peer[data-open] ~ .peer-\[\&\[data-open\]\]\:underline {
+    text-decoration-line: underline
+}
+.peer[data-open] ~ .peer-\[\[data-open\]\]\:underline {
+    text-decoration-line: underline
+}
+.in-foo .peer ~ .peer-\[\.in-foo_\&\]\:underline {
+    text-decoration-line: underline
+}
+.peer.in-foo ~ .peer-\[\.in-foo\]\:underline {
+    text-decoration-line: underline
+}
+.peer\/foo:focus ~ .peer-\[\&\:focus\]\/foo\:underline {
+    text-decoration-line: underline
+}
+.peer\/foo:hover ~ .peer-\[\:hover\]\/foo\:underline {
+    text-decoration-line: underline
+}
+.peer\/foo[data-open] ~ .peer-\[\&\[data-open\]\]\/foo\:underline {
+    text-decoration-line: underline
+}
+.peer\/foo[data-open] ~ .peer-\[\[data-open\]\]\/foo\:underline {
+    text-decoration-line: underline
+}
+.in-foo .peer\/foo ~ .peer-\[\.in-foo_\&\]\/foo\:underline {
+    text-decoration-line: underline
+}
+.peer\/foo.in-foo ~ .peer-\[\.in-foo\]\/foo\:underline {
+    text-decoration-line: underline
+}
+  

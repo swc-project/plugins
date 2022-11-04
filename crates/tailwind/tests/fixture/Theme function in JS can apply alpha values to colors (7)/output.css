@@ -1,0 +1,4 @@
+.text-foo {
+    color: rgb(var(--foo) / var(--my-alpha))
+}
+  

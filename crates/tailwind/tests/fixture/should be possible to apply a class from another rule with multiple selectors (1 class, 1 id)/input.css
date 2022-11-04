@@ -1,0 +1,13 @@
+
+    @tailwind utilities;
+    @layer utilities {
+      #a,
+      .b {
+        @apply underline;
+      }
+
+      .c {
+        @apply b;
+      }
+    }
+  

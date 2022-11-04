@@ -1,0 +1,20 @@
+
+    @tailwind components;
+    @tailwind utilities;
+
+    @layer utilities {
+      .aspect-w-1 {
+        position: relative;
+      }
+
+      .aspect-w-1 {
+        --tw-aspect-w: 1;
+      }
+    }
+
+    @layer components {
+      .foo {
+        @apply aspect-w-1;
+      }
+    }
+  

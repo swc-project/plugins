@@ -1,0 +1,16 @@
+
+      @tailwind components;
+
+      @layer components {
+        .a {
+          color: red;
+          @apply b;
+          color: blue;
+        }
+
+        .b {
+          @apply text-green-500;
+          text-decoration: underline;
+        }
+      }
+    

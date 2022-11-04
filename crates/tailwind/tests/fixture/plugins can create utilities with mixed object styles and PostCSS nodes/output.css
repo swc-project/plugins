@@ -1,0 +1,9 @@
+.custom-object-fill {
+    object-fit: fill
+}
+.custom-object-contain {
+    object-fit: contain
+}
+.custom-object-cover {
+    object-fit: cover
+}

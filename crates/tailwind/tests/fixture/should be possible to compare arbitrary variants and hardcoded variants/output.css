@@ -1,0 +1,16 @@
+@media (min-width: 500px) {
+    .testmin-\[500px\]\:italic {
+        font-style: italic
+    }
+}
+@media (min-width: 600px) {
+    .testmin-example\:italic {
+        font-style: italic
+    }
+}
+@media (min-width: 700px) {
+    .testmin-\[700px\]\:italic {
+        font-style: italic
+    }
+}
+  

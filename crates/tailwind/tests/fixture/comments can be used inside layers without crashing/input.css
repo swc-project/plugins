@@ -1,0 +1,26 @@
+
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+
+    @layer base {
+      /* Important base */
+      div {
+        background-color: #bada55;
+      }
+    }
+
+    @layer utilities {
+      /* Important utility */
+      .important-utility {
+        text-align: banana;
+      }
+    }
+
+    @layer components {
+      /* Important component */
+      .important-component {
+        text-align: banana;
+      }
+    }
+  

@@ -1,0 +1,1 @@
+{"content":[{"raw":"html`<button class=\"bg-blue-400 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded\">${data.title}</button>`;"}],"corePlugins":{"preflight":false},"theme":{},"plugins":[]}

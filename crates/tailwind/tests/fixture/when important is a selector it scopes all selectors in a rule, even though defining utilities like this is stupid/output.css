@@ -1,0 +1,3 @@
+#app .custom-rotate-90, #app .custom-rotate-1\/4 {
+    transform: rotate(90deg)
+}

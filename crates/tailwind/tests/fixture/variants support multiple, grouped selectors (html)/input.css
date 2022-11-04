@@ -1,0 +1,13 @@
+
+    @tailwind utilities;
+    @layer utilities {
+      .base1 .foo,
+      .base1 .bar {
+        color: red;
+      }
+
+      .base2 .bar .base2-foo {
+        color: red;
+      }
+    }
+  

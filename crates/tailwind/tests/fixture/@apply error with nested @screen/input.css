@@ -1,0 +1,12 @@
+
+    @tailwind components;
+    @tailwind utilities;
+
+    @layer components {
+      .foo {
+        @screen md {
+          @apply text-black;
+        }
+      }
+    }
+  

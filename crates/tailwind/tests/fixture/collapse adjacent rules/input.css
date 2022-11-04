@@ -1,0 +1,38 @@
+
+    @tailwind base;
+    @font-face {
+      font-family: 'Inter';
+      src: url('/fonts/Inter.woff2') format('woff2'), url('/fonts/Inter.woff') format('woff');
+    }
+    @font-face {
+      font-family: 'Gilroy';
+      src: url('/fonts/Gilroy.woff2') format('woff2'), url('/fonts/Gilroy.woff') format('woff');
+    }
+    @page {
+      margin: 1cm;
+    }
+    @tailwind components;
+    @tailwind utilities;
+    @layer base {
+      @font-face {
+        font-family: 'Poppins';
+        src: url('/fonts/Poppins.woff2') format('woff2'), url('/fonts/Poppins.woff') format('woff');
+      }
+      @font-face {
+        font-family: 'Proxima Nova';
+        src: url('/fonts/ProximaNova.woff2') format('woff2'),
+          url('/fonts/ProximaNova.woff') format('woff');
+      }
+    }
+    .foo,
+    .bar {
+      color: black;
+    }
+    .foo,
+    .bar {
+      font-weight: 700;
+    }
+    .some-apply-thing {
+      @apply foo-bar:md:text-black foo-bar:md:font-bold foo-bar:text-black foo-bar:font-bold md:font-bold md:text-black;
+    }
+  

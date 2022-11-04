@@ -1,0 +1,21 @@
+
+    @tailwind base;
+    /* --- */
+    @tailwind utilities;
+
+    .a:before {
+      @apply rotate-45;
+    }
+
+    .b:after {
+      @apply rotate-3;
+    }
+
+    .c:first-line {
+      @apply rotate-1;
+    }
+
+    .d:first-letter {
+      @apply rotate-6;
+    }
+  

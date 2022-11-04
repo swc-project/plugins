@@ -1,0 +1,1 @@
+{"prefix":"tw-","darkMode":"class","content":["/Users/kdy1/projects/lab/tailwindcss/tests/prefix.test.html"],"corePlugins":{"preflight":false},"theme":{"animation":{"spin":"spin 1s linear infinite","ping":"ping 1s cubic-bezier(0, 0, 0.2, 1) infinite"},"keyframes":{"spin":{"to":{"transform":"rotate(360deg)"}}}},"plugins":[null]}

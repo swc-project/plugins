@@ -1,0 +1,14 @@
+.bg-gray-500 {
+
+    --tw-bg-opacity: 1;
+
+    background-color: rgb(107 114 128 / var(--tw-bg-opacity))
+}
+
+    .focus\:bg-gray-500 {
+
+    --tw-bg-opacity: 1;
+
+    background-color: rgb(107 114 128 / var(--tw-bg-opacity))
+}
+  

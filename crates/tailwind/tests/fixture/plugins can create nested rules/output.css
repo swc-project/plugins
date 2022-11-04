@@ -1,0 +1,20 @@
+.btn-blue {
+    background-color: blue;
+    color: white;
+    padding: .5rem 1rem;
+    border-radius: .25rem;
+}
+.btn-blue:hover {
+    background-color: darkblue;
+}
+@media (min-width: 500px) {
+    .btn-blue:hover {
+        background-color: orange;
+    }
+}
+.btn-blue > a {
+    color: red;
+}
+h1 .btn-blue {
+    color: purple;
+}

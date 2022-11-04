@@ -1,0 +1,16 @@
+
+    @tailwind utilities;
+
+    .nested {
+      .example {
+      }
+
+      .other {
+      }
+    }
+
+    .other {
+      .example {
+      }
+    }
+  

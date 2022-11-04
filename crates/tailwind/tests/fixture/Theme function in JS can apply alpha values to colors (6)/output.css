@@ -1,0 +1,4 @@
+.text-foo {
+    color: hsl(217 91% 60% / var(--my-alpha))
+}
+  

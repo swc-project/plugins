@@ -1,0 +1,17 @@
+.banana-sm {
+    test-property: 1px
+}
+.banana-md {
+    test-property: 2px
+}
+.banana-lg {
+    test-property: 3px
+}
+.hover\:banana-sm:hover {
+    test-property: 1px
+}
+@media (min-width: 400px) {
+    .sm\:banana-sm {
+        test-property: 1px
+    }
+}

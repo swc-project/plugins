@@ -1,0 +1,8 @@
+
+    @tailwind components;
+    @tailwind utilities;
+
+    .my-card {
+      @apply scale-150;
+    }
+  

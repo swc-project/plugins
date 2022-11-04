@@ -1,0 +1,4 @@
+.content-\[\'snake\\_case\'\] {
+    --tw-content: 'snake_case';
+    content: var(--tw-content)
+}

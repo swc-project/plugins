@@ -1,0 +1,9 @@
+.font-bold {
+    font-weight: 700
+}
+@media (min-width: 700rem) {
+    .min-\[700rem\]\:font-bold {
+        font-weight: 700
+    }
+}
+  

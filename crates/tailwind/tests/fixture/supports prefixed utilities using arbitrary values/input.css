@@ -1,0 +1,7 @@
+
+    .foo {
+      @apply tw-text-[color:rgb(var(--button-background,var(--primary-button-background)))];
+      @apply tw-ease-[cubic-bezier(0.77,0,0.175,1)];
+      @apply tw-rounded-[min(4px,var(--input-border-radius))];
+    }
+  

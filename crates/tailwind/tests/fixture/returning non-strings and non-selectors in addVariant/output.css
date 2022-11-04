@@ -1,0 +1,6 @@
+.peer[aria-expanded="true"] ~ .peer-aria-expanded\:text-center {
+    text-align: center
+}
+.peer[aria-expanded="false"] ~ .peer-aria-expanded-2\:text-center {
+    text-align: center
+}

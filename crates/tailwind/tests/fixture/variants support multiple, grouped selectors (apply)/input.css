@@ -1,0 +1,12 @@
+
+    @tailwind utilities;
+    @layer utilities {
+      .base .foo,
+      .base .bar {
+        color: red;
+      }
+    }
+    .baz {
+      @apply sm:base;
+    }
+  

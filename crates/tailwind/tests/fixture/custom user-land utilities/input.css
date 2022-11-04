@@ -1,0 +1,17 @@
+
+    @layer utilities {
+      .align-banana {
+        text-align: banana;
+      }
+    }
+
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+
+    @layer utilities {
+      .align-chocolate {
+        text-align: chocolate;
+      }
+    }
+  

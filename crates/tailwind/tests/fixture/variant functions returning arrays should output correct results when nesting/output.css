@@ -1,0 +1,9 @@
+@media (test) {
+    .test\:foo {
+        display: grid;
+    }
+    .test\:foo > * {
+        grid-column: span 2;
+    }
+}
+  

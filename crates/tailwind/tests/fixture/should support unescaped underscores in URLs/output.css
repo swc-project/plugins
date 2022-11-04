@@ -1,0 +1,3 @@
+.bg-\[url\(\'brown_potato\.jpg\'\)\2c _url\(\'red_tomato\.png\'\)\] {
+    background-image: url('brown_potato.jpg'), url('red_tomato.png')
+}

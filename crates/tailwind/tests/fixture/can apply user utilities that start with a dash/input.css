@@ -1,0 +1,14 @@
+
+    @tailwind utilities;
+    @layer utilities {
+      .foo-1 {
+        margin: 10px;
+      }
+      .-foo-1 {
+        margin: -15px;
+      }
+      .new-class {
+        @apply -foo-1;
+      }
+    }
+  

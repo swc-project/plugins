@@ -1,0 +1,1 @@
+{"content":[{"raw":"\n          <div class=\"bg-theme text-theme\">This should be green text on red background.</div>\n        "}],"theme":{"colors":{"theme":{"bg":"red","text":"green"}},"extend":{"textColor":{"theme":{"DEFAULT":"green"}},"backgroundColor":{"theme":{"DEFAULT":"red"}}}},"corePlugins":{"preflight":false}}

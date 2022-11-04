@@ -1,0 +1,21 @@
+
+    .baz {
+      @apply bar underline;
+    }
+
+    @tailwind components;
+
+    .keep-me-even-though-I-am-not-used-in-content {
+      color: green;
+    }
+
+    @tailwind utilities;
+
+    .foo {
+      @apply font-bold;
+    }
+
+    .bar {
+      @apply no-underline;
+    }
+  

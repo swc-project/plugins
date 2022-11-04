@@ -1,0 +1,7 @@
+
+    @tailwind base;
+
+    .foo {
+      @apply focus:rotate-90;
+    }
+  

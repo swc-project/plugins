@@ -1,0 +1,1 @@
+{"content":[{"raw":"\n          <div class=\"[&_.foo\\_\\_bar]:hover:underline\"></div>\n          <div class=\"hover:[&_.foo\\_\\_bar]:underline\"></div>\n        "}],"corePlugins":{"preflight":false}}

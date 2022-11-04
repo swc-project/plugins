@@ -1,0 +1,42 @@
+
+    @defaults test {
+      --color: black;
+    }
+
+    /* --- */
+
+    .foo {
+      @defaults test;
+      background-color: var(--color);
+    }
+
+    #app {
+      @defaults test;
+      border-color: var(--color);
+    }
+
+    span#page {
+      @defaults test;
+      color: var(--color);
+    }
+
+    div[data-foo='bar']#other {
+      @defaults test;
+      fill: var(--color);
+    }
+
+    div[data-bar='baz'] {
+      @defaults test;
+      stroke: var(--color);
+    }
+
+    article {
+      @defaults test;
+      --article: var(--color);
+    }
+
+    div[data-foo='bar']#another::before {
+      @defaults test;
+      fill: var(--color);
+    }
+  

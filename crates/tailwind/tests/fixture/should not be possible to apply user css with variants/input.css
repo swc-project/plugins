@@ -1,0 +1,12 @@
+
+    @tailwind components;
+    @tailwind utilities;
+
+    .foo {
+      color: red;
+    }
+
+    .bar {
+      @apply hover:foo;
+    }
+  

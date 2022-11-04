@@ -1,0 +1,1 @@
+{"content":[{"raw":"<div class=\"banana-sm banana-md banana-lg hover:banana-sm sm:banana-sm\"></div>"}],"corePlugins":[],"theme":{"screens":{"sm":"400px"},"testPlugin":{"sm":"1px","md":"2px","lg":"3px"}},"plugins":[{"__options":{"className":"banana"},"config":{}}]}

@@ -1,0 +1,16 @@
+.test {
+    color: default_null
+}
+.test\/foo {
+    color: default_mewtwo
+}
+.test-1\/foo {
+    color: one_mewtwo
+}
+.test\/\[bar\] {
+    color: default_bar
+}
+.test-1\/\[bar\] {
+    color: one_bar
+}
+  

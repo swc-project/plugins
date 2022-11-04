@@ -1,0 +1,7 @@
+
+      h2 {
+        @apply text-xl;
+        @apply lg:text-3xl;
+        @apply sm:text-2xl;
+      }
+    

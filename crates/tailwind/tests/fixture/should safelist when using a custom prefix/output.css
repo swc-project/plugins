@@ -1,0 +1,11 @@
+.tw-bg-red-100 {
+    --tw-bg-opacity: 1;
+    background-color: rgb(254 226 226 / var(--tw-bg-opacity))
+}
+.tw-bg-red-200 {
+    --tw-bg-opacity: 1;
+    background-color: rgb(254 202 202 / var(--tw-bg-opacity))
+}
+.tw-uppercase {
+    text-transform: uppercase
+}

@@ -1,0 +1,8 @@
+
+      #myselector  .custom-utility {
+    font-weight: 400
+}
+#myselector .group:hover  .custom-utility {
+    text-decoration-line: underline
+}
+  

@@ -1,0 +1,4 @@
+.content-\[\'hello\]\'\] {
+    --tw-content: 'hello]';
+    content: var(--tw-content)
+}

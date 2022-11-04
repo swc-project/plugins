@@ -1,0 +1,17 @@
+.custom-container {
+    width: 100%
+}
+@media (min-width: 100px) {
+    .custom-container {
+        max-width: 100px
+    }
+}
+.btn {
+    padding: 1rem .5rem;
+    display: block
+}
+@media (min-width: 100px) {
+    .btn {
+        display: inline-block
+    }
+}

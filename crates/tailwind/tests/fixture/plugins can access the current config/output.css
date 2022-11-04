@@ -1,0 +1,23 @@
+.custom-container {
+    width: 100%
+}
+@media (min-width: 576px) {
+    .custom-container {
+        max-width: 576px
+    }
+}
+@media (min-width: 768px) {
+    .custom-container {
+        max-width: 768px
+    }
+}
+@media (min-width: 992px) {
+    .custom-container {
+        max-width: 992px
+    }
+}
+@media (min-width: 1200px) {
+    .custom-container {
+        max-width: 1200px
+    }
+}

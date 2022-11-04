@@ -1,0 +1,53 @@
+
+    @layer vanilla {
+      strong {
+        font-weight: medium;
+      }
+    }
+
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+
+    @layer components {
+      .btn {
+        background: blue;
+      }
+    }
+
+    @layer utilities {
+      .align-banana {
+        text-align: banana;
+      }
+    }
+
+    @layer base {
+      h1 {
+        font-weight: bold;
+      }
+    }
+
+    @layer components {
+      .card {
+        border-radius: 12px;
+      }
+    }
+
+    @layer base {
+      p {
+        font-weight: normal;
+      }
+    }
+
+    @layer utilities {
+      .align-sandwich {
+        text-align: sandwich;
+      }
+    }
+
+    @layer chocolate {
+      a {
+        text-decoration: underline;
+      }
+    }
+  

@@ -1,0 +1,21 @@
+.font-normal {
+    font-weight: 400
+}
+.test\:font-bold *::test {
+    font-weight: calc(0 + 700)
+}
+.test\:font-medium *::test {
+    font-weight: calc(0 + 500)
+}
+.test\:font-bold::test {
+    font-weight: calc(0 + 700)
+}
+.test\:font-medium::test {
+    font-weight: calc(0 + 500)
+}
+.hover\:test\:font-black *:hover::test {
+    font-weight: calc(0 + 900)
+}
+.hover\:test\:font-black:hover::test {
+    font-weight: calc(0 + 900)
+}

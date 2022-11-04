@@ -1,0 +1,11 @@
+
+      .foo-1 {
+        margin: 10px;
+      }
+      .-foo-1 {
+        margin: -15px;
+      }
+      .new-class {
+        margin: -15px;
+      }
+  

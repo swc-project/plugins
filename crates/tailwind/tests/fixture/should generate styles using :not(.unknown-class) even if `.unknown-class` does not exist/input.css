@@ -1,0 +1,9 @@
+
+    @tailwind components;
+
+    @layer components {
+      div:not(.unknown-class) {
+        color: red;
+      }
+    }
+  

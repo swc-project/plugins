@@ -1,0 +1,15 @@
+.font-bold {
+      font-weight: 700;
+}
+    .hover\:font-bold:hover {
+      font-weight: 700;
+}
+    @media (min-width: 768px) {
+      .md\:font-bold {
+            font-weight: 700;
+      }
+}
+    .foo {
+      color: black;
+    }
+  

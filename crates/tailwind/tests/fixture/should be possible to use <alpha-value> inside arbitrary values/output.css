@@ -1,0 +1,3 @@
+.bg-\[rgb\(var\(--color-primary\)\/\<alpha-value\>\)\]\/50 {
+    background-color: rgb(var(--color-primary)/0.5)
+}

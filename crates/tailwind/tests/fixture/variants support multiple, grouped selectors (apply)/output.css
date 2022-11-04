@@ -1,0 +1,7 @@
+
+    @media (min-width: 640px) {
+      .baz .foo,.baz .bar {
+        color: red;
+      }
+}
+  

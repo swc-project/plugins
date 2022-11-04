@@ -1,0 +1,47 @@
+
+    @tailwind base;
+    /* --- */
+    @tailwind utilities;
+
+    @layer utilities {
+      .foo {
+        @apply rotate-3;
+      }
+    }
+
+    .bar {
+      @apply before:scale-110;
+    }
+
+    .baz::before {
+      @apply rotate-45;
+    }
+
+    .whats ~ .next > span:hover {
+      @apply skew-x-6;
+    }
+
+    .media-queries {
+      @apply md:rotate-45;
+    }
+
+    .a,
+    .b,
+    .c {
+      @apply skew-y-3;
+    }
+
+    .a,
+    .b {
+      @apply rotate-45;
+    }
+
+    .a::before,
+    .b::after {
+      @apply rotate-90;
+    }
+
+    .recursive {
+      @apply foo;
+    }
+  

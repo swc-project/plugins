@@ -1,0 +1,10 @@
+.test-\[a\2c b\2c c\]\:underline.a > * {
+    text-decoration-line: underline
+}
+.test-\[a\2c b\2c c\]\:underline.b > * {
+    text-decoration-line: underline
+}
+.test-\[a\2c b\2c c\]\:underline.c > * {
+    text-decoration-line: underline
+}
+  

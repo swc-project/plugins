@@ -1,0 +1,8 @@
+
+    .foo1 {
+      color: theme(colors[a/b]);
+    }
+    .foo2 {
+      color: theme(colors[a/b]/50%);
+    }
+  

@@ -1,0 +1,17 @@
+
+    .foo + .foo {
+      color: blue;
+    }
+    .bar + .bar {
+      color: fuchsia;
+    }
+    header {
+      @apply foo;
+    }
+    main {
+      @apply foo bar;
+    }
+    footer {
+      @apply bar;
+    }
+  

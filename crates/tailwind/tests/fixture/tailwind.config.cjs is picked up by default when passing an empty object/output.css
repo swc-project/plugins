@@ -1,0 +1,5 @@
+@media (min-width: 400px) {
+    .mobile\:font-bold {
+        font-weight: 700
+    }
+}

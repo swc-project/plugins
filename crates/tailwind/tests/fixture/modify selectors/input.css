@@ -1,0 +1,10 @@
+
+    @tailwind components;
+    @tailwind utilities;
+
+    @layer components {
+      .markdown > p {
+        margin-top: 12px;
+      }
+    }
+  

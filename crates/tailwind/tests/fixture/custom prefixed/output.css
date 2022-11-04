@@ -1,0 +1,8 @@
+@keyframes tw-one {
+    to {
+        transform: rotate(360deg)
+    }
+}
+.tw-animate-one {
+    animation: tw-one 2s
+}

@@ -1,0 +1,5 @@
+
+    .foo {
+      @apply focus:rotate-90;
+    }
+  

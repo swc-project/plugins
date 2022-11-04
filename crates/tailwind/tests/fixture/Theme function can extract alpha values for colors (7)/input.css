@@ -1,0 +1,5 @@
+
+    .foo {
+      color: theme(colors.blue.500 / var(--my-alpha));
+    }
+  

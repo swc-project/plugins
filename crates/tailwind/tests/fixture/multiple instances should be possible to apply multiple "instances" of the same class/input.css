@@ -1,0 +1,13 @@
+
+      .a {
+        @apply b;
+      }
+
+      .b {
+        @apply uppercase;
+      }
+
+      .b {
+        color: red;
+      }
+    

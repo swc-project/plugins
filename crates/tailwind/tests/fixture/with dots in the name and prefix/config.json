@@ -1,0 +1,1 @@
+{"prefix":"tw-","content":[{"raw":"\n          <div class=\"tw-animate-zoom-.5\"></div>\n          <div class=\"tw-animate-zoom-1.5\"></div>\n        "}],"theme":{"extend":{"keyframes":{"zoom-.5":{"to":{"transform":"scale(0.5)"}},"zoom-1.5":{"to":{"transform":"scale(1.5)"}}},"animation":{"zoom-.5":"zoom-.5 2s","zoom-1.5":"zoom-1.5 2s"}}}}

@@ -1,0 +1,17 @@
+
+    .foo.bar {
+      color: red;
+    }
+    .bar.foo {
+      color: green;
+    }
+    header:nth-of-type(odd) {
+      @apply foo;
+    }
+    main {
+      @apply foo bar;
+    }
+    footer {
+      @apply bar;
+    }
+  

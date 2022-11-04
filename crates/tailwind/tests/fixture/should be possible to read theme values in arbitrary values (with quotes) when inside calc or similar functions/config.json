@@ -1,0 +1,1 @@
+{"content":[{"raw":"<div\n          class=\"w-[calc(100%-theme('spacing.1'))] w-[calc(100%-theme('spacing[0.5]'))]\"\n        ></div>"}],"theme":{"spacing":{"1":"calc(1 * .25rem)","0.5":"calc(.5 * .25rem)"}}}

@@ -1,0 +1,8 @@
+
+    .custom-utility {
+    font-weight: 400
+}
+.group:hover .custom-utility {
+    text-decoration-line: underline
+}
+  

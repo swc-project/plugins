@@ -1,0 +1,10 @@
+
+    @tailwind utilities;
+
+    @layer utilities {
+      .example {
+        line-height: 3;
+        line-height: 2;
+      }
+    }
+  

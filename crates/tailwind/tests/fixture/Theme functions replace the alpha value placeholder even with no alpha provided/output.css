@@ -1,0 +1,6 @@
+
+    .foo {
+      background: rgb(0 0 255 / 1);
+      color: rgb(var(--foo) / 1);
+    }
+  

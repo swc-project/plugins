@@ -1,0 +1,9 @@
+.tw-custom-object-fill {
+    object-fit: fill
+}
+.tw-custom-object-contain {
+    object-fit: contain
+}
+.tw-custom-object-cover {
+    object-fit: cover
+}

@@ -1,0 +1,10 @@
+
+    @tailwind components;
+    @tailwind utilities;
+
+    @layer components {
+      .foo {
+        @apply tw-group;
+      }
+    }
+  

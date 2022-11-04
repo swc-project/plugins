@@ -1,0 +1,10 @@
+@media (min-width: 640px) {
+      .sm\:base1 .foo,.sm\:base1 .bar {
+        color: red;
+      }
+
+      .sm\:base2 .bar .base2-foo {
+        color: red;
+      }
+}
+  

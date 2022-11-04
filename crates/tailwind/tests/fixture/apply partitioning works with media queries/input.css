@@ -1,0 +1,18 @@
+
+    @tailwind base;
+    @layer base {
+      html,
+      body {
+        @apply text-green-600;
+        font-size: 1rem;
+      }
+
+      @media print {
+        html,
+        body {
+          @apply text-red-600;
+          font-size: 2rem;
+        }
+      }
+    }
+  

@@ -1,0 +1,43 @@
+.group:hover .group-hover\:underline {
+    text-decoration-line: underline
+}
+.group\/foo:hover .group-hover\/foo\:underline {
+    text-decoration-line: underline
+}
+.group:focus .group-\[\&\:focus\]\:underline {
+    text-decoration-line: underline
+}
+.group:hover .group-\[\:hover\]\:underline {
+    text-decoration-line: underline
+}
+.group[data-open] .group-\[\&\[data-open\]\]\:underline {
+    text-decoration-line: underline
+}
+.group[data-open] .group-\[\[data-open\]\]\:underline {
+    text-decoration-line: underline
+}
+.in-foo .group .group-\[\.in-foo_\&\]\:underline {
+    text-decoration-line: underline
+}
+.group.in-foo .group-\[\.in-foo\]\:underline {
+    text-decoration-line: underline
+}
+.group\/foo:focus .group-\[\&\:focus\]\/foo\:underline {
+    text-decoration-line: underline
+}
+.group\/foo:hover .group-\[\:hover\]\/foo\:underline {
+    text-decoration-line: underline
+}
+.group\/foo[data-open] .group-\[\&\[data-open\]\]\/foo\:underline {
+    text-decoration-line: underline
+}
+.group\/foo[data-open] .group-\[\[data-open\]\]\/foo\:underline {
+    text-decoration-line: underline
+}
+.in-foo .group\/foo .group-\[\.in-foo_\&\]\/foo\:underline {
+    text-decoration-line: underline
+}
+.group\/foo.in-foo .group-\[\.in-foo\]\/foo\:underline {
+    text-decoration-line: underline
+}
+  

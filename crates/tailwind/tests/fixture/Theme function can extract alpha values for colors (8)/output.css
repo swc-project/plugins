@@ -1,0 +1,5 @@
+
+    .foo {
+      color: rgb(var(--foo) / 50%);
+    }
+  

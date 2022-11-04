@@ -1,0 +1,5 @@
+.card { padding: 1rem; border-radius: .25rem
+} .btn { padding: 1rem .5rem; display: inline-block
+} .custom-skew-12deg { transform: skewY(-12deg)
+} .custom-border-collapse { border-collapse: collapse
+}

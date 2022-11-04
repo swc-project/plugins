@@ -1,0 +1,5 @@
+
+    #myselector .custom-utility {
+      @apply font-normal group-hover:underline;
+    }
+  

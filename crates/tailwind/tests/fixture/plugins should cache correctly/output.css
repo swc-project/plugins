@@ -1,0 +1,8 @@
+.apple {
+    position: absolute
+}
+@media (min-width: 400px) {
+    .sm\:apple {
+        position: absolute
+    }
+}

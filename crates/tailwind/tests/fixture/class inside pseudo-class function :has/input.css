@@ -1,0 +1,17 @@
+
+    @tailwind utilities;
+    @layer utilities {
+      :where(.foo) {
+        color: red;
+      }
+      :matches(.foo, .bar, .baz) {
+        color: orange;
+      }
+      :is(.foo) {
+        color: yellow;
+      }
+      html:has(.foo) {
+        color: green;
+      }
+    }
+  

@@ -1,0 +1,11 @@
+@media (min-width: 500px) {
+    .testmin-\[500px\]\:underline {
+        text-decoration-line: underline
+    }
+}
+@media (min-width: 700px) {
+    .testmin-\[700px\]\:italic {
+        font-style: italic
+    }
+}
+  

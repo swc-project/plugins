@@ -1,0 +1,25 @@
+
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+
+    * {
+      color: red;
+    }
+
+    .combined,
+    * {
+      text-align: center;
+    }
+
+    @layer base {
+      * {
+        color: blue;
+      }
+
+      .combined,
+      * {
+        color: red;
+      }
+    }
+  

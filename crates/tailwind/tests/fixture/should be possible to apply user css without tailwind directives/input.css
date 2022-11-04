@@ -1,0 +1,11 @@
+
+    .bop {
+      color: red;
+    }
+    .bar {
+      background-color: blue;
+    }
+    .foo {
+      @apply bar bop absolute;
+    }
+  

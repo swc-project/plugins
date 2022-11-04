@@ -1,0 +1,14 @@
+
+    @tailwind utilities;
+
+    @layer utilities {
+      html.dark .a,
+      html.dark .b {
+        color: red;
+      }
+    }
+
+    html.dark .c {
+      @apply hover:b;
+    }
+  

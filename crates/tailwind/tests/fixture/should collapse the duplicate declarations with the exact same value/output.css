@@ -1,0 +1,6 @@
+
+      .example {
+        color: blue;
+        height: var(--value);
+      }
+  

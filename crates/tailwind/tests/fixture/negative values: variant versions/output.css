@@ -1,0 +1,16 @@
+.hover\:-tw-top-1:hover {
+    top: -0.25rem
+}
+.hover\:tw--top-1:hover {
+    top: -0.25rem
+}
+.hover\:-tw-top-\[1px\]:hover {
+    top: -1px
+}
+.hover\:tw--top-\[1px\]:hover {
+    top: -1px
+}
+.hover\:tw-top-\[-1px\]:hover {
+    top: -1px
+}
+  

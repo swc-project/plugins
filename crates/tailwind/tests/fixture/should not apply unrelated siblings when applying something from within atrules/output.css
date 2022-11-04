@@ -1,0 +1,25 @@
+
+      .foo {
+        font-weight: bold;
+        color: green;
+      }
+      @supports (a: b) {
+        .foo {
+          color: blue;
+        }
+      }
+
+      .bar {
+        color: green;
+      }
+
+      @supports (a: b) {
+        .bar {
+          color: blue;
+        }
+
+        .something-unrelated {
+          color: red;
+        }
+      }
+  

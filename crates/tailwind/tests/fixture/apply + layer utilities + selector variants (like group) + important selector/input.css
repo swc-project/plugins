@@ -1,0 +1,8 @@
+
+    @tailwind utilities;
+    @layer utilities {
+      .custom-utility {
+        @apply font-normal group-hover:underline;
+      }
+    }
+  

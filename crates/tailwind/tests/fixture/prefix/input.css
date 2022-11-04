@@ -1,0 +1,15 @@
+
+    @tailwind base;
+    @tailwind components;
+    @layer components {
+      .custom-component {
+        @apply tw-font-bold dark:group-hover:tw-font-normal;
+      }
+    }
+    @tailwind utilities;
+    @layer utilities {
+      .custom-utility {
+        foo: bar;
+      }
+    }
+  

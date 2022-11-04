@@ -1,0 +1,12 @@
+
+      :root {
+        font-weight: bold;
+      }
+
+      /* --- */
+
+      :root,
+      .a {
+        color: black;
+      }
+  

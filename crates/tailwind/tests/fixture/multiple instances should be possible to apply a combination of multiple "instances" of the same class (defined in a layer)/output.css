@@ -1,0 +1,15 @@
+
+        .a {
+          color: red;
+          --tw-text-opacity: 1;
+          color: rgb(34 197 94 / var(--tw-text-opacity));
+          text-decoration: underline;
+          color: blue;
+        }
+
+        .b {
+          --tw-text-opacity: 1;
+          color: rgb(34 197 94 / var(--tw-text-opacity));
+          text-decoration: underline;
+}
+    

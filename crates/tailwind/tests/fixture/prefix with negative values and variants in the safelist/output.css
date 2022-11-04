@@ -1,0 +1,21 @@
+.-tw-top-1 {
+    top: -0.25rem
+}
+.tw--top-1 {
+    top: -0.25rem
+}
+.hover\:-tw-top-1:hover {
+    top: -0.25rem
+}
+.hover\:tw--top-1:hover {
+    top: -0.25rem
+}
+@media (min-width: 640px) {
+    .sm\:hover\:-tw-top-1:hover {
+        top: -0.25rem
+    }
+    .sm\:hover\:tw--top-1:hover {
+        top: -0.25rem
+    }
+}
+  

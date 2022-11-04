@@ -1,0 +1,34 @@
+.foo, [id=app], [id=page], [id=other], [data-bar='baz'], article, [id=another]::before {
+      --color: black;
+}
+
+    /* --- */
+
+    .foo {
+      background-color: var(--color);
+    }
+
+    #app {
+      border-color: var(--color);
+    }
+
+    span#page {
+      color: var(--color);
+    }
+
+    div[data-foo='bar']#other {
+      fill: var(--color);
+    }
+
+    div[data-bar='baz'] {
+      stroke: var(--color);
+    }
+
+    article {
+      --article: var(--color);
+    }
+
+    div[data-foo='bar']#another::before {
+      fill: var(--color);
+    }
+  

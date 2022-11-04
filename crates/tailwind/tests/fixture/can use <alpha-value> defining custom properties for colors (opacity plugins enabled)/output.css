@@ -1,0 +1,42 @@
+.divide-primary > :not([hidden]) ~ :not([hidden]) {
+    --tw-divide-opacity: 1;
+    border-color: rgb(var(--color-primary) / var(--tw-divide-opacity))
+}
+.divide-opacity-50 > :not([hidden]) ~ :not([hidden]) {
+    --tw-divide-opacity: 0.5
+}
+.border-primary {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--color-primary) / var(--tw-border-opacity))
+}
+.border-opacity-50 {
+    --tw-border-opacity: 0.5
+}
+.bg-primary {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--color-primary) / var(--tw-bg-opacity))
+}
+.bg-opacity-50 {
+    --tw-bg-opacity: 0.5
+}
+.text-primary {
+    --tw-text-opacity: 1;
+    color: rgb(var(--color-primary) / var(--tw-text-opacity))
+}
+.text-opacity-50 {
+    --tw-text-opacity: 0.5
+}
+.placeholder-primary::placeholder {
+    --tw-placeholder-opacity: 1;
+    color: rgb(var(--color-primary) / var(--tw-placeholder-opacity))
+}
+.placeholder-opacity-50::placeholder {
+    --tw-placeholder-opacity: 0.5
+}
+.ring-primary {
+    --tw-ring-opacity: 1;
+    --tw-ring-color: rgb(var(--color-primary) / var(--tw-ring-opacity))
+}
+.ring-opacity-50 {
+    --tw-ring-opacity: 0.5
+}

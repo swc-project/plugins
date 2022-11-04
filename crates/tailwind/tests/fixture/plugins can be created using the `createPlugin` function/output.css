@@ -1,0 +1,17 @@
+.test-sm {
+    test-property: 1rem
+}
+.test-md {
+    test-property: 2rem
+}
+.test-lg {
+    test-property: 3rem
+}
+.hover\:test-sm:hover {
+    test-property: 1rem
+}
+@media (min-width: 400px) {
+    .sm\:test-sm {
+        test-property: 1rem
+    }
+}

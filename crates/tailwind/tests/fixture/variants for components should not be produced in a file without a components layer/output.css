@@ -1,0 +1,5 @@
+@media (min-width: 640px) {
+    .sm\:underline {
+        text-decoration-line: underline
+    }
+}

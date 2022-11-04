@@ -1,0 +1,14 @@
+
+      @tailwind components;
+
+      @layer components {
+        .a {
+          @apply b;
+        }
+
+        .b {
+          @apply uppercase;
+          color: red;
+        }
+      }
+    

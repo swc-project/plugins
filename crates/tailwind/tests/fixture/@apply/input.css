@@ -1,0 +1,118 @@
+
+    @tailwind components;
+    @tailwind utilities;
+
+    @layer components {
+      .basic-example {
+        @apply rounded-md bg-blue-500 px-4 py-2;
+      }
+      .class-order {
+        @apply p-8 px-3 py-7 pt-4 pr-1;
+      }
+      .with-additional-properties {
+        font-weight: 500;
+        @apply text-right;
+      }
+      .variants {
+        @apply font-semibold hover:font-bold focus:font-medium lg:font-light xl:focus:font-black;
+      }
+      .only-variants {
+        @apply hover:font-bold focus:font-medium lg:font-light xl:focus:font-black;
+      }
+      .apply-group-variant {
+        @apply group-hover:text-center lg:group-hover:text-left;
+      }
+      .apply-dark-variant {
+        @apply dark:text-center dark:hover:text-right lg:dark:text-left;
+      }
+      .apply-custom-utility {
+        @apply custom-util hover:custom-util lg:custom-util xl:focus:custom-util;
+      }
+      .multiple,
+      .selectors {
+        @apply rounded-md bg-blue-500 px-4 py-2;
+      }
+      .multiple-variants,
+      .selectors-variants {
+        @apply hover:text-center active:text-right lg:focus:text-left;
+      }
+      .multiple-group,
+      .selectors-group {
+        @apply group-hover:text-center lg:group-hover:text-left;
+      }
+      .complex-utilities {
+        @apply ordinal tabular-nums shadow-lg hover:shadow-xl focus:diagonal-fractions;
+      }
+      .use-base-only-a {
+        @apply font-bold;
+      }
+      .use-base-only-b {
+        @apply use-base-only-a font-normal;
+      }
+      .use-dependant-only-a {
+        @apply font-bold;
+      }
+      .use-dependant-only-b {
+        @apply use-dependant-only-a font-normal;
+      }
+      .btn {
+        @apply rounded py-2 px-4 font-bold;
+      }
+      .btn-blue {
+        @apply btn bg-blue-500 text-white hover:bg-blue-700;
+      }
+      .recursive-apply-a {
+        @apply font-black sm:font-thin;
+      }
+      .recursive-apply-b {
+        @apply recursive-apply-a font-semibold md:font-extralight;
+      }
+      .recursive-apply-c {
+        @apply recursive-apply-b font-bold lg:font-light;
+      }
+      .use-with-other-properties-base {
+        color: green;
+        @apply font-bold;
+      }
+      .use-with-other-properties-component {
+        @apply use-with-other-properties-base;
+      }
+      .add-sibling-properties {
+        padding: 2rem;
+        @apply px-4 hover:px-2 lg:px-10 xl:focus:px-1;
+        padding-top: 3px;
+        @apply use-with-other-properties-base;
+      }
+
+      h1 {
+        @apply text-2xl sm:text-3xl lg:text-2xl;
+      }
+      h2 {
+        @apply text-2xl;
+        @apply lg:text-2xl;
+        @apply sm:text-2xl;
+      }
+
+      .important-modifier {
+        @apply !rounded-md px-4;
+      }
+
+      .important-modifier-variant {
+        @apply px-4 hover:!rounded-md;
+      }
+    }
+
+    @layer utilities {
+      .custom-util {
+        custom: stuff;
+      }
+
+      .foo {
+        @apply animate-spin;
+      }
+
+      .bar {
+        @apply animate-pulse !important;
+      }
+    }
+  

@@ -1,0 +1,9 @@
+
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+
+    .foo {
+      @apply [@media_screen{@media(hover:hover){&:hover}}]:underline;
+    }
+  

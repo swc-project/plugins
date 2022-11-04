@@ -1,0 +1,1 @@
+{"content":[{"raw":"\n        <script>\n          let current = 'foo'\n        </script>\n\n        <button class:lg:hover:bg-blue-500={current === 'foo'}>Click me</button>\n\n        <button\n          class:bg-red-500={current === 'foo'}\n        >\n          Click me\n        </button>\n        ","extension":"svelte"}],"corePlugins":{"preflight":false},"theme":{},"plugins":[]}

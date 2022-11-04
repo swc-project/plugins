@@ -1,0 +1,5 @@
+
+      div:not(.unknown-class) {
+        color: red;
+      }
+  

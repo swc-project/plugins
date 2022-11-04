@@ -1,0 +1,13 @@
+@keyframes one {
+    to {
+        transform: rotate(360deg)
+    }
+}
+@keyframes two {
+    to {
+        transform: scale(1.23)
+    }
+}
+.animate-multiple {
+    animation: one 2s, two 3s
+}

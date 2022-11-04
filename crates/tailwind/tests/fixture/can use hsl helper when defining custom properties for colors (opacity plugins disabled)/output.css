@@ -1,0 +1,36 @@
+.divide-primary > :not([hidden]) ~ :not([hidden]) {
+    border-color: hsl(var(--color-primary) / 1)
+}
+.divide-primary\/50 > :not([hidden]) ~ :not([hidden]) {
+    border-color: hsl(var(--color-primary) / 0.5)
+}
+.border-primary {
+    border-color: hsl(var(--color-primary) / 1)
+}
+.border-primary\/50 {
+    border-color: hsl(var(--color-primary) / 0.5)
+}
+.bg-primary {
+    background-color: hsl(var(--color-primary) / 1)
+}
+.bg-primary\/50 {
+    background-color: hsl(var(--color-primary) / 0.5)
+}
+.text-primary {
+    color: hsl(var(--color-primary) / 1)
+}
+.text-primary\/50 {
+    color: hsl(var(--color-primary) / 0.5)
+}
+.placeholder-primary::placeholder {
+    color: hsl(var(--color-primary) / 1)
+}
+.placeholder-primary\/50::placeholder {
+    color: hsl(var(--color-primary) / 0.5)
+}
+.ring-primary {
+    --tw-ring-color: hsl(var(--color-primary) / 1)
+}
+.ring-primary\/50 {
+    --tw-ring-color: hsl(var(--color-primary) / 0.5)
+}

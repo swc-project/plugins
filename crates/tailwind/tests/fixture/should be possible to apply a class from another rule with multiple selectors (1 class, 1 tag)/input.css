@@ -1,0 +1,14 @@
+
+    @tailwind utilities;
+
+    @layer utilities {
+      span,
+      .b {
+        @apply underline;
+      }
+
+      .c {
+        @apply b;
+      }
+    }
+  

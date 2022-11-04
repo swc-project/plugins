@@ -1,0 +1,10 @@
+
+    @tailwind components;
+    @tailwind utilities;
+
+    @layer components {
+      .foo:not(.text-red-500) {
+        @apply text-red-500;
+      }
+    }
+  

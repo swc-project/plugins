@@ -1,0 +1,12 @@
+@media (potato: baked) {
+    .potato-\[baked\]\:w-3 {
+        width: 0.75rem
+    }
+}
+@media (potato: yellow) {
+    .potato-\[yellow\]\:bg-yellow-200 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(254 240 138 / var(--tw-bg-opacity))
+    }
+}
+  

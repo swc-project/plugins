@@ -1,0 +1,14 @@
+
+    .nested {
+      .example {
+      }
+
+      .other {
+      }
+    }
+
+    .other {
+      .example {
+      }
+    }
+  

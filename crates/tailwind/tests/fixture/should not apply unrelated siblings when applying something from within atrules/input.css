@@ -1,0 +1,25 @@
+
+    @tailwind components;
+    @tailwind utilities;
+
+    @layer components {
+      .foo {
+        font-weight: bold;
+        @apply bar;
+      }
+
+      .bar {
+        color: green;
+      }
+
+      @supports (a: b) {
+        .bar {
+          color: blue;
+        }
+
+        .something-unrelated {
+          color: red;
+        }
+      }
+    }
+  

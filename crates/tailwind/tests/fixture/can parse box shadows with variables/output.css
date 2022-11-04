@@ -1,0 +1,6 @@
+.shadow-lg {
+    --tw-shadow: var(-a, 0 35px 60px -15px rgba(0, 0, 0)), 0 0 1px rgb(0, 0, 0);
+    --tw-shadow-colored: 0 35px 60px -15px var(--tw-shadow-color), 0 0 1px var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+}
+  

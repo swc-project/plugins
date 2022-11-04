@@ -1,0 +1,11 @@
+.text-md {
+    font-size: 16px;
+    line-height: 24px
+}
+.text-sm {
+    font-size: 12px
+}
+.text-lg {
+    font-size: 20px;
+    line-height: 28px
+}

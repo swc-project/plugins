@@ -1,0 +1,8 @@
+@media screen {
+    .screen\:parent .child {
+        foo: bar
+    }
+    .parent .screen\:child {
+        foo: bar
+    }
+}

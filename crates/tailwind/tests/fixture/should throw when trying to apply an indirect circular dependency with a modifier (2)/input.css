@@ -1,0 +1,18 @@
+
+    @tailwind components;
+    @tailwind utilities;
+
+    @layer components {
+      .a {
+        @apply b;
+      }
+
+      .b {
+        @apply hover:c;
+      }
+
+      .c {
+        @apply a;
+      }
+    }
+  

@@ -1,0 +1,5 @@
+
+    .foo {
+      color: theme('colors.yellow / 50%');
+    }
+  

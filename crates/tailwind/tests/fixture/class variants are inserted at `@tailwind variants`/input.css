@@ -1,0 +1,7 @@
+
+    @tailwind utilities;
+    @tailwind variants;
+    .foo {
+      color: black;
+    }
+  

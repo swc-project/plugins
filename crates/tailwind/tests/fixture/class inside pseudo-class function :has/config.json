@@ -1,0 +1,1 @@
+{"content":[{"raw":"<div class=\"foo hover:foo sm:foo\"></div>"},{"raw":"<div class=\"bar hover:bar sm:bar\"></div>"},{"raw":"<div class=\"baz hover:baz sm:baz\"></div>"}],"corePlugins":{"preflight":false}}

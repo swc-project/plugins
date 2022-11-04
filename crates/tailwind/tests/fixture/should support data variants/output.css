@@ -1,0 +1,40 @@
+.data-checked\:underline[data-ui~="checked"] {
+    text-decoration-line: underline
+}
+.data-\[position\=top\]\:underline[data-position=top] {
+    text-decoration-line: underline
+}
+.data-\[foo\=bar_baz\]\:underline[data-foo=bar baz] {
+    text-decoration-line: underline
+}
+.group[data-ui~="checked"] .group-data-checked\:underline {
+    text-decoration-line: underline
+}
+.group\/foo[data-ui~="checked"] .group-data-checked\/foo\:underline {
+    text-decoration-line: underline
+}
+.group[data-position=top] .group-data-\[position\=top\]\:underline {
+    text-decoration-line: underline
+}
+.group[data-foo=bar baz] .group-data-\[foo\=bar_baz\]\:underline {
+    text-decoration-line: underline
+}
+.group\/foo[data-position=top] .group-data-\[position\=top\]\/foo\:underline {
+    text-decoration-line: underline
+}
+.peer[data-ui~="checked"] ~ .peer-data-checked\:underline {
+    text-decoration-line: underline
+}
+.peer\/foo[data-ui~="checked"] ~ .peer-data-checked\/foo\:underline {
+    text-decoration-line: underline
+}
+.peer[data-position=top] ~ .peer-data-\[position\=top\]\:underline {
+    text-decoration-line: underline
+}
+.peer[data-foo=bar baz] ~ .peer-data-\[foo\=bar_baz\]\:underline {
+    text-decoration-line: underline
+}
+.peer\/foo[data-position=top] ~ .peer-data-\[position\=top\]\/foo\:underline {
+    text-decoration-line: underline
+}
+  

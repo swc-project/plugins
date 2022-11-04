@@ -1,0 +1,1 @@
+{"content":[{"raw":"<div class=\"bg-red bg-transparent bg-black bg-white\"></div>"}],"presets":[null,{"presets":[null],"theme":{"extend":{"colors":{"black":"black","red":"#ee0000"}}},"corePlugins":["backgroundColor"]}],"theme":{"extend":{"colors":{"white":"white"}}}}
