@@ -11,7 +11,23 @@ mod normalize_tailwind_directives;
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 #[serde(deny_unknown_fields)]
-pub struct Config {}
+pub struct Config {
+    pub content: Vec<Content>,
+    pub theme: ThemeConfig,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+#[serde(deny_unknown_fields)]
+pub struct ThemeConfig {}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+#[serde(deny_unknown_fields)]
+#[serde(untagged)]
+pub enum Content {
+    Raw { raw: String },
+}
 
 /// Main entrypoint.
 ///
