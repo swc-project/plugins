@@ -3,41 +3,6 @@ import path from 'path'
 
 import { html, run, css, defaults } from '../../../tailwindcss-master/tests/util/run'
 
-test('all plugins are executed that match a candidate', () => {
-  let config = {
-    content: [{ raw: html`<div class="bg-green-light bg-green"></div>` }],
-    theme: {
-      colors: {
-        green: {
-          light: 'green',
-        },
-      },
-    },
-    corePlugins: { preflight: false },
-  }
-
-  let input = css`
-    @tailwind utilities;
-
-    .bg-green {
-      /* Empty on purpose */
-    }
-  `
-
-  return run(input, config).then((result) => {
-    expect(result.css).toMatchFormattedCss(css`
-      .bg-green-light {
-        --tw-bg-opacity: 1;
-        background-color: rgb(0 128 0 / var(--tw-bg-opacity));
-      }
-
-      .bg-green {
-        /* Empty on purpose */
-      }
-    `)
-  })
-})
-
 test('per-plugin colors with the same key can differ when using a custom colors object', () => {
   let config = {
     content: [
