@@ -1,0 +1,20 @@
+{
+  "name": "parcel",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "build": "parcel build ./src/index.html --no-cache",
+    "dev": "parcel watch ./src/index.html --no-cache",
+    "test": "jest --runInBand --forceExit"
+  },
+  "jest": {
+    "testTimeout": 10000,
+    "displayName": "parcel",
+    "setupFilesAfterEnv": [
+      "<rootDir>/../../jest/customMatchers.js"
+    ]
+  },
+  "devDependencies": {
+    "parcel": "^2.5.0"
+  }
+}
