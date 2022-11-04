@@ -10,3 +10,11 @@ version = "0.1.2"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+swc_core = {version = "0.40.46", features = [
+  "common",
+  "css_ast",
+  "css_codegen",
+  "css_parser",
+  "css_visit",
+  "ecma_visit",
+]}
