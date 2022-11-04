@@ -1,10 +1,10 @@
+use swc_atoms::JsWord;
 use swc_core::{
     common::collections::AHashSet,
     css::{
         ast::{AtRule, AtRuleName, Stylesheet},
         visit::{Visit, VisitWith},
     },
-    ecma::atoms::JsWord,
 };
 
 #[derive(Default)]

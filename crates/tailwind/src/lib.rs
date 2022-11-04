@@ -1,5 +1,5 @@
 use serde::Deserialize;
-use swc_core::css::{ast::Stylesheet, visit::VisitMut};
+use swc_core::css::ast::Stylesheet;
 
 use crate::{
     detect_nesting::detect_nesting, normalize_tailwind_directives::normalize_tailwind_directives,
