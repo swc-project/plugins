@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 
-import { html, run, css, defaults } from './util/run'
+import { html, run, css, defaults } from '../../../tailwindcss-master/tests/util/run'
 
 test('basic usage', () => {
   let config = {
