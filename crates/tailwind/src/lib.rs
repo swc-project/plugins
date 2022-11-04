@@ -1,3 +1,4 @@
+use serde::Deserialize;
 use swc_core::css::{ast::Stylesheet, visit::VisitMut};
 
 use crate::{
@@ -7,6 +8,9 @@ use crate::{
 mod detect_nesting;
 mod normalize_tailwind_directives;
 
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+#[serde(deny_unknown_fields)]
 pub struct Config {}
 
 /// Main entrypoint.
