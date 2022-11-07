@@ -105,22 +105,6 @@ export default function expandTailwindAtRules(context) {
       variants: null,
     }
 
-    root.walkAtRules((rule) => {
-      // Make sure this file contains Tailwind directives. If not, we can save
-      // a lot of work and bail early. Also we don't have to register our touch
-      // file as a dependency since the output of this CSS does not depend on
-      // the source of any templates. Think Vue <style> blocks for example.
-      if (rule.name === 'tailwind') {
-        if (Object.keys(layerNodes).includes(rule.params)) {
-          layerNodes[rule.params] = rule
-        }
-      }
-    })
-
-    if (Object.values(layerNodes).every((n) => n === null)) {
-      return root
-    }
-
     // ---
 
     // Find potential rules in changed files
