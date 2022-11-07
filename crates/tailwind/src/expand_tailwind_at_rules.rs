@@ -17,11 +17,22 @@ pub(crate) fn expand_tailwind_at_rules(ss: &mut Stylesheet) {
         return;
     }
 
+    // Find potential rules in changed files
+    let mut candidates = AHashSet::default();
+    let mut seen = AHashSet::default();
+
+    candidates.insert(Candidate::NotOnDemand);
+
     //
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub(crate) enum Candidate {
+    NotOnDemand,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum LayerNode {
+pub(crate) enum LayerNode {
     Base,
     Components,
     Utilities,
