@@ -1,9 +1,9 @@
-use swc_atoms::{atom, js_word};
+use swc_atoms::js_word;
 use swc_core::{
     common::{collections::AHashSet, DUMMY_SP},
     css::{
         ast::{AtRule, AtRuleName, ComponentValue, Ident, Rule, Stylesheet},
-        visit::{Visit, VisitMut, VisitMutWith, VisitWith},
+        visit::{VisitMut, VisitMutWith},
     },
 };
 use swc_timer::timer;
@@ -13,7 +13,7 @@ use crate::context::Context;
 pub(crate) fn expand_tailwind_at_rules(context: &mut Context, ss: &mut Stylesheet) {
     let mut layers = AHashSet::<LayerNode>::default();
 
-    ss.visit_with(&mut TailwindFinder {
+    ss.visit_mut_with(&mut TailwindFinder {
         layers: &mut layers,
     });
 
@@ -82,13 +82,30 @@ pub(crate) enum LayerNode {
     Variant,
 }
 
+/// This removes `@tailwind` directives.
 struct TailwindFinder<'a> {
     layers: &'a mut AHashSet<LayerNode>,
 }
 
-impl Visit for TailwindFinder<'_> {
-    fn visit_at_rule(&mut self, n: &AtRule) {
-        n.visit_children_with(self);
+impl VisitMut for TailwindFinder<'_> {
+    fn visit_mut_rules(&mut self, n: &mut Vec<Rule>) {
+        n.visit_mut_children_with(self);
+
+        n.retain(|r| match r {
+            Rule::AtRule(r) => {
+                if let AtRuleName::Ident(name) = &r.name {
+                    &*name.value != ""
+                } else {
+                    true
+                }
+            }
+
+            _ => true,
+        })
+    }
+
+    fn visit_mut_at_rule(&mut self, n: &mut AtRule) {
+        n.visit_mut_children_with(self);
 
         if let AtRuleName::Ident(name) = &n.name {
             if &*name.value == "tailwind" {
@@ -108,8 +125,14 @@ impl Visit for TailwindFinder<'_> {
                                 "variants" => {
                                     self.layers.insert(LayerNode::Variant);
                                 }
-                                _ => {}
+                                _ => continue,
                             }
+
+                            n.name = AtRuleName::Ident(Ident {
+                                span: DUMMY_SP,
+                                value: js_word!(""),
+                                raw: None,
+                            });
                         }
                     }
                 }
