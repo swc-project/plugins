@@ -1,5 +1,5 @@
 use serde::Deserialize;
-use swc_atoms::JsWord;
+use swc_atoms::{Atom, JsWord};
 use swc_core::common::collections::AHashMap;
 
 #[derive(Debug, Deserialize)]
@@ -20,6 +20,9 @@ pub struct Config {
 
     #[serde(default = "default_prefix")]
     pub prefix: String,
+
+    #[serde(default = "default_separator")]
+    pub separator: Atom,
 }
 
 #[derive(Debug, Deserialize)]
@@ -99,6 +102,10 @@ const fn true_by_default() -> bool {
 
 fn default_prefix() -> String {
     "--tw-".into()
+}
+
+fn default_separator() -> Atom {
+    "_".into()
 }
 
 impl Default for CorePluginsConfig {

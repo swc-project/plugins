@@ -16,7 +16,7 @@ fn resolve_matches(
 ) -> Vec<MatchResult> {
     let original = original.unwrap_or(candidate);
 
-    let separator = context.tailwind_config.separator;
+    let separator = context.tailwind_config.separator.clone();
 
     vec![]
 }

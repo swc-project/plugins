@@ -40,7 +40,9 @@ impl Compiler {
         // Partition apply rules that are found in the css itself.
         partition_apply_at_rules(ss);
 
-        let mut context = Context {};
+        let mut context = Context {
+            tailwind_config: &self.config,
+        };
 
         expand_tailwind_at_rules(&mut context, ss);
     }
