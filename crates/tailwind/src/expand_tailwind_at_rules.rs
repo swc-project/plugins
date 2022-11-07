@@ -132,13 +132,16 @@ impl VisitMut for TailwindReplacer<'_> {
                         {
                             match v {
                                 "base" => {
-                                    // TODO
+                                    self.extra.extend(self.built.base.drain());
+                                    self.extra.extend(self.built.defaults.iter().cloned());
                                 }
                                 "components" => {
-                                    // TODO
+                                    self.extra.extend(self.built.components.drain());
+                                    self.extra.extend(self.built.defaults.iter().cloned());
                                 }
                                 "utilities" => {
-                                    // TODO
+                                    self.extra.extend(self.built.utilities.drain());
+                                    self.extra.extend(self.built.defaults.iter().cloned());
                                 }
                                 "variants" => {
                                     // TODO
