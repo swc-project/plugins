@@ -1,9 +1,9 @@
 use swc_core::{
-    common::util::take::Take,
+    common::{util::take::Take, DUMMY_SP},
     css::{
         ast::{
             AtRule, AtRuleName, AtRulePrelude, ComponentValue, DeclarationOrAtRule, Rule,
-            Stylesheet,
+            SimpleBlock, Stylesheet,
         },
         visit::{VisitMut, VisitMutWith},
     },
@@ -14,7 +14,9 @@ pub fn partition_apply_at_rules(ss: &mut Stylesheet) {
 }
 
 #[derive(Debug, Default)]
-struct Visitor {}
+struct Visitor {
+    added: Vec<Rule>,
+}
 
 impl VisitMut for Visitor {
     fn visit_mut_at_rule(&mut self, n: &mut AtRule) {
@@ -57,7 +59,19 @@ impl VisitMut for Visitor {
                             return;
                         }
 
-                        for nodes in node_groups.into_iter().rev() {}
+                        for nodes in node_groups.into_iter().rev() {
+                            let rule = AtRule {
+                                span: n.span,
+                                name: n.name.clone(),
+                                prelude: n.prelude.clone(),
+                                block: Some(SimpleBlock {
+                                    value: nodes,
+                                    ..body.clone()
+                                }),
+                            };
+
+                            self.added.push(Rule::AtRule(box rule));
+                        }
                     }
                     None => {}
                 }

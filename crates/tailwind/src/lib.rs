@@ -1,4 +1,5 @@
 #![feature(box_patterns)]
+#![feature(box_syntax)]
 
 use swc_core::css::ast::Stylesheet;
 
