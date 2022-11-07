@@ -1,9 +1,9 @@
 import LRU from 'quick-lru'
-import * as sharedState from './sharedState'
-import { generateRules } from './generateRules'
-import log from '../util/log'
-import cloneNodes from '../util/cloneNodes'
-import { defaultExtractor } from './defaultExtractor'
+import * as sharedState from '../tailwindcss-master/src/lib/sharedState'
+import { generateRules } from '../tailwindcss-master/src/lib/generateRules'
+import log from '../tailwindcss-master/src/util/log'
+import cloneNodes from '../tailwindcss-master/src/util/cloneNodes'
+import { defaultExtractor } from '../tailwindcss-master/src/lib/defaultExtractor'
 
 let env = sharedState.env
 
@@ -75,7 +75,7 @@ function getClassCandidates(content, extractor, candidates, seen) {
 
 /**
  *
- * @param {[import('./offsets.js').RuleOffset, import('postcss').Node][]} rules
+ * @param {[import('../tailwindcss-master/src/lib/offsets.js').RuleOffset, import('postcss').Node][]} rules
  * @param {*} context
  */
 function buildStylesheet(rules, context) {
