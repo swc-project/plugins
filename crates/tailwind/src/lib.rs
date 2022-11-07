@@ -5,12 +5,14 @@ use swc_core::css::ast::Stylesheet;
 
 pub use crate::config::*;
 use crate::{
-    detect_nesting::detect_nesting, normalize_tailwind_directives::normalize_tailwind_directives,
+    detect_nesting::detect_nesting, expand_tailwind_at_rules::expand_tailwind_at_rules,
+    normalize_tailwind_directives::normalize_tailwind_directives,
     partition_apply_at_rules::partition_apply_at_rules,
 };
 
 mod config;
 mod detect_nesting;
+mod expand_tailwind_at_rules;
 mod normalize_tailwind_directives;
 mod partition_apply_at_rules;
 
@@ -33,5 +35,7 @@ impl Compiler {
 
         // Partition apply rules that are found in the css itself.
         partition_apply_at_rules(ss);
+
+        expand_tailwind_at_rules(ss);
     }
 }
