@@ -1,3 +1,4 @@
+use indexmap::IndexSet;
 use swc_atoms::js_word;
 use swc_core::{
     common::{collections::AHashSet, util::take::Take, DUMMY_SP},
@@ -26,7 +27,7 @@ pub(crate) fn expand_tailwind_at_rules(context: &mut Context, ss: &mut Styleshee
     }
 
     // Find potential rules in changed files
-    let mut candidates = AHashSet::default();
+    let mut candidates = IndexSet::default();
     // let mut seen = AHashSet::default();
 
     candidates.insert(Candidate::NotOnDemand);

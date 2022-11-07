@@ -1,5 +1,9 @@
-use swc_core::common::collections::AHashSet;
+use indexmap::IndexSet;
 
 use crate::{base::Candidate, context::Context};
 
-pub(crate) fn generate_rules(candidates: &AHashSet<Candidate>, context: &mut Context) {}
+pub(crate) fn generate_rules(
+    candidates: &IndexSet<Candidate, ahash::RandomState>,
+    context: &mut Context,
+) {
+}
