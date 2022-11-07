@@ -2307,6 +2307,7 @@ dependencies = [
  "serde_json",
  "swc_atoms",
  "swc_core",
+ "swc_timer",
  "testing",
 ]
 
