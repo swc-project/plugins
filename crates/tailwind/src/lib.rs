@@ -22,8 +22,12 @@ impl Compiler {
     }
 
     pub fn process(&self, ss: &mut Stylesheet) {
-        normalize_tailwind_directives(ss);
+        let directives = normalize_tailwind_directives(ss);
 
         detect_nesting(ss);
+
+        // Partition apply rules that are found in the css
+        // itself.
+        partition_apply_at_rules(ss);
     }
 }
