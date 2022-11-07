@@ -54,7 +54,7 @@ fn resolve_matches(
             result.extend(resolve_matches(
                 base + &*separator + part,
                 context,
-                original,
+                Some(original),
             ));
         }
     }
