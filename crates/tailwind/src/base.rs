@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use swc_core::css::ast::Rule;
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -31,13 +33,10 @@ pub(crate) enum LayerNode {
 
 pub(crate) enum Plugin {
     Function(Box<dyn Fn(&Modifier, &PluginContext) -> Vec<Vec<Rule>>>),
+    Str(String),
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub(crate) enum Modifier {
-    Default,
-    MinusDefault,
-}
+pub(crate) type Modifier = Cow<'static, str>;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct PluginContext {

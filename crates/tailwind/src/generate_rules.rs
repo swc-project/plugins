@@ -80,7 +80,46 @@ fn resolve_matches(
                         }
                     }
                 }
+                Plugin::Str(plugin) if modifier == "DEFAULT" || modifier == "-DEFAULT" => {
+                    let rule_set = plugin;
+
+                    let (rules, options) = parse_rules(rule_set, context.postcss_node_cache);
+                    for rule in rules {
+                        let mut obj = sort.clone();
+                        sort.options = obj.options.into_iter().chain(options).collect();
+                        matches_per_plugin.push((obj, rule));
+                    }
+                }
+                _ => {}
             }
+
+            if matches_per_plugin.len() > 0 {
+                let matching_types = get_matching_types(
+                    sort.options.types.unwrap_or_default(),
+                    modifier,
+                    sort.options,
+                    context.tailwind_config,
+                )
+                .into_iter()
+                .map(|(_, v)| v)
+                .collect::<Vec<_>>();
+
+                if matching_types.len() > 0 {
+                    type_by_matches.insert(sort, matching_types);
+                }
+
+                matches.push(matches_per_plugin);
+            }
+        }
+
+        if is_arbitrary_value(&modifier) {
+            if matches.len() > 1 {
+                // Partition plugins in 2 categories so that we can start
+                // searching in the plugins that don't have
+                // `any` as a type first.
+            }
+
+            matches = matches.map(|list| list.filter(|m| isParsableNode(m[1])));
         }
     }
 
