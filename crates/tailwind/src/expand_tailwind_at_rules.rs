@@ -8,7 +8,11 @@ use swc_core::{
 };
 use swc_timer::timer;
 
-use crate::{context::Context, generate_rules::generate_rules};
+use crate::{
+    base::{Candidate, LayerNode},
+    context::Context,
+    generate_rules::generate_rules,
+};
 
 pub(crate) fn expand_tailwind_at_rules(context: &mut Context, ss: &mut Stylesheet) {
     let mut layers = AHashSet::<LayerNode>::default();
@@ -71,19 +75,6 @@ struct BuiltStylesheet {
     components: AHashSet<Rule>,
     utilities: AHashSet<Rule>,
     variants: AHashSet<Rule>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub(crate) enum Candidate {
-    NotOnDemand,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub(crate) enum LayerNode {
-    Base,
-    Components,
-    Utilities,
-    Variant,
 }
 
 /// This removes `@tailwind` directives.

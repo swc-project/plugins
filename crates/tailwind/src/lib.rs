@@ -11,6 +11,7 @@ use crate::{
     partition_apply_at_rules::partition_apply_at_rules,
 };
 
+mod base;
 mod config;
 mod context;
 mod detect_nesting;
