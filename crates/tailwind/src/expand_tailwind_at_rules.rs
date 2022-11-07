@@ -1,6 +1,6 @@
 use swc_atoms::js_word;
 use swc_core::{
-    common::{collections::AHashSet, DUMMY_SP},
+    common::{collections::AHashSet, util::take::Take, DUMMY_SP},
     css::{
         ast::{AtRule, AtRuleName, AtRulePrelude, Ident, Rule, Stylesheet, Token},
         visit::{Visit, VisitMut, VisitMutWith, VisitWith},
@@ -52,6 +52,7 @@ pub(crate) fn expand_tailwind_at_rules(context: &mut Context, ss: &mut Styleshee
 
     ss.visit_mut_with(&mut TailwindReplacer {
         built: &mut new_stylesheet,
+        extra: Default::default(),
     });
 
     // Cleanup any leftover @layer at-rules
@@ -89,23 +90,32 @@ pub(crate) enum LayerNode {
 /// This removes `@tailwind` directives.
 struct TailwindReplacer<'a> {
     built: &'a mut BuiltStylesheet,
+    extra: Vec<Rule>,
 }
 
 impl VisitMut for TailwindReplacer<'_> {
     fn visit_mut_rules(&mut self, n: &mut Vec<Rule>) {
-        n.visit_mut_children_with(self);
+        let mut prev = self.extra.take();
 
-        n.retain(|r| match r {
-            Rule::AtRule(r) => {
+        let mut new = Vec::with_capacity(n.len() + 4);
+
+        for mut r in n.take() {
+            r.visit_mut_with(self);
+
+            new.extend(self.extra.take());
+
+            if let Rule::AtRule(r) = &r {
                 if let AtRuleName::Ident(name) = &r.name {
-                    name.value != js_word!("")
+                    if name.value == js_word!("") {
+                        continue;
+                    }
                 } else {
-                    true
                 }
             }
+            new.push(r);
+        }
 
-            _ => true,
-        })
+        *n = new;
     }
 
     fn visit_mut_at_rule(&mut self, n: &mut AtRule) {
