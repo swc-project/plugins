@@ -36,7 +36,7 @@ fn resolve_matches(
 
     if class_candidate.starts_with('!') {
         important = true;
-        class_candidate = class_candidate[1..].to_string();
+        class_candidate = class_candidate[1..];
     }
 
     // TODO(kdy1): Port
@@ -75,9 +75,9 @@ fn resolve_matches(
                         // TODO:
                         //   let [rules, options] = parseRules(ruleSet, context.postCssNodeCache)
                         for rule in rule_set {
-                            // matchesPerPlugin.push([{ ...sort, options: {
-                            // ...sort.options,
-                            // ...options } }, rule])
+                            let mut obj = sort.clone();
+                            sort.options = obj.options.into_iter().chain(options).collect();
+                            matches_per_plugin.push((obj, rule));
                         }
                     }
                 }

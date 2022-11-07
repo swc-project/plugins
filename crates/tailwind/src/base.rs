@@ -44,5 +44,22 @@ pub struct PluginContext {
     pub is_only_plugin: bool,
 }
 
-/// I don't know what is this.
-pub(crate) struct RuleOffset {}
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub(crate) struct RuleOffset {
+    //     * @property {Layer} layer The layer that this rule belongs to
+    //  * @property {Layer} parentLayer The layer that this rule originally belonged to. Only
+    //    different from layer if this is a variant.
+    //  * @property {bigint} arbitrary 0n if false, 1n if true
+    //  * @property {bigint} variants Dynamic size. 1 bit per registered variant. 0n means no
+    //    variants
+    //  * @property {bigint} parallelIndex Rule index for the parallel variant. 0 if not
+    //    applicable.
+    //  * @property {bigint} index Index of the rule / utility in it's given *parent* layer.
+    //    Monotonically increasing.
+    // TODO: Declare properties above
+    /// Some information on how we can sort arbitrary variants
+    pub options: Vec<VariantOption>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub(crate) struct VariantOption {}
