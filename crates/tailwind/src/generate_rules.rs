@@ -36,18 +36,18 @@ fn resolve_matches(
 
     // TODO(kdy1): Port
 
-    if is_variant_grouping_enabled {
-        if class_candidate.starts_with('(') && class_candidate.ends_with(')') {
-            let base = {
-                let mut v = variants.clone();
-                v.reverse();
-                v.join(&separator)
-            };
+    if is_variant_grouping_enabled
+        && class_candidate.starts_with('(')
+        && class_candidate.ends_with(')')
+    {
+        let base = {
+            let mut v = variants.clone();
+            v.reverse();
+            v.join(&separator)
+        };
 
-            for part in split_at_top_level_only(&class_candidate[1..class_candidate.len() - 1], ",")
-            {
-                result.extend(resolveMatches(base + separator + part, context, original));
-            }
+        for part in split_at_top_level_only(&class_candidate[1..class_candidate.len() - 1], ",") {
+            result.extend(resolve_matches(base + separator + part, context, original));
         }
     }
 

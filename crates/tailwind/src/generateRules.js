@@ -530,24 +530,6 @@ function* recordCandidates(matches, classCandidate) {
 }
 
 function* resolveMatches(candidate, context, original = candidate) {
-  let separator = context.tailwindConfig.separator
-  let [classCandidate, ...variants] = splitWithSeparator(candidate, separator).reverse()
-  let important = false
-
-  if (classCandidate.startsWith('!')) {
-    important = true
-    classCandidate = classCandidate.slice(1)
-  }
-
-  if (flagEnabled(context.tailwindConfig, 'variantGrouping')) {
-    if (classCandidate.startsWith('(') && classCandidate.endsWith(')')) {
-      let base = variants.slice().reverse().join(separator)
-      for (let part of splitAtTopLevelOnly(classCandidate.slice(1, -1), ',')) {
-        yield* resolveMatches(base + separator + part, context, original)
-      }
-    }
-  }
-
   // TODO: Reintroduce this in ways that doesn't break on false positives
   // function sortAgainst(toSort, against) {
   //   return toSort.slice().sort((a, z) => {
