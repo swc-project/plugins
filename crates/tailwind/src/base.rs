@@ -29,4 +29,4 @@ pub struct PluginContext {
 }
 
 /// I don't know what is this.
-pub(crate) type Sort = ();
+pub(crate) struct RuleOffset {}

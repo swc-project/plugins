@@ -1,9 +1,9 @@
 use indexmap::IndexSet;
 use swc_atoms::Atom;
-use swc_core::common::collections::{AHashMap, AHashSet};
+use swc_core::common::collections::AHashMap;
 
 use crate::{
-    base::{Candidate, Modifier, Plugin, PluginContext, Sort},
+    base::{Candidate, Modifier, Plugin, PluginContext, RuleOffset},
     context::Context,
 };
 
@@ -91,7 +91,7 @@ fn resolve_matched_plugins(class_candidate: &str, context: &mut Context) -> Vec<
     todo!()
 }
 
-type MatchedPlugin = (Vec<(Sort, Plugin)>, Modifier);
+type MatchedPlugin = (Vec<(RuleOffset, Plugin)>, Modifier);
 
 fn split_with_separator(candidate: &Candidate, separator: Atom) -> Vec<String> {
     todo!()
