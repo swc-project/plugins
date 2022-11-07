@@ -95,7 +95,7 @@ struct TailwindReplacer<'a> {
 
 impl VisitMut for TailwindReplacer<'_> {
     fn visit_mut_rules(&mut self, n: &mut Vec<Rule>) {
-        let mut prev = self.extra.take();
+        let prev = self.extra.take();
 
         let mut new = Vec::with_capacity(n.len() + 4);
 
@@ -109,13 +109,13 @@ impl VisitMut for TailwindReplacer<'_> {
                     if name.value == js_word!("") {
                         continue;
                     }
-                } else {
                 }
             }
             new.push(r);
         }
 
         *n = new;
+        self.extra = prev;
     }
 
     fn visit_mut_at_rule(&mut self, n: &mut AtRule) {
