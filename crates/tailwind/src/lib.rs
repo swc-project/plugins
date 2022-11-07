@@ -1,3 +1,5 @@
+#![feature(box_patterns)]
+
 use swc_core::css::ast::Stylesheet;
 
 pub use crate::config::*;
