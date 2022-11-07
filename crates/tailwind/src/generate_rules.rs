@@ -27,7 +27,7 @@ fn resolve_matches(
     let separator = context.tailwind_config.separator.clone();
 
     let (mut class_candidate, variants) = {
-        let mut v = split_with_separator(candidate, separator);
+        let mut v = split_with_separator(candidate, &separator);
         let c = v.pop().unwrap();
         v.reverse();
         (c, v)
