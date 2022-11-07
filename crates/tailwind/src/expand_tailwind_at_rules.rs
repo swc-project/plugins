@@ -1,3 +1,5 @@
+use std::time::Instant;
+
 use swc_core::{
     common::collections::AHashSet,
     css::{
@@ -5,8 +7,11 @@ use swc_core::{
         visit::{Visit, VisitWith},
     },
 };
+use swc_timer::timer;
 
-pub(crate) fn expand_tailwind_at_rules(ss: &mut Stylesheet) {
+use crate::context::Context;
+
+pub(crate) fn expand_tailwind_at_rules(context: &mut Context, ss: &mut Stylesheet) {
     let mut layers = AHashSet::<LayerNode>::default();
 
     ss.visit_with(&mut TailwindFinder {
@@ -23,8 +28,26 @@ pub(crate) fn expand_tailwind_at_rules(ss: &mut Stylesheet) {
 
     candidates.insert(Candidate::NotOnDemand);
 
+    // TODO(kdy1): Port
+
+    {
+        let _timer = timer!("Reading changed files");
+
+        // for (let { content, extension } of context.changedContent) {
+        //     let transformer = getTransformer(context.tailwindConfig,
+        // extension)     let extractor = getExtractor(context,
+        // extension)     getClassCandidates(transformer(content),
+        // extractor, candidates, seen) }
+    }
     //
+
+    {
+        let _timer = timer!("generate rules");
+        generate_rules(&candidates, context);
+    }
 }
+
+fn generate_rules(candidates: &AHashSet<Candidate>, context: &mut Context) {}
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) enum Candidate {
