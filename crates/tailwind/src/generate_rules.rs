@@ -9,7 +9,15 @@ pub(crate) fn generate_rules(
     for candidate in candidates {}
 }
 
-fn resolve_matches(candidate: &Candidate, context: &mut Context) -> Vec<MatchResult> {
+fn resolve_matches(
+    candidate: &Candidate,
+    context: &mut Context,
+    original: Option<&Candidate>,
+) -> Vec<MatchResult> {
+    let original = original.unwrap_or(candidate);
+
+    let separator = context.tailwind_config.separator;
+
     vec![]
 }
 
