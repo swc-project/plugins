@@ -73,8 +73,8 @@ fn resolve_matches(
                 Plugin::Function(plugin) => {
                     for rule_set in plugin(&modifier, &PluginContext { is_only_plugin }) {
                         // TODO:
-                        //   let [rules, options] = parseRules(ruleSet, context.postCssNodeCache)
-                        for rule in rule_set {
+                        let (rules, options) = parse_rules(rule_set, context.postcss_node_cache);
+                        for rule in rules {
                             let mut obj = sort.clone();
                             sort.options = obj.options.into_iter().chain(options).collect();
                             matches_per_plugin.push((obj, rule));
