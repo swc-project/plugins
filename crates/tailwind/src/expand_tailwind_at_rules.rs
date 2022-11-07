@@ -50,6 +50,7 @@ pub(crate) fn expand_tailwind_at_rules(context: &mut Context, ss: &mut Styleshee
         build_stylesheet(context)
     };
 
+    // Replace any Tailwind directives with generated CSS
     ss.visit_mut_with(&mut TailwindReplacer {
         built: &mut new_stylesheet,
         extra: Default::default(),

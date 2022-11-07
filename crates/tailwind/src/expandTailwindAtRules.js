@@ -138,9 +138,6 @@ export default function expandTailwindAtRules(context) {
     env.DEBUG && console.timeEnd('Build stylesheet')
 
     let {
-      defaults: defaultNodes,
-      base: baseNodes,
-      components: componentNodes,
       utilities: utilityNodes,
       variants: screenNodes,
     } = context.stylesheetCache
@@ -148,33 +145,6 @@ export default function expandTailwindAtRules(context) {
     // ---
 
     // Replace any Tailwind directives with generated CSS
-
-    if (layerNodes.base) {
-      layerNodes.base.before(
-        cloneNodes([...baseNodes, ...defaultNodes], layerNodes.base.source, {
-          layer: 'base',
-        })
-      )
-      layerNodes.base.remove()
-    }
-
-    if (layerNodes.components) {
-      layerNodes.components.before(
-        cloneNodes([...componentNodes], layerNodes.components.source, {
-          layer: 'components',
-        })
-      )
-      layerNodes.components.remove()
-    }
-
-    if (layerNodes.utilities) {
-      layerNodes.utilities.before(
-        cloneNodes([...utilityNodes], layerNodes.utilities.source, {
-          layer: 'utilities',
-        })
-      )
-      layerNodes.utilities.remove()
-    }
 
     // We do post-filtering to not alter the emitted order of the variants
     const variantNodes = Array.from(screenNodes).filter((node) => {
