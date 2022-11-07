@@ -19,6 +19,22 @@ struct Visitor {
 }
 
 impl VisitMut for Visitor {
+    fn visit_mut_rules(&mut self, rules: &mut Vec<Rule>) {
+        let mut new = Vec::with_capacity(rules.len());
+
+        for mut rule in rules.take() {
+            let prev = self.added.take();
+            rule.visit_mut_with(self);
+
+            new.push(rule);
+            new.extend(self.added.take());
+
+            self.added = prev;
+        }
+
+        *rules = new;
+    }
+
     fn visit_mut_at_rule(&mut self, n: &mut AtRule) {
         n.visit_mut_children_with(self);
 
