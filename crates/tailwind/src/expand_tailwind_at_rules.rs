@@ -2,11 +2,8 @@ use swc_atoms::js_word;
 use swc_core::{
     common::{collections::AHashSet, DUMMY_SP},
     css::{
-        ast::{
-            AtRule, AtRuleName, AtRulePrelude, ComponentValue, Ident, Rule, Stylesheet, Token,
-            TokenAndSpan,
-        },
-        visit::{VisitMut, VisitMutWith},
+        ast::{AtRule, AtRuleName, AtRulePrelude, Ident, Rule, Stylesheet, Token},
+        visit::{Visit, VisitMut, VisitMutWith, VisitWith},
     },
 };
 use swc_timer::timer;
@@ -16,7 +13,7 @@ use crate::context::Context;
 pub(crate) fn expand_tailwind_at_rules(context: &mut Context, ss: &mut Stylesheet) {
     let mut layers = AHashSet::<LayerNode>::default();
 
-    ss.visit_mut_with(&mut TailwindFinder {
+    ss.visit_with(&mut TailwindFinder {
         layers: &mut layers,
     });
 
@@ -86,11 +83,9 @@ pub(crate) enum LayerNode {
 }
 
 /// This removes `@tailwind` directives.
-struct TailwindFinder<'a> {
-    layers: &'a mut AHashSet<LayerNode>,
-}
+struct TailwindReplacer {}
 
-impl VisitMut for TailwindFinder<'_> {
+impl VisitMut for TailwindReplacer {
     fn visit_mut_rules(&mut self, n: &mut Vec<Rule>) {
         n.visit_mut_children_with(self);
 
@@ -121,6 +116,54 @@ impl VisitMut for TailwindFinder<'_> {
                         {
                             match v {
                                 "base" => {
+                                    // TODO
+                                }
+                                "components" => {
+                                    // TODO
+                                }
+                                "utilities" => {
+                                    // TODO
+                                }
+                                "variants" => {
+                                    // TODO
+                                }
+                                _ => continue,
+                            }
+
+                            n.name = AtRuleName::Ident(Ident {
+                                span: DUMMY_SP,
+                                value: js_word!(""),
+                                raw: None,
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
+        //
+    }
+}
+
+struct TailwindFinder<'a> {
+    layers: &'a mut AHashSet<LayerNode>,
+}
+
+impl Visit for TailwindFinder<'_> {
+    fn visit_at_rule(&mut self, n: &AtRule) {
+        n.visit_children_with(self);
+
+        if let AtRuleName::Ident(name) = &n.name {
+            if &*name.value == "tailwind" {
+                if let Some(box AtRulePrelude::ListOfComponentValues(tokens)) = &n.prelude {
+                    for v in &tokens.children {
+                        if let Some(v) = v
+                            .as_preserved_token()
+                            .map(|v| &v.token)
+                            .and_then(extract_directive)
+                        {
+                            match v {
+                                "base" => {
                                     self.layers.insert(LayerNode::Base);
                                 }
                                 "components" => {
@@ -134,12 +177,6 @@ impl VisitMut for TailwindFinder<'_> {
                                 }
                                 _ => continue,
                             }
-
-                            n.name = AtRuleName::Ident(Ident {
-                                span: DUMMY_SP,
-                                value: js_word!(""),
-                                raw: None,
-                            });
                         }
                     }
                 }
