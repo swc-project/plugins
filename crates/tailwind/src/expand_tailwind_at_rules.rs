@@ -45,10 +45,14 @@ pub(crate) fn expand_tailwind_at_rules(context: &mut Context, ss: &mut Styleshee
         generate_rules(&candidates, context);
     }
 
-    let new_stylesheet = {
+    let mut new_stylesheet = {
         let _timer = timer!("Build stylesheet");
         build_stylesheet(context)
     };
+
+    ss.visit_mut_with(&mut TailwindReplacer {
+        built: &mut new_stylesheet,
+    });
 
     // Cleanup any leftover @layer at-rules
     ss.visit_mut_with(&mut LayerRemover);
@@ -83,9 +87,11 @@ pub(crate) enum LayerNode {
 }
 
 /// This removes `@tailwind` directives.
-struct TailwindReplacer {}
+struct TailwindReplacer<'a> {
+    built: &'a mut BuiltStylesheet,
+}
 
-impl VisitMut for TailwindReplacer {
+impl VisitMut for TailwindReplacer<'_> {
     fn visit_mut_rules(&mut self, n: &mut Vec<Rule>) {
         n.visit_mut_children_with(self);
 
