@@ -1,9 +1,8 @@
 use swc_core::{
-    common::{util::take::Take, DUMMY_SP},
+    common::util::take::Take,
     css::{
         ast::{
-            AtRule, AtRuleName, AtRulePrelude, ComponentValue, DeclarationOrAtRule, Rule,
-            SimpleBlock, Stylesheet,
+            AtRule, AtRuleName, ComponentValue, DeclarationOrAtRule, Rule, SimpleBlock, Stylesheet,
         },
         visit::{VisitMut, VisitMutWith},
     },
