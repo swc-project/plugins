@@ -530,28 +530,9 @@ function* recordCandidates(matches, classCandidate) {
 }
 
 function* resolveMatches(candidate, context, original = candidate) {
-  // TODO: Reintroduce this in ways that doesn't break on false positives
-  // function sortAgainst(toSort, against) {
-  //   return toSort.slice().sort((a, z) => {
-  //     return bigSign(against.get(a)[0] - against.get(z)[0])
-  //   })
-  // }
-  // let sorted = sortAgainst(variants, context.variantMap)
-  // if (sorted.toString() !== variants.toString()) {
-  //   let corrected = sorted.reverse().concat(classCandidate).join(':')
-  //   throw new Error(`Class ${candidate} should be written as ${corrected}`)
-  // }
 
   for (let matchedPlugins of resolveMatchedPlugins(classCandidate, context)) {
-    let matches = []
-    let typesByMatches = new Map()
-
-    let [plugins, modifier] = matchedPlugins
-    let isOnlyPlugin = plugins.length === 1
-
     for (let [sort, plugin] of plugins) {
-      let matchesPerPlugin = []
-
       if (typeof plugin === 'function') {
         for (let ruleSet of [].concat(plugin(modifier, { isOnlyPlugin }))) {
           let [rules, options] = parseRules(ruleSet, context.postCssNodeCache)

@@ -1,7 +1,11 @@
 use indexmap::IndexSet;
 use swc_atoms::Atom;
+use swc_core::common::collections::{AHashMap, AHashSet};
 
-use crate::{base::Candidate, context::Context};
+use crate::{
+    base::{Candidate, Modifier, Plugin, Sort},
+    context::Context,
+};
 
 pub(crate) fn generate_rules(
     candidates: &IndexSet<Candidate, ahash::RandomState>,
@@ -47,12 +51,34 @@ fn resolve_matches(
         };
 
         for part in split_at_top_level_only(&class_candidate[1..class_candidate.len() - 1], ",") {
-            result.extend(resolve_matches(base + separator + part, context, original));
+            result.extend(resolve_matches(
+                base + &*separator + part,
+                context,
+                original,
+            ));
+        }
+    }
+
+    for matched_plugins in resolve_matched_plugins(&class_candidate, context) {
+        let mut matches = vec![];
+        let mut type_by_matches = AHashMap::default();
+
+        let (plugins, modifier) = matched_plugins;
+        let is_only_plugin = plugins.len() == 1;
+
+        for (sort, plugin) in plugins {
+            let mut matches_per_plugin = vec![];
         }
     }
 
     result
 }
+
+fn resolve_matched_plugins(class_candidate: &str, context: &mut Context) -> Vec<MatchedPlugin> {
+    todo!()
+}
+
+type MatchedPlugin = (Vec<(Sort, Plugin)>, Modifier);
 
 fn split_with_separator(candidate: &Candidate, separator: Atom) -> Vec<String> {
     todo!()
