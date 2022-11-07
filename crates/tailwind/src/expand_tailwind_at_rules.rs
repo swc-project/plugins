@@ -3,7 +3,7 @@ use std::time::Instant;
 use swc_core::{
     common::collections::AHashSet,
     css::{
-        ast::{AtRule, AtRuleName, ComponentValue, Stylesheet},
+        ast::{AtRule, AtRuleName, ComponentValue, Rule, Stylesheet},
         visit::{Visit, VisitWith},
     },
 };
@@ -42,12 +42,30 @@ pub(crate) fn expand_tailwind_at_rules(context: &mut Context, ss: &mut Styleshee
     //
 
     {
-        let _timer = timer!("generate rules");
+        let _timer = timer!("Generate rules");
         generate_rules(&candidates, context);
     }
+
+    let new_stylesheet = {
+        let _timer = timer!("Build stylesheet");
+        build_stylesheet(context)
+    };
+}
+
+fn build_stylesheet(context: &mut Context) -> BuiltStylesheet {
+    Default::default()
 }
 
 fn generate_rules(candidates: &AHashSet<Candidate>, context: &mut Context) {}
+
+#[derive(Debug, Default)]
+struct BuiltStylesheet {
+    base: AHashSet<Rule>,
+    defaults: AHashSet<Rule>,
+    components: AHashSet<Rule>,
+    utilities: AHashSet<Rule>,
+    variants: AHashSet<Rule>,
+}
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) enum Candidate {
