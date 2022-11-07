@@ -1,10 +1,9 @@
-use std::time::Instant;
-
+use swc_atoms::{atom, js_word};
 use swc_core::{
-    common::collections::AHashSet,
+    common::{collections::AHashSet, DUMMY_SP},
     css::{
-        ast::{AtRule, AtRuleName, ComponentValue, Rule, Stylesheet},
-        visit::{Visit, VisitWith},
+        ast::{AtRule, AtRuleName, ComponentValue, Ident, Rule, Stylesheet},
+        visit::{Visit, VisitMut, VisitMutWith, VisitWith},
     },
 };
 use swc_timer::timer;
@@ -24,7 +23,7 @@ pub(crate) fn expand_tailwind_at_rules(context: &mut Context, ss: &mut Styleshee
 
     // Find potential rules in changed files
     let mut candidates = AHashSet::default();
-    let mut seen = AHashSet::default();
+    // let mut seen = AHashSet::default();
 
     candidates.insert(Candidate::NotOnDemand);
 
@@ -50,6 +49,9 @@ pub(crate) fn expand_tailwind_at_rules(context: &mut Context, ss: &mut Styleshee
         let _timer = timer!("Build stylesheet");
         build_stylesheet(context)
     };
+
+    // Cleanup any leftover @layer at-rules
+    ss.visit_mut_with(&mut LayerRemover);
 }
 
 fn build_stylesheet(context: &mut Context) -> BuiltStylesheet {
@@ -105,6 +107,53 @@ impl Visit for TailwindFinder<'_> {
                                 }
                                 "variants" => {
                                     self.layers.insert(LayerNode::Variant);
+                                }
+                                _ => {}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        //
+    }
+}
+
+struct LayerRemover;
+
+impl VisitMut for LayerRemover {
+    fn visit_mut_rules(&mut self, n: &mut Vec<Rule>) {
+        n.visit_mut_children_with(self);
+
+        n.retain(|r| match r {
+            Rule::AtRule(r) => {
+                if let AtRuleName::Ident(name) = &r.name {
+                    &*name.value != ""
+                } else {
+                    true
+                }
+            }
+
+            _ => true,
+        })
+    }
+
+    fn visit_mut_at_rule(&mut self, n: &mut AtRule) {
+        n.visit_mut_children_with(self);
+
+        if let AtRuleName::Ident(name) = &n.name {
+            if &*name.value == "layer" {
+                if let Some(block) = &n.block {
+                    for v in &block.value {
+                        if let ComponentValue::Ident(i) = v {
+                            match &*i.value {
+                                "base" | "components" | "utilities" | "variants" => {
+                                    n.name = AtRuleName::Ident(Ident {
+                                        span: DUMMY_SP,
+                                        value: js_word!(""),
+                                        raw: None,
+                                    });
                                 }
                                 _ => {}
                             }
