@@ -2303,6 +2303,7 @@ dependencies = [
 name = "swc_tailwind"
 version = "0.1.2"
 dependencies = [
+ "indexmap",
  "serde",
  "serde_json",
  "swc_atoms",
