@@ -15,6 +15,8 @@ fn resolve_matches(
     context: &mut Context,
     original: Option<&Candidate>,
 ) -> Vec<MatchResult> {
+    let mut result = vec![];
+
     let original = original.unwrap_or(candidate);
 
     let separator = context.tailwind_config.separator.clone();
@@ -32,7 +34,24 @@ fn resolve_matches(
         class_candidate = class_candidate[1..].to_string();
     }
 
-    vec![]
+    // TODO(kdy1): Port
+
+    if is_variant_grouping_enabled {
+        if class_candidate.starts_with('(') && class_candidate.ends_with(')') {
+            let base = {
+                let mut v = variants.clone();
+                v.reverse();
+                v.join(&separator)
+            };
+
+            for part in split_at_top_level_only(&class_candidate[1..class_candidate.len() - 1], ",")
+            {
+                result.extend(resolveMatches(base + separator + part, context, original));
+            }
+        }
+    }
+
+    result
 }
 
 fn split_with_separator(candidate: &Candidate, separator: Atom) -> Vec<String> {
