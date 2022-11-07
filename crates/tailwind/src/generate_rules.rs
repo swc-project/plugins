@@ -5,6 +5,7 @@ use swc_core::common::collections::AHashMap;
 use crate::{
     base::{Candidate, Modifier, Plugin, PluginContext, RuleOffset},
     context::Context,
+    util::split_at_top_level_only,
 };
 
 pub(crate) fn generate_rules(
@@ -93,8 +94,11 @@ fn resolve_matched_plugins(class_candidate: &str, context: &mut Context) -> Vec<
 
 type MatchedPlugin = (Vec<(RuleOffset, Plugin)>, Modifier);
 
-fn split_with_separator(candidate: &Candidate, separator: Atom) -> Vec<String> {
-    todo!()
+fn split_with_separator(candidate: &Candidate, separator: &str) -> Vec<Candidate> {
+    match candidate {
+        Candidate::NotOnDemand => vec![Candidate::NotOnDemand],
+        Candidate::Str(s) => split_at_top_level_only(s, separator),
+    }
 }
 
 struct MatchResult {}

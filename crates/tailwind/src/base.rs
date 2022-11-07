@@ -3,6 +3,7 @@ use swc_core::css::ast::Rule;
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) enum Candidate {
     NotOnDemand,
+    Str(String),
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]

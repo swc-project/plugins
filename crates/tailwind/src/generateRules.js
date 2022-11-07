@@ -509,13 +509,6 @@ function* resolveMatchedPlugins(classCandidate, context) {
   }
 }
 
-function splitWithSeparator(input, separator) {
-  if (input === sharedState.NOT_ON_DEMAND) {
-    return [sharedState.NOT_ON_DEMAND]
-  }
-
-  return splitAtTopLevelOnly(input, separator)
-}
 
 function* recordCandidates(matches, classCandidate) {
   for (const match of matches) {

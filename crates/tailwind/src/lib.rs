@@ -19,6 +19,7 @@ mod expand_tailwind_at_rules;
 mod generate_rules;
 mod normalize_tailwind_directives;
 mod partition_apply_at_rules;
+mod util;
 
 /// Main entrypoint.
 ///
