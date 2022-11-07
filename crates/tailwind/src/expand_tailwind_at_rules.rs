@@ -2,7 +2,10 @@ use swc_atoms::js_word;
 use swc_core::{
     common::{collections::AHashSet, DUMMY_SP},
     css::{
-        ast::{AtRule, AtRuleName, ComponentValue, Ident, Rule, Stylesheet},
+        ast::{
+            AtRule, AtRuleName, AtRulePrelude, ComponentValue, Ident, Rule, Stylesheet, Token,
+            TokenAndSpan,
+        },
         visit::{VisitMut, VisitMutWith},
     },
 };
@@ -94,7 +97,7 @@ impl VisitMut for TailwindFinder<'_> {
         n.retain(|r| match r {
             Rule::AtRule(r) => {
                 if let AtRuleName::Ident(name) = &r.name {
-                    &*name.value != ""
+                    name.value != js_word!("")
                 } else {
                     true
                 }
@@ -109,10 +112,14 @@ impl VisitMut for TailwindFinder<'_> {
 
         if let AtRuleName::Ident(name) = &n.name {
             if &*name.value == "tailwind" {
-                if let Some(block) = &n.block {
-                    for v in &block.value {
-                        if let ComponentValue::Ident(i) = v {
-                            match &*i.value {
+                if let Some(box AtRulePrelude::ListOfComponentValues(tokens)) = &n.prelude {
+                    for v in &tokens.children {
+                        if let Some(v) = v
+                            .as_preserved_token()
+                            .map(|v| &v.token)
+                            .and_then(extract_directive)
+                        {
+                            match v {
                                 "base" => {
                                     self.layers.insert(LayerNode::Base);
                                 }
@@ -143,6 +150,14 @@ impl VisitMut for TailwindFinder<'_> {
     }
 }
 
+fn extract_directive(t: &Token) -> Option<&str> {
+    if let Token::Ident { value, .. } = t {
+        Some(&**value)
+    } else {
+        None
+    }
+}
+
 struct LayerRemover;
 
 impl VisitMut for LayerRemover {
@@ -152,7 +167,7 @@ impl VisitMut for LayerRemover {
         n.retain(|r| match r {
             Rule::AtRule(r) => {
                 if let AtRuleName::Ident(name) = &r.name {
-                    &*name.value != ""
+                    name.value != js_word!("")
                 } else {
                     true
                 }
@@ -167,10 +182,14 @@ impl VisitMut for LayerRemover {
 
         if let AtRuleName::Ident(name) = &n.name {
             if &*name.value == "layer" {
-                if let Some(block) = &n.block {
-                    for v in &block.value {
-                        if let ComponentValue::Ident(i) = v {
-                            match &*i.value {
+                if let Some(box AtRulePrelude::ListOfComponentValues(tokens)) = &n.prelude {
+                    for v in &tokens.children {
+                        if let Some(v) = v
+                            .as_preserved_token()
+                            .map(|v| &v.token)
+                            .and_then(extract_directive)
+                        {
+                            match v {
                                 "base" | "components" | "utilities" | "variants" => {
                                     n.name = AtRuleName::Ident(Ident {
                                         span: DUMMY_SP,
