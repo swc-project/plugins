@@ -20,6 +20,7 @@ swc_core = {version = "0.40.46", features = [
   "css_visit",
   "ecma_visit",
 ]}
+swc_timer = "0.17.13"
 
 [dev-dependencies]
 serde_json = "1"
