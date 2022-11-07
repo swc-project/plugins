@@ -8,7 +8,7 @@ use swc_core::{
 };
 use swc_timer::timer;
 
-use crate::context::Context;
+use crate::{context::Context, generate_rules::generate_rules};
 
 pub(crate) fn expand_tailwind_at_rules(context: &mut Context, ss: &mut Stylesheet) {
     let mut layers = AHashSet::<LayerNode>::default();
@@ -63,8 +63,6 @@ pub(crate) fn expand_tailwind_at_rules(context: &mut Context, ss: &mut Styleshee
 fn build_stylesheet(context: &mut Context) -> BuiltStylesheet {
     Default::default()
 }
-
-fn generate_rules(candidates: &AHashSet<Candidate>, context: &mut Context) {}
 
 #[derive(Debug, Default)]
 struct BuiltStylesheet {
