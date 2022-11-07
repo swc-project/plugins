@@ -1,6 +1,6 @@
 import LRU from 'quick-lru'
 import * as sharedState from '../tailwindcss-master/src/lib/sharedState'
-import { generateRules } from '../tailwindcss-master/src/lib/generateRules'
+import { generateRules } from './generateRules'
 import log from '../tailwindcss-master/src/util/log'
 import cloneNodes from '../tailwindcss-master/src/util/cloneNodes'
 import { defaultExtractor } from '../tailwindcss-master/src/lib/defaultExtractor'
@@ -143,8 +143,6 @@ export default function expandTailwindAtRules(context) {
     } = context.stylesheetCache
 
     // ---
-
-    // Replace any Tailwind directives with generated CSS
 
     // We do post-filtering to not alter the emitted order of the variants
     const variantNodes = Array.from(screenNodes).filter((node) => {
