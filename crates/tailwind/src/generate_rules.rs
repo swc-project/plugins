@@ -3,7 +3,7 @@ use swc_atoms::Atom;
 use swc_core::common::collections::{AHashMap, AHashSet};
 
 use crate::{
-    base::{Candidate, Modifier, Plugin, Sort},
+    base::{Candidate, Modifier, Plugin, PluginContext, Sort},
     context::Context,
 };
 
@@ -68,6 +68,19 @@ fn resolve_matches(
 
         for (sort, plugin) in plugins {
             let mut matches_per_plugin = vec![];
+            match plugin {
+                Plugin::Function(plugin) => {
+                    for rule_set in plugin(&modifier, &PluginContext { is_only_plugin }) {
+                        // TODO:
+                        //   let [rules, options] = parseRules(ruleSet, context.postCssNodeCache)
+                        for rule in rule_set {
+                            // matchesPerPlugin.push([{ ...sort, options: {
+                            // ...sort.options,
+                            // ...options } }, rule])
+                        }
+                    }
+                }
+            }
         }
     }
 
