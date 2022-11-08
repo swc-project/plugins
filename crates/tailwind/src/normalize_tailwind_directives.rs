@@ -3,34 +3,36 @@ use swc_core::{
     common::collections::AHashSet,
     css::{
         ast::{AtRule, AtRuleName, Stylesheet},
-        visit::{Visit, VisitWith},
+        visit::{VisitMut, VisitMutWith},
     },
 };
 
 #[derive(Default)]
 pub(crate) struct Directives {
-    pub tailwindDirectives: AHashSet<JsWord>,
+    pub tailwind_directives: AHashSet<JsWord>,
 
-    pub applyDirectives: AHashSet<AtRule>,
+    pub apply_directives: AHashSet<AtRule>,
 }
 
-pub(crate) fn normalize_tailwind_directives(ss: &Stylesheet) -> Directives {
+pub(crate) fn normalize_tailwind_directives(ss: &mut Stylesheet) -> Directives {
     let mut data = Directives::default();
 
-    let mut v = Visitor { data: &mut data };
+    let mut v = TailwindNormalizer { data: &mut data };
+
+    ss.visit_mut_with(&mut v);
 
     data
 }
 
-struct Visitor<'a> {
+struct TailwindNormalizer<'a> {
     data: &'a mut Directives,
 }
 
-impl Visit for Visitor<'_> {
-    fn visit_at_rule(&mut self, at_rule: &AtRule) {
+impl VisitMut for TailwindNormalizer<'_> {
+    fn visit_mut_at_rule(&mut self, at_rule: &mut AtRule) {
         if let AtRuleName::Ident(i) = &at_rule.name {
             if &*i.value == "apply" {
-                self.data.applyDirectives.insert(at_rule.clone());
+                self.data.apply_directives.insert(at_rule.clone());
             }
 
             if &*i.value == "tailwind" {
@@ -39,6 +41,6 @@ impl Visit for Visitor<'_> {
             }
         }
 
-        at_rule.visit_children_with(self);
+        at_rule.visit_mut_children_with(self);
     }
 }
