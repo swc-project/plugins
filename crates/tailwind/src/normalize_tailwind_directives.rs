@@ -13,8 +13,7 @@ use swc_core::{
 #[derive(Default)]
 pub(crate) struct Directives {
     pub tailwind_directives: AHashSet<JsWord>,
-
-    pub apply_directives: AHashSet<AtRule>,
+    // pub apply_directives: AHashSet<AtRule>,
 }
 
 pub(crate) fn normalize_tailwind_directives(ss: &mut Stylesheet) -> Directives {
