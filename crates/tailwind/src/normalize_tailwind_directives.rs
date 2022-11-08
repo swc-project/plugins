@@ -2,7 +2,10 @@ use swc_atoms::JsWord;
 use swc_core::{
     common::collections::AHashSet,
     css::{
-        ast::{AtRule, AtRuleName, AtRulePrelude, ComponentValue, Stylesheet, Token, TokenAndSpan},
+        ast::{
+            AtRule, AtRuleName, AtRulePrelude, ComponentValue, ImportPrelude, ImportPreludeHref,
+            ListOfComponentValues, Stylesheet, Token, TokenAndSpan,
+        },
         visit::{VisitMut, VisitMutWith},
     },
 };
@@ -30,7 +33,51 @@ struct TailwindNormalizer<'a> {
 
 impl VisitMut for TailwindNormalizer<'_> {
     fn visit_mut_at_rule(&mut self, at_rule: &mut AtRule) {
-        if let AtRuleName::Ident(name) = &at_rule.name {
+        if let AtRuleName::Ident(name) = &mut at_rule.name {
+            if &*name.value == "import" {
+                if let Some(box AtRulePrelude::ImportPrelude(ImportPrelude {
+                    span, href, ..
+                })) = &mut at_rule.prelude
+                {
+                    let is = |specifier: &str| match &**href {
+                        ImportPreludeHref::Url(_) => false,
+                        ImportPreludeHref::Str(s) => &s.value == specifier,
+                    };
+
+                    let create_prelude = |s: &str| {
+                        Some(box AtRulePrelude::ListOfComponentValues(
+                            ListOfComponentValues {
+                                span: *span,
+                                children: vec![ComponentValue::PreservedToken(TokenAndSpan {
+                                    span: *span,
+                                    token: Token::Ident {
+                                        value: s.into(),
+                                        raw: "".into(),
+                                    },
+                                })],
+                            },
+                        ))
+                    };
+
+                    if is("tailwindcss/base") {
+                        name.value = "tailwind".into();
+                        at_rule.prelude = create_prelude("base");
+                    } else if is("tailwindcss/components") {
+                        name.value = "tailwind".into();
+                        at_rule.prelude = create_prelude("components");
+                    } else if is("tailwindcss/components") {
+                        name.value = "tailwind".into();
+                        at_rule.prelude = create_prelude("utilities");
+                    } else if is("tailwindcss/utilities") {
+                        name.value = "tailwind".into();
+                        at_rule.prelude = create_prelude("components");
+                    } else if is("tailwindcss/screens") || is("tailwindcss/variants") {
+                        name.value = "tailwind".into();
+                        at_rule.prelude = create_prelude("variants");
+                    }
+                }
+            }
+
             if &*name.value == "tailwind" {
                 if let Some(box AtRulePrelude::ListOfComponentValues(values)) = &mut at_rule.prelude
                 {
@@ -43,11 +90,11 @@ impl VisitMut for TailwindNormalizer<'_> {
                             if &**value == "screens" {
                                 *value = "variants".into()
                             }
+
+                            self.data.tailwind_directives.insert(value.clone());
                         }
                     }
                 }
-                // self.data.tailwindDirectives.insert(at_rule.params.
-                // clone());
             }
         }
 
