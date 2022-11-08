@@ -57,7 +57,7 @@ pub(crate) struct RuleOffset {
     //    Monotonically increasing.
     // TODO: Declare properties above
     /// Some information on how we can sort arbitrary variants
-    pub options: AHashMap<String, VariantOption>,
+    pub options: AHashMap<String, Vec<VariantOption>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]

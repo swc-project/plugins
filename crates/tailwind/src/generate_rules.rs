@@ -95,7 +95,7 @@ fn resolve_matches(
 
             if matches_per_plugin.len() > 0 {
                 let matching_types = get_matching_types(
-                    sort.options.types.unwrap_or_default(),
+                    sort.options.get("types").cloned().unwrap_or_default(),
                     modifier,
                     sort.options,
                     context.tailwind_config,
