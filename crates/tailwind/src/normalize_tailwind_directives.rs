@@ -2,7 +2,7 @@ use swc_atoms::JsWord;
 use swc_core::{
     common::collections::AHashSet,
     css::{
-        ast::{AtRule, AtRuleName, Stylesheet},
+        ast::{AtRule, AtRuleName, AtRulePrelude, ComponentValue, Stylesheet, Token, TokenAndSpan},
         visit::{VisitMut, VisitMutWith},
     },
 };
@@ -30,12 +30,22 @@ struct TailwindNormalizer<'a> {
 
 impl VisitMut for TailwindNormalizer<'_> {
     fn visit_mut_at_rule(&mut self, at_rule: &mut AtRule) {
-        if let AtRuleName::Ident(i) = &at_rule.name {
-            if &*i.value == "apply" {
-                self.data.apply_directives.insert(at_rule.clone());
-            }
-
-            if &*i.value == "tailwind" {
+        if let AtRuleName::Ident(name) = &at_rule.name {
+            if &*name.value == "tailwind" {
+                if let Some(box AtRulePrelude::ListOfComponentValues(values)) = &mut at_rule.prelude
+                {
+                    for v in values.children.iter_mut() {
+                        if let ComponentValue::PreservedToken(TokenAndSpan {
+                            token: Token::Ident { value, .. },
+                            ..
+                        }) = v
+                        {
+                            if &**value == "screens" {
+                                *value = "variants".into()
+                            }
+                        }
+                    }
+                }
                 // self.data.tailwindDirectives.insert(at_rule.params.
                 // clone());
             }
