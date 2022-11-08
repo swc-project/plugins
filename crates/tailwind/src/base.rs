@@ -1,6 +1,6 @@
 use std::borrow::Cow;
 
-use swc_core::css::ast::Rule;
+use swc_core::{common::collections::AHashMap, css::ast::Rule};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) enum Candidate {
@@ -43,7 +43,7 @@ pub struct PluginContext {
     pub is_only_plugin: bool,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) struct RuleOffset {
     //     * @property {Layer} layer The layer that this rule belongs to
     //  * @property {Layer} parentLayer The layer that this rule originally belonged to. Only
@@ -57,7 +57,7 @@ pub(crate) struct RuleOffset {
     //    Monotonically increasing.
     // TODO: Declare properties above
     /// Some information on how we can sort arbitrary variants
-    pub options: Vec<VariantOption>,
+    pub options: AHashMap<String, VariantOption>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
