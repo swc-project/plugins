@@ -5,15 +5,20 @@ use swc_core::css::ast::Stylesheet;
 
 pub use crate::config::*;
 use crate::{
-    context::Context, detect_nesting::detect_nesting,
-    evaluate_tailwind_functions::evaluate_tailwind_functions,
+    collapse_adjacent_rules::collapse_adjacent_rules,
+    collapse_duplicate_declarations::collapse_duplicate_declarations, context::Context,
+    detect_nesting::detect_nesting, evaluate_tailwind_functions::evaluate_tailwind_functions,
     expand_apply_at_rules::expand_apply_at_rules,
     expand_tailwind_at_rules::expand_tailwind_at_rules,
     normalize_tailwind_directives::normalize_tailwind_directives,
     partition_apply_at_rules::partition_apply_at_rules,
+    resolve_defaults_at_rules::resolve_defaults_at_rules,
+    substitute_screen_at_rules::substitute_screen_at_rules,
 };
 
 mod base;
+mod collapse_adjacent_rules;
+mod collapse_duplicate_declarations;
 mod config;
 mod context;
 mod detect_nesting;
@@ -23,6 +28,8 @@ mod expand_tailwind_at_rules;
 mod generate_rules;
 mod normalize_tailwind_directives;
 mod partition_apply_at_rules;
+mod resolve_defaults_at_rules;
+mod substitute_screen_at_rules;
 mod util;
 
 /// Main entrypoint.
@@ -56,9 +63,9 @@ impl Compiler {
         partition_apply_at_rules(ss);
         expand_apply_at_rules(&mut context, ss);
         evaluate_tailwind_functions(&mut context, ss);
-        substitute_screen_at_rules(context, ss);
-        resolve_defaults_at_rules(context, ss);
-        collapse_adjacent_rules(context, ss);
-        collapse_duplicate_declarations(context, ss);
+        substitute_screen_at_rules(&mut context, ss);
+        resolve_defaults_at_rules(&mut context, ss);
+        collapse_adjacent_rules(&mut context, ss);
+        collapse_duplicate_declarations(&mut context, ss);
     }
 }
