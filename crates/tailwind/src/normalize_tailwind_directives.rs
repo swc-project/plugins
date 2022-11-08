@@ -16,6 +16,7 @@ pub(crate) struct Directives {
     // pub apply_directives: AHashSet<AtRule>,
 }
 
+/// TODO(kdy1): Report errors for wrong config
 pub(crate) fn normalize_tailwind_directives(ss: &mut Stylesheet) -> Directives {
     let mut data = Directives::default();
 
