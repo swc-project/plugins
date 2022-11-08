@@ -1,18 +1,18 @@
 import postcss from 'postcss'
 import selectorParser from 'postcss-selector-parser'
-import parseObjectStyles from '../tailwindcss-master/src/util/parseObjectStyles'
-import isPlainObject from '../tailwindcss-master/src/util/isPlainObject'
-import prefixSelector from '../tailwindcss-master/src/util/prefixSelector'
-import { updateAllClasses, filterSelectorsForClass, getMatchingTypes } from '../tailwindcss-master/src/util/pluginUtils'
-import log from '../tailwindcss-master/src/util/log'
-import * as sharedState from '../tailwindcss-master/src/lib/sharedState'
-import { formatVariantSelector, finalizeSelector } from '../tailwindcss-master/src/util/formatVariantSelector'
-import { asClass } from '../tailwindcss-master/src/util/nameClass'
-import { normalize } from '../tailwindcss-master/src/util/dataTypes'
-import { isValidVariantFormatString, parseVariant } from '../tailwindcss-master/src/lib/setupContextUtils'
-import isValidArbitraryValue from '../tailwindcss-master/src/util/isValidArbitraryValue'
-import { splitAtTopLevelOnly } from '../tailwindcss-master/src/util/splitAtTopLevelOnly.js'
-import { flagEnabled } from '../tailwindcss-master/src/featureFlags'
+import parseObjectStyles from '../util/parseObjectStyles'
+import isPlainObject from '../util/isPlainObject'
+import prefixSelector from '../util/prefixSelector'
+import { updateAllClasses, filterSelectorsForClass, getMatchingTypes } from '../util/pluginUtils'
+import log from '../util/log'
+import * as sharedState from './sharedState'
+import { formatVariantSelector, finalizeSelector } from '../util/formatVariantSelector'
+import { asClass } from '../util/nameClass'
+import { normalize } from '../util/dataTypes'
+import { isValidVariantFormatString, parseVariant } from './setupContextUtils'
+import isValidArbitraryValue from '../util/isValidArbitraryValue'
+import { splitAtTopLevelOnly } from '../util/splitAtTopLevelOnly.js'
+import { flagEnabled } from '../featureFlags'
 
 let classNameParser = selectorParser((selectors) => {
   return selectors.first.filter(({ type }) => type === 'class').pop().value
@@ -509,6 +509,13 @@ function* resolveMatchedPlugins(classCandidate, context) {
   }
 }
 
+function splitWithSeparator(input, separator) {
+  if (input === sharedState.NOT_ON_DEMAND) {
+    return [sharedState.NOT_ON_DEMAND]
+  }
+
+  return splitAtTopLevelOnly(input, separator)
+}
 
 function* recordCandidates(matches, classCandidate) {
   for (const match of matches) {
@@ -523,9 +530,46 @@ function* recordCandidates(matches, classCandidate) {
 }
 
 function* resolveMatches(candidate, context, original = candidate) {
+  let separator = context.tailwindConfig.separator
+  let [classCandidate, ...variants] = splitWithSeparator(candidate, separator).reverse()
+  let important = false
+
+  if (classCandidate.startsWith('!')) {
+    important = true
+    classCandidate = classCandidate.slice(1)
+  }
+
+  if (flagEnabled(context.tailwindConfig, 'variantGrouping')) {
+    if (classCandidate.startsWith('(') && classCandidate.endsWith(')')) {
+      let base = variants.slice().reverse().join(separator)
+      for (let part of splitAtTopLevelOnly(classCandidate.slice(1, -1), ',')) {
+        yield* resolveMatches(base + separator + part, context, original)
+      }
+    }
+  }
+
+  // TODO: Reintroduce this in ways that doesn't break on false positives
+  // function sortAgainst(toSort, against) {
+  //   return toSort.slice().sort((a, z) => {
+  //     return bigSign(against.get(a)[0] - against.get(z)[0])
+  //   })
+  // }
+  // let sorted = sortAgainst(variants, context.variantMap)
+  // if (sorted.toString() !== variants.toString()) {
+  //   let corrected = sorted.reverse().concat(classCandidate).join(':')
+  //   throw new Error(`Class ${candidate} should be written as ${corrected}`)
+  // }
 
   for (let matchedPlugins of resolveMatchedPlugins(classCandidate, context)) {
+    let matches = []
+    let typesByMatches = new Map()
+
+    let [plugins, modifier] = matchedPlugins
+    let isOnlyPlugin = plugins.length === 1
+
     for (let [sort, plugin] of plugins) {
+      let matchesPerPlugin = []
+
       if (typeof plugin === 'function') {
         for (let ruleSet of [].concat(plugin(modifier, { isOnlyPlugin }))) {
           let [rules, options] = parseRules(ruleSet, context.postCssNodeCache)
