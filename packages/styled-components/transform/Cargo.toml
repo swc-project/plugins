@@ -20,7 +20,7 @@ swc_core = { features = [
   "ecma_ast",
   "ecma_utils",
   "ecma_visit",
-], version = "0.40.46" }
+], version = "0.40.56" }
 tracing = "0.1.32"
 
 [dev-dependencies]
@@ -29,5 +29,5 @@ swc_core = { features = [
   "ecma_parser",
   "ecma_transforms",
   "testing_transform",
-], version = "0.40.46" }
+], version = "0.40.56" }
 testing = "0.31.13"
