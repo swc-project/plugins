@@ -299,6 +299,7 @@ impl Namespacer {
                         InputType::Tokens(&args),
                         ParserConfig {
                             allow_wrong_line_comments: true,
+                            css_modules: true,
                             ..Default::default()
                         },
                         // TODO(kdy1): We might be able to report syntax errors.
