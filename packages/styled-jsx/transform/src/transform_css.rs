@@ -14,7 +14,11 @@ use swc_core::{
         },
         parser::{
             lexer::Lexer,
-            parser::{input::Tokens, Parser, ParserConfig},
+            parse_input,
+            parser::{
+                input::{InputType, Tokens},
+                Parser, ParserConfig,
+            },
         },
         prefixer::prefixer,
         visit::{VisitMut, VisitMutWith},
@@ -290,8 +294,8 @@ impl Namespacer {
                 args.tokens = front_tokens;
 
                 let complex_selectors = panic::catch_unwind(|| {
-                    let x: ComplexSelector = parse_tokens(
-                        &args,
+                    let x: ComplexSelector = parse_input(
+                        InputType::Tokens(&args),
                         ParserConfig {
                             allow_wrong_line_comments: true,
                             ..Default::default()
