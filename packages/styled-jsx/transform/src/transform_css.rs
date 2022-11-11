@@ -3,8 +3,8 @@ use std::{panic, sync::Arc};
 use easy_error::{bail, Error};
 use swc_core::{
     common::{
-        errors::HANDLER, source_map::Pos, util::take::Take, BytePos, FileName, SourceMap, Span,
-        Spanned, SyntaxContext, DUMMY_SP,
+        errors::HANDLER, source_map::Pos, util::take::Take, BytePos, SourceMap, Span, Spanned,
+        SyntaxContext, DUMMY_SP,
     },
     css::{
         ast::*,
