@@ -2197,6 +2197,7 @@ dependencies = [
  "swc_common",
  "swc_core",
  "swc_emotion",
+ "tracing",
 ]
 
 [[package]]
@@ -2207,6 +2208,7 @@ dependencies = [
  "serde",
  "swc_common",
  "swc_core",
+ "tracing",
 ]
 
 [[package]]
@@ -2239,6 +2241,7 @@ version = "0.12.3"
 dependencies = [
  "swc_common",
  "swc_core",
+ "tracing",
 ]
 
 [[package]]
@@ -2265,6 +2268,7 @@ dependencies = [
  "serde_json",
  "swc_common",
  "swc_core",
+ "tracing",
 ]
 
 [[package]]
@@ -2276,6 +2280,7 @@ dependencies = [
  "styled_components",
  "swc_common",
  "swc_core",
+ "tracing",
 ]
 
 [[package]]
@@ -2297,6 +2302,7 @@ dependencies = [
  "serde_json",
  "swc_common",
  "swc_core",
+ "tracing",
 ]
 
 [[package]]
