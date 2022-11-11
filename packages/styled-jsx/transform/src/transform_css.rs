@@ -3,8 +3,8 @@ use std::{panic, sync::Arc};
 use easy_error::{bail, Error};
 use swc_core::{
     common::{
-        errors::HANDLER, source_map::Pos, util::take::Take, BytePos, SourceMap, Span, Spanned,
-        SyntaxContext, DUMMY_SP,
+        errors::HANDLER, source_map::Pos, util::take::Take, BytePos, FileName, SourceMap, Span,
+        Spanned, SyntaxContext, DUMMY_SP,
     },
     css::{
         ast::*,
@@ -13,8 +13,8 @@ use swc_core::{
             CodeGenerator, CodegenConfig, Emit,
         },
         parser::{
-            parse_str, parse_tokens,
-            parser::{input::Tokens, ParserConfig},
+            lexer::Lexer,
+            parser::{input::Tokens, Parser, ParserConfig},
         },
         prefixer::prefixer,
         visit::{VisitMut, VisitMutWith},
@@ -39,18 +39,21 @@ pub fn transform_css(
 ) -> Result<Expr, Error> {
     debug!("CSS: \n{}", style_info.css);
 
-    let result: Result<Stylesheet, _> = parse_str(
-        &style_info.css,
-        style_info.css_span.lo,
-        style_info.css_span.hi,
-        ParserConfig {
-            allow_wrong_line_comments: true,
-            ..Default::default()
-        },
-        // We ignore errors because we inject placeholders for expressions which is
-        // not a valid css.
-        &mut vec![],
+    let config = ParserConfig {
+        allow_wrong_line_comments: true,
+        ..Default::default()
+    };
+    let lexer = Lexer::new(
+        StringInput::new(
+            &style_info.css,
+            style_info.css_span.lo,
+            style_info.css_span.hi,
+        ),
+        config,
     );
+    let mut parser = Parser::new(lexer, config);
+
+    let result: Result<Stylesheet, _> = parser.parse_all();
     let mut ss = match result {
         Ok(ss) => ss,
         Err(err) => {
