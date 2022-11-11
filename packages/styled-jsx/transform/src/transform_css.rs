@@ -45,6 +45,7 @@ pub fn transform_css(
 
     let config = ParserConfig {
         allow_wrong_line_comments: true,
+        css_modules: true,
         ..Default::default()
     };
     let lexer = Lexer::new(
