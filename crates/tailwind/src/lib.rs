@@ -13,6 +13,7 @@ use regex::Regex;
 use swc_common::{
     collections::{AHashMap, AHashSet},
     sync::Lazy,
+    util::take::Take,
     DUMMY_SP,
 };
 use swc_core::{
@@ -146,6 +147,14 @@ impl Tailwind {
             });
         }
 
+        // Replace the @tailwind rule with the CSS that was generated based on the
+        // user's template contents.
+
+        ss.visit_mut_with(&mut TailwindReplacer {
+            new_rules: &mut new_rules,
+            extra: Default::default(),
+        });
+
         Ok(())
     }
 }
@@ -256,5 +265,56 @@ impl VisitMut for DeclCollector {
     fn visit_mut_declaration(&mut self, n: &mut Declaration) {
         // TODO: Remove clone using mem::replace
         self.decls.push(n.clone());
+    }
+}
+
+struct TailwindReplacer<'a> {
+    new_rules: &'a mut Vec<Rule>,
+    extra: Vec<Rule>,
+}
+
+impl VisitMut for TailwindReplacer<'_> {
+    fn visit_mut_rules(&mut self, n: &mut Vec<Rule>) {
+        let prev = self.extra.take();
+
+        let mut new = Vec::with_capacity(n.len() + 4);
+
+        for mut r in n.take() {
+            r.visit_mut_with(self);
+
+            new.extend(self.extra.take());
+
+            if let Rule::AtRule(r) = &r {
+                if let AtRuleName::Ident(name) = &r.name {
+                    if name.value == js_word!("") {
+                        continue;
+                    }
+                }
+            }
+            new.push(r);
+        }
+
+        *n = new;
+        self.extra = prev;
+    }
+
+    fn visit_mut_at_rule(&mut self, n: &mut AtRule) {
+        n.visit_mut_children_with(self);
+
+        if let AtRuleName::Ident(name) = &n.name {
+            if &*name.value == "tailwind" {
+                if let Some(box AtRulePrelude::ListOfComponentValues(tokens)) = &n.prelude {
+                    // Remove @tailwind
+                    n.name = AtRuleName::Ident(Ident {
+                        span: DUMMY_SP,
+                        value: js_word!(""),
+                        raw: None,
+                    });
+                    self.extra.extend(self.new_rules.take());
+                }
+            }
+        }
+
+        //
     }
 }
