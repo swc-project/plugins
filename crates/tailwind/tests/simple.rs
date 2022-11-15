@@ -41,7 +41,7 @@ fn run(input: &str, config_path: &Path) -> Output {
 
         let mut tw = Tailwind::new(cm.clone(), config_path.into());
 
-        tw.compile(&mut ss);
+        tw.compile(&mut ss).unwrap();
 
         let css = {
             let mut buf = String::new();
