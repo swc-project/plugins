@@ -122,7 +122,7 @@ impl Tailwind {
                     for (name, value) in colors {
                         let mut m = AHashMap::default();
                         m.insert("color".into(), value.clone());
-                        map.insert(format!("text-{}", name), m);
+                        map.insert(format!(".text-{}", name), m);
                     }
                 }
 
