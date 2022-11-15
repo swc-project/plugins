@@ -89,6 +89,22 @@ impl Tailwind {
             context.add_utilities(map);
         }));
 
+        // Example built-in plugin that can read values from the config.
+
+        plugins.push({
+            let config = config.clone();
+            Box::new(move |context| {
+                let map = AHashMap::default();
+
+                // TODO: Convert config to a hash map
+
+                // This is an example of using config from core plugins
+                #[allow(clippy::drop_ref)]
+                drop(&config);
+                context.add_utilities(map);
+            })
+        });
+
         Ok(())
     }
 }
