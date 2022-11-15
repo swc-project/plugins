@@ -1,0 +1,7 @@
+@tailwind utilities;
+
+@layer utilities {
+  .css-utility {
+    color: blue;
+  }
+}

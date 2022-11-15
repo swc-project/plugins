@@ -1,0 +1,7 @@
+@tailwind utilities;
+
+@layer utilities {
+  .util-from-css {
+    color: blue;
+  }
+}
