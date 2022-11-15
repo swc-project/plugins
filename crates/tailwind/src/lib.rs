@@ -10,6 +10,7 @@ use anyhow::{Context, Result};
 #[cfg(feature = "parallel")]
 use rayon::prelude::*;
 use regex::Regex;
+use serde::Deserialize;
 use swc_common::{
     collections::{AHashMap, AHashSet},
     errors::HANDLER,
@@ -31,14 +32,15 @@ use swc_core::{
 };
 
 /// Content of the config file
-#[derive(Debug)]
+#[derive(Debug, Deserialize)]
 pub struct Config {
     content: Vec<String>,
 }
 
 impl Config {
     pub fn from_path(path: &Path) -> Result<Self> {
-        todo!()
+        let s = read_to_string(path).context("failed to read config file")?;
+        serde_json::from_str(&s).context("failed to parse config file")
     }
 }
 
@@ -166,7 +168,7 @@ impl Tailwind {
     }
 }
 
-fn resolve_glob(config: &[String]) -> Vec<PathBuf> {
+fn resolve_glob(globs: &[String]) -> Vec<PathBuf> {
     todo!()
 }
 
