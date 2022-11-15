@@ -12,7 +12,10 @@ use swc_common::{
     collections::{AHashMap, AHashSet},
     sync::Lazy,
 };
-use swc_core::css::ast::ListOfComponentValues;
+use swc_core::css::{
+    ast::Stylesheet,
+    visit::{VisitMut, VisitMutWith},
+};
 
 /// Content of the config file
 #[derive(Debug)]
@@ -38,7 +41,7 @@ impl Tailwind {
         Self { config_path }
     }
 
-    pub fn compile(&mut self) -> Result<()> {
+    pub fn compile(&mut self, ss: &mut Stylesheet) -> Result<()> {
         let config = Config::from_path(&self.config_path)
             .context("failed to load config file")
             .map(Arc::new)?;
@@ -114,6 +117,16 @@ impl Tailwind {
         // TODO:
         // plugins.extend(config.plugins);
 
+        // Collect "plugins" from the CSS
+        //
+        // NOTE: In reality we want to collect information for the correct layer. But
+        // for this proof of concept that does not matter. Idea is that we _can_
+        // read the CSS file and collect information from it.
+
+        ss.visit_mut_with(&mut PluginCollector {
+            plugins: &mut plugins,
+        });
+
         Ok(())
     }
 }
@@ -129,3 +142,9 @@ pub struct PluginContext {}
 impl PluginContext {
     pub fn add_utilities(&mut self, map: AHashMap<String, AHashMap<String, String>>) {}
 }
+
+struct PluginCollector<'a> {
+    plugins: &'a mut Vec<Plugin>,
+}
+
+impl VisitMut for PluginCollector<'_> {}
