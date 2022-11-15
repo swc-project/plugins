@@ -77,6 +77,7 @@ fn run(input: &str, config_path: &Path) -> Output {
 
             buf
         };
+        let css = format_css(&css);
 
         Ok(Output { css })
     })
