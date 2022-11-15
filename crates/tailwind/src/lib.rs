@@ -140,7 +140,10 @@ impl Tailwind {
         let mut new_rules = vec![];
 
         for plugin in plugins {
-            plugin(&mut PluginContext {});
+            plugin(&mut PluginContext {
+                candidates: &candidates,
+                new_rules: &mut new_rules,
+            });
         }
 
         Ok(())
@@ -155,6 +158,7 @@ type Plugin = Box<dyn for<'aa> Fn(&mut PluginContext<'aa>)>;
 
 pub struct PluginContext<'a> {
     candidates: &'a AHashSet<String>,
+    new_rules: &'a mut Vec<Rule>,
 }
 
 impl PluginContext<'_> {
