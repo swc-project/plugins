@@ -2,6 +2,7 @@ use std::{fs::read_to_string, path::Path};
 
 use swc_common::FileName;
 use swc_core::css::{
+    ast::Stylesheet,
     codegen::{writer::basic::BasicCssWriter, CodeGenerator, Emit},
     parser::parse_file,
 };
@@ -29,7 +30,26 @@ fn should_generate_css_using_values_from_your_config_file() {
 }
 
 fn format_css(s: &str) -> String {
-    s.into()
+    testing::run_test(false, |cm, _| {
+        let fm = cm.new_source_file(FileName::Anon, s.into());
+
+        let ss: Stylesheet = parse_file(&fm, Default::default(), &mut vec![]).unwrap();
+
+        let css = {
+            let mut buf = String::new();
+            let mut g = CodeGenerator::new(
+                BasicCssWriter::new(&mut buf, None, Default::default()),
+                Default::default(),
+            );
+
+            g.emit(&ss).unwrap();
+
+            buf
+        };
+
+        Ok(css)
+    })
+    .unwrap()
 }
 
 struct Output {
