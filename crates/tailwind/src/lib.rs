@@ -21,10 +21,10 @@ use swc_core::{
     css::{
         ast::{
             AtRule, AtRuleName, AtRulePrelude, ComponentValue, Declaration, DeclarationName, Ident,
-            QualifiedRule, QualifiedRulePrelude, Rule, SimpleBlock, Stylesheet, Token,
-            TokenAndSpan,
+            ListOfComponentValues, QualifiedRule, QualifiedRulePrelude, Rule, SimpleBlock,
+            Stylesheet, Token, TokenAndSpan,
         },
-        parser::{parse_file, parse_str},
+        parser::parse_file,
         visit::{VisitMut, VisitMutWith},
     },
     ecma::atoms::js_word,
@@ -221,24 +221,21 @@ impl PluginContext<'_> {
                 let body = definitions
                     .into_iter()
                     .filter_map(|(property, value)| {
-                        let mut errors = vec![];
-
                         let name = if property.contains("-") {
                             parse!(property).map(DeclarationName::DashedIdent)
                         } else {
                             parse!(property).map(DeclarationName::Ident)
                         }?;
-                        let value = parse!(value)?;
+                        let value: ListOfComponentValues = parse!(value)?;
 
                         Some(ComponentValue::Declaration(Declaration {
                             span: DUMMY_SP,
                             name,
-                            value,
+                            value: value.children,
                             important: Default::default(),
                         }))
                     })
                     .collect();
-                for (property, value) in definitions {}
 
                 let prelude = match prelude {
                     Some(v) => v,
