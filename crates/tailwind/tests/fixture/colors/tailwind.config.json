@@ -1,0 +1,8 @@
+{
+  "content": ["tests/fixture/colors/index.html"],
+  "theme": {
+    "colors": {
+      "primary": "#0088cc"
+    }
+  }
+}

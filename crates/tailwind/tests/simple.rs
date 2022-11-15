@@ -11,7 +11,10 @@ use swc_tailwind::Tailwind;
 fn should_generate_css_using_values_from_your_config_file() {
     let input = read_to_string("tests/fixture/colors/index.css").unwrap();
 
-    let res = run(&input, "./test-fixtures/colors/tailwind.config.js".as_ref());
+    let res = run(
+        &input,
+        "./tests/fixture/colors/tailwind.config.json".as_ref(),
+    );
 
     assert_eq!(
         res.css,
@@ -34,12 +37,12 @@ struct Output {
 }
 
 fn run(input: &str, config_path: &Path) -> Output {
-    testing::run_test(false, |cm, handler| {
+    testing::run_test(false, |cm, _handler| {
         let fm = cm.new_source_file(FileName::Custom("input.css".into()), input.into());
 
         let mut ss = parse_file(&fm, Default::default(), &mut vec![]).unwrap();
 
-        let mut tw = Tailwind::new(cm.clone(), config_path.into());
+        let mut tw = Tailwind::new(cm, config_path.into());
 
         tw.compile(&mut ss).expect("failed to compile");
 
