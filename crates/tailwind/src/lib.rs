@@ -105,6 +105,15 @@ impl Tailwind {
             })
         });
 
+        // External plugins registered in the `tailwind.config.js` file.
+
+        // This requires a trick.
+        // Note: We can invoke js function from standalone node addon, but we can't from
+        // wasm plugin.
+
+        // TODO:
+        // plugins.extend(config.plugins);
+
         Ok(())
     }
 }
