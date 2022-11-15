@@ -33,6 +33,7 @@ use swc_core::{
 
 /// Content of the config file
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Config {
     content: Vec<String>,
 }
