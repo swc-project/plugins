@@ -50,6 +50,27 @@ fn should_generate_css_using_built_in_plugins() {
     );
 }
 
+#[test]
+fn should_generate_css_using_static_plugins_defined_in_your_css() {
+    let input = read_to_string("tests/fixture/css-plugin/index.css").unwrap();
+
+    let res = run(
+        &input,
+        "./tests/fixture/css-plugin/tailwind.config.json".as_ref(),
+    );
+
+    assert_eq!(
+        res.css,
+        format_css(
+            "
+            .css-utility {
+                color: blue;
+            }
+            "
+        )
+    );
+}
+
 fn format_css(s: &str) -> String {
     testing::run_test(false, |cm, _| {
         let fm = cm.new_source_file(FileName::Anon, s.into());

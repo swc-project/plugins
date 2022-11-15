@@ -6,20 +6,6 @@ import prettier from 'prettier'
 import tailwind from './index'
 
 describe('plugins', () => {
-  it('should generate CSS using static plugins defined in your CSS', () => {
-    let input = readFile('./test-fixtures/css-plugin/index.css')
-    let config = file('./test-fixtures/css-plugin/tailwind.config.js')
-
-    return run(input, config).then((result) => {
-      expect(format(result.css)).toEqual(
-        format(css`
-          .css-utility {
-            color: blue;
-          }
-        `),
-      )
-    })
-  })
 
   it('should generate CSS using external plugins defined in your tailwind.config.js file', () => {
     let input = readFile('./test-fixtures/external-plugin/index.css')
