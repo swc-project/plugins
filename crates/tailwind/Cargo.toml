@@ -20,5 +20,7 @@ swc_common = {version = "0.29.13", features = ["concurrent"]}
 swc_core = {version = "0.40.56", features = [
   "common",
   "css_ast",
+  "css_codegen",
+  "css_parser",
   "css_visit",
 ]}
