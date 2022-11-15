@@ -1,14 +1,32 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+use std::path::{Path, PathBuf};
+
+use anyhow::Result;
+
+/// Content of the config file
+#[derive(Debug)]
+pub struct Config {
+    content: Vec<String>,
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+impl Config {
+    pub fn from_path(path: &Path) -> Result<Self> {
+        todo!()
+    }
+}
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+#[derive(Debug)]
+pub struct Tailwind {
+    config_path: PathBuf,
+}
+
+impl Tailwind {
+    pub fn new(config_path: PathBuf) -> Self {
+        Self { config_path }
+    }
+
+    pub fn compile(&mut self) -> Result<()> {
+        let config = Config::from_path(&self.config_path)?;
+
+        Ok(())
     }
 }
