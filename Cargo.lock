@@ -2380,6 +2380,7 @@ name = "swc_tailwind"
 version = "0.1.3"
 dependencies = [
  "anyhow",
+ "glob",
  "rayon",
  "regex",
  "serde",
