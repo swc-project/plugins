@@ -172,7 +172,7 @@ pub struct PluginContext<'a> {
 
 impl PluginContext<'_> {
     /// `map`: `(selector, definitions)`
-    pub fn add_utilities(&mut self, map: AHashMap<String, AHashMap<String, String>>) {
+    pub fn add_utilities(&mut self, map: AHashMap<String, Vec<Declaration>>) {
         // Only generate the rules that we care about.
         // .slice(1) is a quick way of getting rid of the `.` of the selector
         // Very naive, but as a proof-of-concept this is fine.
