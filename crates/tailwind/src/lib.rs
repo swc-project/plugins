@@ -22,8 +22,8 @@ use swc_core::{
     css::{
         ast::{
             AtRule, AtRuleName, AtRulePrelude, ComponentValue, Declaration, DeclarationName, Ident,
-            ListOfComponentValues, QualifiedRule, QualifiedRulePrelude, Rule, SimpleBlock,
-            Stylesheet, Token, TokenAndSpan,
+            LayerPrelude, ListOfComponentValues, QualifiedRule, QualifiedRulePrelude, Rule,
+            SimpleBlock, Stylesheet, Token, TokenAndSpan,
         },
         parser::parse_file,
         visit::{VisitMut, VisitMutWith},
@@ -277,6 +277,11 @@ impl PluginContext<'_> {
             }
         }
     }
+
+    /// `map`: `(selector, definitions)`
+    pub fn add_utilities_parsed(&mut self, rules: Vec<Rule>) {
+        self.new_rules.extend(rules);
+    }
 }
 
 struct PluginCollector<'a> {
@@ -303,34 +308,25 @@ impl VisitMut for PluginCollector<'_> {
     fn visit_mut_at_rule(&mut self, n: &mut AtRule) {
         if let AtRuleName::Ident(name) = &n.name {
             if &*name.value == "layer" {
-                if let Some(box AtRulePrelude::ListOfComponentValues(tokens)) = &n.prelude {
-                    for v in &tokens.children {
-                        if let Some(selector_name) = v
-                            .as_preserved_token()
-                            .map(|v| &v.token)
-                            .and_then(extract_directive)
-                        {
-                            // @layer utilities {}
+                if let Some(box AtRulePrelude::LayerPrelude(LayerPrelude::Name(layer_name))) =
+                    &n.prelude
+                {
+                    // layer_name is `utilities` for @layer utilities {}
 
-                            let mut collector = DeclCollector::default();
-                            n.block.visit_mut_with(&mut collector);
+                    let mut collector = DeclCollector::default();
+                    n.block.visit_mut_with(&mut collector);
 
-                            self.plugins.push(Box::new(|context| {
-                                let mut m = AHashMap::default();
+                    self.plugins.push(Box::new(move |context| {
+                        context.add_utilities_parsed(collector.rules.clone());
+                    }));
 
-                                // TODO: Add collector.decls to m
-                                context.add_utilities(m);
-                            }));
-
-                            // Remove @layer
-                            n.name = AtRuleName::Ident(Ident {
-                                span: DUMMY_SP,
-                                value: js_word!(""),
-                                raw: None,
-                            });
-                            return;
-                        }
-                    }
+                    // Remove @layer
+                    n.name = AtRuleName::Ident(Ident {
+                        span: DUMMY_SP,
+                        value: js_word!(""),
+                        raw: None,
+                    });
+                    return;
                 }
             }
         }
@@ -351,13 +347,13 @@ fn extract_directive(t: &Token) -> Option<&str> {
 
 #[derive(Default)]
 struct DeclCollector {
-    decls: Vec<Declaration>,
+    rules: Vec<Rule>,
 }
 
 impl VisitMut for DeclCollector {
-    fn visit_mut_declaration(&mut self, n: &mut Declaration) {
+    fn visit_mut_qualified_rule(&mut self, n: &mut QualifiedRule) {
         // TODO: Remove clone using mem::replace
-        self.decls.push(n.clone());
+        self.rules.push(Rule::QualifiedRule(Box::new(n.clone())));
     }
 }
 
