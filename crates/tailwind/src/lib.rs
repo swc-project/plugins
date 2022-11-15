@@ -1,13 +1,18 @@
 use std::{
     fs::read_to_string,
     path::{Path, PathBuf},
+    sync::Arc,
 };
 
 use anyhow::{Context, Result};
 #[cfg(feature = "parallel")]
 use rayon::prelude::*;
 use regex::Regex;
-use swc_common::{collections::AHashSet, sync::Lazy};
+use swc_common::{
+    collections::{AHashMap, AHashSet},
+    sync::Lazy,
+};
+use swc_core::css::ast::ListOfComponentValues;
 
 /// Content of the config file
 #[derive(Debug)]
@@ -34,7 +39,9 @@ impl Tailwind {
     }
 
     pub fn compile(&mut self) -> Result<()> {
-        let config = Config::from_path(&self.config_path).context("failed to load config file")?;
+        let config = Config::from_path(&self.config_path)
+            .context("failed to load config file")
+            .map(Arc::new)?;
 
         let files = resolve_glob(&config.content);
 
@@ -62,6 +69,26 @@ impl Tailwind {
             .flatten()
             .collect::<AHashSet<_>>();
 
+        let mut plugins: Vec<Plugin> = vec![];
+
+        // Built-in plugins
+        plugins.push(Box::new(|context| {
+            let mut map = AHashMap::default();
+
+            map.insert(".built-in-utility".into(), {
+                let mut m = AHashMap::default();
+                m.insert("color".into(), "red".into());
+                m
+            });
+            map.insert(".should-not-be-generated".into(), {
+                let mut m = AHashMap::default();
+                m.insert("appearance".into(), "none".into());
+                m
+            });
+
+            context.add_utilities(map);
+        }));
+
         Ok(())
     }
 }
@@ -70,4 +97,10 @@ fn resolve_glob(config: &[String]) -> Vec<PathBuf> {
     todo!()
 }
 
-enum Plugin {}
+type Plugin = Box<dyn Fn(&mut PluginContext)>;
+
+pub struct PluginContext {}
+
+impl PluginContext {
+    pub fn add_utilities(&mut self, map: AHashMap<String, AHashMap<String, String>>) {}
+}
