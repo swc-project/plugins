@@ -12,13 +12,18 @@ use rayon::prelude::*;
 use regex::Regex;
 use swc_common::{
     collections::{AHashMap, AHashSet},
+    errors::HANDLER,
     sync::Lazy,
     util::take::Take,
-    DUMMY_SP,
+    FileName, SourceMap, DUMMY_SP,
 };
 use swc_core::{
     css::{
-        ast::{AtRule, AtRuleName, AtRulePrelude, Declaration, Ident, Rule, Stylesheet, Token},
+        ast::{
+            AtRule, AtRuleName, AtRulePrelude, ComponentValue, Declaration, Ident, QualifiedRule,
+            QualifiedRulePrelude, Rule, SimpleBlock, Stylesheet, Token, TokenAndSpan,
+        },
+        parser::{parse_file, parse_str},
         visit::{VisitMut, VisitMutWith},
     },
     ecma::atoms::js_word,
@@ -38,14 +43,14 @@ impl Config {
 
 static CONTENT_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r#"['"\s<>=/]"#).unwrap());
 
-#[derive(Debug)]
 pub struct Tailwind {
+    cm: Arc<SourceMap>,
     config_path: PathBuf,
 }
 
 impl Tailwind {
-    pub fn new(config_path: PathBuf) -> Self {
-        Self { config_path }
+    pub fn new(cm: Arc<SourceMap>, config_path: PathBuf) -> Self {
+        Self { config_path, cm }
     }
 
     pub fn compile(&mut self, ss: &mut Stylesheet) -> Result<()> {
@@ -142,6 +147,7 @@ impl Tailwind {
 
         for plugin in plugins {
             plugin(&mut PluginContext {
+                cm: &self.cm,
                 candidates: &candidates,
                 new_rules: &mut new_rules,
             });
@@ -166,21 +172,87 @@ fn resolve_glob(config: &[String]) -> Vec<PathBuf> {
 type Plugin = Box<dyn for<'aa> Fn(&mut PluginContext<'aa>)>;
 
 pub struct PluginContext<'a> {
+    cm: &'a SourceMap,
     candidates: &'a AHashSet<String>,
     new_rules: &'a mut Vec<Rule>,
 }
 
 impl PluginContext<'_> {
     /// `map`: `(selector, definitions)`
-    pub fn add_utilities(&mut self, map: AHashMap<String, Vec<Declaration>>) {
+    pub fn add_utilities(&mut self, map: AHashMap<String, AHashMap<String, String>>) {
         // Only generate the rules that we care about.
         // .slice(1) is a quick way of getting rid of the `.` of the selector
         // Very naive, but as a proof-of-concept this is fine.
         for (selector, definitions) in map {
             if self.candidates.contains(&selector[1..]) {
-                for node in parse_object_styles(selector, &definitions) {
-                    self.new_rules.push(node);
+                // TODO: Customize FileName so that we can generate correct source map
+                //
+                // The source map system of swc is designed to allow pointing different files.
+
+                macro_rules! parse {
+                    ($input:expr) => {{
+                        let mut errors = vec![];
+
+                        let fm = self.cm.new_source_file(FileName::Anon, $input);
+                        let n = parse_file(&fm, Default::default(), &mut errors);
+
+                        // Report errors
+                        for err in errors {
+                            HANDLER.with(|handler| {
+                                err.to_diagnostics(handler).emit();
+                            });
+                        }
+
+                        match n {
+                            Ok(v) => Some(v),
+                            Err(err) => {
+                                HANDLER.with(|handler| {
+                                    err.to_diagnostics(handler).emit();
+                                });
+                                None
+                            }
+                        }
+                    }};
                 }
+
+                let prelude = parse!(selector).map(QualifiedRulePrelude::SelectorList);
+
+                let body = definitions
+                    .into_iter()
+                    .filter_map(|(property, value)| {
+                        let mut errors = vec![];
+
+                        let name = parse!(property)?;
+                        let value = parse!(value)?;
+
+                        Some(ComponentValue::Declaration(Declaration {
+                            span: DUMMY_SP,
+                            name,
+                            value,
+                            important: Default::default(),
+                        }))
+                    })
+                    .collect();
+                for (property, value) in definitions {}
+
+                let prelude = match prelude {
+                    Some(v) => v,
+                    None => continue,
+                };
+
+                self.new_rules
+                    .push(Rule::QualifiedRule(Box::new(QualifiedRule {
+                        span: DUMMY_SP,
+                        prelude,
+                        block: SimpleBlock {
+                            span: DUMMY_SP,
+                            name: TokenAndSpan {
+                                span: DUMMY_SP,
+                                token: Token::LBrace,
+                            },
+                            value: body,
+                        },
+                    })));
             }
         }
     }
