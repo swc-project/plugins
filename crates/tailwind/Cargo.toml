@@ -12,6 +12,7 @@ parallel = ["rayon"]
 
 [dependencies]
 anyhow = "1"
+glob = "0.3.0"
 rayon = {version = "1", optional = true}
 regex = "1"
 serde = "1"
