@@ -182,13 +182,6 @@ impl VisitMut for PluginCollector<'_> {
                         {
                             // @layer utilities {}
 
-                            // Remove @layer
-                            n.name = AtRuleName::Ident(Ident {
-                                span: DUMMY_SP,
-                                value: js_word!(""),
-                                raw: None,
-                            });
-
                             let mut collector = DeclCollector::default();
                             n.block.visit_mut_with(&mut collector);
 
@@ -198,6 +191,13 @@ impl VisitMut for PluginCollector<'_> {
                                 // TODO: Add collector.decls to m
                                 context.add_utilities(m);
                             }));
+
+                            // Remove @layer
+                            n.name = AtRuleName::Ident(Ident {
+                                span: DUMMY_SP,
+                                value: js_word!(""),
+                                raw: None,
+                            });
                             return;
                         }
                     }
