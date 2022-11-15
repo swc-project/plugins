@@ -20,8 +20,9 @@ use swc_common::{
 use swc_core::{
     css::{
         ast::{
-            AtRule, AtRuleName, AtRulePrelude, ComponentValue, Declaration, Ident, QualifiedRule,
-            QualifiedRulePrelude, Rule, SimpleBlock, Stylesheet, Token, TokenAndSpan,
+            AtRule, AtRuleName, AtRulePrelude, ComponentValue, Declaration, DeclarationName, Ident,
+            QualifiedRule, QualifiedRulePrelude, Rule, SimpleBlock, Stylesheet, Token,
+            TokenAndSpan,
         },
         parser::{parse_file, parse_str},
         visit::{VisitMut, VisitMutWith},
@@ -222,7 +223,11 @@ impl PluginContext<'_> {
                     .filter_map(|(property, value)| {
                         let mut errors = vec![];
 
-                        let name = parse!(property)?;
+                        let name = if property.contains("-") {
+                            parse!(property).map(DeclarationName::DashedIdent)
+                        } else {
+                            parse!(property).map(DeclarationName::Ident)
+                        }?;
                         let value = parse!(value)?;
 
                         Some(ComponentValue::Declaration(Declaration {
