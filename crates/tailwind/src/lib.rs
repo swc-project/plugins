@@ -169,7 +169,16 @@ impl Tailwind {
 }
 
 fn resolve_glob(globs: &[String]) -> Vec<PathBuf> {
-    todo!()
+    let mut buf = vec![];
+
+    for glob in globs {
+        let paths = glob::glob(glob).unwrap();
+
+        // TODO: Report an error
+        buf.extend(paths.filter_map(Result::ok));
+    }
+
+    buf
 }
 
 type Plugin = Box<dyn for<'aa> Fn(&mut PluginContext<'aa>)>;
