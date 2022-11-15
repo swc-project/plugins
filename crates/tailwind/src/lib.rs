@@ -1,3 +1,5 @@
+#![feature(box_patterns)]
+
 use std::{
     fs::read_to_string,
     path::{Path, PathBuf},
@@ -11,10 +13,14 @@ use regex::Regex;
 use swc_common::{
     collections::{AHashMap, AHashSet},
     sync::Lazy,
+    DUMMY_SP,
 };
-use swc_core::css::{
-    ast::Stylesheet,
-    visit::{VisitMut, VisitMutWith},
+use swc_core::{
+    css::{
+        ast::{AtRule, AtRuleName, AtRulePrelude, Declaration, Ident, Rule, Stylesheet, Token},
+        visit::{VisitMut, VisitMutWith},
+    },
+    ecma::atoms::js_word,
 };
 
 /// Content of the config file
@@ -147,4 +153,80 @@ struct PluginCollector<'a> {
     plugins: &'a mut Vec<Plugin>,
 }
 
-impl VisitMut for PluginCollector<'_> {}
+impl VisitMut for PluginCollector<'_> {
+    fn visit_mut_rules(&mut self, n: &mut Vec<Rule>) {
+        n.visit_mut_children_with(self);
+
+        n.retain(|r| match r {
+            Rule::AtRule(r) => {
+                if let AtRuleName::Ident(name) = &r.name {
+                    name.value != js_word!("")
+                } else {
+                    true
+                }
+            }
+
+            _ => true,
+        })
+    }
+
+    fn visit_mut_at_rule(&mut self, n: &mut AtRule) {
+        if let AtRuleName::Ident(name) = &n.name {
+            if &*name.value == "layer" {
+                if let Some(box AtRulePrelude::ListOfComponentValues(tokens)) = &n.prelude {
+                    for v in &tokens.children {
+                        if let Some(v) = v
+                            .as_preserved_token()
+                            .map(|v| &v.token)
+                            .and_then(extract_directive)
+                        {
+                            // @layer utilities {}
+
+                            // Remove @layer
+                            n.name = AtRuleName::Ident(Ident {
+                                span: DUMMY_SP,
+                                value: js_word!(""),
+                                raw: None,
+                            });
+
+                            let mut collector = DeclCollector::default();
+                            n.block.visit_mut_with(&mut collector);
+
+                            self.plugins.push(Box::new(|context| {
+                                let mut m = AHashMap::default();
+
+                                // TODO: Add collector.decls to m
+                                context.add_utilities(m);
+                            }));
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        n.visit_mut_children_with(self);
+
+        //
+    }
+}
+
+fn extract_directive(t: &Token) -> Option<&str> {
+    if let Token::Ident { value, .. } = t {
+        Some(&**value)
+    } else {
+        None
+    }
+}
+
+#[derive(Default)]
+struct DeclCollector {
+    decls: Vec<Declaration>,
+}
+
+impl VisitMut for DeclCollector {
+    fn visit_mut_declaration(&mut self, n: &mut Declaration) {
+        // TODO: Remove clone using mem::replace
+        self.decls.push(n.clone());
+    }
+}
