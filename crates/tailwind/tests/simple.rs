@@ -11,7 +11,22 @@ use swc_tailwind::Tailwind;
 fn should_generate_css_using_values_from_your_config_file() {
     let input = read_to_string("tests/fixture/colors/index.css").unwrap();
 
-    run(&input, "./test-fixtures/colors/tailwind.config.js".as_ref());
+    let res = run(&input, "./test-fixtures/colors/tailwind.config.js".as_ref());
+
+    assert_eq!(
+        res.css,
+        format_css(
+            "
+            .text-primary {
+                color: #0088cc;
+            }
+            "
+        )
+    );
+}
+
+fn format_css(s: &str) -> String {
+    s.into()
 }
 
 struct Output {
