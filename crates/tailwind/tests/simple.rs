@@ -29,6 +29,27 @@ fn should_generate_css_using_values_from_your_config_file() {
     );
 }
 
+#[test]
+fn should_generate_css_using_built_in_plugins() {
+    let input = read_to_string("tests/fixture/basic/index.css").unwrap();
+
+    let res = run(
+        &input,
+        "./tests/fixture/basic/tailwind.config.json".as_ref(),
+    );
+
+    assert_eq!(
+        res.css,
+        format_css(
+            "
+            .built-in-utility {
+                color: red;
+            }
+            "
+        )
+    );
+}
+
 fn format_css(s: &str) -> String {
     testing::run_test(false, |cm, _| {
         let fm = cm.new_source_file(FileName::Anon, s.into());
