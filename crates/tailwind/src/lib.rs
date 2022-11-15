@@ -4,6 +4,8 @@ use std::{
 };
 
 use anyhow::{Context, Result};
+#[cfg(feature = "parallel")]
+use rayon::prelude::*;
 use regex::Regex;
 use swc_common::{collections::AHashSet, sync::Lazy};
 
@@ -36,10 +38,15 @@ impl Tailwind {
 
         let files = resolve_glob(&config.content);
 
-        // TODO: Make this parallel using rayon once wasm get support for it
-        // TODO: Optimize
-        let candidates = files
-            .into_iter()
+        // Collect candidates, optionally in parallel
+        #[cfg(not(feature = "parallel"))]
+        let iter = files.into_iter();
+
+        #[cfg(feature = "parallel")]
+        let iter = files.into_par_iter();
+
+        // TODO: Optimize collect out
+        let candidates = iter
             .map(|f| {
                 let contents = read_to_string(&f).context("failed to read file")?;
 
@@ -62,3 +69,5 @@ impl Tailwind {
 fn resolve_glob(config: &[String]) -> Vec<PathBuf> {
     todo!()
 }
+
+enum Plugin {}
