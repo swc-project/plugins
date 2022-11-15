@@ -133,6 +133,16 @@ impl Tailwind {
             plugins: &mut plugins,
         });
 
+        // Generate all of the CSS by looking at the classes extracted from the template
+        // files registered in the user's `content` configuration and matching
+        // them with the plugins we registered with Tailwind above.
+
+        let mut new_rules = vec![];
+
+        for plugin in plugins {
+            plugin(&mut PluginContext {});
+        }
+
         Ok(())
     }
 }
@@ -141,11 +151,13 @@ fn resolve_glob(config: &[String]) -> Vec<PathBuf> {
     todo!()
 }
 
-type Plugin = Box<dyn Fn(&mut PluginContext)>;
+type Plugin = Box<dyn for<'aa> Fn(&mut PluginContext<'aa>)>;
 
-pub struct PluginContext {}
+pub struct PluginContext<'a> {
+    candidates: &'a AHashSet<String>,
+}
 
-impl PluginContext {
+impl PluginContext<'_> {
     pub fn add_utilities(&mut self, map: AHashMap<String, AHashMap<String, String>>) {}
 }
 
