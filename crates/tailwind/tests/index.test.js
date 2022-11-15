@@ -5,21 +5,6 @@ import prettier from 'prettier'
 
 import tailwind from './index'
 
-it('should generate CSS using values from your config file', () => {
-  let input = readFile('./test-fixtures/colors/index.css')
-  let config = file('./test-fixtures/colors/tailwind.config.js')
-
-  return run(input, config).then((result) => {
-    expect(format(result.css)).toEqual(
-      format(css`
-        .text-primary {
-          color: #0088cc;
-        }
-      `),
-    )
-  })
-})
-
 describe('plugins', () => {
   it('should generate CSS using built-in plugins', () => {
     let input = readFile('./test-fixtures/basic/index.css')
