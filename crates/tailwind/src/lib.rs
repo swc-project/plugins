@@ -36,6 +36,8 @@ use swc_core::{
 #[serde(deny_unknown_fields)]
 pub struct Config {
     content: Vec<String>,
+    #[serde(default)]
+    theme: AHashMap<String, AHashMap<String, String>>,
 }
 
 impl Config {
@@ -111,15 +113,20 @@ impl Tailwind {
         // Example built-in plugin that can read values from the config.
 
         plugins.push({
+            #[allow(clippy::redundant_clone)]
             let config = config.clone();
             Box::new(move |context| {
-                let map = AHashMap::default();
+                let mut map = AHashMap::default();
 
-                // TODO: Convert config to a hash map
+                if let Some(colors) = config.theme.get("colors") {
+                    for (name, value) in colors {
+                        let mut m = AHashMap::default();
+                        m.insert("color".into(), value.clone());
+                        map.insert(format!("text-{}", name), m);
+                    }
+                }
 
                 // This is an example of using config from core plugins
-                #[allow(clippy::drop_ref)]
-                drop(&config);
                 context.add_utilities(map);
             })
         });
