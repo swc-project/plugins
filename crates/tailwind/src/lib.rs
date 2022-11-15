@@ -162,7 +162,19 @@ pub struct PluginContext<'a> {
 }
 
 impl PluginContext<'_> {
-    pub fn add_utilities(&mut self, map: AHashMap<String, AHashMap<String, String>>) {}
+    /// `map`: `(selector, definitions)`
+    pub fn add_utilities(&mut self, map: AHashMap<String, AHashMap<String, String>>) {
+        // Only generate the rules that we care about.
+        // .slice(1) is a quick way of getting rid of the `.` of the selector
+        // Very naive, but as a proof-of-concept this is fine.
+        for (selector, definitions) in map {
+            if self.candidates.contains(&selector[1..]) {
+                for node in parse_object_styles(selector, &definitions) {
+                    self.new_rules.push(node);
+                }
+            }
+        }
+    }
 }
 
 struct PluginCollector<'a> {
