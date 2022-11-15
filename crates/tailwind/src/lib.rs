@@ -175,7 +175,7 @@ impl VisitMut for PluginCollector<'_> {
             if &*name.value == "layer" {
                 if let Some(box AtRulePrelude::ListOfComponentValues(tokens)) = &n.prelude {
                     for v in &tokens.children {
-                        if let Some(v) = v
+                        if let Some(selector_name) = v
                             .as_preserved_token()
                             .map(|v| &v.token)
                             .and_then(extract_directive)
