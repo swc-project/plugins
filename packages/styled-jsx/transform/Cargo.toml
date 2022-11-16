@@ -11,9 +11,9 @@ custom_transform = ["swc_core/common_concurrent"]
 
 [dependencies]
 easy-error = "1.0.0"
-tracing = "0.1.32"
+tracing = "0.1.37"
 
-swc_core = { version = "0.43.13", features = [
+swc_core = { version = "0.43.14", features = [
   "common",
   "ecma_ast",
   "css_ast",
@@ -31,4 +31,4 @@ swc_core = { version = "0.43.13", features = [
 testing = "0.31.14"
 swc_core = { features = [
   "testing_transform"
-], version = "0.43.13" }
+], version = "0.43.14" }
