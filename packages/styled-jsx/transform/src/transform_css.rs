@@ -13,8 +13,12 @@ use swc_core::{
             CodeGenerator, CodegenConfig, Emit,
         },
         parser::{
-            parse_str, parse_tokens,
-            parser::{input::Tokens, ParserConfig},
+            lexer::Lexer,
+            parse_input,
+            parser::{
+                input::{InputType, Tokens},
+                Parser, ParserConfig,
+            },
         },
         prefixer::prefixer,
         visit::{VisitMut, VisitMutWith},
@@ -39,18 +43,23 @@ pub fn transform_css(
 ) -> Result<Expr, Error> {
     debug!("CSS: \n{}", style_info.css);
 
-    let result: Result<Stylesheet, _> = parse_str(
-        &style_info.css,
-        style_info.css_span.lo,
-        style_info.css_span.hi,
-        ParserConfig {
-            allow_wrong_line_comments: true,
-            ..Default::default()
-        },
-        // We ignore errors because we inject placeholders for expressions which is
-        // not a valid css.
-        &mut vec![],
+    // TODO use `parse_string_input` in future
+    let config = ParserConfig {
+        allow_wrong_line_comments: true,
+        css_modules: false,
+        ..Default::default()
+    };
+    let lexer = Lexer::new(
+        StringInput::new(
+            &style_info.css,
+            style_info.css_span.lo,
+            style_info.css_span.hi,
+        ),
+        config,
     );
+    let mut parser = Parser::new(lexer, config);
+
+    let result: Result<Stylesheet, _> = parser.parse_all();
     let mut ss = match result {
         Ok(ss) => ss,
         Err(err) => {
@@ -170,6 +179,7 @@ impl VisitMut for Namespacer {
 
         let mut new_selectors = vec![];
         let mut combinator = None;
+
         for sel in node.children.take() {
             match &sel {
                 ComplexSelectorChildren::CompoundSelector(selector) => {
@@ -207,90 +217,62 @@ impl Namespacer {
         mut node: CompoundSelector,
     ) -> Result<Vec<ComplexSelectorChildren>, Error> {
         let mut pseudo_index = None;
-        let mut arg_tokens;
 
         for (i, selector) in node.subclass_selectors.iter().enumerate() {
-            let (name, args) = match selector {
-                SubclassSelector::PseudoClass(PseudoClassSelector { name, children, .. }) => {
-                    arg_tokens = children
-                        .iter()
-                        .flatten()
-                        .flat_map(|v| match v {
-                            PseudoClassSelectorChildren::PreservedToken(v) => vec![v.clone()],
-                            PseudoClassSelectorChildren::AnPlusB(an_plus_b) => match an_plus_b {
-                                AnPlusB::Ident(v) => to_tokens(v).tokens,
-                                AnPlusB::AnPlusBNotation(v) => to_tokens(v).tokens,
-                            },
-                            PseudoClassSelectorChildren::Ident(v) => to_tokens(v).tokens,
-                            PseudoClassSelectorChildren::Str(v) => to_tokens(v).tokens,
-                            PseudoClassSelectorChildren::Delimiter(v) => to_tokens(v).tokens,
-                            PseudoClassSelectorChildren::SelectorList(v) => to_tokens(v).tokens,
-                            PseudoClassSelectorChildren::CompoundSelectorList(v) => {
-                                to_tokens(v).tokens
-                            }
-                            PseudoClassSelectorChildren::RelativeSelectorList(v) => {
-                                to_tokens(v).tokens
-                            }
-                            PseudoClassSelectorChildren::CompoundSelector(v) => to_tokens(v).tokens,
-                            PseudoClassSelectorChildren::ForgivingSelectorList(v) => {
-                                to_tokens(v).tokens
-                            }
-                            PseudoClassSelectorChildren::ForgivingRelativeSelectorList(v) => {
-                                to_tokens(v).tokens
-                            }
-                            PseudoClassSelectorChildren::ComplexSelector(v) => to_tokens(v).tokens,
-                        })
-                        .collect::<Vec<_>>();
+            let (name, children) = match &selector {
+                SubclassSelector::PseudoClass(PseudoClassSelector {
+                    name,
+                    children: Some(children),
+                    ..
+                }) if &name.value == "global" => (name, children),
+                SubclassSelector::PseudoClass(_) | SubclassSelector::PseudoElement(_) => {
+                    if pseudo_index.is_none() {
+                        pseudo_index = Some(i);
+                    }
 
-                    (name, &arg_tokens)
-                }
-                SubclassSelector::PseudoElement(PseudoElementSelector {
-                    name, children, ..
-                }) => {
-                    arg_tokens = children
-                        .iter()
-                        .flatten()
-                        .flat_map(|v| match v {
-                            PseudoElementSelectorChildren::PreservedToken(v) => vec![v.clone()],
-                            PseudoElementSelectorChildren::Ident(v) => to_tokens(v).tokens,
-                            PseudoElementSelectorChildren::CompoundSelector(v) => {
-                                to_tokens(v).tokens
-                            }
-                            PseudoElementSelectorChildren::CustomHighlightName(v) => {
-                                to_tokens(v).tokens
-                            }
-                        })
-                        .collect::<Vec<_>>();
-
-                    (name, &arg_tokens)
+                    continue;
                 }
                 _ => continue,
             };
 
             // One off global selector
             if &name.value == "global" {
-                let args = args.clone();
-                let mut args = {
-                    let lo = args.first().map(|v| v.span.lo).unwrap_or(BytePos(0));
-                    let hi = args.last().map(|v| v.span.hi).unwrap_or(BytePos(0));
+                // TODO(alexander-akait): in future we should use list of component values
+                let tokens = children
+                    .iter()
+                    .map(|v| match v {
+                        PseudoClassSelectorChildren::PreservedToken(v) => v.clone(),
+                        _ => {
+                            unreachable!();
+                        }
+                    })
+                    .collect::<Vec<TokenAndSpan>>();
+                let mut tokens = {
+                    let lo = tokens.first().map(|v| v.span_lo()).unwrap_or(BytePos(0));
+                    let hi = tokens.last().map(|v| v.span_hi()).unwrap_or(BytePos(0));
 
                     Tokens {
                         span: Span::new(lo, hi, Default::default()),
-                        tokens: args,
+                        tokens,
                     }
                 };
 
-                let block_tokens = get_block_tokens(&args);
-                let mut front_tokens = get_front_selector_tokens(&args);
-                front_tokens.extend(args.tokens);
-                front_tokens.extend(block_tokens);
-                args.tokens = front_tokens;
+                // Because it is allowed to write `.bar :global(> .foo) {}` or .bar
+                // :global(.foo) {}`, so selector can be complex or relative (it violates the
+                // specification), but it is popular usage, so we just add `a >` at top and then
+                // remove it
+                let mut front_tokens = get_front_selector_tokens(&tokens);
+
+                front_tokens.extend(tokens.tokens);
+
+                tokens.tokens = front_tokens;
 
                 let complex_selectors = panic::catch_unwind(|| {
-                    let x: ComplexSelector = parse_tokens(
-                        &args,
+                    let x: ComplexSelector = parse_input(
+                        InputType::Tokens(&tokens),
                         ParserConfig {
                             allow_wrong_line_comments: true,
+                            css_modules: true,
                             ..Default::default()
                         },
                         // TODO(kdy1): We might be able to report syntax errors.
@@ -348,8 +330,6 @@ impl Namespacer {
                     }
                     Err(_) => bail!("Failed to transform one off global selector"),
                 };
-            } else if pseudo_index.is_none() {
-                pseudo_index = Some(i);
             }
         }
 
@@ -361,6 +341,7 @@ impl Namespacer {
             None => node.subclass_selectors.len(),
             Some(i) => i,
         };
+
         if !self.is_global {
             node.subclass_selectors.insert(
                 insert_index,
@@ -410,131 +391,4 @@ fn get_front_selector_tokens(selector_tokens: &Tokens) -> Vec<TokenAndSpan> {
             token: Token::WhiteSpace { value: " ".into() },
         },
     ]
-}
-
-fn get_block_tokens(selector_tokens: &Tokens) -> Vec<TokenAndSpan> {
-    let start_pos = selector_tokens.span.hi.to_u32();
-    vec![
-        TokenAndSpan {
-            span: Span {
-                lo: BytePos(start_pos),
-                hi: BytePos(start_pos + 1),
-                ctxt: SyntaxContext::empty(),
-            },
-            token: Token::WhiteSpace { value: " ".into() },
-        },
-        TokenAndSpan {
-            span: Span {
-                lo: BytePos(start_pos + 1),
-                hi: BytePos(start_pos + 2),
-                ctxt: SyntaxContext::empty(),
-            },
-            token: Token::LBrace,
-        },
-        TokenAndSpan {
-            span: Span {
-                lo: BytePos(start_pos + 2),
-                hi: BytePos(start_pos + 3),
-                ctxt: SyntaxContext::empty(),
-            },
-            token: Token::WhiteSpace { value: " ".into() },
-        },
-        TokenAndSpan {
-            span: Span {
-                lo: BytePos(start_pos + 3),
-                hi: BytePos(start_pos + 8),
-                ctxt: SyntaxContext::empty(),
-            },
-            token: Token::Ident {
-                value: "color".into(),
-                raw: "color".into(),
-            },
-        },
-        TokenAndSpan {
-            span: Span {
-                lo: BytePos(start_pos + 8),
-                hi: BytePos(start_pos + 9),
-                ctxt: SyntaxContext::empty(),
-            },
-            token: Token::Colon,
-        },
-        TokenAndSpan {
-            span: Span {
-                lo: BytePos(start_pos + 9),
-                hi: BytePos(start_pos + 10),
-                ctxt: SyntaxContext::empty(),
-            },
-            token: Token::WhiteSpace { value: " ".into() },
-        },
-        TokenAndSpan {
-            span: Span {
-                lo: BytePos(start_pos + 10),
-                hi: BytePos(start_pos + 13),
-                ctxt: SyntaxContext::empty(),
-            },
-            token: Token::Ident {
-                value: "red".into(),
-                raw: "red".into(),
-            },
-        },
-        TokenAndSpan {
-            span: Span {
-                lo: BytePos(start_pos + 13),
-                hi: BytePos(start_pos + 14),
-                ctxt: SyntaxContext::empty(),
-            },
-            token: Token::Semi,
-        },
-        TokenAndSpan {
-            span: Span {
-                lo: BytePos(start_pos + 14),
-                hi: BytePos(start_pos + 15),
-                ctxt: SyntaxContext::empty(),
-            },
-            token: Token::WhiteSpace { value: " ".into() },
-        },
-        TokenAndSpan {
-            span: Span {
-                lo: BytePos(start_pos + 15),
-                hi: BytePos(start_pos + 16),
-                ctxt: SyntaxContext::empty(),
-            },
-            token: Token::RBrace,
-        },
-        TokenAndSpan {
-            span: Span {
-                lo: BytePos(start_pos + 16),
-                hi: BytePos(start_pos + 17),
-                ctxt: SyntaxContext::empty(),
-            },
-            token: Token::WhiteSpace { value: " ".into() },
-        },
-    ]
-}
-
-fn to_tokens<N: Spanned>(node: &N) -> Tokens
-where
-    for<'aa> CodeGenerator<&'aa mut BasicCssWriter<'aa, &'aa mut std::string::String>>: Emit<N>,
-{
-    let mut s = String::new();
-    {
-        let mut wr = BasicCssWriter::new(&mut s, None, BasicCssWriterConfig::default());
-        let mut gen = CodeGenerator::new(&mut wr, CodegenConfig { minify: true });
-
-        gen.emit(node).unwrap();
-    }
-
-    let span = node.span();
-    let lexer = swc_core::css::parser::lexer::Lexer::new(
-        StringInput::new(&s, span.lo, span.hi),
-        ParserConfig {
-            allow_wrong_line_comments: true,
-            ..Default::default()
-        },
-    );
-
-    Tokens {
-        span: Span::new(span.lo, span.hi, Default::default()),
-        tokens: lexer.collect(),
-    }
 }

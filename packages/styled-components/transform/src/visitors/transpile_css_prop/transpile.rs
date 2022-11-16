@@ -640,7 +640,7 @@ fn trace_root_value(e: &Expr) -> Option<&Expr> {
     match e {
         Expr::Member(e) => trace_root_value(&e.obj),
         Expr::Call(e) => match &e.callee {
-            Callee::Expr(e) => trace_root_value(&**e),
+            Callee::Expr(e) => trace_root_value(e),
             _ => None,
         },
         Expr::Ident(_) => Some(e),
@@ -659,7 +659,7 @@ where
             Expr::Ident(id) if is_top_level_ident(id) => {
                 if let Expr::Call(CallExpr { args, .. }) = expr {
                     args.iter()
-                        .all(|arg| -> bool { is_direct_access(&*arg.expr, is_top_level_ident) })
+                        .all(|arg| -> bool { is_direct_access(&arg.expr, is_top_level_ident) })
                 } else {
                     true
                 }
