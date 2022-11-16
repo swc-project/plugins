@@ -34,7 +34,7 @@ struct EmotionJsOptions {
 
 // This config transformation has to be the same as https://github.com/vercel/next.js/blob/9fe2f2637c8384ae7939d5a4a30f1557a4262acb/packages/next/build/swc/options.js#L115-L140
 impl EmotionJsOptions {
-    fn to_emotion_options(self, env_name: &str) -> EmotionOptions {
+    fn into_emotion_options(self, env_name: &str) -> EmotionOptions {
         EmotionOptions {
             enabled: Some(true),
             sourcemap: Some(match env_name {
@@ -63,7 +63,7 @@ pub fn process_transform(program: Program, data: TransformPluginProgramMetadata)
     )
     .expect("invalid config for emotion");
 
-    let config = config.to_emotion_options(
+    let config = config.into_emotion_options(
         &data
             .get_context(&TransformPluginMetadataContextKind::Env)
             .unwrap_or_default(),
