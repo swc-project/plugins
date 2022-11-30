@@ -23,4 +23,4 @@ swc_core = { features = [
 
 [dev-dependencies]
 swc_core = { features = ["testing_transform"], version = "0.44.2" }
-testing = "0.31.14"
+testing = "0.31.17"

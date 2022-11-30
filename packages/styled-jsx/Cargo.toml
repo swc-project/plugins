@@ -33,4 +33,4 @@ tracing = { version = "0.1.37", features = ["release_max_level_off"] }
 
 [dev-dependencies]
 swc_core = { features = ["testing_transform"], version = "0.44.2" }
-testing = "0.31.14"
+testing = "0.31.17"
