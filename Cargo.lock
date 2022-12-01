@@ -2303,7 +2303,7 @@ dependencies = [
 
 [[package]]
 name = "swc_tailwind"
-version = "0.1.5"
+version = "0.1.6"
 
 [[package]]
 name = "swc_timer"
