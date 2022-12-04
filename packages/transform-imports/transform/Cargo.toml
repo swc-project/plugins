@@ -19,8 +19,8 @@ swc_core = { features = [
   "cached",
   "ecma_ast",
   "ecma_visit",
-], version = "0.44.2" }
+], version = "0.45.1" }
 
 [dev-dependencies]
-swc_core = { features = ["testing_transform"], version = "0.44.2" }
-testing = "0.31.17"
+swc_core = { features = ["testing_transform"], version = "0.45.1" }
+testing = "0.31.20"
