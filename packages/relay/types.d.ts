@@ -3,5 +3,6 @@ declare module "@swc/plugin-relay" {
     rootDir: string;
     artifactDirectory?: string;
     language: "typescript" | "flow";
+    eagerEsModules?: boolean;
   }
 }

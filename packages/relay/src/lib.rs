@@ -29,6 +29,18 @@ pub enum RelayLanguageConfig {
     Flow,
 }
 
+impl<'a> TryFrom<&'a str> for RelayLanguageConfig {
+    type Error = String;
+
+    fn try_from(value: &'a str) -> Result<Self, Self::Error> {
+        match value {
+            "flow" => Ok(Self::Flow),
+            "typescript" => Ok(Self::TypeScript),
+            _ => Err(format!("Unexpected language config value '{value}'")),
+        }
+    }
+}
+
 impl Default for RelayLanguageConfig {
     fn default() -> Self {
         Self::Flow
@@ -140,7 +152,6 @@ impl<'a> Fold for Relay<'a> {
 
         match &expr {
             Expr::TaggedTpl(tpl) => {
-                println!("TaggedTpl {:?}", tpl);
                 if let Some(built_expr) = self.build_call_expr_from_tpl(tpl) {
                     built_expr
                 } else {
@@ -154,10 +165,7 @@ impl<'a> Fold for Relay<'a> {
     fn fold_module_items(&mut self, items: Vec<ModuleItem>) -> Vec<ModuleItem> {
         let items = items
             .into_iter()
-            .map(|item| {
-                println!("Module item");
-                item.fold_children_with(self)
-            })
+            .map(|item| item.fold_children_with(self))
             .collect::<Vec<_>>();
 
         self.imports
@@ -220,7 +228,6 @@ impl<'a> Relay<'a> {
                 return None;
             }
         }
-        println!("\n\nExpression is GraphQL\n\n");
 
         let operation_name = pull_first_operation_name_from_tpl(tpl);
 
@@ -337,14 +344,9 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
     let artifact_directory = plugin_config["artifactDirectory"]
         .as_str()
         .map(PathBuf::from);
-    let language =
-        plugin_config["language"]
-            .as_str()
-            .map_or(RelayLanguageConfig::TypeScript, |v| match v {
-                "typescript" => RelayLanguageConfig::TypeScript,
-                "flow" => RelayLanguageConfig::Flow,
-                _ => panic!("Unexpected language config value"),
-            });
+    let language = plugin_config["language"]
+        .as_str()
+        .map_or(RelayLanguageConfig::TypeScript, |v| v.try_into().unwrap());
     let eager_es_modules = plugin_config["eagerEsModules"]
         .as_bool()
         .unwrap_or_default();
