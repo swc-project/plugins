@@ -285,7 +285,8 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
         .map(PathBuf::from);
     let language = plugin_config["language"]
         .as_str()
-        .map_or(RelayLanguageConfig::TypeScript, |v| v.try_into().unwrap());
+        .map(|v| v.try_into().unwrap())
+        .unwrap_or_default();
     let eager_es_modules = plugin_config["eagerEsModules"]
         .as_bool()
         .unwrap_or_default();
