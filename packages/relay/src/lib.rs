@@ -116,36 +116,6 @@ fn build_require_expr_from_path(path: &str) -> Expr {
     })
 }
 
-fn warn_needs_rebuild(definition_name: &str, build_command: &str) -> Expr {
-    Expr::Call(CallExpr {
-        span: Default::default(),
-        callee: Callee::Expr(Box::new(Expr::Member(MemberExpr {
-            span: Default::default(),
-            obj: Box::new(Expr::Ident(Ident {
-                span: Default::default(),
-                sym: "console".into(),
-                optional: false,
-            })),
-            prop: MemberProp::Ident(Ident {
-                span: Default::default(),
-                sym: "error".into(),
-                optional: false,
-            }),
-        }))),
-        args: vec![ExprOrSpread {
-            spread: None,
-            expr: Box::new(Expr::Lit(Lit::Str(
-                format!(
-                    "The definition of '{definition_name}' appears to have changed. Run \
-                     '{build_command}' to update the generated files to receive the expected data."
-                )
-                .into(),
-            ))),
-        }],
-        type_args: None,
-    })
-}
-
 impl<'a> Fold for Relay<'a> {
     fn fold_expr(&mut self, expr: Expr) -> Expr {
         let expr = expr.fold_children_with(self);
@@ -233,55 +203,24 @@ impl<'a> Relay<'a> {
 
         match operation_name {
             None => None,
-            Some(operation_name) => match self.build_require_path(operation_name.as_str()) {
+            Some(operation_name) => match self.build_require_path(&operation_name) {
                 Ok(final_path) => {
                     let ident_name = unique_ident_name_from_operation_name(&operation_name);
-                    let operation_ident = Ident {
-                        sym: ident_name.clone().into(),
-                        span: Default::default(),
-                        optional: false,
-                    };
-                    let bytes = md5::compute(tpl.tpl.quasis[0].raw.as_bytes());
-                    let hash = format!("{:?}", &bytes);
-                    let hash_member = Expr::Member(MemberExpr {
-                        span: Default::default(),
-                        obj: Box::new(Expr::Ident(operation_ident.clone())),
-                        prop: MemberProp::Ident(Ident {
-                            span: Default::default(),
-                            sym: "hash".into(),
-                            optional: false,
-                        }),
-                    });
-
-                    let hash_ne_computed_hash = Expr::Bin(BinExpr {
-                        span: Default::default(),
-                        op: BinaryOp::NotEqEq,
-                        left: Box::new(hash_member),
-                        right: Box::new(Expr::Lit(Lit::Str(hash.into()))),
-                    });
-
-                    let warn_if_outdated = Expr::Bin(BinExpr {
-                        span: Default::default(),
-                        op: BinaryOp::LogicalAnd,
-                        left: Box::new(hash_ne_computed_hash),
-                        right: Box::new(warn_needs_rebuild(&operation_name, "relay")),
-                    });
-
+                    let final_path = final_path.to_str().unwrap();
+                    
                     if self.config.eager_es_modules {
                         self.imports.push(RelayImport {
-                            path: final_path.to_str().unwrap().to_string(),
-                            item: ident_name,
+                            path: final_path.to_owned(),
+                            item: ident_name.clone(),
                         });
-                        let assign_and_check = Expr::Seq(SeqExpr {
+                        let operation_ident = Ident {
                             span: Default::default(),
-                            exprs: vec![
-                                Box::new(warn_if_outdated),
-                                Box::new(Expr::Ident(operation_ident)),
-                            ],
-                        });
-                        Some(assign_and_check)
+                            sym: ident_name.into(),
+                            optional: false,
+                        };
+                        Some(Expr::Ident(operation_ident))
                     } else {
-                        Some(build_require_expr_from_path(final_path.to_str().unwrap()))
+                        Some(build_require_expr_from_path(final_path))
                     }
                 }
                 Err(_err) => {
