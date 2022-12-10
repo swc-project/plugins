@@ -2,9 +2,7 @@
 
 //! TODO: Once refactoring next-swc is done, remove duplicated codes and import
 //! packages directly
-use std::{
-    path::{Path, PathBuf},
-};
+use std::path::{Path, PathBuf};
 
 use once_cell::sync::Lazy;
 use regex::Regex;
@@ -252,21 +250,21 @@ impl<'a> Relay<'a> {
                             optional: false,
                         }),
                     });
-                
+
                     let hash_ne_computed_hash = Expr::Bin(BinExpr {
                         span: Default::default(),
                         op: BinaryOp::NotEqEq,
                         left: Box::new(hash_member),
                         right: Box::new(Expr::Lit(Lit::Str(hash.into()))),
                     });
-                
+
                     let warn_if_outdated = Expr::Bin(BinExpr {
                         span: Default::default(),
                         op: BinaryOp::LogicalAnd,
                         left: Box::new(hash_ne_computed_hash),
                         right: Box::new(warn_needs_rebuild(&operation_name, "relay")),
                     });
-                
+
                     if self.config.eager_es_modules {
                         let assign_and_check = Expr::Seq(SeqExpr {
                             span: Default::default(),
