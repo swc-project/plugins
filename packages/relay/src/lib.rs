@@ -8,7 +8,6 @@ use once_cell::sync::Lazy;
 use regex::Regex;
 use serde::Deserialize;
 use serde_json::Value;
-use swc_common::DUMMY_SP;
 use swc_core::{
     common::FileName,
     ecma::{
@@ -236,7 +235,7 @@ impl<'a> Relay<'a> {
                     });
                     let operation_ident = Ident {
                         sym: ident_name.into(),
-                        span: DUMMY_SP,
+                        span: Default::default(),
                         optional: false,
                     };
                     let bytes = md5::compute(tpl.tpl.quasis[0].raw.as_bytes());
