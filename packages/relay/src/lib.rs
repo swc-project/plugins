@@ -49,7 +49,7 @@ impl Default for RelayLanguageConfig {
 
 #[derive(Debug, Clone)]
 struct RelayImport {
-    path: String,
+    path: PathBuf,
     item: String,
 }
 
@@ -67,7 +67,7 @@ impl RelayImport {
                 imported: None,
                 is_type_only: false,
             })],
-            src: Box::new(self.path.clone().into()),
+            src: Box::new(self.path.to_string_lossy().into()),
             type_only: false,
             asserts: None,
         }))
@@ -206,11 +206,10 @@ impl<'a> Relay<'a> {
             Some(operation_name) => match self.build_require_path(&operation_name) {
                 Ok(final_path) => {
                     let ident_name = unique_ident_name_from_operation_name(&operation_name);
-                    let final_path = final_path.to_str().unwrap();
                     
                     if self.config.eager_es_modules {
                         self.imports.push(RelayImport {
-                            path: final_path.to_owned(),
+                            path: final_path,
                             item: ident_name.clone(),
                         });
                         let operation_ident = Ident {
@@ -220,7 +219,7 @@ impl<'a> Relay<'a> {
                         };
                         Some(Expr::Ident(operation_ident))
                     } else {
-                        Some(build_require_expr_from_path(final_path))
+                        Some(build_require_expr_from_path(final_path.to_str().unwrap()))
                     }
                 }
                 Err(_err) => {
