@@ -6,18 +6,17 @@ use swc_plugin_relay::{relay, Config, RelayLanguageConfig};
 
 #[testing::fixture("tests/fixture/simple/**/input.js")]
 fn fixture(input: PathBuf) {
-    println!("Input {:?}", input);
     let output = input.parent().unwrap().join("output.js");
 
     test_fixture(
         Default::default(),
-        &|t| relay(
+        &|_| relay(
             &Config {
                 artifact_directory: None,
                 language: RelayLanguageConfig::TypeScript,
                 eager_es_modules: false,
             },
-            FileName::Real("foo".parse().unwrap()),
+            FileName::Real("file.js".parse().unwrap()),
             Default::default(),
         ),
         &input,
@@ -28,18 +27,17 @@ fn fixture(input: PathBuf) {
 
 #[testing::fixture("tests/fixture/eagerEsModules/**/input.js")]
 fn fixture_es_modules(input: PathBuf) {
-    println!("Input {:?}", input);
     let output = input.parent().unwrap().join("output.js");
 
     test_fixture(
         Default::default(),
-        &|t| relay(
+        &|_| relay(
             &Config {
                 artifact_directory: None,
                 language: RelayLanguageConfig::TypeScript,
                 eager_es_modules: true,
             },
-            FileName::Real("foo".parse().unwrap()),
+            FileName::Real("file.js".parse().unwrap()),
             Default::default(),
         ),
         &input,
