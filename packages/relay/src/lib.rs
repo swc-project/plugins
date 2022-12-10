@@ -229,12 +229,8 @@ impl<'a> Relay<'a> {
             Some(operation_name) => match self.build_require_path(operation_name.as_str()) {
                 Ok(final_path) => {
                     let ident_name = unique_ident_name_from_operation_name(&operation_name);
-                    self.imports.push(RelayImport {
-                        path: final_path.to_str().unwrap().to_string(),
-                        item: ident_name.clone(),
-                    });
                     let operation_ident = Ident {
-                        sym: ident_name.into(),
+                        sym: ident_name.clone().into(),
                         span: Default::default(),
                         optional: false,
                     };
@@ -265,6 +261,10 @@ impl<'a> Relay<'a> {
                     });
 
                     if self.config.eager_es_modules {
+                        self.imports.push(RelayImport {
+                            path: final_path.to_str().unwrap().to_string(),
+                            item: ident_name,
+                        });
                         let assign_and_check = Expr::Seq(SeqExpr {
                             span: Default::default(),
                             exprs: vec![
