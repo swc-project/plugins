@@ -2,12 +2,15 @@
 
 //! TODO: Once refactoring next-swc is done, remove duplicated codes and import
 //! packages directly
-use std::path::{Path, PathBuf};
+use std::{
+    path::{Path, PathBuf},
+};
 
 use once_cell::sync::Lazy;
 use regex::Regex;
 use serde::Deserialize;
 use serde_json::Value;
+use swc_common::DUMMY_SP;
 use swc_core::{
     common::FileName,
     ecma::{
@@ -35,10 +38,38 @@ impl Default for RelayLanguageConfig {
     }
 }
 
+#[derive(Debug, Clone)]
+struct RelayImport {
+    path: String,
+    item: String,
+}
+
+impl RelayImport {
+    fn as_module_item(&self) -> ModuleItem {
+        ModuleItem::ModuleDecl(ModuleDecl::Import(ImportDecl {
+            span: Default::default(),
+            specifiers: vec![ImportSpecifier::Named(ImportNamedSpecifier {
+                span: Default::default(),
+                local: Ident {
+                    span: Default::default(),
+                    sym: self.item.clone().into(),
+                    optional: false,
+                },
+                imported: None,
+                is_type_only: false,
+            })],
+            src: Box::new(self.path.clone().into()),
+            type_only: false,
+            asserts: None,
+        }))
+    }
+}
+
 struct Relay<'a> {
     root_dir: PathBuf,
     file_name: FileName,
     config: &'a Config,
+    imports: Vec<RelayImport>,
 }
 
 #[derive(Deserialize, Debug, Default, Clone)]
@@ -47,6 +78,8 @@ pub struct Config {
     pub artifact_directory: Option<PathBuf>,
     #[serde(default)]
     pub language: RelayLanguageConfig,
+    #[serde(default)]
+    pub eager_es_modules: bool,
 }
 
 fn pull_first_operation_name_from_tpl(tpl: &TaggedTpl) -> Option<String> {
@@ -74,12 +107,43 @@ fn build_require_expr_from_path(path: &str) -> Expr {
     })
 }
 
+fn warn_needs_rebuild(definition_name: &str, build_command: &str) -> Expr {
+    Expr::Call(CallExpr {
+        span: Default::default(),
+        callee: Callee::Expr(Box::new(Expr::Member(MemberExpr {
+            span: Default::default(),
+            obj: Box::new(Expr::Ident(Ident {
+                span: Default::default(),
+                sym: "console".into(),
+                optional: false,
+            })),
+            prop: MemberProp::Ident(Ident {
+                span: Default::default(),
+                sym: "error".into(),
+                optional: false,
+            }),
+        }))),
+        args: vec![ExprOrSpread {
+            spread: None,
+            expr: Box::new(Expr::Lit(Lit::Str(
+                format!(
+                    "The definition of '{definition_name}' appears to have changed. Run \
+                     '{build_command}' to update the generated files to receive the expected data."
+                )
+                .into(),
+            ))),
+        }],
+        type_args: None,
+    })
+}
+
 impl<'a> Fold for Relay<'a> {
     fn fold_expr(&mut self, expr: Expr) -> Expr {
         let expr = expr.fold_children_with(self);
 
         match &expr {
             Expr::TaggedTpl(tpl) => {
+                println!("TaggedTpl {:?}", tpl);
                 if let Some(built_expr) = self.build_call_expr_from_tpl(tpl) {
                     built_expr
                 } else {
@@ -89,6 +153,27 @@ impl<'a> Fold for Relay<'a> {
             _ => expr,
         }
     }
+
+    fn fold_module_items(&mut self, items: Vec<ModuleItem>) -> Vec<ModuleItem> {
+        let items = items
+            .into_iter()
+            .map(|item| {
+                println!("Module item");
+                item.fold_children_with(self)
+            })
+            .collect::<Vec<_>>();
+
+        self.imports
+            .iter()
+            .map(|import| import.as_module_item())
+            .chain(items.into_iter())
+            .collect()
+    }
+}
+
+// TODO: This is really hacky.
+fn unique_ident_name_from_operation_name(operation_name: &str) -> String {
+    format!("__{}", operation_name)
 }
 
 #[derive(Debug)]
@@ -138,13 +223,63 @@ impl<'a> Relay<'a> {
                 return None;
             }
         }
+        println!("\n\nExpression is GraphQL\n\n");
 
         let operation_name = pull_first_operation_name_from_tpl(tpl);
 
         match operation_name {
             None => None,
             Some(operation_name) => match self.build_require_path(operation_name.as_str()) {
-                Ok(final_path) => Some(build_require_expr_from_path(final_path.to_str().unwrap())),
+                Ok(final_path) => {
+                    let ident_name = unique_ident_name_from_operation_name(&operation_name);
+                    self.imports.push(RelayImport {
+                        path: final_path.to_str().unwrap().to_string(),
+                        item: ident_name.clone(),
+                    });
+                    let operation_ident = Ident {
+                        sym: ident_name.into(),
+                        span: DUMMY_SP,
+                        optional: false,
+                    };
+                    let bytes = md5::compute(tpl.tpl.quasis[0].raw.as_bytes());
+                    let hash = format!("{:?}", &bytes);
+                    let hash_member = Expr::Member(MemberExpr {
+                        span: Default::default(),
+                        obj: Box::new(Expr::Ident(operation_ident.clone())),
+                        prop: MemberProp::Ident(Ident {
+                            span: Default::default(),
+                            sym: "hash".into(),
+                            optional: false,
+                        }),
+                    });
+                
+                    let hash_ne_computed_hash = Expr::Bin(BinExpr {
+                        span: Default::default(),
+                        op: BinaryOp::NotEqEq,
+                        left: Box::new(hash_member),
+                        right: Box::new(Expr::Lit(Lit::Str(hash.into()))),
+                    });
+                
+                    let warn_if_outdated = Expr::Bin(BinExpr {
+                        span: Default::default(),
+                        op: BinaryOp::LogicalAnd,
+                        left: Box::new(hash_ne_computed_hash),
+                        right: Box::new(warn_needs_rebuild(&operation_name, "relay")),
+                    });
+                
+                    if self.config.eager_es_modules {
+                        let assign_and_check = Expr::Seq(SeqExpr {
+                            span: Default::default(),
+                            exprs: vec![
+                                Box::new(warn_if_outdated),
+                                Box::new(Expr::Ident(operation_ident)),
+                            ],
+                        });
+                        Some(assign_and_check)
+                    } else {
+                        Some(build_require_expr_from_path(final_path.to_str().unwrap()))
+                    }
+                }
                 Err(_err) => {
                     // let base_error = "Could not transform GraphQL template to a Relay import.";
                     // let error_message = match err {
@@ -172,6 +307,7 @@ pub fn relay(config: &Config, file_name: FileName, root_dir: PathBuf) -> impl Fo
         root_dir,
         file_name,
         config,
+        imports: vec![],
     }
 }
 
@@ -212,10 +348,14 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
                 "flow" => RelayLanguageConfig::Flow,
                 _ => panic!("Unexpected language config value"),
             });
+    let eager_es_modules = plugin_config["eagerEsModules"]
+        .as_bool()
+        .unwrap_or_default();
 
     let config = Config {
         artifact_directory,
         language,
+        eager_es_modules,
     };
 
     let mut relay = relay(&config, filename, root_dir);
