@@ -57,15 +57,13 @@ impl RelayImport {
     fn as_module_item(&self) -> ModuleItem {
         ModuleItem::ModuleDecl(ModuleDecl::Import(ImportDecl {
             span: Default::default(),
-            specifiers: vec![ImportSpecifier::Named(ImportNamedSpecifier {
+            specifiers: vec![ImportSpecifier::Default(ImportDefaultSpecifier {
                 span: Default::default(),
                 local: Ident {
                     span: Default::default(),
                     sym: self.item.clone().into(),
                     optional: false,
                 },
-                imported: None,
-                is_type_only: false,
             })],
             src: Box::new(self.path.to_string_lossy().into()),
             type_only: false,
@@ -206,7 +204,7 @@ impl<'a> Relay<'a> {
             Some(operation_name) => match self.build_require_path(&operation_name) {
                 Ok(final_path) => {
                     let ident_name = unique_ident_name_from_operation_name(&operation_name);
-                    
+
                     if self.config.eager_es_modules {
                         self.imports.push(RelayImport {
                             path: final_path,
