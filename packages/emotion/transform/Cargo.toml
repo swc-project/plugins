@@ -5,7 +5,7 @@ edition = "2021"
 license = "Apache-2.0"
 name = "swc_emotion"
 repository = "https://github.com/swc-project/plugins.git"
-version = "0.28.5"
+version = "0.28.6"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -25,7 +25,7 @@ swc_core = { features = [
   "ecma_utils",
   "ecma_visit",
   "trace_macro",
-], version = "0.47.0" }
+], version = "0.48.12" }
 tracing = {version = "0.1.37", features = ["release_max_level_info"]}
 
 [dev-dependencies]
@@ -33,5 +33,5 @@ serde_json = "1"
 swc_core = { features = [
   "testing_transform",
   "ecma_transforms_react",
-], version = "0.47.0" }
-testing = "0.31.20"
+], version = "0.48.12" }
+testing = "0.31.24"
