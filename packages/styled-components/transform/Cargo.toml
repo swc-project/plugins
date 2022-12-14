@@ -33,4 +33,4 @@ swc_core = { features = [
   "ecma_transforms",
   "testing_transform",
 ], version = "0.47.0" }
-testing = "0.31.20"
+testing = "0.31.24"

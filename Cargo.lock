@@ -1613,9 +1613,9 @@ dependencies = [
 
 [[package]]
 name = "swc_atoms"
-version = "0.4.25"
+version = "0.4.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "63b8033a868fbebf5829797ac0c543499622b657e2d33a08ca6ab12547b8bafc"
+checksum = "cef7796df1985447f1fb8803ca2a00b445b20abbc65c8e73acb08835d7651ff0"
 dependencies = [
  "once_cell",
  "rkyv",
@@ -1642,9 +1642,9 @@ dependencies = [
 
 [[package]]
 name = "swc_common"
-version = "0.29.19"
+version = "0.29.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "90e2328ba5e7c8f83ff8273b352c890f981d80d215ee29cddcbe19aa789d3592"
+checksum = "811faf77280a5f43fedf06769c391d4f2ed274b1ce9267e3a47e9b13527930b7"
 dependencies = [
  "ahash",
  "anyhow",
@@ -2159,9 +2159,9 @@ dependencies = [
 
 [[package]]
 name = "swc_error_reporters"
-version = "0.13.20"
+version = "0.13.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7b8dba54343538503f4e8f8110b569dcf2ac0781b0afd7a950fdc97814f14a4c"
+checksum = "035712357b19deefa23cec538f5cca48e6a799b1f37f6bf7cfbf1328f035c030"
 dependencies = [
  "anyhow",
  "miette",
@@ -2414,9 +2414,9 @@ dependencies = [
 
 [[package]]
 name = "testing"
-version = "0.31.20"
+version = "0.31.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9b96c1192fef3c7f6c7962e5861c3c90982ee0cfba5a5fbb1c666ab8df4b495e"
+checksum = "81be4c3a0e1150b5cfe1f7381a3ea608bfc56a22f54469d8b6a663cd1cad52a1"
 dependencies = [
  "ansi_term",
  "difference",
