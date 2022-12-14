@@ -2,7 +2,12 @@
 set -eu
 
 function upgradeCargo {
-    cargo upgrade --workspace $@
+    CRATES="$(cargo metadata --format-version 1 \
+    | jq -r '.packages[] | select(.source == null) | .manifest_path')"
+
+    for CRATE in $CRATES; do
+        cargo upgrade --manifest-path $CRATE $@
+    done
 }
 
 upgradeCargo swc_atoms swc_common testing swc_ecmascript swc_ecma_transforms_testing swc_plugin swc_core
