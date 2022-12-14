@@ -2,7 +2,7 @@
 set -eu
 
 function upgradeCargo {
-    cargo upgrade $@ || true
+    cargo upgrade -i $@ || true
 }
 
 upgradeCargo -p swc_atoms -p swc_common -p testing -p swc_ecmascript -p swc_ecma_transforms_testing -p swc_plugin -p swc_core
