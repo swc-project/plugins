@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 set -eu
 
-function up {
+function upgradeCargo {
     cargo upgrade --workspace $@
 }
 
-up swc_atoms swc_common testing swc_ecmascript swc_ecma_transforms_testing swc_plugin swc_core
+upgradeCargo swc_atoms swc_common testing swc_ecmascript swc_ecma_transforms_testing swc_plugin swc_core
 
 git commit -a -m 'Update swc crates' || true
 
-up styled_jsx modularize_imports swc_emotion
+upgradeCargo styled_jsx modularize_imports swc_emotion
 
 git commit -a -m 'Update extra crates' || true
 
