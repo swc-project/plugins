@@ -2400,10 +2400,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "swc_tailwind"
-version = "0.1.9"
-
-[[package]]
 name = "swc_timer"
 version = "0.17.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
