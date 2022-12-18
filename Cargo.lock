@@ -1692,9 +1692,9 @@ dependencies = [
 
 [[package]]
 name = "swc_atoms"
-version = "0.4.29"
+version = "0.4.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cef7796df1985447f1fb8803ca2a00b445b20abbc65c8e73acb08835d7651ff0"
+checksum = "d20167122f1f8566ec6fc4d34dcbdeed34cbade2e5d3fdcfd6fca6613c88b1ad"
 dependencies = [
  "once_cell",
  "rkyv",
