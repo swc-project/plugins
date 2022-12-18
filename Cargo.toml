@@ -1,6 +1,5 @@
 [workspace]
 members = [
-  "crates/tailwind",
   "packages/emotion",
   "packages/jest",
   "packages/loadable-components",
