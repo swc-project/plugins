@@ -3,10 +3,8 @@
 #### Setup
 
 ```sh
-npm install --save-dev @swc/plugin-relay @swc/core@1.2.215
+npm install --save-dev @swc/plugin-relay @swc/core
 ```
-
-> @swc/core@1.2.215 is required for now
 
 ### Example
 
