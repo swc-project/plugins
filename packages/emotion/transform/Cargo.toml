@@ -25,7 +25,7 @@ swc_core = { features = [
   "ecma_utils",
   "ecma_visit",
   "trace_macro",
-], version = "0.48.29" }
+], version = "0.52.8" }
 tracing = {version = "0.1.37", features = ["release_max_level_info"]}
 
 [dev-dependencies]
@@ -33,5 +33,5 @@ serde_json = "1"
 swc_core = { features = [
   "testing_transform",
   "ecma_transforms_react",
-], version = "0.48.29" }
-testing = "0.31.25"
+], version = "0.52.8" }
+testing = "0.31.28"
