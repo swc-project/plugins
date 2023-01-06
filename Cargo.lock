@@ -2218,7 +2218,7 @@ dependencies = [
 
 [[package]]
 name = "swc_emotion"
-version = "0.28.7"
+version = "0.28.8"
 dependencies = [
  "base64",
  "byteorder",
