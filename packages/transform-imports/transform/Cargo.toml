@@ -22,5 +22,5 @@ swc_core = { features = [
 ], version = "0.52.8" }
 
 [dev-dependencies]
-swc_core = { features = ["testing_transform"], version = "0.52.8" }
+swc_core = { features = ["testing_transform", "ecma_parser"], version = "0.52.8" }
 testing = "0.31.28"
