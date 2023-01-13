@@ -6,7 +6,7 @@ function bumpNpm {
 }
 
 function bumpCargo {
-    cargo mono bump $1 --breaking
+    cargo mono bump $1
 }
 
 CRATES="$(cargo metadata --format-version 1 \
