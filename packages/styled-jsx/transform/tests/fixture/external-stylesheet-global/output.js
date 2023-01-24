@@ -1,13 +1,13 @@
 import _JSXStyle from "styled-jsx/style";
 import styles, { foo as styles3 } from './styles';
 const styles2 = require('./styles2');
-export default (()=><div >
+export default (()=><div>
 
-    <p >test</p>
+    <p>test</p>
 
-    <div >woot</div>
+    <div>woot</div>
 
-    <p >woot</p>
+    <p>woot</p>
 
     <_JSXStyle id={styles2.__hash}>{styles2}</_JSXStyle>
 

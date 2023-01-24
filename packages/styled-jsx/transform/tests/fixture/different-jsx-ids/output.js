@@ -15,10 +15,10 @@ const B = ()=><div className={"jsx-d1ed441bb35f699d"}>
     <_JSXStyle id={"d1ed441bb35f699d"}>{`p.jsx-d1ed441bb35f699d{color:${otherColor}}`}</_JSXStyle>
 
   </div>;
-export default (()=><div >
+export default (()=><div>
 
-    <A />
+    <A/>
 
-    <B />
+    <B/>
 
   </div>);
