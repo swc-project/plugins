@@ -17,35 +17,35 @@ const Thing2 = styled(Thing).withConfig({
 `;
 /*
  * Basic fixtures
- */ const StaticString = (p)=><_StyledP >A</_StyledP>;
-const StaticTemplate = (p)=><_StyledP2 >
+ */ const StaticString = (p)=><_StyledP>A</_StyledP>;
+const StaticTemplate = (p)=><_StyledP2>
 
     A
 
   </_StyledP2>;
-const ObjectProp = (p)=><_StyledP3 >A</_StyledP3>;
-const NoChildren = (p)=><_StyledP4 />;
-const CssHelperProp = (p)=><_StyledP5 >
+const ObjectProp = (p)=><_StyledP3>A</_StyledP3>;
+const NoChildren = (p)=><_StyledP4/>;
+const CssHelperProp = (p)=><_StyledP5>
 
     A
 
   </_StyledP5>;
 /*
  * Dynamic prop
- */ const CustomComp = (p)=><_StyledParagraph >H</_StyledParagraph>;
+ */ const CustomComp = (p)=><_StyledParagraph>H</_StyledParagraph>;
 const DynamicProp = (p)=><_StyledP6 $_css={props.cssText}>H</_StyledP6>;
 const LocalInterpolation = (p)=><_StyledP7 $_css2={props.bg}>
 
     H
 
   </_StyledP7>;
-const FuncInterpolation = (p)=><_StyledP8 >
+const FuncInterpolation = (p)=><_StyledP8>
 
     H
 
   </_StyledP8>;
 const radius = 10;
-const GlobalInterpolation = (p)=><_StyledP9 >
+const GlobalInterpolation = (p)=><_StyledP9>
 
     H
 
@@ -55,15 +55,15 @@ const LocalCssHelperProp = (p)=><_StyledP10 $_css3={p.color}>
     A
 
   </_StyledP10>;
-const DynamicCssHelperProp = (p)=><_StyledP11 >
+const DynamicCssHelperProp = (p)=><_StyledP11>
 
     A
 
   </_StyledP11>;
-const CustomCompWithDot = (p)=><_StyledButtonGhost >H</_StyledButtonGhost>;
-const NestedCompWithDot = (p)=><_StyledButtonGhostNew >H</_StyledButtonGhostNew>;
-const CustomCompWithDotLowerCase = (p)=><_StyledButtonGhost2 >H</_StyledButtonGhost2>;
-const CustomElement = (p)=><_StyledButtonGhost3 >H</_StyledButtonGhost3>;
+const CustomCompWithDot = (p)=><_StyledButtonGhost>H</_StyledButtonGhost>;
+const NestedCompWithDot = (p)=><_StyledButtonGhostNew>H</_StyledButtonGhostNew>;
+const CustomCompWithDotLowerCase = (p)=><_StyledButtonGhost2>H</_StyledButtonGhost2>;
+const CustomElement = (p)=><_StyledButtonGhost3>H</_StyledButtonGhost3>;
 const globalVar = '"foo"';
 const getAfterValue = ()=>'"bar"';
 const ObjectPropMixedInputs = (p)=>{
@@ -82,7 +82,7 @@ const SpreadObjectPropMixedInputs = (p)=>{
 
     </_StyledP13>;
 };
-/* styled component defined after function it's used in */ const EarlyUsageComponent = (p)=><_StyledThing />;
+/* styled component defined after function it's used in */ const EarlyUsageComponent = (p)=><_StyledThing/>;
 const Thing3 = styled.div.withConfig({
     displayName: "code__Thing3",
     componentId: "sc-867225be-2"
@@ -123,12 +123,12 @@ var _StyledThing = styled(Thing3).withConfig({
     displayName: "code___StyledThing",
     componentId: "sc-867225be-7"
 })`color: red;`;
-const EarlyUsageComponent2 = (p)=><_StyledThing2 />;
+const EarlyUsageComponent2 = (p)=><_StyledThing2/>;
 function Thing4(props1) {
     return <div {...props1}/>;
 }
-/* insert before usage for non-local scope styled HOC targets */ const ImportedComponentUsage = (p)=><_StyledSomeComponent />;
-const RequiredComponentUsage = (p)=><_StyledSomeOtherComponent />;
+/* insert before usage for non-local scope styled HOC targets */ const ImportedComponentUsage = (p)=><_StyledSomeComponent/>;
+const RequiredComponentUsage = (p)=><_StyledSomeOtherComponent/>;
 const ObjectInterpolation = (p)=>{
     const theme = useTheme();
     return <_StyledP14 $_css15={theme.colors.red}>

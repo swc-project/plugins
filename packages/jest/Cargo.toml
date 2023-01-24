@@ -14,7 +14,7 @@ crate-type = ["cdylib", "rlib"]
 phf = { version = "0.10.0", features = ["macros"] }
 serde = { version = "1.0.130", features = ["derive"] }
 swc_common = { version = "0.29.27", features = ["concurrent"] }
-swc_core = { version = "0.56.0", features = [
+swc_core = { version = "0.58.5", features = [
   "ecma_plugin_transform",
   "ecma_utils",
   "ecma_visit",

@@ -10,7 +10,7 @@ export default (()=><>
 
       <h3 id="head" className={"jsx-6dd5f97e085c0297"}>Title...</h3>
 
-      <React.Fragment >
+      <React.Fragment>
 
         <p className={"jsx-6dd5f97e085c0297"}>hello</p>
 
@@ -34,7 +34,7 @@ export default (()=><>
 function Component1() {
     return <>
 
-      <div >test</div>
+      <div>test</div>
 
     </>;
 }
