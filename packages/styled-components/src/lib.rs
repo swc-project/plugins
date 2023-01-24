@@ -1,5 +1,10 @@
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 
+use std::{
+    collections::hash_map::DefaultHasher,
+    hash::{Hash, Hasher},
+};
+
 use styled_components::Config;
 use swc_core::{
     common::FileName,
@@ -24,8 +29,9 @@ fn styled_components(mut program: Program, data: TransformPluginProgramMetadata)
         None => FileName::Anon,
     };
 
-    // TODO: Use correct value
-    let src_file_hash = 0;
+    let mut hasher = DefaultHasher::default();
+    program.hash(&mut hasher);
+    let src_file_hash = hasher.finish() as _;
 
     let mut pass = styled_components::styled_components(file_name, src_file_hash, config);
 
