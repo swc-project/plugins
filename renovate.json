@@ -1,13 +1,5 @@
 {
-  "extends": [
-    ":dependencyDashboard",
-    ":semanticPrefixFixDepsChoreOthers",
-    ":ignoreModulesAndTests",
-    "workarounds:all"
-  ],
-  "prHourlyLimit": 24,
-  "prConcurrentLimit": 5,
-  "gitIgnoredAuthors": ["github-actions@github.com"],
+  "extends": [":dependencyDashboard"],
   "packageRules": [
     {
       "packagePatterns": ["*"],
