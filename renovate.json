@@ -1,0 +1,23 @@
+{
+  "extends": [
+    ":dependencyDashboard",
+    ":semanticPrefixFixDepsChoreOthers",
+    ":ignoreModulesAndTests",
+    "workarounds:all"
+  ],
+  "prHourlyLimit": 24,
+  "prConcurrentLimit": 5,
+  "gitIgnoredAuthors": ["github-actions@github.com"],
+  "packageRules": [
+    {
+      "packagePatterns": ["*"],
+      "enabled": false
+    },
+    {
+      "groupName": "swc_core",
+      "matchPackageNames": ["swc_core", "testing"],
+      "rangeStrategy": "bump",
+      "enabled": true
+    }
+  ]
+}
