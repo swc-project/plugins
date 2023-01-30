@@ -11,6 +11,7 @@
       "groupName": "swc_core",
       "matchPackageNames": ["swc_core", "testing"],
       "rangeStrategy": "bump",
+      "matchUpdateTypes": ["major"],
       "enabled": true
     }
   ]
