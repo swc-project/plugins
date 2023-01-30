@@ -1,6 +1,17 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base"
+  "extends": ["config:base", ":dependencyDashboard"],
+
+  "packageRules": [
+    {
+      "packagePatterns": ["*"],
+      "enabled": false
+    },
+    {
+      "groupName": "swc_core",
+      "matchPackageNames": ["swc_core", "testing"],
+      "rangeStrategy": "bump",
+      "enabled": true
+    }
   ]
 }
