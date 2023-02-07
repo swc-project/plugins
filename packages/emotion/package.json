@@ -16,5 +16,6 @@
   },
   "author": "강동윤 <kdy1997.dev@gmail.com>",
   "keywords": [],
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "preferUnplugged": true
 }
