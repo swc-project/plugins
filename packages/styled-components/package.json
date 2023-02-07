@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-styled-components",
-  "version": "1.5.40",
+  "version": "1.5.41",
   "description": "SWC plugin for styled-components",
   "main": "swc_plugin_styled_components.wasm",
   "scripts": {
@@ -16,5 +16,6 @@
   },
   "author": "강동윤 <kdy1997.dev@gmail.com>",
   "keywords": [],
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "preferUnplugged": true
 }
