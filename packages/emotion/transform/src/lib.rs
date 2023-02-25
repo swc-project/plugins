@@ -1,17 +1,17 @@
-use std::borrow::Cow;
-use std::path::{Path, PathBuf};
-use std::sync::Arc;
+use std::{
+    borrow::Cow,
+    path::{Path, PathBuf},
+    sync::Arc,
+};
 
 use fxhash::FxHashMap;
 use import_map::ImportMap;
 use once_cell::sync::Lazy;
-use regex::Regex;
+use regex::{Regex, RegexBuilder};
 use serde::{Deserialize, Serialize};
 use sourcemap::{RawToken, SourceMap as RawSourcemap};
 use swc_core::{
     common::{comments::Comments, util::take::Take, BytePos, SourceMapperDyn, DUMMY_SP},
-    ecma::utils::ExprFactory,
-    ecma::visit::{Fold, FoldWith},
     ecma::{
         ast::{
             ArrayLit, CallExpr, Callee, Expr, ExprOrSpread, Id, Ident, ImportDecl, ImportSpecifier,
@@ -20,6 +20,8 @@ use swc_core::{
             ObjectLit, Pat, Prop, PropName, PropOrSpread, SourceMapperExt, Tpl, VarDeclarator,
         },
         atoms::JsWord,
+        utils::ExprFactory,
+        visit::{Fold, FoldWith},
     },
     trace_macro::swc_trace,
 };
@@ -77,6 +79,13 @@ static EMOTION_OFFICIAL_LIBRARIES: Lazy<Vec<EmotionModuleConfig>> = Lazy::new(||
             default_export: Some(ExprKind::Styled),
         },
     ]
+});
+
+static INVALID_SINGLE_LINE_COMMENT: Lazy<Regex> = Lazy::new(|| {
+    RegexBuilder::new(r"(?P<s>^|[^:]|\s)//.*$")
+        .multi_line(true)
+        .build()
+        .unwrap()
 });
 
 static SPACE_AROUND_COLON: Lazy<Regex> =
@@ -808,6 +817,16 @@ fn match_css_export(item: &ExportItem, prop: &MemberProp) -> bool {
 
 #[inline]
 fn minify_css_string(input: &str, is_first_item: bool, is_last_item: bool) -> Cow<str> {
+    match INVALID_SINGLE_LINE_COMMENT.replace_all(input, "$s") {
+        Cow::Borrowed(borrowed) => remove_space_around_colon(borrowed, is_first_item, is_last_item),
+        Cow::Owned(owned) => remove_space_around_colon(&owned, is_first_item, is_last_item)
+            .into_owned()
+            .into(),
+    }
+}
+
+#[inline]
+fn remove_space_around_colon(input: &str, is_first_item: bool, is_last_item: bool) -> Cow<str> {
     let pattern = |c| c == '\n';
     let pattern_trim_spaces = |c| c == ' ' || c == '\n';
     SPACE_AROUND_COLON.replace_all(
@@ -829,6 +848,7 @@ fn minify_css_string(input: &str, is_first_item: bool, is_last_item: bool) -> Co
 #[allow(unused_imports)]
 mod test_emotion {
     use super::minify_css_string;
+    use crate::INVALID_SINGLE_LINE_COMMENT;
 
     #[test]
     fn should_not_trim_end_space_in_first_item() {
@@ -841,5 +861,17 @@ mod test_emotion {
             ),
             "box-shadow:inset 0px 0px 0px "
         );
+    }
+
+    #[test]
+    fn should_minify_single_line_comment_correctly() {
+        assert_eq!(
+            minify_css_string(
+                "//comment;\ncolor: red;//comment\nbackground-image:url(http://dummy-url)",
+                true,
+                true
+            ),
+            "color:red;background-image:url(http://dummy-url)"
+        )
     }
 }
