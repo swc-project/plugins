@@ -29,9 +29,46 @@ pub enum RelayLanguageConfig {
     Flow,
 }
 
+impl<'a> TryFrom<&'a str> for RelayLanguageConfig {
+    type Error = String;
+
+    fn try_from(value: &'a str) -> Result<Self, Self::Error> {
+        match value {
+            "flow" => Ok(Self::Flow),
+            "typescript" => Ok(Self::TypeScript),
+            _ => Err(format!("Unexpected language config value '{value}'")),
+        }
+    }
+}
+
 impl Default for RelayLanguageConfig {
     fn default() -> Self {
         Self::Flow
+    }
+}
+
+#[derive(Debug, Clone)]
+struct RelayImport {
+    path: JsWord,
+    item: JsWord,
+}
+
+impl RelayImport {
+    fn as_module_item(&self) -> ModuleItem {
+        ModuleItem::ModuleDecl(ModuleDecl::Import(ImportDecl {
+            span: Default::default(),
+            specifiers: vec![ImportSpecifier::Default(ImportDefaultSpecifier {
+                span: Default::default(),
+                local: Ident {
+                    span: Default::default(),
+                    sym: self.item.clone(),
+                    optional: false,
+                },
+            })],
+            src: Box::new(self.path.clone().into()),
+            type_only: false,
+            asserts: None,
+        }))
     }
 }
 
@@ -39,6 +76,7 @@ struct Relay<'a> {
     root_dir: PathBuf,
     file_name: FileName,
     config: &'a Config,
+    imports: Vec<RelayImport>,
 }
 
 #[derive(Deserialize, Debug, Default, Clone)]
@@ -47,6 +85,8 @@ pub struct Config {
     pub artifact_directory: Option<PathBuf>,
     #[serde(default)]
     pub language: RelayLanguageConfig,
+    #[serde(default)]
+    pub eager_es_modules: bool,
 }
 
 fn pull_first_operation_name_from_tpl(tpl: &TaggedTpl) -> Option<String> {
@@ -89,6 +129,24 @@ impl<'a> Fold for Relay<'a> {
             _ => expr,
         }
     }
+
+    fn fold_module_items(&mut self, items: Vec<ModuleItem>) -> Vec<ModuleItem> {
+        let items = items
+            .into_iter()
+            .map(|item| item.fold_children_with(self))
+            .collect::<Vec<_>>();
+
+        self.imports
+            .iter()
+            .map(|import| import.as_module_item())
+            .chain(items.into_iter())
+            .collect()
+    }
+}
+
+// TODO: This is really hacky.
+fn unique_ident_name_from_operation_name(operation_name: &str) -> String {
+    format!("__{}", operation_name)
 }
 
 #[derive(Debug)]
@@ -143,8 +201,31 @@ impl<'a> Relay<'a> {
 
         match operation_name {
             None => None,
-            Some(operation_name) => match self.build_require_path(operation_name.as_str()) {
-                Ok(final_path) => Some(build_require_expr_from_path(final_path.to_str().unwrap())),
+            Some(operation_name) => match self.build_require_path(&operation_name) {
+                Ok(final_path) => {
+                    let final_path = final_path.to_string_lossy();
+
+                    #[cfg(target_os = "windows")]
+                    let final_path = final_path.replace("\\", "/");
+
+                    let ident_name: JsWord =
+                        unique_ident_name_from_operation_name(&operation_name).into();
+
+                    if self.config.eager_es_modules {
+                        self.imports.push(RelayImport {
+                            path: final_path.into(),
+                            item: ident_name.clone(),
+                        });
+                        let operation_ident = Ident {
+                            span: Default::default(),
+                            sym: ident_name,
+                            optional: false,
+                        };
+                        Some(Expr::Ident(operation_ident))
+                    } else {
+                        Some(build_require_expr_from_path(&final_path))
+                    }
+                }
                 Err(_err) => {
                     // let base_error = "Could not transform GraphQL template to a Relay import.";
                     // let error_message = match err {
@@ -172,6 +253,7 @@ pub fn relay(config: &Config, file_name: FileName, root_dir: PathBuf) -> impl Fo
         root_dir,
         file_name,
         config,
+        imports: vec![],
     }
 }
 
@@ -204,18 +286,17 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
     let artifact_directory = plugin_config["artifactDirectory"]
         .as_str()
         .map(PathBuf::from);
-    let language =
-        plugin_config["language"]
-            .as_str()
-            .map_or(RelayLanguageConfig::TypeScript, |v| match v {
-                "typescript" => RelayLanguageConfig::TypeScript,
-                "flow" => RelayLanguageConfig::Flow,
-                _ => panic!("Unexpected language config value"),
-            });
+    let language = plugin_config["language"]
+        .as_str()
+        .map_or(RelayLanguageConfig::TypeScript, |v| v.try_into().unwrap());
+    let eager_es_modules = plugin_config["eagerEsModules"]
+        .as_bool()
+        .unwrap_or_default();
 
     let config = Config {
         artifact_directory,
         language,
+        eager_es_modules,
     };
 
     let mut relay = relay(&config, filename, root_dir);

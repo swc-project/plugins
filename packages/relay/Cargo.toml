@@ -24,3 +24,6 @@ swc_core = { version = "0.59.14", features = [
   "common",
 ] }
 tracing = { version = "0.1.37", features = ["release_max_level_off"] }
+
+[dev-dependencies]
+testing = "0.31.14"
