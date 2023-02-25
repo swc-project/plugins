@@ -49,8 +49,8 @@ impl Default for RelayLanguageConfig {
 
 #[derive(Debug, Clone)]
 struct RelayImport {
-    path: PathBuf,
-    item: String,
+    path: JsWord,
+    item: JsWord,
 }
 
 impl RelayImport {
@@ -61,11 +61,11 @@ impl RelayImport {
                 span: Default::default(),
                 local: Ident {
                     span: Default::default(),
-                    sym: self.item.clone().into(),
+                    sym: self.item.clone(),
                     optional: false,
                 },
             })],
-            src: Box::new(self.path.to_string_lossy().into()),
+            src: Box::new(self.path.clone().into()),
             type_only: false,
             asserts: None,
         }))
@@ -203,21 +203,27 @@ impl<'a> Relay<'a> {
             None => None,
             Some(operation_name) => match self.build_require_path(&operation_name) {
                 Ok(final_path) => {
-                    let ident_name = unique_ident_name_from_operation_name(&operation_name);
+                    let final_path = final_path.to_string_lossy();
+
+                    #[cfg(target_arch = "windows")]
+                    let final_path = final_path.replace("\\", "/");
+
+                    let ident_name: JsWord =
+                        unique_ident_name_from_operation_name(&operation_name).into();
 
                     if self.config.eager_es_modules {
                         self.imports.push(RelayImport {
-                            path: final_path,
+                            path: final_path.into(),
                             item: ident_name.clone(),
                         });
                         let operation_ident = Ident {
                             span: Default::default(),
-                            sym: ident_name.into(),
+                            sym: ident_name,
                             optional: false,
                         };
                         Some(Expr::Ident(operation_ident))
                     } else {
-                        Some(build_require_expr_from_path(final_path.to_str().unwrap()))
+                        Some(build_require_expr_from_path(&final_path))
                     }
                 }
                 Err(_err) => {
