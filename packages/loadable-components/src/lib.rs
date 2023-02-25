@@ -271,9 +271,11 @@ where
             .map(|map| map["webpackChunkName"].as_str().map(|v| v.to_string()))
             .unwrap_or_default();
 
-        if !aggressive_import && let Some(values) = values {
-            self.add_or_replace_chunk_name_comment(import, values);
-            return webpack_chunk_name.unwrap().into();
+        if !aggressive_import {
+            if let Some(values) = values {
+                self.add_or_replace_chunk_name_comment(import, values);
+                return webpack_chunk_name.unwrap().into();
+            }
         }
 
         let mut chunk_name_node = self.generate_chunk_name_node(
