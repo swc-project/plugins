@@ -205,7 +205,7 @@ impl<'a> Relay<'a> {
                 Ok(final_path) => {
                     let final_path = final_path.to_string_lossy();
 
-                    #[cfg(target_arch = "windows")]
+                    #[cfg(target_os = "windows")]
                     let final_path = final_path.replace("\\", "/");
 
                     let ident_name: JsWord =
