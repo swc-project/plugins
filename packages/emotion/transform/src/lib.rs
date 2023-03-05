@@ -203,7 +203,7 @@ impl<C: Comments> EmotionTransformer<C> {
             filepath: path.to_owned(),
             dir: path.parent().and_then(|p| p.to_str()).map(|s| s.to_owned()),
             filename: path
-                .file_name()
+                .file_stem()
                 .and_then(|filename| filename.to_str())
                 .map(|s| s.to_owned()),
             cm,
