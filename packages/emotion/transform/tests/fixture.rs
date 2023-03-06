@@ -2,9 +2,13 @@ use std::path::PathBuf;
 
 use swc_core::{
     common::{chain, comments::SingleThreadedComments, Mark},
-    ecma::parser::{Syntax, TsConfig},
-    ecma::transforms::react::{jsx, Runtime},
-    ecma::transforms::testing::test_fixture,
+    ecma::{
+        parser::{Syntax, TsConfig},
+        transforms::{
+            react::{jsx, Runtime},
+            testing::test_fixture,
+        },
+    },
 };
 use swc_emotion::EmotionOptions;
 use testing::fixture;
@@ -48,6 +52,73 @@ fn next_emotion_fixture(input: PathBuf) {
                         sourcemap: Some(true),
                         auto_label: Some(true),
                         import_map: Some(test_import_map),
+                        ..Default::default()
+                    },
+                    &PathBuf::from("input.ts"),
+                    tr.cm.clone(),
+                    tr.comments.as_ref().clone(),
+                ),
+                jsx
+            )
+        },
+        &input,
+        &output,
+        Default::default(),
+    );
+}
+
+// Test the label format generation behaviour.
+// This uses the same input for each output, where each
+// output is validating the different labelling options.
+//
+// Each folder name in `/labels` specifies the label option being tested:
+//   "/labels/filename" -> "[filename]"
+//   "/labels/filename-local" -> "[filename]-[local]"
+//   "/labels/local" -> "[local]"
+#[fixture("tests/labels/**/output.js")]
+fn emotion_label_fixture(output: PathBuf) {
+    let output_folder = output.parent().unwrap();
+    let input = output_folder.parent().unwrap().join("input.tsx");
+
+    let label_option_raw = output_folder.file_name().unwrap().to_str().unwrap();
+    let label_option = if (output_folder.to_str().unwrap()).contains('-') {
+        // Multiple labelling specifiers, e.g. [filename]-[local]
+        label_option_raw
+            .split('-')
+            .map(|s| format!("[{s}]"))
+            .collect::<Vec<String>>()
+            .join("-")
+    } else {
+        // Singular labelling specifiers, e.g. [local]
+        format!("[{label_option_raw}]")
+    };
+
+    test_fixture(
+        ts_syntax(),
+        &|tr| {
+            let top_level_mark = Mark::fresh(Mark::root());
+            let jsx = jsx::<SingleThreadedComments>(
+                tr.cm.clone(),
+                Some(tr.comments.as_ref().clone()),
+                swc_core::ecma::transforms::react::Options {
+                    next: false.into(),
+                    runtime: Some(Runtime::Automatic),
+                    throw_if_namespace: false.into(),
+                    development: false.into(),
+                    use_builtins: true.into(),
+                    use_spread: true.into(),
+                    ..Default::default()
+                },
+                top_level_mark,
+            );
+
+            chain!(
+                swc_emotion::emotion(
+                    EmotionOptions {
+                        enabled: Some(true),
+                        sourcemap: Some(true),
+                        auto_label: Some(true),
+                        label_format: Some(label_option.to_string()),
                         ..Default::default()
                     },
                     &PathBuf::from("input.ts"),
