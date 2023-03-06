@@ -201,7 +201,11 @@ impl<C: Comments> EmotionTransformer<C> {
             options,
             filepath_hash: None,
             filepath: path.to_owned(),
-            dirname: path.parent().and_then(|p| p.to_str()).map(|s| s.to_owned()),
+            dirname: path
+                .parent()
+                .and_then(|parent| parent.file_name())
+                .and_then(|dirname| dirname.to_str())
+                .map(|s| s.to_owned()),
             filename: path
                 .file_stem()
                 .and_then(|filename| filename.to_str())
