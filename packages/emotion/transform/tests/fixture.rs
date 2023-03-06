@@ -78,19 +78,25 @@ fn next_emotion_fixture(input: PathBuf) {
 #[fixture("tests/labels/**/output.js")]
 fn emotion_label_fixture(output: PathBuf) {
     let output_folder = output.parent().unwrap();
+    let output_folder_name = output_folder.file_name().unwrap().to_str().unwrap();
     let input = output_folder.parent().unwrap().join("input.tsx");
 
-    let label_option_raw = output_folder.file_name().unwrap().to_str().unwrap();
-    let label_option = if (output_folder.to_str().unwrap()).contains('-') {
+    // Simulate the input path for fairly represented maps in the fixture output.
+    let mut pseudo_input_path = PathBuf::from(output_folder);
+    pseudo_input_path.push("input.tsx");
+
+    dbg!(&pseudo_input_path);
+
+    let label_option = if output_folder_name.contains('-') {
         // Multiple labelling specifiers, e.g. [filename]-[local]
-        label_option_raw
+        output_folder_name
             .split('-')
             .map(|s| format!("[{s}]"))
             .collect::<Vec<String>>()
             .join("-")
     } else {
         // Singular labelling specifiers, e.g. [local]
-        format!("[{label_option_raw}]")
+        format!("[{output_folder_name}]")
     };
 
     test_fixture(
@@ -121,7 +127,7 @@ fn emotion_label_fixture(output: PathBuf) {
                         label_format: Some(label_option.to_string()),
                         ..Default::default()
                     },
-                    &PathBuf::from("input.ts"),
+                    &PathBuf::from(format!("{output_folder_name}/index.tsx")),
                     tr.cm.clone(),
                     tr.comments.as_ref().clone(),
                 ),
