@@ -72,6 +72,8 @@ fn next_emotion_fixture(input: PathBuf) {
 // output is validating the different labelling options.
 //
 // Each folder name in `/labels` specifies the label option being tested:
+//   "/labels/dirname" -> "[dirname]"
+//   "/labels/dirname-filename-local" -> "[dirname]-[filename]-[local]"
 //   "/labels/filename" -> "[filename]"
 //   "/labels/filename-local" -> "[filename]-[local]"
 //   "/labels/local" -> "[local]"
@@ -84,8 +86,6 @@ fn emotion_label_fixture(output: PathBuf) {
     // Simulate the input path for fairly represented maps in the fixture output.
     let mut pseudo_input_path = PathBuf::from(output_folder);
     pseudo_input_path.push("input.tsx");
-
-    dbg!(&pseudo_input_path);
 
     let label_option = if output_folder_name.contains('-') {
         // Multiple labelling specifiers, e.g. [filename]-[local]
