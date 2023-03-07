@@ -142,13 +142,16 @@ fn emotion_label_fixture(output: PathBuf) {
 
 #[fixture("tests/label-sanitisation/**/*.ts")]
 fn emotion_label_sanitisation(input: PathBuf) {
-    let output_folder = input.parent().unwrap().file_name().unwrap();
+    let output_folder_name = input
+        .parent()
+        .unwrap()
+        .file_name()
+        .unwrap()
+        .to_str()
+        .unwrap();
+    let input_file_name = input.file_name().unwrap().to_str().unwrap();
     let mut output = PathBuf::from(&input);
     output.set_extension("js");
-
-    let normalised_input_path = PathBuf::from(output_folder).join(input.file_name().unwrap());
-
-    dbg!(&normalised_input_path);
 
     test_fixture(
         ts_syntax(),
@@ -178,7 +181,7 @@ fn emotion_label_sanitisation(input: PathBuf) {
                         label_format: Some("[dirname]-[filename]-[local]".to_string()),
                         ..Default::default()
                     },
-                    &normalised_input_path,
+                    &PathBuf::from(format!("{output_folder_name}/{input_file_name}")),
                     tr.cm.clone(),
                     tr.comments.as_ref().clone(),
                 ),
