@@ -171,7 +171,7 @@ pub struct EmotionTransformer<C: Comments> {
     pub options: EmotionOptions,
     filepath_hash: Option<u32>,
     filepath: PathBuf,
-    dir: Option<String>,
+    dirname: Option<String>,
     filename: Option<String>,
     cm: Arc<SourceMapperDyn>,
     comments: C,
@@ -201,7 +201,11 @@ impl<C: Comments> EmotionTransformer<C> {
             options,
             filepath_hash: None,
             filepath: path.to_owned(),
-            dir: path.parent().and_then(|p| p.to_str()).map(|s| s.to_owned()),
+            dirname: path
+                .parent()
+                .and_then(|parent| parent.file_name())
+                .and_then(|dirname| dirname.to_str())
+                .map(|s| s.to_owned()),
             filename: path
                 .file_stem()
                 .and_then(|filename| filename.to_str())
@@ -244,8 +248,8 @@ impl<C: Comments> EmotionTransformer<C> {
             if let Some(filename) = self.filename.as_ref() {
                 label = label.replace("[filename]", filename);
             }
-            if let Some(dir) = self.dir.as_ref() {
-                label = label.replace("[dir]", dir);
+            if let Some(dirname) = self.dirname.as_ref() {
+                label = label.replace("[dirname]", dirname);
             };
         }
         label
