@@ -164,7 +164,7 @@ impl VisitMut for TranspileCssProp {
                                             _ => false,
                                         } =>
                                     {
-                                        Expr::Tpl(v.tpl.take())
+                                        Expr::Tpl(*v.tpl.take())
                                     }
                                     Expr::Object(..) => *v.take(),
                                     _ => Expr::Tpl(Tpl {
@@ -234,7 +234,7 @@ impl VisitMut for TranspileCssProp {
                             css = Expr::Arrow(ArrowExpr {
                                 span: DUMMY_SP,
                                 params: vec![Pat::Ident(p.clone().into())],
-                                body: BlockStmtOrExpr::Expr(Box::new(css.take())),
+                                body: Box::new(BlockStmtOrExpr::Expr(Box::new(css.take()))),
                                 is_async: false,
                                 is_generator: false,
                                 type_params: Default::default(),
@@ -277,9 +277,9 @@ impl VisitMut for TranspileCssProp {
                                     acc.push(Box::new(Expr::Arrow(ArrowExpr {
                                         span: DUMMY_SP,
                                         params: vec![Pat::Ident(p.clone().into())],
-                                        body: BlockStmtOrExpr::Expr(Box::new(
+                                        body: Box::new(BlockStmtOrExpr::Expr(Box::new(
                                             p.make_member(identifier),
-                                        )),
+                                        ))),
                                         is_async: false,
                                         is_generator: false,
                                         type_params: Default::default(),
@@ -306,7 +306,7 @@ impl VisitMut for TranspileCssProp {
                                 span: DUMMY_SP,
                                 tag: Box::new(styled),
                                 type_params: Default::default(),
-                                tpl: css.expect_tpl(),
+                                tpl: Box::new(css.expect_tpl()),
                             })),
                         }),
                         definite: false,

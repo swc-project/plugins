@@ -583,7 +583,7 @@ impl StyledJSXTransformer {
         }
 
         let style = self.get_jsx_style(
-            StyleExpr::Tpl(&tagged_tpl.tpl, &Expr::Tpl(tagged_tpl.tpl.clone())),
+            StyleExpr::Tpl(&tagged_tpl.tpl, &Expr::Tpl(*tagged_tpl.tpl.clone())),
             false,
         );
         let styles = vec![style];
