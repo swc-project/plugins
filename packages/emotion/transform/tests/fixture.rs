@@ -139,3 +139,57 @@ fn emotion_label_fixture(output: PathBuf) {
         Default::default(),
     );
 }
+
+#[fixture("tests/label-sanitisation/**/*.ts")]
+fn emotion_label_sanitisation(input: PathBuf) {
+    let output_folder_name = input
+        .parent()
+        .unwrap()
+        .file_name()
+        .unwrap()
+        .to_str()
+        .unwrap();
+    let input_file_name = input.file_name().unwrap().to_str().unwrap();
+    let mut output = PathBuf::from(&input);
+    output.set_extension("js");
+
+    test_fixture(
+        ts_syntax(),
+        &|tr| {
+            let top_level_mark = Mark::fresh(Mark::root());
+            let jsx = jsx::<SingleThreadedComments>(
+                tr.cm.clone(),
+                Some(tr.comments.as_ref().clone()),
+                swc_core::ecma::transforms::react::Options {
+                    next: false.into(),
+                    runtime: Some(Runtime::Automatic),
+                    throw_if_namespace: false.into(),
+                    development: false.into(),
+                    use_builtins: true.into(),
+                    use_spread: true.into(),
+                    ..Default::default()
+                },
+                top_level_mark,
+            );
+
+            chain!(
+                swc_emotion::emotion(
+                    EmotionOptions {
+                        enabled: Some(true),
+                        sourcemap: Some(true),
+                        auto_label: Some(true),
+                        label_format: Some("[dirname]-[filename]-[local]".to_string()),
+                        ..Default::default()
+                    },
+                    &PathBuf::from(format!("{output_folder_name}/{input_file_name}")),
+                    tr.cm.clone(),
+                    tr.comments.as_ref().clone(),
+                ),
+                jsx
+            )
+        },
+        &input,
+        &output,
+        Default::default(),
+    );
+}

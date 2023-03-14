@@ -81,6 +81,12 @@ static EMOTION_OFFICIAL_LIBRARIES: Lazy<Vec<EmotionModuleConfig>> = Lazy::new(||
     ]
 });
 
+static INVALID_CSS_CLASS_NAME_CHARACTERS: Lazy<Regex> = Lazy::new(|| {
+    RegexBuilder::new(r##"[!"#$%&'()*+,./:;<=>?@\[\]^`|}~{]"##)
+        .build()
+        .unwrap()
+});
+
 static INVALID_SINGLE_LINE_COMMENT: Lazy<Regex> = Lazy::new(|| {
     RegexBuilder::new(r"(?P<s>^|[^:]|\s)//.*$")
         .multi_line(true)
@@ -233,6 +239,10 @@ impl<C: Comments> EmotionTransformer<C> {
         self.filepath_hash.unwrap()
     }
 
+    fn sanitize_label_part<'t>(&self, label_part: &'t str) -> Cow<'t, str> {
+        INVALID_CSS_CLASS_NAME_CHARACTERS.replace_all(label_part, "-")
+    }
+
     fn create_label(&self, with_prefix: bool) -> String {
         let prefix = if with_prefix { "label:" } else { "" };
         let mut label = format!(
@@ -244,12 +254,12 @@ impl<C: Comments> EmotionTransformer<C> {
                 .unwrap_or_else(|| "[local]".to_owned())
         );
         if let Some(current_context) = &self.current_context {
-            label = label.replace("[local]", current_context);
+            label = label.replace("[local]", &self.sanitize_label_part(current_context));
             if let Some(filename) = self.filename.as_ref() {
-                label = label.replace("[filename]", filename);
+                label = label.replace("[filename]", &self.sanitize_label_part(filename));
             }
             if let Some(dirname) = self.dirname.as_ref() {
-                label = label.replace("[dirname]", dirname);
+                label = label.replace("[dirname]", &self.sanitize_label_part(dirname));
             };
         }
         label
