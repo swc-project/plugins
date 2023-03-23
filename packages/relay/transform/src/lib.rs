@@ -15,10 +15,6 @@ use swc_core::{
         utils::{quote_ident, ExprFactory},
         visit::{Fold, FoldWith},
     },
-    plugin::{
-        metadata::TransformPluginMetadataContextKind, plugin_transform,
-        proxies::TransformPluginProgramMetadata,
-    },
 };
 
 #[derive(Copy, Clone, Debug, Deserialize)]
