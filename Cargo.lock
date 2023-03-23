@@ -2461,7 +2461,7 @@ dependencies = [
  "serde_json",
  "swc_common",
  "swc_core",
- "testing",
+ "swc_relay",
  "tracing",
 ]
 
@@ -2496,6 +2496,20 @@ dependencies = [
  "serde_json",
  "swc_common",
  "swc_core",
+ "tracing",
+]
+
+[[package]]
+name = "swc_relay"
+version = "0.1.0"
+dependencies = [
+ "once_cell",
+ "regex",
+ "serde",
+ "serde_json",
+ "swc_common",
+ "swc_core",
+ "testing",
  "tracing",
 ]
 
