@@ -3,7 +3,8 @@ use std::{
     path::{Path, PathBuf},
     sync::Arc,
 };
-
+use std::io::stdout;
+use package_json::PackageJsonManager;
 use fxhash::FxHashMap;
 use import_map::ImportMap;
 use once_cell::sync::Lazy;
@@ -167,10 +168,11 @@ enum PackageMeta {
 pub fn emotion<C: Comments>(
     emotion_options: EmotionOptions,
     path: &Path,
+    src_file_hash: u32,
     cm: Arc<SourceMapperDyn>,
     comments: C,
 ) -> impl Fold {
-    EmotionTransformer::new(emotion_options, path, cm, comments)
+    EmotionTransformer::new(emotion_options, path, src_file_hash, cm, comments)
 }
 
 pub struct EmotionTransformer<C: Comments> {
@@ -179,6 +181,7 @@ pub struct EmotionTransformer<C: Comments> {
     filepath: PathBuf,
     dirname: Option<String>,
     filename: Option<String>,
+    src_file_hash: u32,
     cm: Arc<SourceMapperDyn>,
     comments: C,
     import_packages: FxHashMap<Id, PackageMeta>,
@@ -195,6 +198,7 @@ impl<C: Comments> EmotionTransformer<C> {
     pub fn new(
         options: EmotionOptions,
         path: &Path,
+        src_file_hash: u32,
         cm: Arc<SourceMapperDyn>,
         comments: C,
     ) -> Self {
@@ -207,6 +211,7 @@ impl<C: Comments> EmotionTransformer<C> {
             options,
             filepath_hash: None,
             filepath: path.to_owned(),
+            src_file_hash,
             dirname: path
                 .parent()
                 .and_then(|parent| parent.file_name())
@@ -230,6 +235,7 @@ impl<C: Comments> EmotionTransformer<C> {
     // Compute file hash on demand
     // Memorize the hash of the file name
     fn get_filename_hash(&mut self) -> u32 {
+
         if self.filepath_hash.is_none() {
             self.filepath_hash = Some(hash::murmurhash2(
                 self.filepath.to_string_lossy().as_bytes(),
@@ -341,7 +347,7 @@ impl<C: Comments> EmotionTransformer<C> {
     fn create_label_prop_node(&mut self, key: &str) -> PropOrSpread {
         let stable_class_name = format!(
             "e{}{}",
-            radix_fmt::radix_36(self.get_filename_hash()),
+            radix_fmt::radix_36(self.src_file_hash),
             self.emotion_target_class_name_count
         );
         self.emotion_target_class_name_count += 1;
