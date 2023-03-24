@@ -1,6 +1,6 @@
 import { nonDefaultStyled } from 'package-four';
 let SomeComp = /*#__PURE__*/ nonDefaultStyled("div", {
-    target: "ekie5mj0",
+    target: "e15p6jc60",
     label: "SomeComp"
 })({
     color: 'hotpink'

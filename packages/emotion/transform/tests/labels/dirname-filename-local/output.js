@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 export const StyledDiv = /*#__PURE__*/ styled("div", {
-  target: "e1888tq0",
+  target: "e17wqgfl0",
   label: "dirname-filename-local-index-StyledDiv",
 })(
   "background-color:black;",
