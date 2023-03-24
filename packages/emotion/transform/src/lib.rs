@@ -4,7 +4,6 @@ use std::{
     sync::Arc,
 };
 use std::io::stdout;
-use package_json::PackageJsonManager;
 use fxhash::FxHashMap;
 use import_map::ImportMap;
 use once_cell::sync::Lazy;
@@ -27,7 +26,6 @@ use swc_core::{
     trace_macro::swc_trace,
 };
 
-mod hash;
 mod import_map;
 
 static EMOTION_OFFICIAL_LIBRARIES: Lazy<Vec<EmotionModuleConfig>> = Lazy::new(|| {
@@ -231,19 +229,6 @@ impl<C: Comments> EmotionTransformer<C> {
         }
     }
 
-    #[inline]
-    // Compute file hash on demand
-    // Memorize the hash of the file name
-    fn get_filename_hash(&mut self) -> u32 {
-
-        if self.filepath_hash.is_none() {
-            self.filepath_hash = Some(hash::murmurhash2(
-                self.filepath.to_string_lossy().as_bytes(),
-                0,
-            ));
-        }
-        self.filepath_hash.unwrap()
-    }
 
     fn sanitize_label_part<'t>(&self, label_part: &'t str) -> Cow<'t, str> {
         INVALID_CSS_CLASS_NAME_CHARACTERS.replace_all(label_part, "-")
