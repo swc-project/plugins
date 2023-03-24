@@ -3,7 +3,6 @@ use std::{
     path::{Path, PathBuf},
     sync::Arc,
 };
-use std::io::stdout;
 use fxhash::FxHashMap;
 use import_map::ImportMap;
 use once_cell::sync::Lazy;
