@@ -930,7 +930,7 @@ dependencies = [
 
 [[package]]
 name = "modularize_imports"
-version = "0.26.12"
+version = "0.26.13"
 dependencies = [
  "convert_case",
  "handlebars",
@@ -1736,7 +1736,7 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
 name = "styled_components"
-version = "0.53.12"
+version = "0.53.13"
 dependencies = [
  "Inflector",
  "once_cell",
@@ -1750,7 +1750,7 @@ dependencies = [
 
 [[package]]
 name = "styled_jsx"
-version = "0.30.12"
+version = "0.30.13"
 dependencies = [
  "easy-error",
  "swc_core",
@@ -2307,7 +2307,7 @@ dependencies = [
 
 [[package]]
 name = "swc_emotion"
-version = "0.29.12"
+version = "0.29.13"
 dependencies = [
  "base64",
  "byteorder",
@@ -2501,7 +2501,7 @@ dependencies = [
 
 [[package]]
 name = "swc_relay"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "once_cell",
  "regex",

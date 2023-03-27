@@ -21,6 +21,7 @@ use swc_core::{
 #[serde(rename_all = "lowercase")]
 pub enum RelayLanguageConfig {
     TypeScript,
+    JavaScript,
     Flow,
 }
 
@@ -69,6 +70,7 @@ impl RelayImport {
 
 struct Relay<'a> {
     root_dir: PathBuf,
+    pages_dir: Option<PathBuf>,
     file_name: FileName,
     config: &'a Config,
     imports: Vec<RelayImport>,
@@ -147,6 +149,7 @@ fn unique_ident_name_from_operation_name(operation_name: &str) -> String {
 #[derive(Debug)]
 enum BuildRequirePathError {
     FileNameNotReal,
+    ArtifactDirectoryExpected { file_name: String },
 }
 
 impl<'a> Relay<'a> {
@@ -160,10 +163,21 @@ impl<'a> Relay<'a> {
             RelayLanguageConfig::TypeScript => {
                 format!("{}.graphql.ts", definition_name)
             }
+            RelayLanguageConfig::JavaScript => {
+                format!("{}.graphql.js", definition_name)
+            }
         };
 
         if let Some(artifact_directory) = &self.config.artifact_directory {
             Ok(self.root_dir.join(artifact_directory).join(filename))
+        } else if self
+            .pages_dir
+            .as_ref()
+            .map_or(false, |pages_dir| real_file_name.starts_with(pages_dir))
+        {
+            Err(BuildRequirePathError::ArtifactDirectoryExpected {
+                file_name: real_file_name.display().to_string(),
+            })
         } else {
             Ok(real_file_name
                 .parent()
@@ -243,11 +257,17 @@ impl<'a> Relay<'a> {
     }
 }
 
-pub fn relay(config: &Config, file_name: FileName, root_dir: PathBuf) -> impl Fold + '_ {
+pub fn relay(
+    config: &Config,
+    file_name: FileName,
+    root_dir: PathBuf,
+    pages_dir: Option<PathBuf>,
+) -> impl Fold + '_ {
     Relay {
         root_dir,
         file_name,
         config,
+        pages_dir,
         imports: vec![],
     }
 }
