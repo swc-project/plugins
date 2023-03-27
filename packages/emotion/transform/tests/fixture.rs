@@ -26,7 +26,8 @@ fn next_emotion_fixture(input: PathBuf) {
     test_fixture(
         ts_syntax(),
         &|tr| {
-            let top_level_mark = Mark::fresh(Mark::root());
+            let unresolved_mark = Mark::new();
+            let top_level_mark = Mark::new();
             let jsx = jsx::<SingleThreadedComments>(
                 tr.cm.clone(),
                 Some(tr.comments.as_ref().clone()),
@@ -35,11 +36,10 @@ fn next_emotion_fixture(input: PathBuf) {
                     runtime: Some(Runtime::Automatic),
                     throw_if_namespace: false.into(),
                     development: false.into(),
-                    use_builtins: true.into(),
-                    use_spread: true.into(),
                     ..Default::default()
                 },
                 top_level_mark,
+                unresolved_mark,
             );
 
             let test_import_map =
@@ -102,7 +102,8 @@ fn emotion_label_fixture(output: PathBuf) {
     test_fixture(
         ts_syntax(),
         &|tr| {
-            let top_level_mark = Mark::fresh(Mark::root());
+            let unresolved_mark = Mark::new();
+            let top_level_mark = Mark::new();
             let jsx = jsx::<SingleThreadedComments>(
                 tr.cm.clone(),
                 Some(tr.comments.as_ref().clone()),
@@ -111,11 +112,10 @@ fn emotion_label_fixture(output: PathBuf) {
                     runtime: Some(Runtime::Automatic),
                     throw_if_namespace: false.into(),
                     development: false.into(),
-                    use_builtins: true.into(),
-                    use_spread: true.into(),
                     ..Default::default()
                 },
                 top_level_mark,
+                unresolved_mark,
             );
 
             chain!(
@@ -156,7 +156,8 @@ fn emotion_label_sanitisation(input: PathBuf) {
     test_fixture(
         ts_syntax(),
         &|tr| {
-            let top_level_mark = Mark::fresh(Mark::root());
+            let unresolved_mark = Mark::new();
+            let top_level_mark = Mark::new();
             let jsx = jsx::<SingleThreadedComments>(
                 tr.cm.clone(),
                 Some(tr.comments.as_ref().clone()),
@@ -165,11 +166,10 @@ fn emotion_label_sanitisation(input: PathBuf) {
                     runtime: Some(Runtime::Automatic),
                     throw_if_namespace: false.into(),
                     development: false.into(),
-                    use_builtins: true.into(),
-                    use_spread: true.into(),
                     ..Default::default()
                 },
                 top_level_mark,
+                unresolved_mark,
             );
 
             chain!(
