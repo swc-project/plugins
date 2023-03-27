@@ -19,6 +19,7 @@ fn fixture(input: PathBuf) {
                 },
                 FileName::Real("file.js".parse().unwrap()),
                 Default::default(),
+                None,
             )
         },
         &input,
@@ -42,6 +43,7 @@ fn fixture_es_modules(input: PathBuf) {
                 },
                 FileName::Real("file.js".parse().unwrap()),
                 Default::default(),
+                None,
             )
         },
         &input,
