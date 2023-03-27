@@ -21,6 +21,7 @@ use swc_core::{
 #[serde(rename_all = "lowercase")]
 pub enum RelayLanguageConfig {
     TypeScript,
+    JavaScript,
     Flow,
 }
 
@@ -159,6 +160,9 @@ impl<'a> Relay<'a> {
             RelayLanguageConfig::Flow => format!("{}.graphql.js", definition_name),
             RelayLanguageConfig::TypeScript => {
                 format!("{}.graphql.ts", definition_name)
+            }
+            RelayLanguageConfig::JavaScript => {
+                format!("{}.graphql.js", definition_name)
             }
         };
 
