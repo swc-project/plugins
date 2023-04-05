@@ -44,7 +44,7 @@ fn next_emotion_fixture(input: PathBuf) {
 
             let test_import_map =
                 serde_json::from_str(include_str!("./testImportMap.json")).unwrap();
-
+            let fm = tr.cm.load_file(&input).unwrap();
             chain!(
                 swc_emotion::emotion(
                     EmotionOptions {
@@ -55,6 +55,7 @@ fn next_emotion_fixture(input: PathBuf) {
                         ..Default::default()
                     },
                     &PathBuf::from("input.ts"),
+                    fm.src_hash as u32,
                     tr.cm.clone(),
                     tr.comments.as_ref().clone(),
                 ),
@@ -117,7 +118,7 @@ fn emotion_label_fixture(output: PathBuf) {
                 top_level_mark,
                 unresolved_mark,
             );
-
+            let fm = tr.cm.load_file(&input).unwrap();
             chain!(
                 swc_emotion::emotion(
                     EmotionOptions {
@@ -128,6 +129,7 @@ fn emotion_label_fixture(output: PathBuf) {
                         ..Default::default()
                     },
                     &PathBuf::from(format!("{output_folder_name}/index.tsx")),
+                    fm.src_hash as u32,
                     tr.cm.clone(),
                     tr.comments.as_ref().clone(),
                 ),
@@ -171,7 +173,7 @@ fn emotion_label_sanitisation(input: PathBuf) {
                 top_level_mark,
                 unresolved_mark,
             );
-
+            let fm = tr.cm.load_file(&input).unwrap();
             chain!(
                 swc_emotion::emotion(
                     EmotionOptions {
@@ -182,6 +184,7 @@ fn emotion_label_sanitisation(input: PathBuf) {
                         ..Default::default()
                     },
                     &PathBuf::from(format!("{output_folder_name}/{input_file_name}")),
+                    fm.src_hash as u32,
                     tr.cm.clone(),
                     tr.comments.as_ref().clone(),
                 ),

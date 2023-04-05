@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 export const Dollar$Div = /*#__PURE__*/ styled("div", {
-  target: "ef3xcwq0",
+  target: "elomtyh0",
   label: "label-sanitisation-bad-const-name-Dollar-Div",
 })(
   "background-color:black;",

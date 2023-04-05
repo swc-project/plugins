@@ -1,6 +1,6 @@
 import { nonDefaultStyled as someAlias } from 'package-one';
 let SomeComp = /*#__PURE__*/ someAlias("div", {
-    target: "ekie5mj0",
+    target: "ejjqjuq0",
     label: "SomeComp"
 })({
     color: 'hotpink'
