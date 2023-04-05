@@ -1740,7 +1740,7 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
 name = "styled_components"
-version = "0.54.2"
+version = "0.54.3"
 dependencies = [
  "Inflector",
  "once_cell",
