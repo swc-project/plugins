@@ -11,6 +11,10 @@
     },
     "lodash": {
       "transform": "lodash/{{member}}"
+    },
+    "antd": {
+      "transform": "antd/es/{{kebabCase member}}",
+      "sideEffect": "antd/es/{{kebabCase member}}/style"
     }
   }
 ]

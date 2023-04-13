@@ -5,11 +5,12 @@ use handlebars::{Context, Handlebars, Helper, HelperResult, Output, RenderContex
 use once_cell::sync::Lazy;
 use regex::{Captures, Regex};
 use serde::{Deserialize, Serialize};
-
 use swc_core::{
     cached::regex::CachedRegex,
-    ecma::ast::*,
-    ecma::visit::{noop_fold_type, Fold},
+    ecma::{
+        ast::*,
+        visit::{noop_fold_type, Fold},
+    },
 };
 
 static DUP_SLASH_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"//").unwrap());
@@ -24,6 +25,8 @@ pub struct Config {
 #[serde(rename_all = "camelCase")]
 pub struct PackageConfig {
     pub transform: String,
+    #[serde(default)]
+    pub side_effect: String,
     #[serde(default)]
     pub prevent_full_import: bool,
     #[serde(default)]
@@ -96,6 +99,21 @@ impl<'a> Rewriter<'a> {
                         type_only: false,
                         asserts: None,
                     });
+                    if !self.config.side_effect.is_empty() {
+                        let side_effect_path = self
+                            .renderer
+                            .render_template(&self.config.side_effect, &ctx)
+                            .unwrap_or_else(|e| {
+                                panic!("error rendering template for '{}': {}", self.key, e);
+                            });
+                        out.push(ImportDecl {
+                            span: old_decl.span,
+                            specifiers: [].to_vec(),
+                            src: Box::new(Str::from(side_effect_path.as_ref())),
+                            type_only: (false),
+                            asserts: None,
+                        })
+                    }
                 }
                 _ => {
                     if self.config.prevent_full_import {
@@ -137,6 +155,7 @@ impl FoldImports {
 
 impl Fold for FoldImports {
     noop_fold_type!();
+
     fn fold_module(&mut self, mut module: Module) -> Module {
         let mut new_items: Vec<ModuleItem> = vec![];
         for item in module.body {

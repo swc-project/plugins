@@ -1,9 +1,9 @@
 use std::path::PathBuf;
 
 use modularize_imports::{modularize_imports, PackageConfig};
-use swc_core::{
-    ecma::parser::{EsConfig, Syntax},
-    ecma::transforms::testing::{test_fixture, FixtureTestConfig},
+use swc_core::ecma::{
+    parser::{EsConfig, Syntax},
+    transforms::testing::{test_fixture, FixtureTestConfig},
 };
 use testing::fixture;
 
@@ -26,6 +26,7 @@ fn modularize_imports_fixture(input: PathBuf) {
                         "react-bootstrap".to_string(),
                         PackageConfig {
                             transform: "react-bootstrap/lib/{{member}}".into(),
+                            side_effect: "".into(),
                             prevent_full_import: false,
                             skip_default_conversion: false,
                         },
@@ -34,6 +35,7 @@ fn modularize_imports_fixture(input: PathBuf) {
                         "my-library/?(((\\w*)?/?)*)".to_string(),
                         PackageConfig {
                             transform: "my-library/{{ matches.[1] }}/{{member}}".into(),
+                            side_effect: "".into(),
                             prevent_full_import: false,
                             skip_default_conversion: false,
                         },
@@ -42,6 +44,7 @@ fn modularize_imports_fixture(input: PathBuf) {
                         "my-library-2".to_string(),
                         PackageConfig {
                             transform: "my-library-2/{{ camelCase member }}".into(),
+                            side_effect: "".into(),
                             prevent_full_import: false,
                             skip_default_conversion: true,
                         },
@@ -50,8 +53,18 @@ fn modularize_imports_fixture(input: PathBuf) {
                         "my-library-3".to_string(),
                         PackageConfig {
                             transform: "my-library-3/{{ kebabCase member }}".into(),
+                            side_effect: "".into(),
                             prevent_full_import: false,
                             skip_default_conversion: true,
+                        },
+                    ),
+                    (
+                        "antd".to_string(),
+                        PackageConfig {
+                            transform: "antd/es/{{ kebabCase member }}".into(),
+                            side_effect: "antd/es/{{ kebabCase member }}/style".into(),
+                            prevent_full_import: false,
+                            skip_default_conversion: false,
                         },
                     ),
                 ]
