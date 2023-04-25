@@ -35,4 +35,4 @@ swc_core = { features = [
   "ecma_parser",
   "ecma_transforms_react",
 ], version = "0.75.34" }
-testing = "0.33.0"
+testing = "0.33.6"
