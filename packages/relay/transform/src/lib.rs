@@ -8,7 +8,7 @@ use once_cell::sync::Lazy;
 use regex::Regex;
 use serde::Deserialize;
 use swc_core::{
-    common::FileName,
+    common::{FileName, Mark, DUMMY_SP},
     ecma::{
         ast::*,
         atoms::JsWord,
@@ -74,6 +74,7 @@ struct Relay<'a> {
     file_name: FileName,
     config: &'a Config,
     imports: Vec<RelayImport>,
+    unresolved_mark: Option<Mark>,
 }
 
 #[derive(Deserialize, Debug, Default, Clone)]
@@ -97,10 +98,14 @@ fn pull_first_operation_name_from_tpl(tpl: &TaggedTpl) -> Option<String> {
     })
 }
 
-fn build_require_expr_from_path(path: &str) -> Expr {
+fn build_require_expr_from_path(path: &str, mark: Option<Mark>) -> Expr {
     Expr::Call(CallExpr {
         span: Default::default(),
-        callee: quote_ident!("require").as_callee(),
+        callee: quote_ident!(
+            mark.map(|m| DUMMY_SP.apply_mark(m)).unwrap_or(DUMMY_SP),
+            "require"
+        )
+        .as_callee(),
         args: vec![Lit::Str(Str {
             span: Default::default(),
             value: JsWord::from(path),
@@ -226,13 +231,19 @@ impl<'a> Relay<'a> {
                             item: ident_name.clone(),
                         });
                         let operation_ident = Ident {
-                            span: Default::default(),
+                            span: self
+                                .unresolved_mark
+                                .map(|m| DUMMY_SP.apply_mark(m))
+                                .unwrap_or(Default::default()),
                             sym: ident_name,
                             optional: false,
                         };
                         Some(Expr::Ident(operation_ident))
                     } else {
-                        Some(build_require_expr_from_path(&final_path))
+                        Some(build_require_expr_from_path(
+                            &final_path,
+                            self.unresolved_mark,
+                        ))
                     }
                 }
                 Err(_err) => {
@@ -262,6 +273,7 @@ pub fn relay(
     file_name: FileName,
     root_dir: PathBuf,
     pages_dir: Option<PathBuf>,
+    unresolved_mark: Option<Mark>,
 ) -> impl Fold + '_ {
     Relay {
         root_dir,
@@ -269,5 +281,6 @@ pub fn relay(
         config,
         pages_dir,
         imports: vec![],
+        unresolved_mark,
     }
 }
