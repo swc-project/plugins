@@ -50,7 +50,13 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
         eager_es_modules,
     };
 
-    let mut relay = relay(&config, filename, root_dir, None);
+    let mut relay = relay(
+        &config,
+        filename,
+        root_dir,
+        None,
+        Some(metadata.unresolved_mark),
+    );
 
     program.fold_with(&mut relay)
 }
