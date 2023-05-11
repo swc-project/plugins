@@ -5,7 +5,7 @@ edition = "2021"
 license = "Apache-2.0"
 name = "swc_relay"
 repository = "https://github.com/swc-project/plugins.git"
-version = "0.2.7"
+version = "0.2.8"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -21,7 +21,7 @@ swc_core = { version = "0.75.34", features = [
   "ecma_ast",
   "common",
 ] }
-tracing = { version = "0.1.37", features = ["release_max_level_off"] }
+tracing = { version = "0.1.37" }
 
 [dev-dependencies]
 testing = "0.33.6"
