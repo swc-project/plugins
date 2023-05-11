@@ -1712,7 +1712,7 @@ dependencies = [
 
 [[package]]
 name = "styled_jsx"
-version = "0.31.8"
+version = "0.32.0"
 dependencies = [
  "easy-error",
  "swc_core",
