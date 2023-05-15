@@ -1698,7 +1698,7 @@ dependencies = [
 
 [[package]]
 name = "styled_components"
-version = "0.55.0"
+version = "0.56.0"
 dependencies = [
  "Inflector",
  "once_cell",
