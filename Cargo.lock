@@ -2464,7 +2464,7 @@ dependencies = [
 
 [[package]]
 name = "swc_relay"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "once_cell",
  "regex",
