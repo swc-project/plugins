@@ -482,6 +482,42 @@ dependencies = [
 ]
 
 [[package]]
+name = "fusion_asseturl"
+version = "0.33.0"
+dependencies = [
+ "base64",
+ "byteorder",
+ "fxhash",
+ "once_cell",
+ "radix_fmt",
+ "regex",
+ "serde",
+ "serde_json",
+ "sourcemap",
+ "swc_core",
+ "testing",
+ "tracing",
+]
+
+[[package]]
+name = "fusion_gql"
+version = "0.33.0"
+dependencies = [
+ "base64",
+ "byteorder",
+ "fxhash",
+ "once_cell",
+ "radix_fmt",
+ "regex",
+ "serde",
+ "serde_json",
+ "sourcemap",
+ "swc_core",
+ "testing",
+ "tracing",
+]
+
+[[package]]
 name = "fxhash"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1129,6 +1165,30 @@ name = "pin-project-lite"
 version = "0.2.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e0a7ae3ac2f1173085d398531c705756c94a4c56843785df85a60c1a0afac116"
+
+[[package]]
+name = "plugin_fusion_asseturl"
+version = "0.12.5"
+dependencies = [
+ "fusion_asseturl",
+ "serde",
+ "serde_json",
+ "swc_common",
+ "swc_core",
+ "tracing",
+]
+
+[[package]]
+name = "plugin_fusion_gql"
+version = "0.12.5"
+dependencies = [
+ "fusion_gql",
+ "serde",
+ "serde_json",
+ "swc_common",
+ "swc_core",
+ "tracing",
+]
 
 [[package]]
 name = "pmutil"

@@ -3,6 +3,8 @@ members = [
   "packages/emotion",
   "packages/jest",
   "packages/loadable-components",
+  "packages/fusion-asseturl",
+  "packages/fusion-gql",
   "packages/styled-components",
   "packages/styled-jsx",
   "packages/transform-imports",
