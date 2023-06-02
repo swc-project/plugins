@@ -1,6 +1,7 @@
 {
   "editor.formatOnSave": true,
   "rust-analyzer.linkedProjects": [
-    "./packages/fusion-asseturl/transform/Cargo.toml"
+    "./packages/fusion-asseturl/transform/Cargo.toml",
+    "./packages/fusion/transform/Cargo.toml"
   ]
 }

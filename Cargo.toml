@@ -3,6 +3,7 @@ members = [
   "packages/emotion",
   "packages/jest",
   "packages/loadable-components",
+  "packages/fusion",
   "packages/fusion-asseturl",
   "packages/fusion-gql",
   "packages/styled-components",
