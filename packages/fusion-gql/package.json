@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-fusion-gql",
-  "version": "1.5.60",
+  "version": "1.5.61",
   "description": "SWC plugin for fusion-gql",
   "main": "swc_plugin_fusion_gql.wasm",
   "scripts": {
