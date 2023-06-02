@@ -1,0 +1,13 @@
+import $_asseturl___src_e_jpg from "./src/e.jpg";
+import $_asseturl___d_png from "./d.png";
+import $_asseturl___c_gif from "./c.gif";
+import $_asseturl___b_jpg from "./b.jpg";
+import $_asseturl___a_png from "./a.png";
+import { assetUrl as testUrl } from "fusion-core";
+const a = $_asseturl___a_png;
+const b = $_asseturl___b_jpg;
+const c = $_asseturl___c_gif;
+const d = $_asseturl___d_png;
+const e = $_asseturl___src_e_jpg;
+const another = $_asseturl___d_png;
+const f = assetUrl("./f.png");
