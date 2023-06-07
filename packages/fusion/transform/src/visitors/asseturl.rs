@@ -158,6 +158,7 @@ impl VisitMut for DisplayNameAndId {
 fn ident_from_path(src_str: &String) -> Ident {
     // Generate a new identifier for the import, to avoid any naming conflicts
     let mut new_ident = src_str.replace("/", "_");
+    new_ident = new_ident.replace("-", "_");
     new_ident = new_ident.replace(".", "_");
     // new_ident.insert(0, '_');
     return quote_ident!(format!("$_asseturl_{}", new_ident));
