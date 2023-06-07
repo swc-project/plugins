@@ -2,7 +2,7 @@
   "name": "swc-plugin-fusion",
   "version": "1.0.1",
   "description": "SWC plugin for fusion",
-  "main": "swc_plugin_fusion.wasm",
+  "main": "plugin_fusion.wasm",
   "scripts": {
     "prepack": "cp ../../target/wasm32-wasi/release/plugin_fusion.wasm ."
   },
