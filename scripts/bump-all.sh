@@ -13,7 +13,7 @@ CRATES="$(cargo metadata --format-version 1 \
     | jq -r '.packages[] | select(.source == null) | .name')"
 
 
-for PKG in ./packages/*; do
+for PKG in ./packages/fusion; do
     bumpNpm $PKG
     git commit -a -m "Bump npm package: ${PKG}" || true
 done

@@ -1,20 +1,20 @@
 {
-  "name": "@swc/plugin-fusion",
-  "version": "1.5.61",
+  "name": "swc-plugin-fusion",
+  "version": "1.0.1",
   "description": "SWC plugin for fusion",
   "main": "swc_plugin_fusion.wasm",
   "scripts": {
-    "prepack": "cp ../../target/wasm32-wasi/release/swc_plugin_fusion.wasm ."
+    "prepack": "cp ../../target/wasm32-wasi/release/plugin_fusion.wasm ."
   },
-  "homepage": "https://swc.rs",
+  "homepage": "https://github/tajo/swc-plugins",
   "repository": {
     "type": "git",
-    "url": "+https://github.com/swc-project/plugins.git"
+    "url": "+https://github.com/tajo/swc-plugins.git"
   },
   "bugs": {
-    "url": "https://github.com/swc-project/plugins/issues"
+    "url": "https://github.com/tajo/swc-plugins/issues"
   },
-  "author": "Vojtech Miksu <vojtehc@uber.com>",
+  "author": "Vojtech Miksu <vojtech@uber.com>",
   "keywords": [],
   "license": "Apache-2.0",
   "preferUnplugged": true
