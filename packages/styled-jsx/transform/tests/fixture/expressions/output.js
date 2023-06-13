@@ -8,7 +8,7 @@ const animationName = 'my-cool-animation';
 const obj = {
     display: 'block'
 };
-export default (({ display  })=><div className={"jsx-b452af554142d27 " + _JSXStyle.dynamic([
+export default (({ display })=><div className={"jsx-b452af554142d27 " + _JSXStyle.dynamic([
         [
             "469c0b1cc43512b8",
             [

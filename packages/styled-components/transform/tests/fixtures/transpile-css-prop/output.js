@@ -155,7 +155,7 @@ const LocalCallCssHelperProp = (p)=>{
 };
 // https://github.com/vercel/next.js/issues/38914
 function Home() {
-    const { x  } = {
+    const { x } = {
         x: 4
     };
     return <_StyledDiv2 $_css17={myCss(x)}/>;

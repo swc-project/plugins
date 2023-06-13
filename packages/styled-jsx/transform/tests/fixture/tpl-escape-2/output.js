@@ -1,5 +1,5 @@
 import _JSXStyle from "styled-jsx/style";
-export default function Home({ fontFamily  }) {
+export default function Home({ fontFamily }) {
     return <div className={_JSXStyle.dynamic([
         [
             "3892513b52a23034",
