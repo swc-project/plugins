@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import SomeComponent from '../SomeComponentPath';
-const { SomeOtherComponent  } = require('../SomeOtherComponentPath');
+const { SomeOtherComponent } = require('../SomeOtherComponentPath');
 /**
  * control
  */ const Thing = styled.div.withConfig({

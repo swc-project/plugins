@@ -22,7 +22,7 @@ export const Test2 = ()=><div className={"jsx-81a68341e430a972 " + `jsx-${styles
 
   </div>;
 // external and dynamic
-export const Test3 = ({ color  })=><div className={`jsx-${styles.__hash}` + " " + _JSXStyle.dynamic([
+export const Test3 = ({ color })=><div className={`jsx-${styles.__hash}` + " " + _JSXStyle.dynamic([
         [
             "f08108daf927b99d",
             [
@@ -48,7 +48,7 @@ export const Test3 = ({ color  })=><div className={`jsx-${styles.__hash}` + " " 
 
   </div>;
 // external, static and dynamic
-export const Test4 = ({ color  })=><div className={`jsx-${styles.__hash}` + " jsx-ceba8c9ce34e3d0c " + _JSXStyle.dynamic([
+export const Test4 = ({ color })=><div className={`jsx-${styles.__hash}` + " jsx-ceba8c9ce34e3d0c " + _JSXStyle.dynamic([
         [
             "9779eebad83219f8",
             [
@@ -86,7 +86,7 @@ export const Test5 = ()=><div className={"jsx-df0159ebd3f9fb6f"}>
 
   </div>;
 // static and dynamic
-export const Test6 = ({ color  })=><div className={"jsx-ceba8c9ce34e3d0c " + _JSXStyle.dynamic([
+export const Test6 = ({ color })=><div className={"jsx-ceba8c9ce34e3d0c " + _JSXStyle.dynamic([
         [
             "9779eebad83219f8",
             [
@@ -112,7 +112,7 @@ export const Test6 = ({ color  })=><div className={"jsx-ceba8c9ce34e3d0c " + _JS
 
   </div>;
 // dynamic only
-export const Test7 = ({ color  })=><div className={_JSXStyle.dynamic([
+export const Test7 = ({ color })=><div className={_JSXStyle.dynamic([
         [
             "f08108daf927b99d",
             [
@@ -136,7 +136,7 @@ export const Test7 = ({ color  })=><div className={_JSXStyle.dynamic([
 
   </div>;
 // dynamic with scoped compound variable
-export const Test8 = ({ color  })=>{
+export const Test8 = ({ color })=>{
     if (color) {
         const innerProps = {
             color
@@ -167,7 +167,7 @@ export const Test8 = ({ color  })=>{
     }
 };
 // dynamic with compound variable
-export const Test9 = ({ color  })=>{
+export const Test9 = ({ color })=>{
     const innerProps = {
         color
     };
@@ -205,7 +205,7 @@ export const Test10 = ()=><div className={"jsx-f849b7a02be96503"}>
 
   </div>;
 // dynamic with complex scope
-export const Test11 = ({ color  })=>{
+export const Test11 = ({ color })=>{
     const items = Array.from({
         length: 5
     }).map((item, i)=><li key={i} className={_JSXStyle.dynamic([

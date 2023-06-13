@@ -1,5 +1,5 @@
 import _JSXStyle from "styled-jsx/style";
-export default (({ breakPoint  })=><div className={_JSXStyle.dynamic([
+export default (({ breakPoint })=><div className={_JSXStyle.dynamic([
         [
             "5d2a0e645566ce9c",
             [

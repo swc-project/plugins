@@ -1,5 +1,5 @@
 import _JSXStyle from "styled-jsx/style";
-export default (({ level =1  })=>{
+export default (({ level = 1 })=>{
     const Element = `h${level}`;
     return <Element className={"jsx-fca64cc3f069b519" + " " + "root"}>
 
@@ -9,7 +9,7 @@ export default (({ level =1  })=>{
 
     </Element>;
 });
-export const TestLowerCase = ({ level =1  })=>{
+export const TestLowerCase = ({ level = 1 })=>{
     const element = `h${level}`;
     return <element className={"jsx-fca64cc3f069b519" + " " + "root"}>
 
@@ -29,7 +29,7 @@ export const Test2 = ()=>{
 
     </Element2>;
 };
-export const Test3 = ({ Component ='div'  })=>{
+export const Test3 = ({ Component = 'div' })=>{
     return <Component className={"jsx-f825b24bbab5b83b"}>
 
       <p className={"jsx-f825b24bbab5b83b"}>dynamic element</p>
