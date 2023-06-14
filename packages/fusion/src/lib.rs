@@ -1,12 +1,12 @@
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 
+use std::path::PathBuf;
+
 use fusion::Config;
+use swc_common::{plugin::metadata::TransformPluginMetadataContextKind, FileName};
 use swc_core::{
     ecma::{ast::Program, visit::VisitMutWith},
-    plugin::{
-        plugin_transform,
-        proxies::TransformPluginProgramMetadata,
-    },
+    plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
 };
 
 #[plugin_transform]
@@ -35,6 +35,20 @@ fn fusion_asseturl(mut program: Program, data: TransformPluginProgramMetadata) -
     let mut pass = fusion::gql_macro(
         // file_name,
         config,
+    );
+
+    let file_name =
+        if let Some(filename) = data.get_context(&TransformPluginMetadataContextKind::Filename) {
+            FileName::Real(PathBuf::from(filename))
+        } else {
+            FileName::Anon
+        };
+
+    program.visit_mut_with(&mut pass);
+
+    let mut pass = fusion::dirname_macro(
+        file_name,
+        // config,
     );
 
     program.visit_mut_with(&mut pass);
