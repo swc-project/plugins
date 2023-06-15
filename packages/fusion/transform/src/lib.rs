@@ -4,7 +4,7 @@ use std::{cell::RefCell, rc::Rc};
 
 use serde::Deserialize;
 use swc_core::{
-    common::chain,
+    common::{chain, FileName},
     ecma::{
         atoms::JsWord,
         visit::{Fold, VisitMut},
@@ -16,6 +16,7 @@ pub use crate::{
     gql_utils::{analyzer as gqlAnalyzer, State as gqlState},
     visitors::asseturl::asseturl,
     visitors::gql::gql,
+    visitors::dirname::dirname,
 };
 
 mod asseturl_utils;
@@ -78,4 +79,11 @@ pub fn gql_macro(config: Config) -> impl Fold + VisitMut {
     let config = Rc::new(config);
 
     chain!(gqlAnalyzer(config.clone(), state.clone()), gql(state))
+}
+
+pub fn dirname_macro(file_name: FileName) -> impl Fold + VisitMut {
+    // let state: Rc<RefCell<gqlState>> = Default::default();
+    // let config = Rc::new(config);
+
+    dirname(file_name)
 }
