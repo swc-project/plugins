@@ -22,6 +22,7 @@ pub use crate::{
 mod asseturl_utils;
 mod gql_utils;
 mod visitors;
+mod shared;
 
 #[derive(Debug, Default, Clone, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]

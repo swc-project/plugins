@@ -12,8 +12,6 @@ use swc_core::{
         // atoms::JsWord,
         utils::{
             prepend_stmt,
-            // private_ident,
-            quote_ident,
         },
         visit::{
             as_folder,
@@ -34,6 +32,7 @@ use tracing::{
 };
 
 use crate::gql_utils::State;
+use crate::shared::converters::JsVarConverter;
 
 pub fn gql(
     // file_name: FileName,
@@ -44,6 +43,7 @@ pub fn gql(
     as_folder(DisplayNameAndId {
         state,
         to_prepend: BTreeSet::new(),
+        converter: JsVarConverter::new("gql")
     })
 }
 
@@ -55,13 +55,9 @@ struct Thing {
 
 #[derive(Debug)]
 struct DisplayNameAndId {
-    // file_name: FileName,
-    // src_file_hash: u128,
-    // config: Rc<Config>,
     state: Rc<RefCell<State>>,
-
-    // to_prepend: Vec<Thing>,
     to_prepend: BTreeSet<Thing>,
+    converter: JsVarConverter,
 }
 
 impl DisplayNameAndId {
@@ -77,12 +73,8 @@ impl DisplayNameAndId {
                         match &**expr_other {
                             Expr::Lit(Lit::Str(lit_str)) => {
                                 let src_str = lit_str.value.to_string();
-                                let new_ident = ident_from_path(&src_str);
+                                let new_ident = self.converter.ident_from_path(&src_str);
                                 *expr = new_ident.into();
-                                // call_expr.args = vec![ExprOrSpread {
-                                //     expr: new_ident.into(),
-                                //     spread: None,
-                                // }];
                                 self.to_prepend.insert(Thing { file_path: src_str });
                             }
                             _ => HANDLER.with(|handler| {
@@ -103,7 +95,7 @@ impl VisitMut for DisplayNameAndId {
         n.visit_mut_children_with(self);
 
         for i in self.to_prepend.iter() {
-            let new_ident = ident_from_path(&i.file_path);
+            let new_ident = self.converter.ident_from_path(&i.file_path);
 
             let specifier = ImportSpecifier::Default(ImportDefaultSpecifier {
                 span: new_ident.span,
@@ -155,11 +147,3 @@ impl VisitMut for DisplayNameAndId {
     }
 }
 
-fn ident_from_path(src_str: &String) -> Ident {
-    // Generate a new identifier for the import, to avoid any naming conflicts
-    let mut new_ident = src_str.replace("/", "_");
-    new_ident = new_ident.replace("-", "_");
-    new_ident = new_ident.replace(".", "_");
-    // new_ident.insert(0, '_');
-    return quote_ident!(format!("$_gql_{}", new_ident));
-}
