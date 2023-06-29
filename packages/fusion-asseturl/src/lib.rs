@@ -3,10 +3,7 @@
 use fusion_asseturl::Config;
 use swc_core::{
     ecma::{ast::Program, visit::VisitMutWith},
-    plugin::{
-        plugin_transform,
-        proxies::TransformPluginProgramMetadata,
-    },
+    plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
 };
 
 #[plugin_transform]

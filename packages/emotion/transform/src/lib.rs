@@ -3,6 +3,7 @@ use std::{
     path::{Path, PathBuf},
     sync::Arc,
 };
+
 use fxhash::FxHashMap;
 use import_map::ImportMap;
 use once_cell::sync::Lazy;
@@ -227,7 +228,6 @@ impl<C: Comments> EmotionTransformer<C> {
             registered_imports,
         }
     }
-
 
     fn sanitize_label_part<'t>(&self, label_part: &'t str) -> Cow<'t, str> {
         INVALID_CSS_CLASS_NAME_CHARACTERS.replace_all(label_part, "-")

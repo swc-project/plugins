@@ -1,9 +1,9 @@
 use std::path::PathBuf;
 
 use modularize_imports::{modularize_imports, PackageConfig};
-use swc_core::{
-    ecma::parser::{EsConfig, Syntax},
-    ecma::transforms::testing::{test_fixture, FixtureTestConfig},
+use swc_core::ecma::{
+    parser::{EsConfig, Syntax},
+    transforms::testing::{test_fixture, FixtureTestConfig},
 };
 use testing::fixture;
 

@@ -10,9 +10,7 @@ use swc_core::{
     ecma::{
         ast::*,
         // atoms::JsWord,
-        utils::{
-            prepend_stmt,
-        },
+        utils::prepend_stmt,
         visit::{
             as_folder,
             // noop_fold_type,
@@ -31,8 +29,7 @@ use tracing::{
     Level,
 };
 
-use crate::asseturl_utils::State;
-use crate::shared::converters::JsVarConverter;
+use crate::{asseturl_utils::State, shared::converters::JsVarConverter};
 
 pub fn asseturl(
     // file_name: FileName,
@@ -78,7 +75,8 @@ impl DisplayNameAndId {
                                 self.to_prepend.insert(Thing { file_path: src_str });
                             }
                             _ => HANDLER.with(|handler| {
-                                handler.err(&format!("asseturl() argument must be a string literal"));
+                                handler
+                                    .err(&format!("asseturl() argument must be a string literal"));
                             }),
                         }
                     }
@@ -146,4 +144,3 @@ impl VisitMut for DisplayNameAndId {
         self.replace_asseturl_call(expr)
     }
 }
-

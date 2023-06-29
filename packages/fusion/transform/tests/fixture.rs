@@ -2,9 +2,9 @@
 
 use std::{fs::read_to_string, path::PathBuf};
 
-use fusion::{asseturl_macro, gql_macro, Config, dirname_macro};
+use fusion::{asseturl_macro, dirname_macro, gql_macro, i18n_macro, Config};
 use swc_core::{
-    common::{chain, Mark, FileName},
+    common::{chain, FileName, Mark},
     ecma::{
         parser::{EsConfig, Syntax},
         transforms::{base::resolver, testing::test_fixture},
@@ -24,14 +24,12 @@ fn fixture(input: PathBuf) {
             ..Default::default()
         }),
         &|_| {
-            //
-            // let fm = t.cm.load_file(&input).unwrap();
-
             chain!(
                 resolver(Mark::new(), Mark::new(), false),
                 asseturl_macro(config.clone()),
                 gql_macro(config.clone()),
                 dirname_macro(FileName::Real(PathBuf::from("/path/to/file.js"))),
+                i18n_macro(FileName::Real(PathBuf::from("/path/to/file.js"))),
             )
         },
         &input,

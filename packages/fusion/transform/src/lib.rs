@@ -14,15 +14,15 @@ use swc_core::{
 pub use crate::{
     asseturl_utils::{analyzer as asseturlAnalyzer, State as asseturlState},
     gql_utils::{analyzer as gqlAnalyzer, State as gqlState},
-    visitors::asseturl::asseturl,
-    visitors::gql::gql,
-    visitors::dirname::dirname,
+    i18n::{analyzer as i18nAnalyzer, State as i18nState},
+    visitors::{asseturl::asseturl, dirname::dirname, gql::gql, i18n::i18n_component},
 };
 
 mod asseturl_utils;
 mod gql_utils;
-mod visitors;
+mod i18n;
 mod shared;
+mod visitors;
 
 #[derive(Debug, Default, Clone, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
@@ -68,11 +68,23 @@ fn default_index_file_name() -> Vec<String> {
 
 impl Config {}
 
+pub fn i18n_macro(file_name: FileName) -> impl Fold + VisitMut {
+    let state: Rc<RefCell<i18nState>> = Default::default();
+
+    chain!(
+        i18nAnalyzer(file_name.clone(), state.clone()),
+        i18n_component(file_name.clone(), state)
+    )
+}
+
 pub fn asseturl_macro(config: Config) -> impl Fold + VisitMut {
     let state: Rc<RefCell<asseturlState>> = Default::default();
     let config = Rc::new(config);
 
-    chain!(asseturlAnalyzer(config.clone(), state.clone()), asseturl(state))
+    chain!(
+        asseturlAnalyzer(config.clone(), state.clone()),
+        asseturl(state)
+    )
 }
 
 pub fn gql_macro(config: Config) -> impl Fold + VisitMut {

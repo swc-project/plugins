@@ -1,11 +1,12 @@
 use std::collections::HashMap;
-use swc_core::ecma::{utils::quote_ident, ast::Ident};
+
+use swc_core::ecma::{ast::Ident, utils::quote_ident};
 
 #[derive(Debug)]
 pub struct JsVarConverter {
     map: HashMap<String, String>,
     counter: u32,
-    prefix: String
+    prefix: String,
 }
 
 impl JsVarConverter {
@@ -13,7 +14,7 @@ impl JsVarConverter {
         Self {
             map: HashMap::new(),
             counter: 0,
-            prefix: prefix.to_string()
+            prefix: prefix.to_string(),
         }
     }
 
@@ -31,7 +32,8 @@ impl JsVarConverter {
             js_var.push('_');
         }
 
-        // For the rest of the characters, replace non-alphanumeric characters with underscores.
+        // For the rest of the characters, replace non-alphanumeric characters with
+        // underscores.
         for ch in chars {
             if ch.is_alphanumeric() {
                 js_var.push(ch);

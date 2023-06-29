@@ -10,9 +10,7 @@ use swc_core::{
     ecma::{
         ast::*,
         // atoms::JsWord,
-        utils::{
-            prepend_stmt,
-        },
+        utils::prepend_stmt,
         visit::{
             as_folder,
             // noop_fold_type,
@@ -31,8 +29,7 @@ use tracing::{
     Level,
 };
 
-use crate::gql_utils::State;
-use crate::shared::converters::JsVarConverter;
+use crate::{gql_utils::State, shared::converters::JsVarConverter};
 
 pub fn gql(
     // file_name: FileName,
@@ -43,7 +40,7 @@ pub fn gql(
     as_folder(DisplayNameAndId {
         state,
         to_prepend: BTreeSet::new(),
-        converter: JsVarConverter::new("gql")
+        converter: JsVarConverter::new("gql"),
     })
 }
 
@@ -146,4 +143,3 @@ impl VisitMut for DisplayNameAndId {
         self.replace_gql_call(expr)
     }
 }
-

@@ -5,6 +5,7 @@ use std::path::Path;
 use serde::Deserialize;
 use swc_common::SourceMapper;
 use swc_core::{
+    common::Spanned,
     ecma::{ast::Program, visit::FoldWith},
     plugin::{
         metadata::TransformPluginMetadataContextKind, plugin_transform,
@@ -12,7 +13,6 @@ use swc_core::{
     },
 };
 use swc_emotion::EmotionOptions;
-use swc_core::common::Spanned;
 pub struct TransformVisitor;
 
 #[derive(Deserialize)]

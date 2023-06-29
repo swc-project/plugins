@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-
 use swc_core::{common::collections::AHashMap, ecma::atoms::JsWord};
 
 use crate::{EmotionModuleConfig, ExportItem};

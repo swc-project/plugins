@@ -49,8 +49,7 @@ impl Visit for Analyzer<'_> {
 
     fn visit_import_decl(&mut self, i: &ImportDecl) {
         let is_asseturl = if self.config.top_level_import_paths.is_empty() {
-            &*i.src.value == "fusion-core"
-                || i.src.value.starts_with("fusion-core/")
+            &*i.src.value == "fusion-core" || i.src.value.starts_with("fusion-core/")
         } else {
             self.config.top_level_import_paths.contains(&i.src.value)
         };

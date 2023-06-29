@@ -86,7 +86,8 @@ impl DisplayNameAndId {
                                 self.to_prepend.insert(Thing { file_path: src_str });
                             }
                             _ => HANDLER.with(|handler| {
-                                handler.err(&format!("asseturl() argument must be a string literal"));
+                                handler
+                                    .err(&format!("asseturl() argument must be a string literal"));
                             }),
                         }
                     }

@@ -5,7 +5,7 @@ use swc_core::{
     ecma::ast::*,
 };
 
-pub use self::analyzer::{analyzer};
+pub use self::analyzer::analyzer;
 
 mod analyzer;
 
