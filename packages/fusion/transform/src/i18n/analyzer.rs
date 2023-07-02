@@ -9,7 +9,7 @@ use swc_core::{
         },
     },
 };
-use tracing::{debug};
+use tracing::debug;
 
 use super::State;
 
@@ -92,17 +92,62 @@ struct Analyzer<'a> {
     state: &'a mut State,
 }
 
+fn get_var_name(var_declarator: &VarDeclarator) -> Result<String, String> {
+    match &var_declarator.name {
+        Pat::Ident(binding_ident) => {
+            let name = binding_ident.id.sym.as_ref().to_owned();
+            Ok(name)
+        }
+        _ => {
+            HANDLER.with(|handler| {
+                handler.err(&format!(
+                    "var_declarator.name in foo = useTranslations() is not Pat::Ident"
+                ));
+            });
+            Err("__err".into())
+        }
+    }
+}
+
 impl Visit for Analyzer<'_> {
     noop_visit_type!();
 
-    
+    fn visit_var_declarator(&mut self, var_declarator: &VarDeclarator) {
+        debug!("visit_var_declarator: {:?}", var_declarator.init.as_ref().unwrap());
+        let name = get_var_name(var_declarator).unwrap();
+        let init_val = var_declarator.init.as_ref().unwrap();
+        match &**init_val { // Match against reference
+            Expr::Call(call_expr) => {
+                match &call_expr.callee {
+                    Callee::Expr(boxed_expr) => match &**boxed_expr { // Match against reference
+                        Expr::Ident(ident) => {
+                            if ident.sym.as_ref() == "useTranslations" {
+                                debug!("getting some match here!!!!: {:?}", call_expr);
+                                self.state.add_fusion_plugin_import(name);
+                            }
+                        }
+                        _ => (),
+                    },
+                    _ => (),
+                }
+            }
+            _ => (),
+        }
+    }
 
     fn visit_jsx_opening_element(&mut self, opening_element: &JSXOpeningElement) {
         debug!("visit_jsx_opening_element: {:?}", opening_element);
-        debug!("imports to test: {:?}", self.state.get_fusion_plugin_imports());
+        debug!(
+            "imports to test: {:?}",
+            self.state.get_fusion_plugin_imports()
+        );
         match &opening_element.name {
             JSXElementName::Ident(ident) => {
-                if self.state.get_fusion_plugin_imports().contains(ident.sym.as_ref()) {
+                if self
+                    .state
+                    .get_fusion_plugin_imports()
+                    .contains(ident.sym.as_ref())
+                {
                     let attr_id_value = find_id_attribute(opening_element);
                     match attr_id_value {
                         Some(id) => {
@@ -122,17 +167,20 @@ impl Visit for Analyzer<'_> {
             for s in &i.specifiers {
                 match s {
                     ImportSpecifier::Named(s) => {
-                        if true
-                            && s.imported
-                                .as_ref()
-                                .map(|v| match v {
-                                    ModuleExportName::Ident(v) => &*v.sym,
-                                    ModuleExportName::Str(v) => &*v.value,
-                                })
-                                .unwrap_or(&*s.local.sym)
-                                == "Translate"
+                        let import_name = s
+                            .imported
+                            .as_ref()
+                            .map(|v| match v {
+                                ModuleExportName::Ident(v) => &*v.sym,
+                                ModuleExportName::Str(v) => &*v.value,
+                            })
+                            .unwrap_or(&*s.local.sym);
+                        if import_name == "Translate"
+                            || import_name == "useTranslations"
+                            || import_name == "withTranslations"
                         {
-                            self.state.add_fusion_plugin_import(s.local.sym.as_ref().to_owned());
+                            self.state
+                                .add_fusion_plugin_import(s.local.sym.as_ref().to_owned());
                         }
                     }
                     _ => (),

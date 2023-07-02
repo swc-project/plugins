@@ -31,5 +31,4 @@ impl State {
     pub(crate) fn get_fusion_plugin_imports(&self) -> &HashSet<String> {
         &self.fusion_plugin_imports
     }
-
 }

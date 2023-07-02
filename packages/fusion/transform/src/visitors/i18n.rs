@@ -29,7 +29,8 @@ impl VisitMut for DisplayNameAndId {
         n.visit_mut_children_with(self);
         let analyzer_state = self.state.borrow();
         debug!("state from the analyzer {:?}", analyzer_state);
-        let mut translation_ids: Vec<_> = analyzer_state.get_translation_ids().into_iter().collect();
+        let mut translation_ids: Vec<_> =
+            analyzer_state.get_translation_ids().into_iter().collect();
         translation_ids.sort();
         if !translation_ids.is_empty() {
             prepend_stmt(
