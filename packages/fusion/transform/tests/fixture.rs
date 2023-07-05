@@ -15,7 +15,7 @@ use swc_core::{
 fn fixture(input: PathBuf) {
     let dir = input.parent().unwrap();
     let config = read_to_string(dir.join("config.json")).expect("failed to read config.json");
-    println!("---- Config -----\n{}", config);
+    println!("---- Configg -----\n{}", config);
     let config: Config = serde_json::from_str(&config).unwrap();
 
     test_fixture(

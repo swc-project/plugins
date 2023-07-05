@@ -9,6 +9,7 @@ use swc_core::{
         },
     },
 };
+use tracing::debug;
 
 use super::State;
 
@@ -46,8 +47,6 @@ pub fn find_id_attribute(opening_element: &JSXOpeningElement) -> Option<String> 
             JSXAttrOrSpread::JSXAttr(attr) => {
                 match &attr.name {
                     JSXAttrName::Ident(ident) => {
-                        // `sym` is a `string_cache::Atom` and needs to be converted to a string for
-                        // comparison
                         if ident.sym.as_ref() == "id" {
                             match &attr.value {
                                 Some(JSXAttrValue::Lit(lit)) => {
@@ -111,21 +110,17 @@ impl Visit for Analyzer<'_> {
         let name = get_var_name(var_declarator).unwrap();
         let init_val = var_declarator.init.as_ref().unwrap();
         match &**init_val {
-            // Match against reference
-            Expr::Call(call_expr) => {
-                match &call_expr.callee {
-                    Callee::Expr(boxed_expr) => match &**boxed_expr {
-                        // Match against reference
-                        Expr::Ident(ident) => {
-                            if ident.sym.as_ref() == "useTranslations" {
-                                self.state.add_use_translation_alias(name);
-                            }
+            Expr::Call(call_expr) => match &call_expr.callee {
+                Callee::Expr(boxed_expr) => match &**boxed_expr {
+                    Expr::Ident(ident) => {
+                        if ident.sym.as_ref() == "useTranslations" {
+                            self.state.add_use_translation_alias(name);
                         }
-                        _ => (),
-                    },
+                    }
                     _ => (),
-                }
-            }
+                },
+                _ => (),
+            },
             _ => (),
         }
     }
@@ -175,6 +170,54 @@ impl Visit for Analyzer<'_> {
                     _ => (),
                 }
             }
+        }
+    }
+
+    fn visit_call_expr(&mut self, call_expr: &CallExpr) {
+        let error_msg = "The withTranslations hoc must be called with an array of string literal \
+                         translation keys.";
+        match &call_expr.callee {
+            Callee::Expr(boxed_expr) => match &**boxed_expr {
+                Expr::Call(inner_call_expr) => match &inner_call_expr.callee {
+                    Callee::Expr(inner_boxed_expr) => match &**inner_boxed_expr {
+                        Expr::Ident(ident) => {
+                            if self
+                                .state
+                                .get_fusion_plugin_imports()
+                                .contains(ident.sym.as_ref())
+                            {
+                                debug!("withTranslations call matched");
+                                if let Some(first_arg) = inner_call_expr.args.get(0) {
+                                    match &*first_arg.expr {
+                                        Expr::Array(array_lit) => {
+                                            for elem in &array_lit.elems {
+                                                if let Some(ExprOrSpread { expr, .. }) = elem {
+                                                    if let Expr::Lit(Lit::Str(str_lit)) = &**expr {
+                                                        self.state.add_translation_id(
+                                                            str_lit.value.as_ref().to_owned(),
+                                                        );
+                                                    } else {
+                                                        HANDLER.with(|handler| {
+                                                            handler.err(error_msg);
+                                                        });
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        _ => HANDLER.with(|handler| {
+                                            handler.err(error_msg);
+                                        }),
+                                    }
+                                }
+                            }
+                        }
+                        _ => {}
+                    },
+                    _ => {}
+                },
+                _ => {}
+            },
+            _ => {}
         }
     }
 }
