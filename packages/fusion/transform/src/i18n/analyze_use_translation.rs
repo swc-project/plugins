@@ -1,8 +1,13 @@
 use std::{cell::RefCell, collections::BTreeSet, rc::Rc};
 
-use swc_core::ecma::{
-    ast::*,
-    visit::{as_folder, noop_visit_mut_type, noop_visit_type, Fold, Visit, VisitMut, VisitWith},
+use swc_core::{
+    common::errors::HANDLER,
+    ecma::{
+        ast::*,
+        visit::{
+            as_folder, noop_visit_mut_type, noop_visit_type, Fold, Visit, VisitMut, VisitWith,
+        },
+    },
 };
 use tracing::debug;
 
@@ -65,7 +70,6 @@ impl Visit for Analyzer<'_> {
                                 ExprOrSpread { expr, .. } => match &**expr {
                                     &Expr::Lit(ref lit) => match lit {
                                         Lit::Str(lit_str) => {
-                                            debug!("---- lit_str: {:?}", lit_str);
                                             self.state.add_translation_id(
                                                 lit_str.value.clone().to_string(),
                                             );
@@ -73,17 +77,31 @@ impl Visit for Analyzer<'_> {
                                         _ => {}
                                     },
                                     Expr::Tpl(tpl) => {
+                                        if tpl.quasis.first().unwrap().raw.clone().to_string()
+                                            == ""
+                                        {
+                                            HANDLER.with(|handler| {
+                                                handler.err(&format!(
+                                                    "useTranslations template literal must be \
+                                                     hinted, e.g. \
+                                                     useTranslations(`hint.${{foo}}`) vs \
+                                                     useTranslatiosn(`${{foo}}`)."
+                                                ));
+                                            });
+                                        }
                                         let mut tpl_parts: BTreeSet<String> = BTreeSet::new();
                                         for tpl_element in &tpl.quasis {
                                             let lit_str = &tpl_element.raw;
-                                            debug!("---- template literal: {:?}", lit_str);
                                             tpl_parts.insert(lit_str.clone().to_string());
-                                            //self.state.hashset.
-                                            // insert(lit_str.clone());
                                         }
                                         self.state.add_translation_id_tpl(tpl_parts);
                                     }
-                                    _ => {}
+                                    _ => HANDLER.with(|handler| {
+                                        handler.err(&format!(
+                                            "useTranslations result function must be passed \
+                                             string literal or hinted template literal"
+                                        ));
+                                    }),
                                 },
                             },
                             _ => {}
