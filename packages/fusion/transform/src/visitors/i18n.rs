@@ -12,7 +12,7 @@ use tracing::debug;
 
 use crate::i18n::State;
 
-pub fn i18n_component(file_name: FileName, state: Rc<RefCell<State>>) -> impl Fold + VisitMut {
+pub fn i18n_report_ids(file_name: FileName, state: Rc<RefCell<State>>) -> impl Fold + VisitMut {
     as_folder(DisplayNameAndId { file_name, state })
 }
 

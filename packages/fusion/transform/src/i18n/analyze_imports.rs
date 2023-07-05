@@ -1,7 +1,7 @@
 use std::{cell::RefCell, rc::Rc};
 
 use swc_core::{
-    common::{errors::HANDLER, FileName},
+    common::errors::HANDLER,
     ecma::{
         ast::*,
         visit::{
@@ -9,16 +9,14 @@ use swc_core::{
         },
     },
 };
-use tracing::debug;
 
 use super::State;
 
-pub fn analyzer(file_name: FileName, state: Rc<RefCell<State>>) -> impl VisitMut + Fold {
-    as_folder(AsAnalyzer { file_name, state })
+pub fn i18n_analyze_imports(state: Rc<RefCell<State>>) -> impl VisitMut + Fold {
+    as_folder(AsAnalyzer { state })
 }
 
 struct AsAnalyzer {
-    file_name: FileName,
     state: Rc<RefCell<State>>,
 }
 
@@ -27,7 +25,6 @@ impl VisitMut for AsAnalyzer {
 
     fn visit_mut_module(&mut self, p: &mut Module) {
         let mut v: Analyzer<'_> = Analyzer {
-            file_name: &self.file_name,
             state: &mut self.state.borrow_mut(),
         };
 
@@ -36,7 +33,6 @@ impl VisitMut for AsAnalyzer {
 
     fn visit_mut_script(&mut self, p: &mut Script) {
         let mut v = Analyzer {
-            file_name: &self.file_name,
             state: &mut self.state.borrow_mut(),
         };
 
@@ -88,7 +84,6 @@ pub fn find_id_attribute(opening_element: &JSXOpeningElement) -> Option<String> 
 }
 
 struct Analyzer<'a> {
-    file_name: &'a FileName,
     state: &'a mut State,
 }
 
@@ -113,17 +108,17 @@ impl Visit for Analyzer<'_> {
     noop_visit_type!();
 
     fn visit_var_declarator(&mut self, var_declarator: &VarDeclarator) {
-        debug!("visit_var_declarator: {:?}", var_declarator.init.as_ref().unwrap());
         let name = get_var_name(var_declarator).unwrap();
         let init_val = var_declarator.init.as_ref().unwrap();
-        match &**init_val { // Match against reference
+        match &**init_val {
+            // Match against reference
             Expr::Call(call_expr) => {
                 match &call_expr.callee {
-                    Callee::Expr(boxed_expr) => match &**boxed_expr { // Match against reference
+                    Callee::Expr(boxed_expr) => match &**boxed_expr {
+                        // Match against reference
                         Expr::Ident(ident) => {
                             if ident.sym.as_ref() == "useTranslations" {
-                                debug!("getting some match here!!!!: {:?}", call_expr);
-                                self.state.add_fusion_plugin_import(name);
+                                self.state.add_use_translation_alias(name);
                             }
                         }
                         _ => (),
@@ -136,11 +131,6 @@ impl Visit for Analyzer<'_> {
     }
 
     fn visit_jsx_opening_element(&mut self, opening_element: &JSXOpeningElement) {
-        debug!("visit_jsx_opening_element: {:?}", opening_element);
-        debug!(
-            "imports to test: {:?}",
-            self.state.get_fusion_plugin_imports()
-        );
         match &opening_element.name {
             JSXElementName::Ident(ident) => {
                 if self
@@ -162,7 +152,6 @@ impl Visit for Analyzer<'_> {
     }
 
     fn visit_import_decl(&mut self, i: &ImportDecl) {
-        debug!("file_name: {:?}", self.file_name);
         if &*i.src.value == "fusion-plugin-i18n-react" {
             for s in &i.specifiers {
                 match s {

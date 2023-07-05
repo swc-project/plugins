@@ -14,8 +14,8 @@ use swc_core::{
 pub use crate::{
     asseturl_utils::{analyzer as asseturlAnalyzer, State as asseturlState},
     gql_utils::{analyzer as gqlAnalyzer, State as gqlState},
-    i18n::{analyzer as i18nAnalyzer, State as i18nState},
-    visitors::{asseturl::asseturl, dirname::dirname, gql::gql, i18n::i18n_component},
+    i18n::{i18n_analyze_imports, i18n_analyze_use_translation, State as i18n_state},
+    visitors::{asseturl::asseturl, dirname::dirname, gql::gql, i18n::i18n_report_ids},
 };
 
 mod asseturl_utils;
@@ -69,11 +69,12 @@ fn default_index_file_name() -> Vec<String> {
 impl Config {}
 
 pub fn i18n_macro(file_name: FileName) -> impl Fold + VisitMut {
-    let state: Rc<RefCell<i18nState>> = Default::default();
+    let state: Rc<RefCell<i18n_state>> = Default::default();
 
     chain!(
-        i18nAnalyzer(file_name.clone(), state.clone()),
-        i18n_component(file_name.clone(), state)
+        i18n_analyze_imports(state.clone()),
+        i18n_analyze_use_translation(state.clone()),
+        i18n_report_ids(file_name.clone(), state)
     )
 }
 
