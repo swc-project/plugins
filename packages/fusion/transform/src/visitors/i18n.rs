@@ -32,7 +32,8 @@ impl VisitMut for DisplayNameAndId {
         let mut translation_ids: Vec<_> =
             analyzer_state.get_translation_ids().into_iter().collect();
         translation_ids.sort();
-        if !translation_ids.is_empty() {
+        let translation_ids_tpl = analyzer_state.get_translation_ids_tpl();
+        if !translation_ids.is_empty() || !translation_ids_tpl.is_empty() {
             prepend_stmt(
                 &mut n.body,
                 ModuleItem::ModuleDecl(ModuleDecl::Import(ImportDecl {
@@ -106,6 +107,30 @@ impl VisitMut for DisplayNameAndId {
                                             }))),
                                         })
                                     })
+                                    .chain(translation_ids_tpl.into_iter().map(|inner_set| {
+                                        Some(ExprOrSpread {
+                                            spread: None,
+                                            expr: Box::new(Expr::Array(ArrayLit {
+                                                span: DUMMY_SP,
+                                                elems: inner_set
+                                                    .into_iter()
+                                                    .rev()
+                                                    .map(|s| {
+                                                        Some(ExprOrSpread {
+                                                            spread: None,
+                                                            expr: Box::new(Expr::Lit(Lit::Str(
+                                                                Str {
+                                                                    span: DUMMY_SP,
+                                                                    value: s.to_string().into(),
+                                                                    raw: None,
+                                                                },
+                                                            ))),
+                                                        })
+                                                    })
+                                                    .collect(),
+                                            })),
+                                        })
+                                    }))
                                     .collect(),
                             })),
                         },

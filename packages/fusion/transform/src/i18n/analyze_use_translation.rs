@@ -1,4 +1,4 @@
-use std::{cell::RefCell, rc::Rc};
+use std::{cell::RefCell, collections::BTreeSet, rc::Rc};
 
 use swc_core::ecma::{
     ast::*,
@@ -72,6 +72,17 @@ impl Visit for Analyzer<'_> {
                                         }
                                         _ => {}
                                     },
+                                    Expr::Tpl(tpl) => {
+                                        let mut tpl_parts: BTreeSet<String> = BTreeSet::new();
+                                        for tpl_element in &tpl.quasis {
+                                            let lit_str = &tpl_element.raw;
+                                            debug!("---- template literal: {:?}", lit_str);
+                                            tpl_parts.insert(lit_str.clone().to_string());
+                                            //self.state.hashset.
+                                            // insert(lit_str.clone());
+                                        }
+                                        self.state.add_translation_id_tpl(tpl_parts);
+                                    }
                                     _ => {}
                                 },
                             },
