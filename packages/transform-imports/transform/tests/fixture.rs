@@ -1,9 +1,9 @@
 use std::path::PathBuf;
 
 use modularize_imports::{modularize_imports, PackageConfig};
-use swc_core::{
-    ecma::parser::{EsConfig, Syntax},
-    ecma::transforms::testing::{test_fixture, FixtureTestConfig},
+use swc_core::ecma::{
+    parser::{EsConfig, Syntax},
+    transforms::testing::{test_fixture, FixtureTestConfig},
 };
 use testing::fixture;
 
@@ -50,6 +50,32 @@ fn modularize_imports_fixture(input: PathBuf) {
                         "my-library-3".to_string(),
                         PackageConfig {
                             transform: "my-library-3/{{ kebabCase member }}".into(),
+                            prevent_full_import: false,
+                            skip_default_conversion: true,
+                        },
+                    ),
+                    (
+                        "my-library-4".to_string(),
+                        PackageConfig {
+                            transform: Vec::from([
+                                ("foo".to_string(), "my-library-4/this_is_foo".to_string()),
+                                ("bar".to_string(), "my-library-4/bar".to_string()),
+                                (
+                                    "use(\\w*)".to_string(),
+                                    "my-library-4/{{ kebabCase member }}/{{ kebabCase \
+                                     memberMatches.[1] }}"
+                                        .to_string(),
+                                ),
+                                (
+                                    "(\\w*)Icon".to_string(),
+                                    "my-library-4/{{ kebabCase memberMatches.[1] }}".to_string(),
+                                ),
+                                (
+                                    "*".to_string(),
+                                    "my-library-4/{{ upperCase member }}".to_string(),
+                                ),
+                            ])
+                            .into(),
                             prevent_full_import: false,
                             skip_default_conversion: true,
                         },
