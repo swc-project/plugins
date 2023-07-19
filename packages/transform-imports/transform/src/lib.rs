@@ -93,7 +93,7 @@ impl<'a> Rewriter<'a> {
 
                     let new_path = match &self.config.transform {
                         Transform::String(s) => {
-                            self.renderer.render_template(&s, &ctx).unwrap_or_else(|e| {
+                            self.renderer.render_template(s, &ctx).unwrap_or_else(|e| {
                                 panic!("error rendering template for '{}': {}", self.key, e);
                             })
                         }
@@ -119,8 +119,6 @@ impl<'a> Rewriter<'a> {
                                     .expect("transform-imports: invalid regex");
                                 let group = regex.captures(name_str);
 
-                                println!("!!!!key: {} {:?}, {}", key, group, name_str);
-
                                 if let Some(group) = group {
                                     let group = group
                                         .iter()
@@ -132,7 +130,7 @@ impl<'a> Rewriter<'a> {
 
                                     result = Some(
                                         self.renderer
-                                            .render_template(&val, &ctx_with_member_matches)
+                                            .render_template(val, &ctx_with_member_matches)
                                             .unwrap_or_else(|e| {
                                                 panic!(
                                                     "error rendering template for '{}': {}",
