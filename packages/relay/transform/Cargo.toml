@@ -5,7 +5,7 @@ edition = "2021"
 license = "Apache-2.0"
 name = "swc_relay"
 repository = "https://github.com/swc-project/plugins.git"
-version = "0.7.0"
+version = "0.8.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -15,7 +15,7 @@ regex = "1.5"
 serde = "1"
 serde_json = "1"
 swc_common = { version = "0.31.17", features = ["concurrent"] }
-swc_core = { version = "0.79.10", features = [
+swc_core = { version = "0.79.20", features = [
   "ecma_utils",
   "ecma_visit",
   "ecma_ast",
