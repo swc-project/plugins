@@ -16,11 +16,6 @@ tracing = "0.1.37"
 swc_core = { version = "0.79.20", features = [
   "common",
   "ecma_ast",
-  "css_ast",
-  "css_codegen",
-  "css_parser",
-  "css_prefixer",
-  "css_visit",
   "ecma_parser",
   "ecma_minifier",
   "ecma_utils",
