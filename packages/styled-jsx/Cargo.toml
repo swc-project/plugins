@@ -15,6 +15,7 @@ custom_transform = ["swc_core/common_concurrent"]
 
 [dependencies]
 easy-error = "1.0.0"
+lightningcss = "1.0.0-alpha.44"
 styled_jsx = { path = "./transform" }
 swc_core = { version = "0.79.20", features = [
   "common",
