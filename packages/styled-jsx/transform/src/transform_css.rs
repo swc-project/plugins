@@ -1,27 +1,11 @@
 use std::{panic, sync::Arc};
 
-use easy_error::{bail, Error};
+use easy_error::{bail, Error, ResultExt};
+use lightningcss::stylesheet::{ParserOptions, PrinterOptions, StyleSheet};
 use swc_core::{
     common::{
         errors::HANDLER, source_map::Pos, util::take::Take, BytePos, SourceMap, Span, Spanned,
         SyntaxContext, DUMMY_SP,
-    },
-    css::{
-        ast::*,
-        codegen::{
-            writer::basic::{BasicCssWriter, BasicCssWriterConfig},
-            CodeGenerator, CodegenConfig, Emit,
-        },
-        parser::{
-            lexer::Lexer,
-            parse_input,
-            parser::{
-                input::{InputType, Tokens},
-                Parser, ParserConfig,
-            },
-        },
-        prefixer::prefixer,
-        visit::{VisitMut, VisitMutWith},
     },
     ecma::{
         ast::{Expr, Tpl, TplElement},
@@ -49,17 +33,13 @@ pub fn transform_css(
         css_modules: false,
         ..Default::default()
     };
-    let lexer = Lexer::new(
-        StringInput::new(
-            &style_info.css,
-            style_info.css_span.lo,
-            style_info.css_span.hi,
-        ),
-        config,
-    );
-    let mut parser = Parser::new(lexer, config);
 
-    let result: Result<Stylesheet, _> = parser.parse_all();
+    let result: Result<StyleSheet, _> = StyleSheet::parse(
+        &style_info.css,
+        ParserOptions {
+            ..Default::default()
+        },
+    );
     let mut ss = match result {
         Ok(ss) => ss,
         Err(err) => {
@@ -91,19 +71,15 @@ pub fn transform_css(
         is_dynamic: style_info.is_dynamic,
     });
 
-    let mut s = String::new();
-    {
-        let mut wr = BasicCssWriter::new(&mut s, None, BasicCssWriterConfig::default());
-        let mut gen = CodeGenerator::new(&mut wr, CodegenConfig { minify: true });
-
-        gen.emit(&ss).unwrap();
-    }
+    let res = ss
+        .to_css(PrinterOptions::default())
+        .context("failed to print css")?;
 
     if style_info.expressions.is_empty() {
-        return Ok(string_literal_expr(&s));
+        return Ok(string_literal_expr(&res));
     }
 
-    let mut parts: Vec<&str> = s.split("__styled-jsx-placeholder-").collect();
+    let mut parts: Vec<&str> = res.split("__styled-jsx-placeholder-").collect();
     let mut final_expressions = vec![];
     for i in parts.iter_mut().skip(1) {
         let (num_len, expression_index) = read_number(i);
