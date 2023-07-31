@@ -1773,6 +1773,7 @@ name = "styled_jsx"
 version = "0.37.0"
 dependencies = [
  "easy-error",
+ "lightningcss",
  "swc_core",
  "testing",
  "tracing",
@@ -2398,7 +2399,6 @@ name = "swc_plugin_styled_jsx"
 version = "0.14.3"
 dependencies = [
  "easy-error",
- "lightningcss",
  "styled_jsx",
  "swc_core",
  "testing",
