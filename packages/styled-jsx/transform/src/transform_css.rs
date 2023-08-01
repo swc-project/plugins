@@ -1,7 +1,10 @@
 use std::{panic, sync::Arc};
 
 use easy_error::{bail, Error, ResultExt};
-use lightningcss::stylesheet::{ParserOptions, PrinterOptions, StyleSheet};
+use lightningcss::{
+    stylesheet::{ParserOptions, PrinterOptions, StyleSheet},
+    visitor::Visitor,
+};
 use swc_core::{
     common::{
         errors::HANDLER, source_map::Pos, util::take::Take, BytePos, SourceMap, Span, Spanned,
@@ -127,7 +130,7 @@ struct Namespacer {
     is_dynamic: bool,
 }
 
-impl VisitMut for Namespacer {
+impl<'i> Visitor<'i> for Namespacer {
     fn visit_mut_complex_selector(&mut self, node: &mut ComplexSelector) {
         #[cfg(debug_assertions)]
         let _tracing = {
