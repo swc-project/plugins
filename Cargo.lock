@@ -816,6 +816,7 @@ dependencies = [
  "data-encoding",
  "itertools",
  "lazy_static",
+ "lightningcss-derive",
  "parcel_selectors",
  "parcel_sourcemap",
  "paste",
@@ -823,6 +824,17 @@ dependencies = [
  "rayon",
  "serde",
  "smallvec",
+]
+
+[[package]]
+name = "lightningcss-derive"
+version = "1.0.0-alpha.39"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "80f9c05013e43faeef3f09a4c425f926b91a64fee540887a9857a5556b70ea5a"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 1.0.109",
 ]
 
 [[package]]
