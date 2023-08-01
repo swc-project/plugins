@@ -79,10 +79,10 @@ pub fn transform_css(
         .context("failed to print css")?;
 
     if style_info.expressions.is_empty() {
-        return Ok(string_literal_expr(&res));
+        return Ok(string_literal_expr(&res.code));
     }
 
-    let mut parts: Vec<&str> = res.split("__styled-jsx-placeholder-").collect();
+    let mut parts: Vec<&str> = res.code.split("__styled-jsx-placeholder-").collect();
     let mut final_expressions = vec![];
     for i in parts.iter_mut().skip(1) {
         let (num_len, expression_index) = read_number(i);
