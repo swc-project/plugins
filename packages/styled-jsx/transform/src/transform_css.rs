@@ -3,7 +3,7 @@ use std::{panic, sync::Arc};
 use easy_error::{bail, Error, ResultExt};
 use lightningcss::{
     stylesheet::{ParserOptions, PrinterOptions, StyleSheet},
-    visitor::Visitor,
+    visitor::{Visit, Visitor},
 };
 use swc_core::{
     common::{
@@ -64,8 +64,8 @@ pub fn transform_css(
         }
     };
     // ? Do we need to support optionally prefixing?
-    ss.visit_mut_with(&mut prefixer(Default::default()));
-    ss.visit_mut_with(&mut Namespacer {
+    ss.visit(&mut prefixer(Default::default()));
+    ss.visit(&mut Namespacer {
         class_name: match class_name {
             Some(s) => s.clone(),
             None => format!("jsx-{}", &hash_string(&style_info.hash)),
