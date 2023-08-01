@@ -2,7 +2,7 @@ use std::{panic, sync::Arc};
 
 use easy_error::{bail, Error, ResultExt};
 use lightningcss::{
-    stylesheet::{ParserOptions, PrinterOptions, StyleSheet},
+    stylesheet::{MinifyOptions, ParserOptions, PrinterOptions, StyleSheet},
     visitor::{Visit, Visitor},
 };
 use swc_core::{
@@ -63,8 +63,9 @@ pub fn transform_css(
             bail!("Failed to parse css");
         }
     };
-    // ? Do we need to support optionally prefixing?
-    ss.visit(&mut prefixer(Default::default()));
+
+    // Apply auto prefixer
+    ss.minify(MinifyOptions {});
     ss.visit(&mut Namespacer {
         class_name: match class_name {
             Some(s) => s.clone(),
@@ -132,30 +133,6 @@ struct Namespacer {
 
 impl<'i> Visitor<'i> for Namespacer {
     fn visit_mut_complex_selector(&mut self, node: &mut ComplexSelector) {
-        #[cfg(debug_assertions)]
-        let _tracing = {
-            // This will add information to the log messages, only for debug build.
-            // Note that we use cargo feature to remove all logging on production builds.
-
-            let mut code = String::new();
-            {
-                let mut wr = BasicCssWriter::new(&mut code, None, BasicCssWriterConfig::default());
-                let mut gen = CodeGenerator::new(&mut wr, CodegenConfig { minify: true });
-
-                gen.emit(&*node).unwrap();
-            }
-
-            tracing::span!(
-                tracing::Level::TRACE,
-                "Namespacer::visit_mut_complex_selector",
-                class_name = &*self.class_name,
-                is_global = self.is_global,
-                is_dynamic = self.is_dynamic,
-                input = &*code
-            )
-            .entered()
-        };
-
         let mut new_selectors = vec![];
         let mut combinator = None;
 
