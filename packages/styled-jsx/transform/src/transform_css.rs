@@ -150,6 +150,7 @@ impl<'i> Visitor<'i> for Namespacer {
 
     const TYPES: VisitTypes = visit_types!(SELECTORS);
 
+    #[cfg_attr(debug_assertions, tracing::instrument(skip_all))]
     fn visit_selector(&mut self, selector: &mut Selector<'i>) -> Result<(), Self::Error> {
         let mut new_selectors = vec![];
         let mut combinator = None;
@@ -194,6 +195,7 @@ impl<'i> Visitor<'i> for Namespacer {
 }
 
 impl Namespacer {
+    #[cfg_attr(debug_assertions, tracing::instrument(skip_all))]
     fn get_transformed_selectors<'a, 'i, Impl>(
         &mut self,
         combinator: Option<Combinator>,
