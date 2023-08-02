@@ -141,36 +141,26 @@ impl<'i> Visitor<'i> for Namespacer {
 
         let mut iter = selector.iter();
         loop {
-            while let Some(sel) = iter.next() {
-                match sel {
-                    Component::Combinator(v) => {
-                        combinator = Some(v.clone());
-                    }
-
-                    _ => {
-                        match self.get_transformed_selectors(combinator, sel.clone()) {
-                            Ok(transformed_selectors) => {
-                                new_selectors.extend(transformed_selectors)
-                            }
-                            Err(_) => {
-                                HANDLER.with(|handler| {
-                                    handler
-                                        .struct_span_err(
-                                            selector.span,
-                                            "Failed to transform one off global selector",
-                                        )
-                                        .emit()
-                                });
-                                new_selectors.push(sel);
-                            }
-                        }
-
-                        combinator = None;
-                    }
+            match self.get_transformed_selectors(combinator, &mut iter) {
+                Ok(transformed_selectors) => new_selectors.extend(transformed_selectors),
+                Err(_) => {
+                    HANDLER.with(|handler| {
+                        handler
+                            .struct_span_err(
+                                selector.span,
+                                "Failed to transform one off global selector",
+                            )
+                            .emit()
+                    });
+                    new_selectors.push(sel);
                 }
             }
 
-            if iter.next_sequence() {}
+            combinator = None;
+
+            if let Some(next) = iter.next_sequence() {
+                combinator = Some(next);
+            }
         }
 
         Ok(())
