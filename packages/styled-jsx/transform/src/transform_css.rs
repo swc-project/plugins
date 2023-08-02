@@ -66,7 +66,8 @@ pub fn transform_css(
     // TODO:
     ss.minify(MinifyOptions {
         ..Default::default()
-    });
+    })
+    .expect("failed to minify/auto-prefix css");
     ss.visit(&mut Namespacer {
         class_name: match class_name {
             Some(s) => s.clone(),
@@ -74,7 +75,8 @@ pub fn transform_css(
         },
         is_global,
         is_dynamic: style_info.is_dynamic,
-    });
+    })
+    .expect("failed to transform css");
 
     let res = ss
         .to_css(PrinterOptions::default())
