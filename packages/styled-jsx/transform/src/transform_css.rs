@@ -172,7 +172,10 @@ impl Namespacer {
         &mut self,
         combinator: Option<Combinator>,
         mut node: impl Iterator<Item = &'a Component<'b>>,
-    ) -> Result<Vec<Component>, Error> {
+    ) -> Result<Vec<Component>, Error>
+    where
+        'b: 'a,
+    {
         let mut pseudo_index = None;
 
         for (i, selector) in node.enumerate() {
