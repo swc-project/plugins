@@ -139,31 +139,38 @@ impl<'i> Visitor<'i> for Namespacer {
         let mut new_selectors = vec![];
         let mut combinator = None;
 
-        for sel in selector.iter() {
-            match sel {
-                Component::Combinator(v) => {
-                    combinator = Some(v.clone());
-                }
-
-                _ => {
-                    match self.get_transformed_selectors(combinator, sel.clone()) {
-                        Ok(transformed_selectors) => new_selectors.extend(transformed_selectors),
-                        Err(_) => {
-                            HANDLER.with(|handler| {
-                                handler
-                                    .struct_span_err(
-                                        selector.span,
-                                        "Failed to transform one off global selector",
-                                    )
-                                    .emit()
-                            });
-                            new_selectors.push(sel);
-                        }
+        let mut iter = selector.iter();
+        loop {
+            while let Some(sel) = iter.next() {
+                match sel {
+                    Component::Combinator(v) => {
+                        combinator = Some(v.clone());
                     }
 
-                    combinator = None;
+                    _ => {
+                        match self.get_transformed_selectors(combinator, sel.clone()) {
+                            Ok(transformed_selectors) => {
+                                new_selectors.extend(transformed_selectors)
+                            }
+                            Err(_) => {
+                                HANDLER.with(|handler| {
+                                    handler
+                                        .struct_span_err(
+                                            selector.span,
+                                            "Failed to transform one off global selector",
+                                        )
+                                        .emit()
+                                });
+                                new_selectors.push(sel);
+                            }
+                        }
+
+                        combinator = None;
+                    }
                 }
             }
+
+            if iter.next_sequence() {}
         }
 
         Ok(())
@@ -171,14 +178,14 @@ impl<'i> Visitor<'i> for Namespacer {
 }
 
 impl Namespacer {
-    fn get_transformed_selectors(
+    fn get_transformed_selectors<'a, 'b>(
         &mut self,
         combinator: Option<Combinator>,
-        mut node: Component,
+        mut node: impl Iterator<Item = &'a Component<'b>>,
     ) -> Result<Vec<Component>, Error> {
         let mut pseudo_index = None;
 
-        for (i, selector) in node.subclass_selectors.iter().enumerate() {
+        for (i, selector) in node.enumerate() {
             let (name, children) = match &selector {
                 Component::PseudoClass(PseudoClassSelector {
                     name,
