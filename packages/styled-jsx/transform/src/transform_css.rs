@@ -2,7 +2,7 @@ use std::{convert::Infallible, panic, sync::Arc};
 
 use easy_error::{bail, Error, ResultExt};
 use lightningcss::{
-    selector::{Combinator, Component, Selector},
+    selector::{Combinator, Component, PseudoClass, Selector},
     stylesheet::{MinifyOptions, ParserOptions, PrinterOptions, StyleSheet},
     visitor::{Visit, Visitor},
 };
@@ -179,13 +179,9 @@ impl Namespacer {
         let mut pseudo_index = None;
 
         for (i, selector) in node.enumerate() {
-            let (name, children) = match &selector {
-                Component::PseudoClass(PseudoClassSelector {
-                    name,
-                    children: Some(children),
-                    ..
-                }) if &name.value == "global" => (name, children),
-                SubclassSelector::PseudoClass(_) | SubclassSelector::PseudoElement(_) => {
+            let children = match &selector {
+                Component::NonTSPseudoClass(PseudoClass::Global { selector, .. }) => selector,
+                Component::NonTSPseudoClass(_) | Component::PseudoElement(_) => {
                     if pseudo_index.is_none() {
                         pseudo_index = Some(i);
                     }
