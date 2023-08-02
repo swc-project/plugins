@@ -194,20 +194,20 @@ impl Namespacer {
                 _ => continue,
             };
 
-            let complex_selectors = children.clone();
+            let mut complex_selectors = children.iter().cloned().collect::<Vec<_>>();
 
-            let mut v = complex_selectors.children[1..].to_vec();
+            // complex_selectors.remove(0);
 
             if let Component::Combinator(Combinator::Descendant) = v[0] {
-                v.remove(0);
+                complex_selectors.remove(0);
             }
 
-            if v.is_empty() {
+            if complex_selectors.is_empty() {
                 bail!("Failed to transform one off global selector");
             }
 
             trace!("Combinator: {:?}", combinator);
-            trace!("v[0]: {:?}", v[0]);
+            trace!("v[0]: {:?}", complex_selectors[0]);
 
             let mut result = vec![];
 
