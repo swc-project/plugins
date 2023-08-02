@@ -207,6 +207,9 @@ impl Namespacer {
                 _ => continue,
             };
 
+            dbg!(&selector);
+            dbg!(&children);
+
             let mut complex_selectors = children.iter().cloned().collect::<Vec<_>>();
 
             // complex_selectors.remove(0);
