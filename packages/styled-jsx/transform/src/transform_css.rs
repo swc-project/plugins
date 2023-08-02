@@ -144,36 +144,29 @@ impl<'i> Visitor<'i> for Namespacer {
                 Component::Combinator(v) => {
                     combinator = Some(v.clone());
                 }
+
+                _ => {
+                    match self.get_transformed_selectors(combinator, sel.clone()) {
+                        Ok(transformed_selectors) => new_selectors.extend(transformed_selectors),
+                        Err(_) => {
+                            HANDLER.with(|handler| {
+                                handler
+                                    .struct_span_err(
+                                        selector.span,
+                                        "Failed to transform one off global selector",
+                                    )
+                                    .emit()
+                            });
+                            new_selectors.push(sel);
+                        }
+                    }
+
+                    combinator = None;
+                }
             }
         }
 
         Ok(())
-    }
-
-    fn visit_mut_complex_selector(&mut self, node: &mut ComplexSelector) {
-        match &sel {
-            ComplexSelectorChildren::CompoundSelector(selector) => {
-                match self.get_transformed_selectors(combinator, selector.clone()) {
-                    Ok(transformed_selectors) => new_selectors.extend(transformed_selectors),
-                    Err(_) => {
-                        HANDLER.with(|handler| {
-                            handler
-                                .struct_span_err(
-                                    selector.span,
-                                    "Failed to transform one off global selector",
-                                )
-                                .emit()
-                        });
-                        new_selectors.push(sel);
-                    }
-                }
-
-                combinator = None;
-            }
-            ComplexSelectorChildren::Combinator(v) => {
-                combinator = Some(v.clone());
-            }
-        };
     }
 }
 
