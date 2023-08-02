@@ -195,6 +195,7 @@ impl Namespacer {
         SelectorIter<'a, 'i, Impl>: Iterator<Item = &'a Component<'i>>,
     {
         let mut pseudo_index = None;
+        let mut last_selector = None;
 
         for (i, selector) in node.enumerate() {
             let children = match &selector {
@@ -204,9 +205,13 @@ impl Namespacer {
                         pseudo_index = Some(i);
                     }
 
+                    last_selector = Some(selector.clone());
                     continue;
                 }
-                _ => continue,
+                _ => {
+                    last_selector = Some(selector.clone());
+                    continue;
+                }
             };
 
             dbg!(&selector);
@@ -276,6 +281,7 @@ impl Namespacer {
         }
 
         let mut result: Vec<Component<'i>> = vec![];
+        result.extend(last_selector);
 
         if let Some(combinator) = combinator {
             result.push(Component::Combinator(combinator));
