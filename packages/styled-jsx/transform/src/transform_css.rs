@@ -151,6 +151,12 @@ impl<'i> Visitor<'i> for Namespacer {
 
         let mut iter = selector.iter();
         loop {
+            if combinator.is_none() {
+                if let Some(next) = iter.next_sequence() {
+                    combinator = Some(next);
+                }
+            }
+
             match self.get_transformed_selectors(combinator, &mut iter) {
                 Ok(transformed_selectors) => new_selectors.extend(transformed_selectors),
                 Err(_) => {
@@ -169,13 +175,11 @@ impl<'i> Visitor<'i> for Namespacer {
                 }
             }
 
-            combinator = None;
-
-            if let Some(next) = iter.next_sequence() {
-                combinator = Some(next);
-            } else {
+            if combinator.is_none() {
                 break;
             }
+
+            combinator = None;
         }
 
         *selector = Selector::from(new_selectors);
