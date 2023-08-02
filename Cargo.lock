@@ -1786,6 +1786,7 @@ version = "0.37.0"
 dependencies = [
  "easy-error",
  "lightningcss",
+ "parcel_selectors",
  "swc_core",
  "testing",
  "tracing",
