@@ -3,7 +3,7 @@ use std::{borrow::Cow, convert::Infallible, panic, sync::Arc};
 use easy_error::{bail, Error, ResultExt};
 use lightningcss::{
     css_modules::Pattern,
-    selector::{Combinator, Component, PseudoClass, Selector},
+    selector::{Combinator, Component, PseudoClass, Selector, SelectorList},
     stylesheet::{MinifyOptions, ParserOptions, PrinterOptions, StyleSheet},
     traits::ParseWithOptions,
     values::ident::Ident,
@@ -39,10 +39,9 @@ pub fn transform_css(
     let result: Result<StyleSheet, _> = StyleSheet::parse(
         &style_info.css,
         ParserOptions {
-            css_modules: Some(lightningcss::css_modules::Config {
-                pattern: Pattern::default(),
-                dashed_idents: false,
-            }),
+            // We cannot use css_modules for `:global` because lightningcss does not support
+            // parsing-only mode.
+            css_modules: None,
             ..Default::default()
         },
     );
@@ -214,10 +213,21 @@ impl Namespacer {
         for (i, component) in (&mut node).enumerate() {
             trace!("Selector at {}", i);
 
+            // Look for :global
             let children = match &component {
-                Component::NonTSPseudoClass(PseudoClass::Global { selector, .. }) => selector,
-                Component::NonTSPseudoClass(_)
-                | Component::PseudoElement(_)
+                Component::NonTSPseudoClass(PseudoClass::CustomFunction { name, arguments }) => {
+                    if &**name != "global" {
+                        if pseudo_index.is_none() {
+                            pseudo_index = Some(i);
+                        }
+
+                        result.push(component.clone());
+                        continue;
+                    }
+
+                    SelectorList::parse(arguments);
+                }
+                Component::PseudoElement(_)
                 | Component::Negation(..)
                 | Component::Root
                 | Component::Empty
