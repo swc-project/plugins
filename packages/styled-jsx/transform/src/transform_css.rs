@@ -33,13 +33,6 @@ pub fn transform_css(
 ) -> Result<Expr, Error> {
     debug!("CSS: \n{}", style_info.css);
 
-    // TODO use `parse_string_input` in future
-    let config = ParserConfig {
-        allow_wrong_line_comments: true,
-        css_modules: false,
-        ..Default::default()
-    };
-
     let result: Result<StyleSheet, _> = StyleSheet::parse(
         &style_info.css,
         ParserOptions {
@@ -51,7 +44,8 @@ pub fn transform_css(
         Err(err) => {
             HANDLER.with(|handler| {
                 // Print css parsing errors
-                err.to_diagnostics(handler).emit();
+                // TODO:
+                // err.to_diagnostics(handler).emit();
 
                 // TODO(kdy1): We may print css so the user can see the error, and report it.
 
@@ -68,7 +62,10 @@ pub fn transform_css(
     };
 
     // Apply auto prefixer
-    ss.minify(MinifyOptions {});
+    // TODO:
+    ss.minify(MinifyOptions {
+        ..Default::default()
+    });
     ss.visit(&mut Namespacer {
         class_name: match class_name {
             Some(s) => s.clone(),
@@ -198,7 +195,7 @@ impl Namespacer {
 
             // complex_selectors.remove(0);
 
-            if let Component::Combinator(Combinator::Descendant) = v[0] {
+            if let Component::Combinator(Combinator::Descendant) = complex_selectors[0] {
                 complex_selectors.remove(0);
             }
 
@@ -265,7 +262,7 @@ impl Namespacer {
             result.push(Component::Combinator(combinator));
         }
 
-        result.push(Component::CompoundSelector(node));
+        result.extend(node.cloned());
 
         Ok(result)
     }
