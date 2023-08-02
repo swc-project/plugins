@@ -180,7 +180,7 @@ impl Namespacer {
 
         for (i, selector) in node.subclass_selectors.iter().enumerate() {
             let (name, children) = match &selector {
-                SubclassSelector::PseudoClass(PseudoClassSelector {
+                Component::PseudoClass(PseudoClassSelector {
                     name,
                     children: Some(children),
                     ..
@@ -246,7 +246,7 @@ impl Namespacer {
                     Ok(complex_selectors) => {
                         let mut v = complex_selectors.children[1..].to_vec();
 
-                        if let ComplexSelectorChildren::Combinator(Combinator {
+                        if let Component::Combinator(Combinator {
                             value: CombinatorValue::Descendant,
                             ..
                         }) = v[0]
@@ -267,17 +267,17 @@ impl Namespacer {
                             match v.get(0) {
                                 // `Descendant` combinator can't be the first because we removed it
                                 // above
-                                Some(ComplexSelectorChildren::Combinator(..))
+                                Some(Component::Combinator(..))
                                     if combinator.value == CombinatorValue::Descendant => {}
                                 _ => {
-                                    result.push(ComplexSelectorChildren::Combinator(combinator));
+                                    result.push(Component::Combinator(combinator));
                                 }
                             }
                         }
 
                         v.iter_mut().for_each(|sel| {
                             if i < node.subclass_selectors.len() {
-                                if let ComplexSelectorChildren::CompoundSelector(sel) = sel {
+                                if let Component::CompoundSelector(sel) = sel {
                                     sel.subclass_selectors
                                         .extend(node.subclass_selectors[i + 1..].iter().cloned());
                                 }
@@ -319,10 +319,10 @@ impl Namespacer {
         let mut result = vec![];
 
         if let Some(combinator) = combinator {
-            result.push(ComplexSelectorChildren::Combinator(combinator));
+            result.push(Component::Combinator(combinator));
         }
 
-        result.push(ComplexSelectorChildren::CompoundSelector(node));
+        result.push(Component::CompoundSelector(node));
 
         Ok(result)
     }
