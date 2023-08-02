@@ -2,7 +2,7 @@ use std::{convert::Infallible, panic, sync::Arc};
 
 use easy_error::{bail, Error, ResultExt};
 use lightningcss::{
-    selector::{Component, Selector},
+    selector::{Combinator, Component, Selector},
     stylesheet::{MinifyOptions, ParserOptions, PrinterOptions, StyleSheet},
     visitor::{Visit, Visitor},
 };
@@ -181,8 +181,8 @@ impl Namespacer {
     fn get_transformed_selectors(
         &mut self,
         combinator: Option<Combinator>,
-        mut node: CompoundSelector,
-    ) -> Result<Vec<ComplexSelectorChildren>, Error> {
+        mut node: Component,
+    ) -> Result<Vec<Component>, Error> {
         let mut pseudo_index = None;
 
         for (i, selector) in node.subclass_selectors.iter().enumerate() {
