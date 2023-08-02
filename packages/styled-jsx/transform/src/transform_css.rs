@@ -7,6 +7,7 @@ use lightningcss::{
     traits::ParseWithOptions,
     visitor::{Visit, Visitor},
 };
+use parcel_selectors::{parser::SelectorIter, SelectorImpl};
 use swc_core::{
     common::{
         errors::HANDLER, source_map::Pos, util::take::Take, BytePos, SourceMap, Span, Spanned,
@@ -169,13 +170,13 @@ impl<'i> Visitor<'i> for Namespacer {
 }
 
 impl Namespacer {
-    fn get_transformed_selectors<'a, 'b>(
+    fn get_transformed_selectors<'a, 'i, Impl>(
         &mut self,
         combinator: Option<Combinator>,
-        mut node: impl Iterator<Item = &'a Component<'b>>,
+        mut node: &mut SelectorIter<'_, 'i, Impl>,
     ) -> Result<Vec<Component>, Error>
     where
-        'b: 'a,
+        Impl: SelectorImpl<'i>,
     {
         let mut pseudo_index = None;
 
