@@ -80,7 +80,12 @@ pub fn transform_css(
     .expect("failed to transform css");
 
     let res = ss
-        .to_css(PrinterOptions::default())
+        .to_css(PrinterOptions {
+            minify: true,
+            // TODO
+            // targets: (),
+            ..Default::default()
+        })
         .context("failed to print css")?;
 
     if style_info.expressions.is_empty() {
