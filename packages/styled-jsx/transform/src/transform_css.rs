@@ -2,7 +2,7 @@ use std::{convert::Infallible, panic, sync::Arc};
 
 use easy_error::{bail, Error, ResultExt};
 use lightningcss::{
-    selector::Selector,
+    selector::{Component, Selector},
     stylesheet::{MinifyOptions, ParserOptions, PrinterOptions, StyleSheet},
     visitor::{Visit, Visitor},
 };
@@ -135,39 +135,45 @@ struct Namespacer {
 impl<'i> Visitor<'i> for Namespacer {
     type Error = Infallible;
 
-    fn visit_selector(&mut self, selector: &mut Selector<'i>) -> Result<(), Self::Error> {}
-
-    fn visit_mut_complex_selector(&mut self, node: &mut ComplexSelector) {
+    fn visit_selector(&mut self, selector: &mut Selector<'i>) -> Result<(), Self::Error> {
         let mut new_selectors = vec![];
         let mut combinator = None;
 
-        for sel in node.children.take() {
-            match &sel {
-                ComplexSelectorChildren::CompoundSelector(selector) => {
-                    match self.get_transformed_selectors(combinator, selector.clone()) {
-                        Ok(transformed_selectors) => new_selectors.extend(transformed_selectors),
-                        Err(_) => {
-                            HANDLER.with(|handler| {
-                                handler
-                                    .struct_span_err(
-                                        selector.span,
-                                        "Failed to transform one off global selector",
-                                    )
-                                    .emit()
-                            });
-                            new_selectors.push(sel);
-                        }
-                    }
-
-                    combinator = None;
-                }
-                ComplexSelectorChildren::Combinator(v) => {
+        for sel in selector.iter() {
+            match sel {
+                Component::Combinator(v) => {
                     combinator = Some(v.clone());
                 }
-            };
+            }
         }
 
-        node.children = new_selectors;
+        Ok(())
+    }
+
+    fn visit_mut_complex_selector(&mut self, node: &mut ComplexSelector) {
+        match &sel {
+            ComplexSelectorChildren::CompoundSelector(selector) => {
+                match self.get_transformed_selectors(combinator, selector.clone()) {
+                    Ok(transformed_selectors) => new_selectors.extend(transformed_selectors),
+                    Err(_) => {
+                        HANDLER.with(|handler| {
+                            handler
+                                .struct_span_err(
+                                    selector.span,
+                                    "Failed to transform one off global selector",
+                                )
+                                .emit()
+                        });
+                        new_selectors.push(sel);
+                    }
+                }
+
+                combinator = None;
+            }
+            ComplexSelectorChildren::Combinator(v) => {
+                combinator = Some(v.clone());
+            }
+        };
     }
 }
 
