@@ -5,7 +5,8 @@ use lightningcss::{
     selector::{Combinator, Component, PseudoClass, Selector},
     stylesheet::{MinifyOptions, ParserOptions, PrinterOptions, StyleSheet},
     traits::ParseWithOptions,
-    visitor::{Visit, Visitor},
+    visit_types,
+    visitor::{Visit, VisitTypes, Visitor},
 };
 use parcel_selectors::{parser::SelectorIter, SelectorImpl};
 use swc_core::{
@@ -134,6 +135,8 @@ struct Namespacer {
 impl<'i> Visitor<'i> for Namespacer {
     type Error = Infallible;
 
+    const TYPES: VisitTypes = visit_types!(SELECTORS);
+
     fn visit_selector(&mut self, selector: &mut Selector<'i>) -> Result<(), Self::Error> {
         let mut new_selectors = vec![];
         let mut combinator = None;
@@ -143,15 +146,18 @@ impl<'i> Visitor<'i> for Namespacer {
             match self.get_transformed_selectors(combinator, &mut iter) {
                 Ok(transformed_selectors) => new_selectors.extend(transformed_selectors),
                 Err(_) => {
-                    HANDLER.with(|handler| {
-                        handler
-                            .struct_span_err(
-                                selector.span,
-                                "Failed to transform one off global selector",
-                            )
-                            .emit()
-                    });
-                    new_selectors.push(sel);
+                    // TODO:
+
+                    // HANDLER.with(|handler| {
+                    //     handler
+                    //         .struct_span_err(
+                    //             selector.span,
+                    //             "Failed to transform one off global selector",
+                    //         )
+                    //         .emit()
+                    // });
+
+                    new_selectors.extend(iter.cloned());
                 }
             }
 
