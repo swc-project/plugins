@@ -178,6 +178,8 @@ impl<'i> Visitor<'i> for Namespacer {
             }
         }
 
+        *selector = Selector::from(new_selectors);
+
         Ok(())
     }
 }
@@ -253,6 +255,9 @@ impl Namespacer {
         }
 
         let mut node: Vec<Component<'i>> = node.cloned().collect();
+
+        dbg!(&node);
+        dbg!(self.is_global);
 
         let subclass_selector = match self.is_dynamic {
             true => Cow::Borrowed("__jsx-style-dynamic-selector"),
