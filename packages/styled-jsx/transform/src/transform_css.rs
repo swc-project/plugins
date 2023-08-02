@@ -279,19 +279,26 @@ impl Namespacer {
             true => Cow::Borrowed("__jsx-style-dynamic-selector"),
             false => Cow::Owned(self.class_name.clone()),
         };
-        let insert_index = match pseudo_index {
-            None => node.len(),
-            Some(i) => i,
-        };
+        match pseudo_index {
+            None => {
+                if !self.is_global {
+                    node.push(Component::Class(Ident::from(subclass_selector)));
+                }
 
-        if !self.is_global {
-            node.insert(
-                insert_index,
-                Component::Class(Ident::from(subclass_selector)),
-            );
+                result.extend(node);
+            }
+
+            Some(insert_index) => {
+                result.extend(node);
+
+                if !self.is_global {
+                    result.insert(
+                        insert_index,
+                        Component::Class(Ident::from(subclass_selector)),
+                    );
+                }
+            }
         }
-
-        result.extend(node);
 
         Ok(result)
     }
