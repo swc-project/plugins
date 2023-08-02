@@ -2,6 +2,7 @@ use std::{borrow::Cow, convert::Infallible, panic, sync::Arc};
 
 use easy_error::{bail, Error, ResultExt};
 use lightningcss::{
+    css_modules::Pattern,
     selector::{Combinator, Component, PseudoClass, Selector},
     stylesheet::{MinifyOptions, ParserOptions, PrinterOptions, StyleSheet},
     traits::ParseWithOptions,
@@ -38,6 +39,10 @@ pub fn transform_css(
     let result: Result<StyleSheet, _> = StyleSheet::parse(
         &style_info.css,
         ParserOptions {
+            css_modules: Some(lightningcss::css_modules::Config {
+                pattern: Pattern::default(),
+                dashed_idents: false,
+            }),
             ..Default::default()
         },
     );
@@ -235,9 +240,6 @@ impl Namespacer {
                     continue;
                 }
             };
-
-            dbg!(&component);
-            dbg!(&children);
 
             let mut complex_selectors = children.iter().cloned().collect::<Vec<_>>();
 
