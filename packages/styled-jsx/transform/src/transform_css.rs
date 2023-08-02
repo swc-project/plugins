@@ -157,7 +157,7 @@ impl<'i> Visitor<'i> for Namespacer {
                     //         .emit()
                     // });
 
-                    new_selectors.extend(iter.cloned());
+                    new_selectors.extend(iter.clone().cloned());
                 }
             }
 
@@ -177,7 +177,7 @@ impl Namespacer {
         &mut self,
         combinator: Option<Combinator>,
         mut node: &mut SelectorIter<'a, 'i, Impl>,
-    ) -> Result<Vec<Component>, Error>
+    ) -> Result<Vec<Component<'i>>, Error>
     where
         Impl: SelectorImpl<'i>,
         SelectorIter<'a, 'i, Impl>: Iterator<Item = &'a Component<'i>>,
