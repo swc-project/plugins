@@ -268,28 +268,3 @@ impl Namespacer {
         Ok(result)
     }
 }
-
-fn get_front_selector_tokens(selector_tokens: &Tokens) -> Vec<TokenAndSpan> {
-    let start_pos = selector_tokens.span.lo.to_u32() - 2;
-    vec![
-        TokenAndSpan {
-            span: Span {
-                lo: BytePos(start_pos),
-                hi: BytePos(start_pos + 1),
-                ctxt: SyntaxContext::empty(),
-            },
-            token: Token::Ident {
-                raw: "a".into(),
-                value: "a".into(),
-            },
-        },
-        TokenAndSpan {
-            span: Span {
-                lo: BytePos(start_pos + 1),
-                hi: BytePos(start_pos + 2),
-                ctxt: SyntaxContext::empty(),
-            },
-            token: Token::WhiteSpace { value: " ".into() },
-        },
-    ]
-}
