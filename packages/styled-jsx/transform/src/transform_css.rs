@@ -1,4 +1,4 @@
-use std::{convert::Infallible, panic, sync::Arc};
+use std::{borrow::Cow, convert::Infallible, panic, sync::Arc};
 
 use easy_error::{bail, Error, ResultExt};
 use lightningcss::{
@@ -247,8 +247,8 @@ impl Namespacer {
         let mut v: Vec<Component<'i>> = node.cloned().collect();
 
         let subclass_selector = match self.is_dynamic {
-            true => "__jsx-style-dynamic-selector",
-            false => &self.class_name,
+            true => Cow::Borrowed("__jsx-style-dynamic-selector"),
+            false => Cow::Owned(self.class_name.clone()),
         };
         let insert_index = match pseudo_index {
             None => v.len(),
