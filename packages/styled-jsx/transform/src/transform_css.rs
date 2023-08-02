@@ -244,7 +244,7 @@ impl Namespacer {
             return Ok(result);
         }
 
-        let mut v = node.cloned().collect::<Vec<Component<'i>>>();
+        let mut v: Vec<Component<'i>> = node.cloned().collect();
 
         let subclass_selector = match self.is_dynamic {
             true => "__jsx-style-dynamic-selector",
@@ -262,7 +262,7 @@ impl Namespacer {
             );
         }
 
-        let mut result = vec![];
+        let mut result: Vec<Component<'i>> = vec![];
 
         if let Some(combinator) = combinator {
             result.push(Component::Combinator(combinator));
