@@ -201,7 +201,9 @@ impl Namespacer {
         let mut pseudo_index = None;
         let mut last_selector = None;
 
-        for (i, selector) in node.enumerate() {
+        let mut node = node.fuse();
+
+        for (i, selector) in (&mut node).enumerate() {
             let children = match &selector {
                 Component::NonTSPseudoClass(PseudoClass::Global { selector, .. }) => selector,
                 Component::NonTSPseudoClass(_) | Component::PseudoElement(_) => {
