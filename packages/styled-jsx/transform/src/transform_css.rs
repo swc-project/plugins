@@ -198,8 +198,9 @@ impl Namespacer {
         Impl: SelectorImpl<'i>,
         SelectorIter<'a, 'i, Impl>: Iterator<Item = &'a Component<'i>>,
     {
+        let mut result: Vec<Component<'i>> = vec![];
+
         let mut pseudo_index = None;
-        let mut last_selector = None;
 
         let mut node = node.fuse();
 
@@ -211,11 +212,11 @@ impl Namespacer {
                         pseudo_index = Some(i);
                     }
 
-                    last_selector = Some(selector.clone());
+                    result.push(selector.clone());
                     continue;
                 }
                 _ => {
-                    last_selector = Some(selector.clone());
+                    result.push(selector.clone());
                     continue;
                 }
             };
@@ -265,6 +266,10 @@ impl Namespacer {
             return Ok(result);
         }
 
+        if let Some(combinator) = combinator {
+            result.push(Component::Combinator(combinator));
+        }
+
         let mut node: Vec<Component<'i>> = node.cloned().collect();
 
         dbg!(&node);
@@ -284,13 +289,6 @@ impl Namespacer {
                 insert_index,
                 Component::Class(Ident::from(subclass_selector)),
             );
-        }
-
-        let mut result: Vec<Component<'i>> = vec![];
-        result.extend(last_selector);
-
-        if let Some(combinator) = combinator {
-            result.push(Component::Combinator(combinator));
         }
 
         result.extend(node);
