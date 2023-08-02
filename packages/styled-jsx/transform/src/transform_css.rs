@@ -253,8 +253,6 @@ impl Namespacer {
             trace!("Combinator: {:?}", combinator);
             trace!("v[0]: {:?}", complex_selectors[0]);
 
-            let mut result = vec![];
-
             if let Some(combinator) = combinator {
                 match complex_selectors.get(0) {
                     // `Descendant` combinator can't be the first because we removed it
