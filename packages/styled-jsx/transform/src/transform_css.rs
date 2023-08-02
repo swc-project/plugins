@@ -5,6 +5,7 @@ use lightningcss::{
     selector::{Combinator, Component, PseudoClass, Selector},
     stylesheet::{MinifyOptions, ParserOptions, PrinterOptions, StyleSheet},
     traits::ParseWithOptions,
+    values::ident::Ident,
     visit_types,
     visitor::{Visit, VisitTypes, Visitor},
 };
@@ -243,28 +244,23 @@ impl Namespacer {
             return Ok(result);
         }
 
+        let mut node = node.cloned().collect::<Vec<Component<'i>>>();
+
         let subclass_selector = match self.is_dynamic {
             true => "__jsx-style-dynamic-selector",
             false => &self.class_name,
         };
         let insert_index = match pseudo_index {
-            None => node.selector_length(),
+            None => node.len(),
             Some(i) => i,
         };
 
-        // if !self.is_global {
-        //     node.subclass_selectors.insert(
-        //         insert_index,
-        //         SubclassSelector::Class(ClassSelector {
-        //             span: DUMMY_SP,
-        //             text: Ident {
-        //                 raw: Some(subclass_selector.into()),
-        //                 value: subclass_selector.into(),
-        //                 span: DUMMY_SP,
-        //             },
-        //         }),
-        //     );
-        // }
+        if !self.is_global {
+            node.insert(
+                insert_index,
+                Component::Class(Ident::from(subclass_selector)),
+            );
+        }
 
         let mut result = vec![];
 
@@ -272,7 +268,7 @@ impl Namespacer {
             result.push(Component::Combinator(combinator));
         }
 
-        result.extend(node.cloned());
+        result.extend(node);
 
         Ok(result)
     }
