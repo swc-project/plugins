@@ -252,19 +252,19 @@ impl Namespacer {
             return Ok(result);
         }
 
-        let mut v: Vec<Component<'i>> = node.cloned().collect();
+        let mut node: Vec<Component<'i>> = node.cloned().collect();
 
         let subclass_selector = match self.is_dynamic {
             true => Cow::Borrowed("__jsx-style-dynamic-selector"),
             false => Cow::Owned(self.class_name.clone()),
         };
         let insert_index = match pseudo_index {
-            None => v.len(),
+            None => node.len(),
             Some(i) => i,
         };
 
         if !self.is_global {
-            v.insert(
+            node.insert(
                 insert_index,
                 Component::Class(Ident::from(subclass_selector)),
             );
@@ -276,7 +276,7 @@ impl Namespacer {
             result.push(Component::Combinator(combinator));
         }
 
-        result.extend(v);
+        result.extend(node);
 
         Ok(result)
     }
