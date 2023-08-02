@@ -212,7 +212,7 @@ impl Namespacer {
             let mut result = vec![];
 
             if let Some(combinator) = combinator {
-                match v.get(0) {
+                match complex_selectors.get(0) {
                     // `Descendant` combinator can't be the first because we removed it
                     // above
                     Some(Component::Combinator(Combinator::Descendant)) => {}
@@ -222,16 +222,16 @@ impl Namespacer {
                 }
             }
 
-            v.iter_mut().for_each(|sel| {
-                if i < node.subclass_selectors.len() {
-                    if let Component::CompoundSelector(sel) = sel {
-                        sel.subclass_selectors
-                            .extend(node.subclass_selectors[i + 1..].iter().cloned());
-                    }
-                }
-            });
+            // complex_selectors.iter_mut().for_each(|sel| {
+            //     if i < node.subclass_selectors.len() {
+            //         if let Component::CompoundSelector(sel) = sel {
+            //             sel.subclass_selectors
+            //                 .extend(node.subclass_selectors[i + 1..].iter().cloned());
+            //         }
+            //     }
+            // });
 
-            result.extend(v);
+            result.extend(complex_selectors);
 
             return Ok(result);
         }
@@ -241,23 +241,23 @@ impl Namespacer {
             false => &self.class_name,
         };
         let insert_index = match pseudo_index {
-            None => node.subclass_selectors.len(),
+            None => node.selector_length(),
             Some(i) => i,
         };
 
-        if !self.is_global {
-            node.subclass_selectors.insert(
-                insert_index,
-                SubclassSelector::Class(ClassSelector {
-                    span: DUMMY_SP,
-                    text: Ident {
-                        raw: Some(subclass_selector.into()),
-                        value: subclass_selector.into(),
-                        span: DUMMY_SP,
-                    },
-                }),
-            );
-        }
+        // if !self.is_global {
+        //     node.subclass_selectors.insert(
+        //         insert_index,
+        //         SubclassSelector::Class(ClassSelector {
+        //             span: DUMMY_SP,
+        //             text: Ident {
+        //                 raw: Some(subclass_selector.into()),
+        //                 value: subclass_selector.into(),
+        //                 span: DUMMY_SP,
+        //             },
+        //         }),
+        //     );
+        // }
 
         let mut result = vec![];
 
