@@ -165,6 +165,8 @@ impl<'i> Visitor<'i> for Namespacer {
 
             if let Some(next) = iter.next_sequence() {
                 combinator = Some(next);
+            } else {
+                break;
             }
         }
 
