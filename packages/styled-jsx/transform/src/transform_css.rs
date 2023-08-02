@@ -1,7 +1,8 @@
-use std::{panic, sync::Arc};
+use std::{convert::Infallible, panic, sync::Arc};
 
 use easy_error::{bail, Error, ResultExt};
 use lightningcss::{
+    selector::Selector,
     stylesheet::{MinifyOptions, ParserOptions, PrinterOptions, StyleSheet},
     visitor::{Visit, Visitor},
 };
@@ -132,6 +133,10 @@ struct Namespacer {
 }
 
 impl<'i> Visitor<'i> for Namespacer {
+    type Error = Infallible;
+
+    fn visit_selector(&mut self, selector: &mut Selector<'i>) -> Result<(), Self::Error> {}
+
     fn visit_mut_complex_selector(&mut self, node: &mut ComplexSelector) {
         let mut new_selectors = vec![];
         let mut combinator = None;
