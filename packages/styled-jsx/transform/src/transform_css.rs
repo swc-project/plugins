@@ -4,6 +4,7 @@ use easy_error::{bail, Error, ResultExt};
 use lightningcss::{
     selector::{Combinator, Component, PseudoClass, Selector},
     stylesheet::{MinifyOptions, ParserOptions, PrinterOptions, StyleSheet},
+    traits::ParseWithOptions,
     visitor::{Visit, Visitor},
 };
 use swc_core::{
@@ -191,102 +192,47 @@ impl Namespacer {
                 _ => continue,
             };
 
-            // One off global selector
-            if &name.value == "global" {
-                // TODO(alexander-akait): in future we should use list of component values
-                let tokens = children
-                    .iter()
-                    .map(|v| match v {
-                        PseudoClassSelectorChildren::PreservedToken(v) => v.clone(),
-                        _ => {
-                            unreachable!();
-                        }
-                    })
-                    .collect::<Vec<TokenAndSpan>>();
-                let mut tokens = {
-                    let lo = tokens.first().map(|v| v.span_lo()).unwrap_or(BytePos(0));
-                    let hi = tokens.last().map(|v| v.span_hi()).unwrap_or(BytePos(0));
+            let complex_selectors = children.clone();
 
-                    Tokens {
-                        span: Span::new(lo, hi, Default::default()),
-                        tokens,
-                    }
-                };
+            let mut v = complex_selectors.children[1..].to_vec();
 
-                // Because it is allowed to write `.bar :global(> .foo) {}` or .bar
-                // :global(.foo) {}`, so selector can be complex or relative (it violates the
-                // specification), but it is popular usage, so we just add `a >` at top and then
-                // remove it
-                let mut front_tokens = get_front_selector_tokens(&tokens);
-
-                front_tokens.extend(tokens.tokens);
-
-                tokens.tokens = front_tokens;
-
-                let complex_selectors = panic::catch_unwind(|| {
-                    let x: ComplexSelector = parse_input(
-                        InputType::Tokens(&tokens),
-                        ParserConfig {
-                            allow_wrong_line_comments: true,
-                            css_modules: true,
-                            ..Default::default()
-                        },
-                        // TODO(kdy1): We might be able to report syntax errors.
-                        &mut vec![],
-                    )
-                    .unwrap();
-                    x
-                });
-
-                return match complex_selectors {
-                    Ok(complex_selectors) => {
-                        let mut v = complex_selectors.children[1..].to_vec();
-
-                        if let Component::Combinator(Combinator {
-                            value: CombinatorValue::Descendant,
-                            ..
-                        }) = v[0]
-                        {
-                            v.remove(0);
-                        }
-
-                        if v.is_empty() {
-                            bail!("Failed to transform one off global selector");
-                        }
-
-                        trace!("Combinator: {:?}", combinator);
-                        trace!("v[0]: {:?}", v[0]);
-
-                        let mut result = vec![];
-
-                        if let Some(combinator) = combinator {
-                            match v.get(0) {
-                                // `Descendant` combinator can't be the first because we removed it
-                                // above
-                                Some(Component::Combinator(..))
-                                    if combinator.value == CombinatorValue::Descendant => {}
-                                _ => {
-                                    result.push(Component::Combinator(combinator));
-                                }
-                            }
-                        }
-
-                        v.iter_mut().for_each(|sel| {
-                            if i < node.subclass_selectors.len() {
-                                if let Component::CompoundSelector(sel) = sel {
-                                    sel.subclass_selectors
-                                        .extend(node.subclass_selectors[i + 1..].iter().cloned());
-                                }
-                            }
-                        });
-
-                        result.extend(v);
-
-                        Ok(result)
-                    }
-                    Err(_) => bail!("Failed to transform one off global selector"),
-                };
+            if let Component::Combinator(Combinator::Descendant) = v[0] {
+                v.remove(0);
             }
+
+            if v.is_empty() {
+                bail!("Failed to transform one off global selector");
+            }
+
+            trace!("Combinator: {:?}", combinator);
+            trace!("v[0]: {:?}", v[0]);
+
+            let mut result = vec![];
+
+            if let Some(combinator) = combinator {
+                match v.get(0) {
+                    // `Descendant` combinator can't be the first because we removed it
+                    // above
+                    Some(Component::Combinator(..))
+                        if combinator.value == CombinatorValue::Descendant => {}
+                    _ => {
+                        result.push(Component::Combinator(combinator));
+                    }
+                }
+            }
+
+            v.iter_mut().for_each(|sel| {
+                if i < node.subclass_selectors.len() {
+                    if let Component::CompoundSelector(sel) = sel {
+                        sel.subclass_selectors
+                            .extend(node.subclass_selectors[i + 1..].iter().cloned());
+                    }
+                }
+            });
+
+            result.extend(v);
+
+            return Ok(result);
         }
 
         let subclass_selector = match self.is_dynamic {
