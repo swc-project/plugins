@@ -213,8 +213,7 @@ impl Namespacer {
                 match v.get(0) {
                     // `Descendant` combinator can't be the first because we removed it
                     // above
-                    Some(Component::Combinator(..))
-                        if combinator.value == CombinatorValue::Descendant => {}
+                    Some(Component::Combinator(Combinator::Descendant)) => {}
                     _ => {
                         result.push(Component::Combinator(combinator));
                     }
