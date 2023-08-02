@@ -173,10 +173,11 @@ impl Namespacer {
     fn get_transformed_selectors<'a, 'i, Impl>(
         &mut self,
         combinator: Option<Combinator>,
-        mut node: &mut SelectorIter<'_, 'i, Impl>,
+        mut node: &mut SelectorIter<'a, 'i, Impl>,
     ) -> Result<Vec<Component>, Error>
     where
         Impl: SelectorImpl<'i>,
+        SelectorIter<'a, 'i, Impl>: Iterator<Item = &'a Component<'i>>,
     {
         let mut pseudo_index = None;
 
