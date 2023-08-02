@@ -181,7 +181,7 @@ impl Namespacer {
     fn get_transformed_selectors<'a, 'i, Impl>(
         &mut self,
         combinator: Option<Combinator>,
-        mut node: &mut SelectorIter<'a, 'i, Impl>,
+        node: &mut SelectorIter<'a, 'i, Impl>,
     ) -> Result<Vec<Component<'i>>, Error>
     where
         Impl: SelectorImpl<'i>,
@@ -244,19 +244,19 @@ impl Namespacer {
             return Ok(result);
         }
 
-        let mut node = node.cloned().collect::<Vec<Component<'i>>>();
+        let mut v = node.cloned().collect::<Vec<Component<'i>>>();
 
         let subclass_selector = match self.is_dynamic {
             true => "__jsx-style-dynamic-selector",
             false => &self.class_name,
         };
         let insert_index = match pseudo_index {
-            None => node.len(),
+            None => v.len(),
             Some(i) => i,
         };
 
         if !self.is_global {
-            node.insert(
+            v.insert(
                 insert_index,
                 Component::Class(Ident::from(subclass_selector)),
             );
@@ -268,7 +268,7 @@ impl Namespacer {
             result.push(Component::Combinator(combinator));
         }
 
-        result.extend(node);
+        result.extend(v);
 
         Ok(result)
     }
