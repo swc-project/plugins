@@ -3,6 +3,7 @@ use std::{borrow::Cow, convert::Infallible, panic, sync::Arc};
 use easy_error::{bail, Error, ResultExt};
 use lightningcss::{
     css_modules::Pattern,
+    properties::custom::TokenList,
     selector::{Combinator, Component, PseudoClass, Selector, SelectorList},
     stylesheet::{MinifyOptions, ParserOptions, PrinterOptions, StyleSheet},
     traits::ParseWithOptions,
@@ -225,10 +226,9 @@ impl Namespacer {
                         continue;
                     }
 
-                    dbg!(&arguments);
-                    // Selector::parse_string_with_options(arguments)
-                    // .expect("failed to parse selector list")
-                    unimplemented!()
+                    let input = print_token_list(arguments);
+                    Selector::parse_string_with_options(&input, Default::default())
+                        .expect("failed to parse selector list")
                 }
                 Component::PseudoElement(_)
                 | Component::Negation(..)
@@ -333,4 +333,8 @@ impl Namespacer {
 
         Ok(result)
     }
+}
+
+fn print_token_list(tokens: &TokenList) -> String {
+    dbg!(&tokens);
 }
