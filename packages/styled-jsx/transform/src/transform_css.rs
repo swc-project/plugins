@@ -214,7 +214,7 @@ impl Namespacer {
             trace!("Selector at {}", i);
 
             // Look for :global
-            let children = match &component {
+            let children: Selector = match &component {
                 Component::NonTSPseudoClass(PseudoClass::CustomFunction { name, arguments }) => {
                     if &**name != "global" {
                         if pseudo_index.is_none() {
@@ -225,7 +225,10 @@ impl Namespacer {
                         continue;
                     }
 
-                    SelectorList::parse(arguments);
+                    dbg!(&arguments);
+                    // Selector::parse_string_with_options(arguments)
+                    // .expect("failed to parse selector list")
+                    unimplemented!()
                 }
                 Component::PseudoElement(_)
                 | Component::Negation(..)
