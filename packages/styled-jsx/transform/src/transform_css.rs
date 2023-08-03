@@ -282,6 +282,10 @@ impl Namespacer {
             // trace!("node: {:?}", node);
             // trace!("complex_selectors: {:?}", complex_selectors);
 
+            // result.push(Component::Combinator(Combinator::Descendant));
+            result.extend(node.cloned());
+            result.push(Component::Combinator(Combinator::Descendant));
+
             if let Some(combinator) = combinator {
                 match complex_selectors.get(0) {
                     // `Descendant` combinator can't be the first because we removed it
@@ -293,17 +297,7 @@ impl Namespacer {
                 }
             }
 
-            // complex_selectors.iter_mut().for_each(|sel| {
-            //     if i < node.subclass_selectors.len() {
-            //         if let Component::CompoundSelector(sel) = sel {
-            //             sel.subclass_selectors
-            //                 .extend(node.subclass_selectors[i + 1..].iter().cloned());
-            //         }
-            //     }
-            // });
-
             result.extend(complex_selectors);
-            result.extend(node.cloned());
 
             return Ok(result);
         }
