@@ -3,10 +3,10 @@ use std::{borrow::Cow, convert::Infallible, panic, sync::Arc};
 use easy_error::{bail, Error, ResultExt};
 use lightningcss::{
     css_modules::Pattern,
-    properties::custom::TokenList,
+    properties::custom::{TokenList, TokenOrValue},
     selector::{Combinator, Component, PseudoClass, Selector, SelectorList},
     stylesheet::{MinifyOptions, ParserOptions, PrinterOptions, StyleSheet},
-    traits::ParseWithOptions,
+    traits::{ParseWithOptions, ToCss},
     values::ident::Ident,
     visit_types,
     visitor::{Visit, VisitTypes, Visitor},
@@ -334,10 +334,49 @@ impl Namespacer {
 }
 
 fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Selector<'i> {
-    dbg!(&tokens);
+    let mut buf = String::new();
 
-    // Selector::parse_string_with_options(&input, Default::default())
-    //     .expect("failed to parse selector list")
-
-    unimplemented!("parse_token_list")
+    for t in tokens.0.iter() {
+        match t {
+            TokenOrValue::Token(t) => {
+                buf.push_str(&t.to_css_string(Default::default()).unwrap());
+            }
+            TokenOrValue::Color(t) => {
+                buf.push_str(&t.to_css_string(Default::default()).unwrap());
+            }
+            TokenOrValue::UnresolvedColor(t) => {
+                unimplemented!("parse_token_list: unresolved color")
+            }
+            TokenOrValue::Url(t) => {
+                buf.push_str(&t.to_css_string(Default::default()).unwrap());
+            }
+            TokenOrValue::Var(t) => {
+                unimplemented!("parse_token_list: var")
+            }
+            TokenOrValue::Env(t) => {
+                unimplemented!("parse_token_list: env var")
+            }
+            TokenOrValue::Function(t) => {
+                unimplemented!("parse_token_list: function")
+            }
+            TokenOrValue::Length(t) => {
+                buf.push_str(&t.to_css_string(Default::default()).unwrap());
+            }
+            TokenOrValue::Angle(t) => {
+                buf.push_str(&t.to_css_string(Default::default()).unwrap());
+            }
+            TokenOrValue::Time(t) => {
+                buf.push_str(&t.to_css_string(Default::default()).unwrap());
+            }
+            TokenOrValue::Resolution(t) => {
+                buf.push_str(&t.to_css_string(Default::default()).unwrap());
+            }
+            TokenOrValue::DashedIdent(t) => {
+                buf.push_str(&t.to_css_string(Default::default()).unwrap());
+            }
+        }
+    }
+    // TODO: Remove leak
+    Selector::parse_string_with_options(buf.leak(), Default::default())
+        .expect("failed to parse selector list")
 }
