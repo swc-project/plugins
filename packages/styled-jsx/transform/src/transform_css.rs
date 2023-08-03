@@ -279,8 +279,8 @@ impl Namespacer {
             }
 
             trace!("Combinator: {:?}", combinator);
-            trace!("node: {:?}", node);
-            trace!("complex_selectors: {:?}", complex_selectors);
+            // trace!("node: {:?}", node);
+            // trace!("complex_selectors: {:?}", complex_selectors);
 
             if let Some(combinator) = combinator {
                 match complex_selectors.get(0) {
