@@ -226,9 +226,7 @@ impl Namespacer {
                         continue;
                     }
 
-                    let input = print_token_list(arguments);
-                    Selector::parse_string_with_options(&input, Default::default())
-                        .expect("failed to parse selector list")
+                    parse_token_list(arguments)
                 }
                 Component::PseudoElement(_)
                 | Component::Negation(..)
@@ -335,6 +333,11 @@ impl Namespacer {
     }
 }
 
-fn print_token_list(tokens: &TokenList) -> String {
+fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Selector<'i> {
     dbg!(&tokens);
+
+    // Selector::parse_string_with_options(&input, Default::default())
+    //     .expect("failed to parse selector list")
+
+    unimplemented!("parse_token_list")
 }
