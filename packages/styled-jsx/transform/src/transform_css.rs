@@ -205,6 +205,8 @@ impl Namespacer {
         Impl: SelectorImpl<'i>,
         SelectorIter<'a, 'i, Impl>: Iterator<Item = &'a Component<'i>>,
     {
+        dbg!(&combinator);
+
         let mut result: Vec<Component<'i>> = vec![];
 
         let mut pseudo_index = None;
@@ -291,6 +293,7 @@ impl Namespacer {
             // });
 
             result.extend(complex_selectors);
+            result.extend(node.cloned());
 
             return Ok(result);
         }
