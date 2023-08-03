@@ -192,9 +192,9 @@ impl<'i> Visitor<'i> for Namespacer {
                 if combinator.is_none() {
                     break;
                 }
+            } else {
+                combinator = None;
             }
-
-            combinator = None;
         }
 
         *selector = Selector::from(new_selectors);
