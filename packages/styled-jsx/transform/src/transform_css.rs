@@ -182,7 +182,12 @@ impl<'i> Visitor<'i> for Namespacer {
             }
 
             if combinator.is_none() {
-                break;
+                if let Some(next) = iter.next_sequence() {
+                    combinator = Some(next);
+                }
+                if combinator.is_none() {
+                    break;
+                }
             }
 
             combinator = None;
@@ -270,7 +275,8 @@ impl Namespacer {
             }
 
             trace!("Combinator: {:?}", combinator);
-            trace!("v[0]: {:?}", complex_selectors[0]);
+            trace!("node: {:?}", node);
+            trace!("complex_selectors: {:?}", complex_selectors);
 
             if let Some(combinator) = combinator {
                 match complex_selectors.get(0) {
