@@ -168,7 +168,7 @@ impl<'i> Visitor<'i> for Namespacer {
             match self.get_transformed_selectors(combinator, &mut iter) {
                 Ok(transformed_selectors) => {
                     let new_sel = Selector::from(transformed_selectors.clone());
-                    dbg!(&new_sel);
+                    // dbg!(&new_sel);
                     new_selectors.extend(transformed_selectors);
                 }
                 Err(_) => {
