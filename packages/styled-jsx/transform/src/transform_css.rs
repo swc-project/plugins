@@ -93,6 +93,8 @@ pub fn transform_css(
         })
         .context("failed to print css")?;
 
+    debug!("Transformed CSS: \n{}", res.code);
+
     if style_info.expressions.is_empty() {
         return Ok(string_literal_expr(&res.code));
     }
@@ -283,7 +285,6 @@ impl Namespacer {
             // trace!("complex_selectors: {:?}", complex_selectors);
 
             // result.push(Component::Combinator(Combinator::Descendant));
-            result.extend(node.cloned());
             result.push(Component::Combinator(Combinator::Descendant));
 
             if let Some(combinator) = combinator {
@@ -298,6 +299,7 @@ impl Namespacer {
             }
 
             result.extend(complex_selectors);
+            result.extend(node.cloned());
 
             return Ok(result);
         }
