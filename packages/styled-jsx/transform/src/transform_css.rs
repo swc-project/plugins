@@ -467,7 +467,7 @@ fn owned_component(c: &Component) -> Component<'static> {
             unimplemented!()
         }
         parcel_selectors::parser::Component::Negation(v) => {
-            unimplemented!()
+            parcel_selectors::parser::Component::Negation(owned_selectors(v))
         }
         parcel_selectors::parser::Component::LocalName(v1) => {
             parcel_selectors::parser::Component::LocalName(LocalName {
@@ -485,7 +485,7 @@ fn owned_component(c: &Component) -> Component<'static> {
             unimplemented!()
         }
         parcel_selectors::parser::Component::Slotted(v) => {
-            unimplemented!()
+            parcel_selectors::parser::Component::Slotted(owned_selector(v))
         }
         parcel_selectors::parser::Component::Part(v) => {
             unimplemented!()
@@ -494,16 +494,26 @@ fn owned_component(c: &Component) -> Component<'static> {
             unimplemented!()
         }
         parcel_selectors::parser::Component::Where(v) => {
-            unimplemented!()
+            parcel_selectors::parser::Component::Where(owned_selectors(v))
         }
         parcel_selectors::parser::Component::Is(v) => {
-            unimplemented!()
+            parcel_selectors::parser::Component::Is(owned_selectors(v))
         }
         parcel_selectors::parser::Component::Any(v1, v2) => {
             unimplemented!()
         }
         parcel_selectors::parser::Component::Has(v) => {
-            unimplemented!()
+            parcel_selectors::parser::Component::Has(owned_selectors(v))
         }
     }
+}
+
+fn owned_selectors(ss: &[Selector]) -> Box<[Selector<'static>]> {
+    let mut buf: Vec<Selector<'static>> = vec![];
+
+    for selector in ss.iter() {
+        buf.push(owned_selector(selector));
+    }
+
+    buf.into_boxed_slice()
 }
