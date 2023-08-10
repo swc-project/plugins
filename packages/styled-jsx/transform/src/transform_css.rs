@@ -243,8 +243,15 @@ impl Namespacer {
         let mut pseudo_index = None;
 
         let mut node: Vec<Component<'i>> = node.fuse().cloned().collect::<Vec<_>>();
+
         if node.is_empty() {
             return Ok(result);
+        }
+
+        #[cfg(debug_assertions)]
+        {
+            let prev_sel = Selector::from(node.clone());
+            debug!("Input selector: {:?}", SafeDebug(&prev_sel))
         }
 
         for (i, component) in node.iter().enumerate() {
@@ -322,12 +329,6 @@ impl Namespacer {
             result.extend(node.into_iter().skip(i + 1));
 
             return Ok(result);
-        }
-
-        #[cfg(debug_assertions)]
-        {
-            let prev_sel = Selector::from(node.clone());
-            debug!("Input selector: {:?}", SafeDebug(&prev_sel))
         }
 
         if let Some(combinator) = combinator {
