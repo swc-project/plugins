@@ -413,14 +413,22 @@ fn owned_component(c: &Component) -> Component<'static> {
         parcel_selectors::parser::Component::ExplicitNoNamespace => {
             parcel_selectors::parser::Component::ExplicitNoNamespace
         }
-        parcel_selectors::parser::Component::DefaultNamespace(v) => {}
-        parcel_selectors::parser::Component::Namespace(v1, v2) => {}
+        parcel_selectors::parser::Component::DefaultNamespace(v) => {
+            parcel_selectors::parser::Component::DefaultNamespace(v.into_owned())
+        }
+        parcel_selectors::parser::Component::Namespace(v1, v2) => {
+            parcel_selectors::parser::Component::Namespace(v1.clone().into_owned(), v2.into_owned())
+        }
         parcel_selectors::parser::Component::ExplicitUniversalType => {
             parcel_selectors::parser::Component::ExplicitUniversalType
         }
         parcel_selectors::parser::Component::LocalName(v1) => {}
-        parcel_selectors::parser::Component::ID(v) => {}
-        parcel_selectors::parser::Component::Class(v) => {}
+        parcel_selectors::parser::Component::ID(v) => {
+            parcel_selectors::parser::Component::ID(v.into_owned())
+        }
+        parcel_selectors::parser::Component::Class(v) => {
+            parcel_selectors::parser::Component::Class(v.into_owned())
+        }
         parcel_selectors::parser::Component::AttributeInNoNamespaceExists {
             local_name,
             local_name_lower,
