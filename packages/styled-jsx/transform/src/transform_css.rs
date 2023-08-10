@@ -182,8 +182,11 @@ impl<'i> Visitor<'i> for Namespacer {
                         break;
                     }
 
-                    let new_sel = Selector::from(transformed_selectors.clone());
-                    dbg!(SafeDebug(&new_sel));
+                    if cfg!(debug_assertions) {
+                        let new_sel = Selector::from(transformed_selectors.clone());
+                        debug!("Transformed as: {:?}", SafeDebug(&new_sel))
+                    }
+
                     new_selectors.push(transformed_selectors);
                 }
                 Err(_) => {
