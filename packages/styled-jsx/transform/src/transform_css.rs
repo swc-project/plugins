@@ -1,4 +1,11 @@
-use std::{borrow::Cow, convert::Infallible, mem::transmute, panic, sync::Arc};
+use std::{
+    borrow::Cow,
+    convert::Infallible,
+    fmt::{write, Debug},
+    mem::transmute,
+    panic::{self, catch_unwind, AssertUnwindSafe},
+    sync::Arc,
+};
 
 use easy_error::{bail, Error, ResultExt};
 use lightningcss::{
@@ -176,7 +183,7 @@ impl<'i> Visitor<'i> for Namespacer {
                     }
 
                     let new_sel = Selector::from(transformed_selectors.clone());
-                    // dbg!(&new_sel);
+                    dbg!(SafeDebug(&new_sel));
                     new_selectors.push(transformed_selectors);
                 }
                 Err(_) => {
@@ -315,8 +322,8 @@ impl Namespacer {
         }
 
         {
-            // let prev_sel = Selector::from(node.clone());
-            // dbg!(&prev_sel);
+            let prev_sel = Selector::from(node.clone());
+            dbg!(SafeDebug(&prev_sel));
         }
 
         if let Some(combinator) = combinator {
@@ -407,5 +414,20 @@ fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Selector<'i> {
     unsafe {
         // Safety: Selector is variant over 'i
         transmute::<Selector, Selector>(owned_selector(&selector))
+    }
+}
+
+struct SafeDebug<'a>(&'a dyn Debug);
+
+impl Debug for SafeDebug<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let s = catch_unwind(AssertUnwindSafe(|| format!("{:?}", self.0)));
+
+        match s {
+            Ok(s) => {
+                write!(f, "{}", s)
+            }
+            Err(_) => write!(f, "<panicked>"),
+        }
     }
 }
