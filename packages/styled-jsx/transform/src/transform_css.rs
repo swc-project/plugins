@@ -226,7 +226,7 @@ impl<'i> Visitor<'i> for Namespacer {
 }
 
 impl Namespacer {
-    #[cfg_attr(debug_assertions, tracing::instrument(skip_all))]
+    #[cfg_attr(debug_assertions, tracing::instrument(skip(self, node)))]
     fn get_transformed_selectors<'a, 'i, Impl>(
         &mut self,
         combinator: Option<Combinator>,
