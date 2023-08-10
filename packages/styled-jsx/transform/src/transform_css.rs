@@ -362,7 +362,7 @@ fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Selector<'i> {
             TokenOrValue::Var(t) => {
                 unimplemented!("parse_token_list: var")
             }
-            TokenOrValue::Env(t) => {
+            TokenOrValue::Env(zt) => {
                 unimplemented!("parse_token_list: env var")
             }
             TokenOrValue::Function(t) => {
@@ -386,6 +386,60 @@ fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Selector<'i> {
         }
     }
     // TODO: Remove leak
-    Selector::parse_string_with_options(buf.leak(), Default::default())
-        .expect("failed to parse selector list")
+    let selector = Selector::parse_string_with_options(&buf, Default::default())
+        .expect("failed to parse selector list");
+
+    owned_selector(&selector)
+}
+
+fn owned_selector(sel: &Selector) -> Selector<'static> {
+    let mut buf: Vec<Component<'static>> = vec![];
+
+    for component in sel.iter_raw_parse_order_from(0) {
+        buf.push(owned_component(component));
+    }
+
+    Selector::from(buf)
+}
+
+fn owned_component(c: &Component) -> Component<'static> {
+    match c {
+        parcel_selectors::parser::Component::Combinator(_) => {}
+        parcel_selectors::parser::Component::ExplicitAnyNamespace => {}
+        parcel_selectors::parser::Component::ExplicitNoNamespace => {}
+        parcel_selectors::parser::Component::DefaultNamespace(_) => {}
+        parcel_selectors::parser::Component::Namespace(_, _) => {}
+        parcel_selectors::parser::Component::ExplicitUniversalType => {}
+        parcel_selectors::parser::Component::LocalName(_) => {}
+        parcel_selectors::parser::Component::ID(_) => {}
+        parcel_selectors::parser::Component::Class(_) => {}
+        parcel_selectors::parser::Component::AttributeInNoNamespaceExists {
+            local_name,
+            local_name_lower,
+        } => {}
+        parcel_selectors::parser::Component::AttributeInNoNamespace {
+            local_name,
+            operator,
+            value,
+            case_sensitivity,
+            never_matches,
+        } => {}
+        parcel_selectors::parser::Component::AttributeOther(_) => {}
+        parcel_selectors::parser::Component::Negation(_) => {}
+        parcel_selectors::parser::Component::Root => {}
+        parcel_selectors::parser::Component::Empty => {}
+        parcel_selectors::parser::Component::Scope => {}
+        parcel_selectors::parser::Component::Nth(_) => {}
+        parcel_selectors::parser::Component::NthOf(_) => {}
+        parcel_selectors::parser::Component::NonTSPseudoClass(_) => {}
+        parcel_selectors::parser::Component::Slotted(_) => {}
+        parcel_selectors::parser::Component::Part(_) => {}
+        parcel_selectors::parser::Component::Host(_) => {}
+        parcel_selectors::parser::Component::Where(_) => {}
+        parcel_selectors::parser::Component::Is(_) => {}
+        parcel_selectors::parser::Component::Any(_, _) => {}
+        parcel_selectors::parser::Component::Has(_) => {}
+        parcel_selectors::parser::Component::PseudoElement(_) => {}
+        parcel_selectors::parser::Component::Nesting => {}
+    }
 }
