@@ -40,6 +40,10 @@ use crate::{
     utils::{hash_string, string_literal_expr},
 };
 
+#[cfg_attr(
+    debug_assertions,
+    tracing::instrument(skip(_cm, style_info, class_name))
+)]
 pub fn transform_css(
     _cm: Arc<SourceMap>,
     style_info: &LocalStyle,
@@ -236,8 +240,6 @@ impl Namespacer {
         Impl: SelectorImpl<'i>,
         SelectorIter<'a, 'i, Impl>: Iterator<Item = &'a Component<'i>>,
     {
-        dbg!(&combinator);
-
         let mut result: Vec<Component<'i>> = vec![];
 
         let mut pseudo_index = None;
@@ -341,9 +343,6 @@ impl Namespacer {
         }
 
         let mut node: Vec<Component<'i>> = node.clone();
-
-        // dbg!(&node);
-        dbg!(self.is_global);
 
         let subclass_selector = match self.is_dynamic {
             true => Cow::Borrowed("__jsx-style-dynamic-selector"),
