@@ -324,6 +324,7 @@ impl Namespacer {
             return Ok(result);
         }
 
+        #[cfg(debug_assertions)]
         {
             let prev_sel = Selector::from(node.clone());
             debug!("Input selector: {:?}", SafeDebug(&prev_sel))
