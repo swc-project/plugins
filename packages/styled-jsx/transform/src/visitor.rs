@@ -489,8 +489,15 @@ impl StyledJSXTransformer {
                     drop_span(expr.clone()).hash(&mut hasher);
                     let mut s = String::new();
                     for i in 0..quasis.len() {
+                        // TODO: Handle comments
+
+                        let before = &*quasis[i].raw;
+                        let before = before.trim();
+
                         let placeholder = if i == quasis.len() - 1 {
                             String::new()
+                        } else if before.ends_with([';', '{']) {
+                            format!("__styled-jsx-placeholder-{}__: 0", i)
                         } else {
                             format!("__styled-jsx-placeholder-{}__", i)
                         };
