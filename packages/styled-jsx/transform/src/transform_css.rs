@@ -177,7 +177,7 @@ impl<'i> Visitor<'i> for Namespacer {
 
                     let new_sel = Selector::from(transformed_selectors.clone());
                     dbg!(&new_sel);
-                    new_selectors.extend(transformed_selectors);
+                    new_selectors.push(transformed_selectors);
                 }
                 Err(_) => {
                     // TODO:
@@ -191,7 +191,7 @@ impl<'i> Visitor<'i> for Namespacer {
                     //         .emit()
                     // });
 
-                    new_selectors.extend(iter.clone().cloned());
+                    new_selectors.push(iter.clone().cloned().collect());
                 }
             }
 
@@ -207,7 +207,9 @@ impl<'i> Visitor<'i> for Namespacer {
             }
         }
 
-        *selector = Selector::from(new_selectors);
+        let new: Vec<_> = new_selectors.into_iter().rev().flatten().collect();
+
+        *selector = Selector::from(new);
 
         Ok(())
     }
