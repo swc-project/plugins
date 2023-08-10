@@ -228,7 +228,7 @@ impl Namespacer {
             trace!("Selector at {}", i);
 
             // Look for :global
-            let children: Selector = match &component {
+            let children: Selector<'i> = match &component {
                 Component::NonTSPseudoClass(PseudoClass::CustomFunction { name, arguments }) => {
                     if &**name != "global" {
                         if pseudo_index.is_none() {
@@ -342,7 +342,7 @@ impl Namespacer {
     }
 }
 
-fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Selector<'i> {
+fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Selector<'static> {
     let mut buf = String::new();
 
     for t in tokens.0.iter() {
