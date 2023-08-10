@@ -326,7 +326,7 @@ impl Namespacer {
 
         {
             let prev_sel = Selector::from(node.clone());
-            dbg!(SafeDebug(&prev_sel));
+            debug!("Input selector: {:?}", SafeDebug(&prev_sel))
         }
 
         if let Some(combinator) = combinator {
