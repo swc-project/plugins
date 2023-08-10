@@ -494,7 +494,8 @@ impl StyledJSXTransformer {
                         } else {
                             format!("__styled-jsx-placeholder-{}__", i)
                         };
-                        s = format!("{}{}{}", s, quasis[i].raw, placeholder)
+                        s.push_str(&quasis[i].raw);
+                        s.push_str(&placeholder);
                     }
                     css = s;
                     css_span = *span;
