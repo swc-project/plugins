@@ -226,9 +226,9 @@ impl Namespacer {
 
         let mut pseudo_index = None;
 
-        let mut node = node.fuse();
+        let mut node: Vec<Component<'i>> = node.fuse().cloned().collect::<Vec<_>>();
 
-        for (i, component) in (&mut node).enumerate() {
+        for (i, component) in node.iter().enumerate() {
             trace!("Selector at {}", i);
 
             // Look for :global
@@ -303,7 +303,7 @@ impl Namespacer {
             }
 
             result.extend(complex_selectors);
-            result.extend(node.cloned());
+            result.extend(node);
 
             return Ok(result);
         }
@@ -312,9 +312,9 @@ impl Namespacer {
             result.push(Component::Combinator(combinator));
         }
 
-        let mut node: Vec<Component<'i>> = node.cloned().collect();
+        let mut node: Vec<Component<'i>> = node.clone();
 
-        dbg!(&node);
+        // dbg!(&node);
         dbg!(self.is_global);
 
         let subclass_selector = match self.is_dynamic {
