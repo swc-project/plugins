@@ -11,7 +11,10 @@ use lightningcss::{
     visit_types,
     visitor::{Visit, VisitTypes, Visitor},
 };
-use parcel_selectors::{parser::SelectorIter, SelectorImpl};
+use parcel_selectors::{
+    parser::{LocalName, SelectorIter},
+    SelectorImpl,
+};
 use swc_core::{
     common::{
         errors::HANDLER, source_map::Pos, util::take::Take, BytePos, SourceMap, Span, Spanned,
@@ -467,7 +470,10 @@ fn owned_component(c: &Component) -> Component<'static> {
             unimplemented!()
         }
         parcel_selectors::parser::Component::LocalName(v1) => {
-            unimplemented!()
+            parcel_selectors::parser::Component::LocalName(LocalName {
+                name: v1.name.clone().into_owned(),
+                lower_name: v1.lower_name.clone().into_owned(),
+            })
         }
         parcel_selectors::parser::Component::Nth(v) => {
             unimplemented!()
