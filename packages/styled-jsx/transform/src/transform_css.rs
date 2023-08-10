@@ -389,7 +389,10 @@ fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Selector<'i> {
     let selector = Selector::parse_string_with_options(&buf, Default::default())
         .expect("failed to parse selector list");
 
-    unsafe { transmute::<Selector, Selector>(owned_selector(&selector)) }
+    unsafe {
+        // Safety: Selector is variant over 'i
+        transmute::<Selector, Selector>(owned_selector(&selector))
+    }
 }
 
 fn owned_selector(sel: &Selector) -> Selector<'static> {
