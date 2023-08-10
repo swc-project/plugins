@@ -257,6 +257,12 @@ impl Namespacer {
         for (i, component) in node.iter().enumerate() {
             trace!("Selector at {}", i);
 
+            #[cfg(debug_assertions)]
+            {
+                let sel = Selector::from(component.clone());
+                debug!("Component: {:?}", SafeDebug(&sel))
+            }
+
             // Look for :global
             let children: Selector<'i> = match &component {
                 Component::NonTSPseudoClass(PseudoClass::CustomFunction { name, arguments }) => {
