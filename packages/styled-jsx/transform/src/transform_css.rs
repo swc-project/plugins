@@ -404,15 +404,23 @@ fn owned_selector(sel: &Selector) -> Selector<'static> {
 
 fn owned_component(c: &Component) -> Component<'static> {
     match c {
-        parcel_selectors::parser::Component::Combinator(_) => {}
-        parcel_selectors::parser::Component::ExplicitAnyNamespace => {}
-        parcel_selectors::parser::Component::ExplicitNoNamespace => {}
-        parcel_selectors::parser::Component::DefaultNamespace(_) => {}
-        parcel_selectors::parser::Component::Namespace(_, _) => {}
-        parcel_selectors::parser::Component::ExplicitUniversalType => {}
-        parcel_selectors::parser::Component::LocalName(_) => {}
-        parcel_selectors::parser::Component::ID(_) => {}
-        parcel_selectors::parser::Component::Class(_) => {}
+        parcel_selectors::parser::Component::Combinator(v) => {
+            parcel_selectors::parser::Component::Combinator(*v)
+        }
+        parcel_selectors::parser::Component::ExplicitAnyNamespace => {
+            parcel_selectors::parser::Component::ExplicitAnyNamespace
+        }
+        parcel_selectors::parser::Component::ExplicitNoNamespace => {
+            parcel_selectors::parser::Component::ExplicitNoNamespace
+        }
+        parcel_selectors::parser::Component::DefaultNamespace(v) => {}
+        parcel_selectors::parser::Component::Namespace(v1, v2) => {}
+        parcel_selectors::parser::Component::ExplicitUniversalType => {
+            parcel_selectors::parser::Component::ExplicitUniversalType
+        }
+        parcel_selectors::parser::Component::LocalName(v1) => {}
+        parcel_selectors::parser::Component::ID(v) => {}
+        parcel_selectors::parser::Component::Class(v) => {}
         parcel_selectors::parser::Component::AttributeInNoNamespaceExists {
             local_name,
             local_name_lower,
@@ -424,22 +432,24 @@ fn owned_component(c: &Component) -> Component<'static> {
             case_sensitivity,
             never_matches,
         } => {}
-        parcel_selectors::parser::Component::AttributeOther(_) => {}
-        parcel_selectors::parser::Component::Negation(_) => {}
-        parcel_selectors::parser::Component::Root => {}
-        parcel_selectors::parser::Component::Empty => {}
-        parcel_selectors::parser::Component::Scope => {}
-        parcel_selectors::parser::Component::Nth(_) => {}
-        parcel_selectors::parser::Component::NthOf(_) => {}
-        parcel_selectors::parser::Component::NonTSPseudoClass(_) => {}
-        parcel_selectors::parser::Component::Slotted(_) => {}
-        parcel_selectors::parser::Component::Part(_) => {}
-        parcel_selectors::parser::Component::Host(_) => {}
-        parcel_selectors::parser::Component::Where(_) => {}
-        parcel_selectors::parser::Component::Is(_) => {}
-        parcel_selectors::parser::Component::Any(_, _) => {}
-        parcel_selectors::parser::Component::Has(_) => {}
-        parcel_selectors::parser::Component::PseudoElement(_) => {}
-        parcel_selectors::parser::Component::Nesting => {}
+        parcel_selectors::parser::Component::AttributeOther(v) => {}
+        parcel_selectors::parser::Component::Negation(v) => {}
+        parcel_selectors::parser::Component::Root => parcel_selectors::parser::Component::Root,
+        parcel_selectors::parser::Component::Empty => parcel_selectors::parser::Component::Empty,
+        parcel_selectors::parser::Component::Scope => parcel_selectors::parser::Component::Scope,
+        parcel_selectors::parser::Component::Nth(v) => {}
+        parcel_selectors::parser::Component::NthOf(v) => {}
+        parcel_selectors::parser::Component::NonTSPseudoClass(v) => {}
+        parcel_selectors::parser::Component::Slotted(v) => {}
+        parcel_selectors::parser::Component::Part(v) => {}
+        parcel_selectors::parser::Component::Host(v) => {}
+        parcel_selectors::parser::Component::Where(v) => {}
+        parcel_selectors::parser::Component::Is(v) => {}
+        parcel_selectors::parser::Component::Any(v1, v2) => {}
+        parcel_selectors::parser::Component::Has(v) => {}
+        parcel_selectors::parser::Component::PseudoElement(v) => {}
+        parcel_selectors::parser::Component::Nesting => {
+            parcel_selectors::parser::Component::Nesting
+        }
     }
 }
