@@ -1,4 +1,4 @@
-use std::{borrow::Cow, convert::Infallible, panic, sync::Arc};
+use std::{borrow::Cow, convert::Infallible, mem::transmute, panic, sync::Arc};
 
 use easy_error::{bail, Error, ResultExt};
 use lightningcss::{
@@ -342,7 +342,7 @@ impl Namespacer {
     }
 }
 
-fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Selector<'static> {
+fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Selector<'i> {
     let mut buf = String::new();
 
     for t in tokens.0.iter() {
@@ -389,7 +389,7 @@ fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Selector<'static> {
     let selector = Selector::parse_string_with_options(&buf, Default::default())
         .expect("failed to parse selector list");
 
-    owned_selector(&selector)
+    unsafe { transmute::<Selector, Selector>(owned_selector(&selector)) }
 }
 
 fn owned_selector(sel: &Selector) -> Selector<'static> {
