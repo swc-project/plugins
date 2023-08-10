@@ -300,7 +300,7 @@ impl Namespacer {
             }
 
             result.extend(complex_selectors);
-            result.extend(node);
+            result.extend(node.into_iter().skip(i + 1));
 
             return Ok(result);
         }
