@@ -259,8 +259,7 @@ impl Namespacer {
 
             #[cfg(debug_assertions)]
             {
-                let sel = Selector::from(component.clone());
-                debug!("Component: {:?}", SafeDebug(&sel))
+                debug!("Component: {:?}", SafeDebug(&component))
             }
 
             // Look for :global
