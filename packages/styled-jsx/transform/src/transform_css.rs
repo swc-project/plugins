@@ -239,7 +239,6 @@ impl Namespacer {
                             pseudo_index = Some(i);
                         }
 
-                        result.push(component.clone());
                         continue;
                     }
 
@@ -263,11 +262,9 @@ impl Namespacer {
                         pseudo_index = Some(i);
                     }
 
-                    result.push(component.clone());
                     continue;
                 }
                 _ => {
-                    result.push(component.clone());
                     continue;
                 }
             };
