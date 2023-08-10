@@ -171,6 +171,10 @@ impl<'i> Visitor<'i> for Namespacer {
 
             match self.get_transformed_selectors(combinator, &mut iter) {
                 Ok(transformed_selectors) => {
+                    if transformed_selectors.is_empty() {
+                        break;
+                    }
+
                     let new_sel = Selector::from(transformed_selectors.clone());
                     dbg!(&new_sel);
                     new_selectors.extend(transformed_selectors);
@@ -227,6 +231,9 @@ impl Namespacer {
         let mut pseudo_index = None;
 
         let mut node: Vec<Component<'i>> = node.fuse().cloned().collect::<Vec<_>>();
+        if node.is_empty() {
+            return Ok(result);
+        }
 
         for (i, component) in node.iter().enumerate() {
             trace!("Selector at {}", i);
