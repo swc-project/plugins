@@ -58,7 +58,10 @@ const __CONST_0__ = {
 };
 function __CONST_1__() {
   return (__CONST_1__ = function () {
-    return { code: 3, onClick() {} };
+    return {
+      code: 3,
+      onClick() {},
+    };
   })();
 }
 
@@ -79,7 +82,72 @@ export function call(dynamic) {
 ```
 
 Note that this plugin supports using non-top-level variables. Those are hoisted to uppermost scope with the all used variable in the scope.
+In other words, you can write code like
 
 ```ts
+import { constify, lazyConst } from "@swc/constify";
 
+export function call(d1) {
+  function a(d2) {
+    function a1() {
+      return [
+        constify({
+          code: d1,
+          onClick() {},
+        }),
+        constify({
+          code: d2,
+          onClick() {
+            console.log(d2);
+          },
+        }),
+        lazyConst({
+          code: d1,
+          onClick() {},
+        }),
+      ];
+    }
+
+    return a1;
+  }
+
+  return a;
+}
+```
+
+and it will be compiled as
+
+```ts
+export function call(d1) {
+  const __CONST_0__ = {
+    code: d1,
+    onClick() {},
+  };
+
+  function __CONST_2__() {
+    return (__CONST_2__ = function () {
+      return {
+        code: d1,
+        onClick() {},
+      };
+    })();
+  }
+
+  function a(d2) {
+    const __CONST_1__ = {
+      code: d2,
+      onClick() {
+        console.log(d2);
+      },
+    };
+
+    function a1() {
+      return [__CONST_0__, __CONST_1__, __CONST_2__()];
+    }
+
+    return a1;
+  }
+
+  return a;
+}
 ```
