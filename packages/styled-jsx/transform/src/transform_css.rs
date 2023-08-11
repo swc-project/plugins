@@ -182,9 +182,7 @@ impl<'i> Visitor<'i> for CssNamespace {
         let mut iter = selector.iter();
         loop {
             if combinator.is_none() {
-                if let Some(next) = iter.next_sequence() {
-                    combinator = Some(next);
-                }
+                combinator = iter.next_sequence();
             }
 
             match self.get_transformed_selectors(combinator, &mut iter) {
