@@ -347,7 +347,9 @@ impl CssNamespace {
                 }
             };
 
-            let mut complex_selectors = children.iter().cloned().collect::<Vec<_>>();
+            let mut complex_selectors =
+                children.iter_raw_match_order().cloned().collect::<Vec<_>>();
+            complex_selectors.drain(complex_selectors.len() - 2..);
 
             // complex_selectors.remove(0);
 
@@ -415,8 +417,12 @@ impl CssNamespace {
     }
 }
 
+/// Because it is allowed to write `.bar :global(> .foo) {}` or .bar
+/// :global(.foo) {}`, so selector can be complex or relative (it violates the
+/// specification), but it is popular usage, so we just add `a ` at top and
+/// then remove it
 fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Selector<'i> {
-    let mut buf = String::new();
+    let mut buf = "a ".to_string();
 
     for t in tokens.0.iter() {
         match t {
@@ -458,7 +464,6 @@ fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Selector<'i> {
             }
         }
     }
-    // TODO: Remove leak
     let selector = Selector::parse_string_with_options(&buf, Default::default())
         .expect("failed to parse selector list");
 
