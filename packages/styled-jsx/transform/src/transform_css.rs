@@ -336,21 +336,13 @@ impl CssNamespace {
             // trace!("complex_selectors: {:?}", complex_selectors);
 
             // result.push(Component::Combinator(Combinator::Descendant));
-            result.push(Component::Combinator(Combinator::Descendant));
-
-            if let Some(combinator) = combinator {
-                match complex_selectors.get(0) {
-                    // `Descendant` combinator can't be the first because we removed it
-                    // above
-                    Some(Component::Combinator(Combinator::Descendant)) => {}
-                    _ => {
-                        result.push(Component::Combinator(combinator));
-                    }
-                }
-            }
 
             result.extend(complex_selectors);
             result.extend(node.into_iter().skip(i + 1));
+
+            if let Some(combinator) = combinator {
+                result.push(Component::Combinator(combinator));
+            }
 
             return Ok(result);
         }
