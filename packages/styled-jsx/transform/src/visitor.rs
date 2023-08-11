@@ -465,6 +465,7 @@ impl StyledJSXTransformer {
         let css_span: Span;
         let is_dynamic;
         let mut expressions = vec![];
+        let mut is_expr_property = vec![];
         match style_expr {
             StyleExpr::Str(Str { value, span, .. }) => {
                 hasher.write(value.as_ref().as_bytes());
@@ -495,10 +496,13 @@ impl StyledJSXTransformer {
                         let before = before.trim();
 
                         let placeholder = if i == quasis.len() - 1 {
+                            is_expr_property.push(false);
                             String::new()
                         } else if before.ends_with([';', '{']) {
+                            is_expr_property.push(true);
                             format!("__styled-jsx-placeholder-{}__: 0", i)
                         } else {
+                            is_expr_property.push(false);
                             format!("__styled-jsx-placeholder-{}__", i)
                         };
                         s.push_str(&quasis[i].raw);
@@ -538,6 +542,7 @@ impl StyledJSXTransformer {
             css_span,
             is_dynamic,
             expressions,
+            is_expr_property,
         })
     }
 

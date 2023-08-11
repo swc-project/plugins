@@ -117,7 +117,7 @@ pub fn transform_css(
     let mut parts: Vec<&str> = res.code.split("__styled-jsx-placeholder-").collect();
     let mut final_expressions = vec![];
     for i in parts.iter_mut().skip(1) {
-        let (num_len, expression_index) = read_number(i);
+        let (num_len, expression_index) = read_number(i, &style_info.is_expr_property);
         final_expressions.push(style_info.expressions[expression_index].clone());
         let substring = &i[(num_len + 2)..];
         *i = substring;
@@ -141,7 +141,7 @@ pub fn transform_css(
 }
 
 /// Returns `(length, value)`
-fn read_number(s: &str) -> (usize, usize) {
+fn read_number(s: &str, is_expr_property: &[bool]) -> (usize, usize) {
     for (idx, c) in s.char_indices() {
         if c.is_ascii_digit() {
             continue;
@@ -149,6 +149,10 @@ fn read_number(s: &str) -> (usize, usize) {
 
         // For 10, we reach here after `0`.
         let value = s[0..idx].parse().expect("failed to parse");
+
+        if is_expr_property[value] {
+            return (idx + 3, value);
+        }
 
         return (idx, value);
     }
