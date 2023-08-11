@@ -1910,6 +1910,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "swc_constify"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "swc_core",
+ "testing",
+ "tracing",
+]
+
+[[package]]
 name = "swc_core"
 version = "0.79.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2309,6 +2319,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ca5df720531bfbd7ceb1139319c39c20c446abfb8f7e0eb47b104205a71152b4"
 dependencies = [
  "once_cell",
+]
+
+[[package]]
+name = "swc_plugin_constify"
+version = "0.1.0"
+dependencies = [
+ "swc_common",
+ "swc_constify",
+ "swc_core",
+ "tracing",
 ]
 
 [[package]]
