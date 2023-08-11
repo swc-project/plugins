@@ -1,37 +1,26 @@
 use std::{
     borrow::Cow,
     convert::Infallible,
-    fmt::{write, Debug},
+    fmt::Debug,
     mem::transmute,
-    ops::Index,
-    panic::{self, catch_unwind, AssertUnwindSafe},
+    panic::{catch_unwind, AssertUnwindSafe},
     sync::Arc,
 };
 
 use easy_error::{bail, Error, ResultExt};
 use lightningcss::{
-    css_modules::Pattern,
     properties::custom::{TokenList, TokenOrValue},
-    selector::{Combinator, Component, PseudoClass, Selector, SelectorList},
+    selector::{Combinator, Component, PseudoClass, Selector},
     stylesheet::{MinifyOptions, ParserOptions, PrinterOptions, StyleSheet},
     traits::{ParseWithOptions, ToCss},
     values::ident::Ident,
     visit_types,
     visitor::{Visit, VisitTypes, Visitor},
 };
-use parcel_selectors::{
-    parser::{LocalName, SelectorIter},
-    SelectorImpl,
-};
+use parcel_selectors::{parser::SelectorIter, SelectorImpl};
 use swc_core::{
-    common::{
-        errors::HANDLER, source_map::Pos, util::take::Take, BytePos, SourceMap, Span, Spanned,
-        SyntaxContext, DUMMY_SP,
-    },
-    ecma::{
-        ast::{Expr, Tpl, TplElement},
-        parser::StringInput,
-    },
+    common::{errors::HANDLER, SourceMap, DUMMY_SP},
+    ecma::ast::{Expr, Tpl, TplElement},
 };
 use tracing::{debug, error, trace};
 
