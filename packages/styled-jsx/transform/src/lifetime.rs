@@ -1,6 +1,6 @@
 use lightningcss::{
     properties::custom::TokenList,
-    selector::{Component, Selector},
+    selector::{Component, Selector, ViewTransitionPartName},
 };
 use parcel_selectors::{
     attr::{AttrSelectorWithOptionalNamespace, NamespaceConstraint, ParsedAttrSelectorOperation},
@@ -150,7 +150,44 @@ pub fn owned_component<'i>(c: &Component) -> Component<'i> {
 fn owned_psuedo_element<'i>(
     v: &lightningcss::selector::PseudoElement,
 ) -> lightningcss::selector::PseudoElement<'i> {
-    todo!()
+    match v {
+        lightningcss::selector::PseudoElement::After => {
+            lightningcss::selector::PseudoElement::After
+        }
+        lightningcss::selector::PseudoElement::Before => {
+            lightningcss::selector::PseudoElement::Before
+        }
+        lightningcss::selector::PseudoElement::FirstLine => {
+            lightningcss::selector::PseudoElement::FirstLine
+        }
+        lightningcss::selector::PseudoElement::FirstLetter => {
+            lightningcss::selector::PseudoElement::FirstLetter
+        }
+        lightningcss::selector::PseudoElement::Selection(v) => {}
+        lightningcss::selector::PseudoElement::Placeholder(v) => {}
+        lightningcss::selector::PseudoElement::Marker => {}
+        lightningcss::selector::PseudoElement::Backdrop(v) => {}
+        lightningcss::selector::PseudoElement::FileSelectorButton(v) => {}
+        lightningcss::selector::PseudoElement::WebKitScrollbar(v) => {}
+        lightningcss::selector::PseudoElement::Cue => {}
+        lightningcss::selector::PseudoElement::CueRegion => {}
+        lightningcss::selector::PseudoElement::CueFunction { selector } => {}
+        lightningcss::selector::PseudoElement::CueRegionFunction { selector } => {}
+        lightningcss::selector::PseudoElement::ViewTransition => {}
+        lightningcss::selector::PseudoElement::ViewTransitionGroup { part_name } => {}
+        lightningcss::selector::PseudoElement::ViewTransitionImagePair { part_name } => {}
+        lightningcss::selector::PseudoElement::ViewTransitionOld { part_name } => {}
+        lightningcss::selector::PseudoElement::ViewTransitionNew { part_name } => {}
+        lightningcss::selector::PseudoElement::Custom { name } => {}
+        lightningcss::selector::PseudoElement::CustomFunction { name, arguments } => {}
+    }
+}
+
+fn owned_view_transition_part_name<'i>(n: &ViewTransitionPartName) -> ViewTransitionPartName<'i> {
+    match n {
+        ViewTransitionPartName::All => ViewTransitionPartName::All,
+        ViewTransitionPartName::Name(v) => ViewTransitionPartName::Name(v.clone().into_owned()),
+    }
 }
 
 fn owned_psuedo_class<'i>(
