@@ -1,5 +1,6 @@
 [workspace]
 members = [
+  "packages/constify",
   "packages/emotion",
   "packages/jest",
   "packages/loadable-components",
