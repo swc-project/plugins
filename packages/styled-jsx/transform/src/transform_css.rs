@@ -264,12 +264,57 @@ impl<'i> Visitor<'i> for CssNamespace {
             }
         }
 
-        let new: Vec<_> = new_selectors.into_iter().rev().flatten().collect();
+        let new: Vec<_> = RemoveWhitespace {
+            iter: new_selectors.into_iter().rev().flatten(),
+            prev: None,
+        }
+        .collect();
         debug!("Selector vector: {:?}", SafeDebug(&new));
 
         *selector = Selector::from(new);
 
         Ok(())
+    }
+}
+
+struct RemoveWhitespace<'i, I> {
+    iter: I,
+    prev: Option<Component<'i>>,
+}
+
+impl<'i, I> Iterator for RemoveWhitespace<'i, I>
+where
+    I: Iterator<Item = Component<'i>>,
+{
+    type Item = Component<'i>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        match self.prev.take() {
+            Some(Component::Combinator(Combinator::Descendant)) => {
+                let next = self.iter.next();
+
+                match next {
+                    Some(Component::Combinator(..)) => {
+                        self.prev = next;
+                        self.next()
+                    }
+                    _ => {
+                        self.prev = next;
+                        Some(Component::Combinator(Combinator::Descendant))
+                    }
+                }
+            }
+            Some(v) => Some(v),
+            _ => {
+                self.prev = self.iter.next();
+
+                if self.prev.is_some() {
+                    self.next()
+                } else {
+                    None
+                }
+            }
+        }
     }
 }
 
@@ -353,6 +398,11 @@ impl CssNamespace {
             complex_selectors.pop();
             if let Some(Component::Combinator(Combinator::Descendant)) = complex_selectors.last() {
                 complex_selectors.pop();
+            } else if let Some(Component::Combinator(c)) = complex_selectors.last() {
+                let c = *c;
+                complex_selectors.pop();
+
+                complex_selectors.insert(0, Component::Combinator(c))
             }
 
             if let Component::Combinator(Combinator::Descendant) = complex_selectors[0] {
