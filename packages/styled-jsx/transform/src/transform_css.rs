@@ -3,6 +3,7 @@ use std::{
     convert::Infallible,
     fmt::{write, Debug},
     mem::transmute,
+    ops::Index,
     panic::{self, catch_unwind, AssertUnwindSafe},
     sync::Arc,
 };
@@ -51,9 +52,10 @@ pub fn transform_css(
     class_name: &Option<String>,
 ) -> Result<Expr, Error> {
     debug!("CSS: \n{}", style_info.css);
+    let css_str = strip_comments(&style_info.css);
 
     let result: Result<StyleSheet, _> = StyleSheet::parse(
-        &style_info.css,
+        &css_str,
         ParserOptions {
             // We cannot use css_modules for `:global` because lightningcss does not support
             // parsing-only mode.
@@ -138,6 +140,27 @@ pub fn transform_css(
         exprs: final_expressions,
         span: DUMMY_SP,
     }))
+}
+
+fn strip_comments(s: &str) -> Cow<str> {
+    if !s.contains("//") {
+        return Cow::Borrowed(s);
+    }
+
+    let mut buf = String::with_capacity(s.len());
+
+    for line in s.lines() {
+        let line = line.trim();
+
+        if let Some(index) = line.find("//") {
+            buf.push_str(&line[..index]);
+        } else {
+            buf.push_str(line);
+        }
+        buf.push('\n');
+    }
+
+    Cow::Owned(buf)
 }
 
 /// Returns `(length, expression_index)`
