@@ -349,9 +349,11 @@ impl CssNamespace {
 
             let mut complex_selectors =
                 children.iter_raw_match_order().cloned().collect::<Vec<_>>();
-            complex_selectors.drain(complex_selectors.len() - 2..);
-
-            // complex_selectors.remove(0);
+            // Remove `a`
+            complex_selectors.pop();
+            if let Some(Component::Combinator(Combinator::Descendant)) = complex_selectors.last() {
+                complex_selectors.pop();
+            }
 
             if let Component::Combinator(Combinator::Descendant) = complex_selectors[0] {
                 complex_selectors.remove(0);
