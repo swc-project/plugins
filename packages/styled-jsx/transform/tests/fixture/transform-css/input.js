@@ -9,19 +9,19 @@ export default () => (
       }
       
       :global(p) {
-        color: blue
+        color: #001
       }
       
       :global(p){
-        color: blue;
+        color: #002;
       }
       
       :global(p), a {
-        color: blue;
+        color: #003;
       }
       
       :global(.foo + a) {
-        color: red;
+        color: #004;
       }
       
       :global(body) {
@@ -29,27 +29,27 @@ export default () => (
       }
       
       p {
-        color: red;
+        color: #005;
       }
       
       p{
-        color: red
+        color: #006
       }
       
       * {
-        color: blue;
+        color: #007;
       }
       
       [href="woot"] {
-        color: red;
+        color: #008;
       }
       
       p a span {
-        color: red;
+        color: #009;
       }
       
       p :global(span) {
-        background: blue
+        background: #00a
       }
       
       p a[title="'w ' '  t'"] {
@@ -57,11 +57,11 @@ export default () => (
       }
       
       p :global(span:not(.test)) {
-        color: green
+        color: #00b
       }
       
       p, h1 {
-        color: blue;
+        color: #00c;
         animation: hahaha 3s ease forwards infinite;
         animation-name: hahaha;
         animation-delay: 100ms;
@@ -72,35 +72,35 @@ export default () => (
       }
       
       p:hover {
-        color: red;
+        color: #00d;
       }
       
       p::before {
-        color: red;
+        color: #00e;
       }
       
       :hover {
-        color: red;
+        color: #00f;
       }
       
       ::before {
-        color: red;
+        color: #010;
       }
       
       :hover p {
-        color: red;
+        color: #011;
       }
       
       p + a {
-        color: red;
+        color: #012;
       }
       
       p ~ a {
-        color: red;
+        color: #013;
       }
       
       p > a {
-        color: red;
+        color: #014;
       }
       
       @keyframes hahaha {
@@ -115,7 +115,7 @@ export default () => (
       
       @media (min-width: 500px) {
         .test {
-          color: red;
+          color: #015;
         }
       }
       
@@ -145,7 +145,7 @@ export default () => (
       }
       
       .test.is-status .test {
-        color: red;
+        color: #016;
       }
       
       .a-selector:hover,

@@ -1,15 +1,15 @@
 import _JSXStyle from "styled-jsx/style";
 export default (({ breakPoint })=><div className={_JSXStyle.dynamic([
         [
-            "5d2a0e645566ce9c",
+            "ff798a455a83a572",
             [
                 breakPoint
             ]
         ]
     ])}>
 
-    <_JSXStyle id={"5d2a0e645566ce9c"} dynamic={[
+    <_JSXStyle id={"ff798a455a83a572"} dynamic={[
         breakPoint
-    ]}>{`@media(${breakPoint}){}`}</_JSXStyle>
+    ]}>{`@media (${breakPoint}){.test.__jsx-style-dynamic-selector{margin-bottom:1em}}`}</_JSXStyle>
 
   </div>);

@@ -3,6 +3,7 @@ use std::{
     path::{Path, PathBuf},
     sync::Arc,
 };
+
 use fxhash::FxHashMap;
 use import_map::ImportMap;
 use once_cell::sync::Lazy;
@@ -130,30 +131,20 @@ struct ExportItem {
     kind: ExprKind,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 enum ImportType {
+    #[default]
     Named,
     Namespace,
     Default,
 }
 
-impl Default for ImportType {
-    fn default() -> Self {
-        ImportType::Named
-    }
-}
-
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Copy, Serialize, Deserialize)]
 enum ExprKind {
+    #[default]
     Css,
     Styled,
     GlobalJSX,
-}
-
-impl Default for ExprKind {
-    fn default() -> Self {
-        ExprKind::Css
-    }
 }
 
 #[derive(Debug)]
@@ -227,7 +218,6 @@ impl<C: Comments> EmotionTransformer<C> {
             registered_imports,
         }
     }
-
 
     fn sanitize_label_part<'t>(&self, label_part: &'t str) -> Cow<'t, str> {
         INVALID_CSS_CLASS_NAME_CHARACTERS.replace_all(label_part, "-")
