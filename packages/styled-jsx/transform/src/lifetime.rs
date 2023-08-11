@@ -2,7 +2,10 @@ use lightningcss::{
     properties::custom::TokenList,
     selector::{Component, Selector},
 };
-use parcel_selectors::parser::{LocalName, NthOfSelectorData};
+use parcel_selectors::{
+    attr::AttrSelectorWithOptionalNamespace,
+    parser::{LocalName, NthOfSelectorData},
+};
 
 pub fn owned_selector<'i>(sel: &Selector) -> Selector<'i> {
     let mut buf: Vec<Component<'i>> = vec![];
@@ -47,7 +50,7 @@ pub fn owned_component<'i>(c: &Component) -> Component<'i> {
         parcel_selectors::parser::Component::Empty => parcel_selectors::parser::Component::Empty,
         parcel_selectors::parser::Component::Scope => parcel_selectors::parser::Component::Scope,
         parcel_selectors::parser::Component::PseudoElement(v) => {
-            unimplemented!()
+            parcel_selectors::parser::Component::PseudoElement(owned_psuedo_element(v))
         }
         parcel_selectors::parser::Component::Nesting => {
             parcel_selectors::parser::Component::Nesting
@@ -70,7 +73,15 @@ pub fn owned_component<'i>(c: &Component) -> Component<'i> {
             unimplemented!()
         }
         parcel_selectors::parser::Component::AttributeOther(v) => {
-            unimplemented!()
+            parcel_selectors::parser::Component::AttributeOther(Box::new(
+                AttrSelectorWithOptionalNamespace {
+                    namespace: v.namespace,
+                    local_name: v.local_name,
+                    local_name_lower: v.local_name_lower,
+                    operation: v.operation,
+                    never_matches: v.never_matches,
+                },
+            ))
         }
         parcel_selectors::parser::Component::Negation(v) => {
             parcel_selectors::parser::Component::Negation(owned_selectors(&v))
@@ -113,6 +124,12 @@ pub fn owned_component<'i>(c: &Component) -> Component<'i> {
             parcel_selectors::parser::Component::Has(owned_selectors(v))
         }
     }
+}
+
+fn owned_psuedo_element<'i>(
+    v: &lightningcss::selector::PseudoElement,
+) -> lightningcss::selector::PseudoElement<'i> {
+    todo!()
 }
 
 fn owned_psuedo_class<'i>(
@@ -250,7 +267,7 @@ fn owned_psuedo_class<'i>(
             }
         }
         lightningcss::selector::PseudoClass::WebKitScrollbar(v) => {
-            lightningcss::selector::PseudoClass::WebKitScrollbar(*v)
+            lightningcss::selector::PseudoClass::WebKitScrollbar(v.clone())
         }
         lightningcss::selector::PseudoClass::Custom { name } => {
             lightningcss::selector::PseudoClass::Custom {
