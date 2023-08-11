@@ -215,9 +215,7 @@ impl<'i> Visitor<'i> for CssNamespace {
             }
 
             if combinator.is_none() {
-                if let Some(next) = iter.next_sequence() {
-                    combinator = Some(next);
-                }
+                combinator = iter.next_sequence();
                 if combinator.is_none() {
                     break;
                 }
