@@ -3,7 +3,7 @@ use lightningcss::{
     selector::{Component, Selector},
 };
 use parcel_selectors::{
-    attr::AttrSelectorWithOptionalNamespace,
+    attr::{AttrSelectorWithOptionalNamespace, NamespaceConstraint, ParsedAttrSelectorOperation},
     parser::{LocalName, NthOfSelectorData},
 };
 
@@ -69,16 +69,37 @@ pub fn owned_component<'i>(c: &Component) -> Component<'i> {
             value,
             case_sensitivity,
             never_matches,
-        } => {
-            unimplemented!()
-        }
+        } => parcel_selectors::parser::Component::AttributeInNoNamespace {
+            local_name: local_name.clone().into_owned(),
+            operator: *operator,
+            value: value.clone().into_owned(),
+            case_sensitivity: *case_sensitivity,
+            never_matches: *never_matches,
+        },
         parcel_selectors::parser::Component::AttributeOther(v) => {
             parcel_selectors::parser::Component::AttributeOther(Box::new(
                 AttrSelectorWithOptionalNamespace {
-                    namespace: v.namespace,
-                    local_name: v.local_name,
-                    local_name_lower: v.local_name_lower,
-                    operation: v.operation,
+                    namespace: v.namespace.as_ref().map(|v| match v {
+                        NamespaceConstraint::Any => NamespaceConstraint::Any,
+                        NamespaceConstraint::Specific((v1, v2)) => NamespaceConstraint::Specific((
+                            v1.clone().into_owned(),
+                            v2.clone().into_owned(),
+                        )),
+                    }),
+                    local_name: v.local_name.clone().into_owned(),
+                    local_name_lower: v.local_name_lower.clone().into_owned(),
+                    operation: match &v.operation {
+                        ParsedAttrSelectorOperation::Exists => ParsedAttrSelectorOperation::Exists,
+                        ParsedAttrSelectorOperation::WithValue {
+                            operator,
+                            case_sensitivity,
+                            expected_value,
+                        } => ParsedAttrSelectorOperation::WithValue {
+                            operator: *operator,
+                            case_sensitivity: *case_sensitivity,
+                            expected_value: expected_value.clone().into_owned(),
+                        },
+                    },
                     never_matches: v.never_matches,
                 },
             ))
