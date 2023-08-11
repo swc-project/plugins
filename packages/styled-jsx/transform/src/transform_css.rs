@@ -32,7 +32,7 @@ use swc_core::{
         parser::StringInput,
     },
 };
-use tracing::{debug, trace};
+use tracing::{debug, error, trace};
 
 use crate::{
     lifetime::owned_selector,
@@ -206,6 +206,7 @@ impl<'i> Visitor<'i> for CssNamespace {
                     new_selectors.push(transformed_selectors);
                 }
                 Err(_) => {
+                    error!("Failed to transform one off global selector");
                     // TODO:
 
                     // HANDLER.with(|handler| {
