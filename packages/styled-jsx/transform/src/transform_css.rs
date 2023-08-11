@@ -291,17 +291,11 @@ where
     fn next(&mut self) -> Option<Self::Item> {
         match self.prev.take() {
             Some(Component::Combinator(Combinator::Descendant)) => {
-                let next = self.iter.next();
+                self.prev = self.iter.next();
 
-                match next {
-                    Some(Component::Combinator(..)) => {
-                        self.prev = next;
-                        self.next()
-                    }
-                    _ => {
-                        self.prev = next;
-                        Some(Component::Combinator(Combinator::Descendant))
-                    }
+                match self.prev {
+                    Some(Component::Combinator(..)) => self.next(),
+                    _ => Some(Component::Combinator(Combinator::Descendant)),
                 }
             }
             Some(v) => Some(v),
