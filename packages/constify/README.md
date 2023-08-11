@@ -57,11 +57,12 @@ const __CONST_0__ = {
   onClick() {},
 };
 function __CONST_1__() {
+  const __data__ = {
+    code: 3,
+    onClick() {},
+  };
   return (__CONST_1__ = function () {
-    return {
-      code: 3,
-      onClick() {},
-    };
+    return __data__;
   })();
 }
 
@@ -125,11 +126,12 @@ export function call(d1) {
   };
 
   function __CONST_2__() {
+    const __data__ = {
+      code: d1,
+      onClick() {},
+    };
     return (__CONST_2__ = function () {
-      return {
-        code: d1,
-        onClick() {},
-      };
+      return __data__;
     })();
   }
 
