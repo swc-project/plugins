@@ -338,6 +338,11 @@ impl Namespacer {
             return Ok(result);
         }
 
+        // TODO: Combinator for pseudo element
+        if result.is_empty() && node.len() == 1 && pseudo_index.is_some() {
+            return Ok(node);
+        }
+
         if let Some(combinator) = combinator {
             result.push(Component::Combinator(combinator));
         }
