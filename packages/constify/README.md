@@ -77,3 +77,9 @@ export function call(dynamic) {
   return options;
 }
 ```
+
+Note that this plugin supports using non-top-level variables. Those are hoisted to uppermost scope with the all used variable in the scope.
+
+```ts
+
+```
