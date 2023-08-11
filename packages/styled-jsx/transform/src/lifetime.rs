@@ -1,8 +1,8 @@
 use lightningcss::selector::{Component, Selector};
 use parcel_selectors::parser::LocalName;
 
-pub fn owned_selector(sel: &Selector) -> Selector<'static> {
-    let mut buf: Vec<Component<'static>> = vec![];
+pub fn owned_selector<'i>(sel: &Selector) -> Selector<'i> {
+    let mut buf: Vec<Component<'i>> = vec![];
 
     for component in sel.iter_raw_parse_order_from(0) {
         buf.push(owned_component(component));
@@ -11,7 +11,7 @@ pub fn owned_selector(sel: &Selector) -> Selector<'static> {
     Selector::from(buf)
 }
 
-pub fn owned_component(c: &Component) -> Component<'static> {
+pub fn owned_component<'i>(c: &Component) -> Component<'i> {
     match c {
         parcel_selectors::parser::Component::Combinator(v) => {
             parcel_selectors::parser::Component::Combinator(*v)
@@ -70,7 +70,7 @@ pub fn owned_component(c: &Component) -> Component<'static> {
             unimplemented!()
         }
         parcel_selectors::parser::Component::Negation(v) => {
-            parcel_selectors::parser::Component::Negation(owned_selectors(v))
+            parcel_selectors::parser::Component::Negation(owned_selectors(&v))
         }
         parcel_selectors::parser::Component::LocalName(v1) => {
             parcel_selectors::parser::Component::LocalName(LocalName {
@@ -94,7 +94,7 @@ pub fn owned_component(c: &Component) -> Component<'static> {
             unimplemented!()
         }
         parcel_selectors::parser::Component::Host(v) => {
-            unimplemented!()
+            parcel_selectors::parser::Component::Host(v.as_ref().map(|v| owned_selector(v)))
         }
         parcel_selectors::parser::Component::Where(v) => {
             parcel_selectors::parser::Component::Where(owned_selectors(v))
@@ -103,7 +103,7 @@ pub fn owned_component(c: &Component) -> Component<'static> {
             parcel_selectors::parser::Component::Is(owned_selectors(v))
         }
         parcel_selectors::parser::Component::Any(v1, v2) => {
-            unimplemented!()
+            parcel_selectors::parser::Component::Any(*v1, owned_selectors(v2))
         }
         parcel_selectors::parser::Component::Has(v) => {
             parcel_selectors::parser::Component::Has(owned_selectors(v))
@@ -111,8 +111,8 @@ pub fn owned_component(c: &Component) -> Component<'static> {
     }
 }
 
-fn owned_selectors(ss: &[Selector]) -> Box<[Selector<'static>]> {
-    let mut buf: Vec<Selector<'static>> = vec![];
+fn owned_selectors<'i>(ss: &[Selector]) -> Box<[Selector<'i>]> {
+    let mut buf: Vec<Selector<'i>> = vec![];
 
     for selector in ss.iter() {
         buf.push(owned_selector(selector));
