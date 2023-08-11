@@ -222,6 +222,11 @@ impl<'i> Visitor<'i> for CssNamespace {
                 }
             }
 
+            debug!(
+                "Selector length after transform: {}",
+                iter.selector_length()
+            );
+
             if combinator.is_none() {
                 combinator = iter.next_sequence();
                 if combinator.is_none() {
