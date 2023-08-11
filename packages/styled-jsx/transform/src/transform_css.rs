@@ -167,10 +167,17 @@ impl<'i> Visitor<'i> for CssNamespace {
 
     const TYPES: VisitTypes = visit_types!(SELECTORS);
 
-    #[cfg_attr(debug_assertions, tracing::instrument(skip_all))]
     fn visit_selector(&mut self, selector: &mut Selector<'i>) -> Result<(), Self::Error> {
         let mut new_selectors = vec![];
         let mut combinator = None;
+
+        #[cfg(debug_assertions)]
+        let _tracing = tracing::span!(
+            tracing::Level::ERROR,
+            "visit_selector",
+            len = selector.len()
+        )
+        .entered();
 
         let mut iter = selector.iter();
         loop {
