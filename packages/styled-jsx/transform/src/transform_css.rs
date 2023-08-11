@@ -200,8 +200,7 @@ impl<'i> Visitor<'i> for CssNamespace {
                     }
 
                     if cfg!(debug_assertions) {
-                        let new_sel = Selector::from(transformed_selectors.clone());
-                        debug!("Transformed as: {:?}", SafeDebug(&new_sel))
+                        debug!("Transformed as: {:?}", SafeDebug(&transformed_selectors))
                     }
 
                     new_selectors.push(transformed_selectors);
