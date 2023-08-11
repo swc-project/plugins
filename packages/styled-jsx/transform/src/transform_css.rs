@@ -294,6 +294,7 @@ impl CssNamespace {
                     parse_token_list(arguments)
                 }
                 Component::PseudoElement(_)
+                | Component::NonTSPseudoClass(..)
                 | Component::Negation(..)
                 | Component::Root
                 | Component::Empty
