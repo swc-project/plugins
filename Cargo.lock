@@ -805,7 +805,7 @@ checksum = "b4668fb0ea861c1df094127ac5f1da3409a82116a4ba74fca2e58ef927159bb3"
 [[package]]
 name = "lightningcss"
 version = "1.0.0-alpha.44"
-source = "git+https://github.com/kdy1/lightningcss.git?branch=kdy1/dev#1d6d62ea0510d7fe7f7452b816e59194cfb739f3"
+source = "git+https://github.com/kdy1/lightningcss.git?branch=kdy1/dev#2392b72ba99f11345c56522020e4a1d09825d887"
 dependencies = [
  "ahash 0.7.6",
  "bitflags 2.3.3",
@@ -828,7 +828,7 @@ dependencies = [
 [[package]]
 name = "lightningcss-derive"
 version = "1.0.0-alpha.39"
-source = "git+https://github.com/kdy1/lightningcss.git?branch=kdy1/dev#1d6d62ea0510d7fe7f7452b816e59194cfb739f3"
+source = "git+https://github.com/kdy1/lightningcss.git?branch=kdy1/dev#2392b72ba99f11345c56522020e4a1d09825d887"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1042,7 +1042,7 @@ checksum = "c1b04fb49957986fdce4d6ee7a65027d55d4b6d2265e5848bbb507b58ccfdb6f"
 [[package]]
 name = "parcel_selectors"
 version = "0.26.0"
-source = "git+https://github.com/kdy1/lightningcss.git?branch=kdy1/dev#1d6d62ea0510d7fe7f7452b816e59194cfb739f3"
+source = "git+https://github.com/kdy1/lightningcss.git?branch=kdy1/dev#2392b72ba99f11345c56522020e4a1d09825d887"
 dependencies = [
  "bitflags 2.3.3",
  "cssparser",
