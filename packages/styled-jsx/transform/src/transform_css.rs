@@ -140,7 +140,7 @@ pub fn transform_css(
     }))
 }
 
-/// Returns `(length, value)`
+/// Returns `(length, expression_index)`
 fn read_number(s: &str, is_expr_property: &[bool]) -> (usize, usize) {
     for (idx, c) in s.char_indices() {
         if c.is_ascii_digit() {
@@ -148,13 +148,13 @@ fn read_number(s: &str, is_expr_property: &[bool]) -> (usize, usize) {
         }
 
         // For 10, we reach here after `0`.
-        let value = s[0..idx].parse().expect("failed to parse");
+        let expression_index = s[0..idx].parse().expect("failed to parse");
 
-        if is_expr_property[value] {
-            return (idx + 3, value);
+        if is_expr_property[expression_index] {
+            return (idx + 3, expression_index);
         }
 
-        return (idx, value);
+        return (idx, expression_index);
     }
 
     unreachable!("read_number(`{}`) is invalid because it is empty", s)
