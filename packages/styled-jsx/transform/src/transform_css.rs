@@ -89,7 +89,7 @@ pub fn transform_css(
         ..Default::default()
     })
     .expect("failed to minify/auto-prefix css");
-    ss.visit(&mut Namespacer {
+    ss.visit(&mut CssNamespace {
         class_name: match class_name {
             Some(s) => s.clone(),
             None => format!("jsx-{}", &hash_string(&style_info.hash)),
@@ -156,13 +156,13 @@ fn read_number(s: &str) -> (usize, usize) {
     unreachable!("read_number(`{}`) is invalid because it is empty", s)
 }
 
-struct Namespacer {
+struct CssNamespace {
     class_name: String,
     is_global: bool,
     is_dynamic: bool,
 }
 
-impl<'i> Visitor<'i> for Namespacer {
+impl<'i> Visitor<'i> for CssNamespace {
     type Error = Infallible;
 
     const TYPES: VisitTypes = visit_types!(SELECTORS);
@@ -229,7 +229,7 @@ impl<'i> Visitor<'i> for Namespacer {
     }
 }
 
-impl Namespacer {
+impl CssNamespace {
     #[cfg_attr(debug_assertions, tracing::instrument(skip(self, node)))]
     fn get_transformed_selectors<'a, 'i, Impl>(
         &mut self,
