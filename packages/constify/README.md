@@ -60,14 +60,14 @@ function __CONST_1__() {
 
 export function call(dynamic) {
   const options = [
-    constify(__CONST_0__),
+    __CONST_0__,
     {
       code: 2,
       onClick() {
         console.log(dynamic);
       },
     },
-    constify(__CONST_1__),
+    __CONST_1__(),
   ];
 
   return options;
