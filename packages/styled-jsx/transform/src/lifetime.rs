@@ -1,5 +1,5 @@
 use lightningcss::selector::{Component, Selector};
-use parcel_selectors::parser::LocalName;
+use parcel_selectors::parser::{LocalName, NthOfSelectorData, NthSelectorData};
 
 pub fn owned_selector<'i>(sel: &Selector) -> Selector<'i> {
     let mut buf: Vec<Component<'i>> = vec![];
@@ -78,11 +78,12 @@ pub fn owned_component<'i>(c: &Component) -> Component<'i> {
                 lower_name: v1.lower_name.clone().into_owned(),
             })
         }
-        parcel_selectors::parser::Component::Nth(v) => {
-            unimplemented!()
-        }
+        parcel_selectors::parser::Component::Nth(v) => parcel_selectors::parser::Component::Nth(*v),
         parcel_selectors::parser::Component::NthOf(v) => {
-            unimplemented!()
+            parcel_selectors::parser::Component::NthOf(NthOfSelectorData::new(
+                *v.nth_data(),
+                owned_selectors(v.selectors()),
+            ))
         }
         parcel_selectors::parser::Component::NonTSPseudoClass(v) => {
             unimplemented!()
@@ -94,7 +95,7 @@ pub fn owned_component<'i>(c: &Component) -> Component<'i> {
             unimplemented!()
         }
         parcel_selectors::parser::Component::Host(v) => {
-            parcel_selectors::parser::Component::Host(v.as_ref().map(|v| owned_selector(v)))
+            parcel_selectors::parser::Component::Host(v.as_ref().map(owned_selector))
         }
         parcel_selectors::parser::Component::Where(v) => {
             parcel_selectors::parser::Component::Where(owned_selectors(v))
