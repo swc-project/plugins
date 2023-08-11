@@ -163,23 +163,72 @@ fn owned_psuedo_element<'i>(
         lightningcss::selector::PseudoElement::FirstLetter => {
             lightningcss::selector::PseudoElement::FirstLetter
         }
-        lightningcss::selector::PseudoElement::Selection(v) => {}
-        lightningcss::selector::PseudoElement::Placeholder(v) => {}
-        lightningcss::selector::PseudoElement::Marker => {}
-        lightningcss::selector::PseudoElement::Backdrop(v) => {}
-        lightningcss::selector::PseudoElement::FileSelectorButton(v) => {}
-        lightningcss::selector::PseudoElement::WebKitScrollbar(v) => {}
-        lightningcss::selector::PseudoElement::Cue => {}
-        lightningcss::selector::PseudoElement::CueRegion => {}
-        lightningcss::selector::PseudoElement::CueFunction { selector } => {}
-        lightningcss::selector::PseudoElement::CueRegionFunction { selector } => {}
-        lightningcss::selector::PseudoElement::ViewTransition => {}
-        lightningcss::selector::PseudoElement::ViewTransitionGroup { part_name } => {}
-        lightningcss::selector::PseudoElement::ViewTransitionImagePair { part_name } => {}
-        lightningcss::selector::PseudoElement::ViewTransitionOld { part_name } => {}
-        lightningcss::selector::PseudoElement::ViewTransitionNew { part_name } => {}
-        lightningcss::selector::PseudoElement::Custom { name } => {}
-        lightningcss::selector::PseudoElement::CustomFunction { name, arguments } => {}
+        lightningcss::selector::PseudoElement::Selection(v) => {
+            lightningcss::selector::PseudoElement::Selection(v.clone())
+        }
+        lightningcss::selector::PseudoElement::Placeholder(v) => {
+            lightningcss::selector::PseudoElement::Placeholder(v.clone())
+        }
+        lightningcss::selector::PseudoElement::Marker => {
+            lightningcss::selector::PseudoElement::Marker
+        }
+        lightningcss::selector::PseudoElement::Backdrop(v) => {
+            lightningcss::selector::PseudoElement::Backdrop(v.clone())
+        }
+        lightningcss::selector::PseudoElement::FileSelectorButton(v) => {
+            lightningcss::selector::PseudoElement::FileSelectorButton(v.clone())
+        }
+        lightningcss::selector::PseudoElement::WebKitScrollbar(v) => {
+            lightningcss::selector::PseudoElement::WebKitScrollbar(v.clone())
+        }
+        lightningcss::selector::PseudoElement::Cue => lightningcss::selector::PseudoElement::Cue,
+        lightningcss::selector::PseudoElement::CueRegion => {
+            lightningcss::selector::PseudoElement::CueRegion
+        }
+        lightningcss::selector::PseudoElement::CueFunction { selector } => {
+            lightningcss::selector::PseudoElement::CueFunction {
+                selector: Box::new(owned_selector(selector)),
+            }
+        }
+        lightningcss::selector::PseudoElement::CueRegionFunction { selector } => {
+            lightningcss::selector::PseudoElement::CueRegionFunction {
+                selector: Box::new(owned_selector(selector)),
+            }
+        }
+        lightningcss::selector::PseudoElement::ViewTransition => {
+            lightningcss::selector::PseudoElement::ViewTransition
+        }
+        lightningcss::selector::PseudoElement::ViewTransitionGroup { part_name } => {
+            lightningcss::selector::PseudoElement::ViewTransitionGroup {
+                part_name: owned_view_transition_part_name(part_name),
+            }
+        }
+        lightningcss::selector::PseudoElement::ViewTransitionImagePair { part_name } => {
+            lightningcss::selector::PseudoElement::ViewTransitionImagePair {
+                part_name: owned_view_transition_part_name(part_name),
+            }
+        }
+        lightningcss::selector::PseudoElement::ViewTransitionOld { part_name } => {
+            lightningcss::selector::PseudoElement::ViewTransitionOld {
+                part_name: owned_view_transition_part_name(part_name),
+            }
+        }
+        lightningcss::selector::PseudoElement::ViewTransitionNew { part_name } => {
+            lightningcss::selector::PseudoElement::ViewTransitionNew {
+                part_name: owned_view_transition_part_name(part_name),
+            }
+        }
+        lightningcss::selector::PseudoElement::Custom { name } => {
+            lightningcss::selector::PseudoElement::Custom {
+                name: name.clone().into_owned(),
+            }
+        }
+        lightningcss::selector::PseudoElement::CustomFunction { name, arguments } => {
+            lightningcss::selector::PseudoElement::CustomFunction {
+                name: name.clone().into_owned(),
+                arguments: owned_token_list(arguments),
+            }
+        }
     }
 }
 
