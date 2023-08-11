@@ -316,7 +316,7 @@ impl CssNamespace {
 
         let mut pseudo_index = None;
 
-        let mut node: Vec<Component<'i>> = node.fuse().cloned().collect::<Vec<_>>();
+        let node: Vec<Component<'i>> = node.fuse().cloned().collect::<Vec<_>>();
 
         if node.is_empty() {
             return Ok(result);
@@ -467,19 +467,16 @@ fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Selector<'i> {
             TokenOrValue::Color(t) => {
                 buf.push_str(&t.to_css_string(Default::default()).unwrap());
             }
-            TokenOrValue::UnresolvedColor(t) => {
-                unimplemented!("parse_token_list: unresolved color")
-            }
             TokenOrValue::Url(t) => {
                 buf.push_str(&t.to_css_string(Default::default()).unwrap());
             }
-            TokenOrValue::Var(t) => {
+            TokenOrValue::Var(..) => {
                 unimplemented!("parse_token_list: var")
             }
-            TokenOrValue::Env(zt) => {
+            TokenOrValue::Env(..) => {
                 unimplemented!("parse_token_list: env var")
             }
-            TokenOrValue::Function(t) => {
+            TokenOrValue::Function(..) => {
                 unimplemented!("parse_token_list: function")
             }
             TokenOrValue::Length(t) => {
@@ -496,6 +493,9 @@ fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Selector<'i> {
             }
             TokenOrValue::DashedIdent(t) => {
                 buf.push_str(&t.to_css_string(Default::default()).unwrap());
+            }
+            TokenOrValue::UnresolvedColor(..) => {
+                unimplemented!("parse_token_list: unresolved color")
             }
         }
     }
