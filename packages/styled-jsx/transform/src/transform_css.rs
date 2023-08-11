@@ -181,6 +181,14 @@ impl<'i> Visitor<'i> for CssNamespace {
 
         let mut iter = selector.iter();
         loop {
+            #[cfg(debug_assertions)]
+            let _tracing = tracing::span!(
+                tracing::Level::ERROR,
+                "visit_selector/loop",
+                len = iter.selector_length()
+            )
+            .entered();
+
             if combinator.is_none() {
                 combinator = iter.next_sequence();
             }
