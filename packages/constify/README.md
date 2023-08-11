@@ -2,6 +2,10 @@
 
 This plugin can be used to hoist constant parts of any expressions as constant variables, without affecting the runtime behavior or readability of the code.
 
+## Why?
+
+There are lots of cases where some parts of expressions are constant and thus can be reused, but others are not.
+
 ## Configuration
 
 This plugin can be configured with `.swcrc`
