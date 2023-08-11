@@ -54,7 +54,7 @@ pub fn transform_css(
     );
     let mut ss = match result {
         Ok(ss) => ss,
-        Err(err) => {
+        Err(_err) => {
             HANDLER.with(|handler| {
                 // Print css parsing errors
                 // TODO:

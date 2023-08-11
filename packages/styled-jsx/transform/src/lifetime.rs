@@ -1,3 +1,5 @@
+#![deny(unused)]
+
 use lightningcss::{
     properties::custom::TokenList,
     selector::{Component, Selector, ViewTransitionPartName},
@@ -105,7 +107,7 @@ pub fn owned_component<'i>(c: &Component) -> Component<'i> {
             ))
         }
         parcel_selectors::parser::Component::Negation(v) => {
-            parcel_selectors::parser::Component::Negation(owned_selectors(&v))
+            parcel_selectors::parser::Component::Negation(owned_selectors(v))
         }
         parcel_selectors::parser::Component::LocalName(v1) => {
             parcel_selectors::parser::Component::LocalName(LocalName {
@@ -164,19 +166,20 @@ fn owned_psuedo_element<'i>(
             lightningcss::selector::PseudoElement::FirstLetter
         }
         lightningcss::selector::PseudoElement::Selection(v) => {
-            lightningcss::selector::PseudoElement::Selection(v.clone())
+            lightningcss::selector::PseudoElement::Selection(*v)
         }
         lightningcss::selector::PseudoElement::Placeholder(v) => {
-            lightningcss::selector::PseudoElement::Placeholder(v.clone())
+            lightningcss::selector::PseudoElement::Placeholder(*v)
         }
         lightningcss::selector::PseudoElement::Marker => {
             lightningcss::selector::PseudoElement::Marker
         }
         lightningcss::selector::PseudoElement::Backdrop(v) => {
-            lightningcss::selector::PseudoElement::Backdrop(v.clone())
+            lightningcss::selector::PseudoElement::Backdrop(*v)
         }
+
         lightningcss::selector::PseudoElement::FileSelectorButton(v) => {
-            lightningcss::selector::PseudoElement::FileSelectorButton(v.clone())
+            lightningcss::selector::PseudoElement::FileSelectorButton(*v)
         }
         lightningcss::selector::PseudoElement::WebKitScrollbar(v) => {
             lightningcss::selector::PseudoElement::WebKitScrollbar(v.clone())
