@@ -12,7 +12,7 @@ custom_transform = ["swc_core/common_concurrent"]
 [dependencies]
 easy-error = "1.0.0"
 tracing = "0.1.37"
-lightningcss = { version = "1.0.0-alpha.44", features = [
+lightningcss = { git = "https://github.com/parcel-bundler/lightningcss.git", features = [
   "visitor",
   "into_owned",
 ] }
