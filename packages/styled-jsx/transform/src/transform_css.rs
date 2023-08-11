@@ -379,7 +379,7 @@ impl CssNamespace {
             return Ok(result);
         }
 
-        // TODO: Combinator for pseudo element
+        // Pseudo element
         if result.is_empty() && node.len() == 1 && pseudo_index.is_some() {
             return Ok(node);
         }
