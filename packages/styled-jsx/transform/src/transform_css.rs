@@ -222,7 +222,7 @@ impl<'i> Visitor<'i> for CssNamespace {
                 }
             }
 
-            debug!(
+            trace!(
                 "Selector length after transform: {}",
                 iter.selector_length()
             );
