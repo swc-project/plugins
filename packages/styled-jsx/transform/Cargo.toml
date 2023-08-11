@@ -16,6 +16,8 @@ lightningcss = { git = "https://github.com/parcel-bundler/lightningcss.git", fea
   "visitor",
   "into_owned",
 ] }
+parcel_selectors = { git = "https://github.com/parcel-bundler/lightningcss.git" }
+
 
 swc_core = { version = "0.79.20", features = [
   "common",
@@ -25,7 +27,6 @@ swc_core = { version = "0.79.20", features = [
   "ecma_utils",
   "ecma_visit",
 ] }
-parcel_selectors = "0.26.0"
 
 [dev-dependencies]
 testing = "0.33.20"
