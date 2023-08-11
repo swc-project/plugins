@@ -359,10 +359,6 @@ impl CssNamespace {
             return Ok(node);
         }
 
-        if let Some(combinator) = combinator {
-            result.push(Component::Combinator(combinator));
-        }
-
         let mut node: Vec<Component<'i>> = node.clone();
 
         let subclass_selector = match self.is_dynamic {
@@ -388,6 +384,10 @@ impl CssNamespace {
                     );
                 }
             }
+        }
+
+        if let Some(combinator) = combinator {
+            result.push(Component::Combinator(combinator));
         }
 
         Ok(result)
