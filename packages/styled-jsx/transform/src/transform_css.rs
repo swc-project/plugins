@@ -237,14 +237,8 @@ impl<'i> Visitor<'i> for CssNamespace {
             }
         }
 
-        let new: Vec<_> = new_selectors
-            .into_iter()
-            .rev()
-            .inspect(|selector_vector| {
-                debug!("Selector vector: {:?}", SafeDebug(&selector_vector));
-            })
-            .flatten()
-            .collect();
+        let new: Vec<_> = new_selectors.into_iter().rev().flatten().collect();
+        debug!("Selector vector: {:?}", SafeDebug(&new));
 
         *selector = Selector::from(new);
 
