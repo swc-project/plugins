@@ -2,13 +2,10 @@
 
 use import_analyzer::ImportMap;
 use swc_core::{
-    common::{
-        collections::AHashMap, sync::Lazy, util::take::Take, Mark, Span, Spanned, SyntaxContext,
-        DUMMY_SP,
-    },
+    common::{sync::Lazy, util::take::Take, Mark, Span, Spanned, SyntaxContext, DUMMY_SP},
     ecma::{
         ast::{
-            CallExpr, Callee, Decl, Expr, Id, Ident, ImportDecl, Module, ModuleItem, Stmt, VarDecl,
+            CallExpr, Callee, Decl, Expr, Ident, ImportDecl, Module, ModuleItem, Stmt, VarDecl,
             VarDeclKind, VarDeclarator,
         },
         atoms::JsWord,
@@ -51,10 +48,6 @@ impl Constify {
 impl VisitMut for Constify {
     noop_visit_mut_type!();
 
-    fn visit_mut_import_decl(&mut self, i: &mut ImportDecl) {
-        i.visit_mut_children_with(self);
-    }
-
     fn visit_mut_expr(&mut self, e: &mut Expr) {
         e.visit_mut_children_with(self);
 
@@ -95,6 +88,37 @@ impl VisitMut for Constify {
         }
     }
 
+    fn visit_mut_import_decl(&mut self, i: &mut ImportDecl) {
+        i.visit_mut_children_with(self);
+    }
+
+    fn visit_mut_module(&mut self, m: &mut Module) {
+        self.imports = ImportMap::analyze(m);
+        if !self.imports.is_module_imported(&MODULE_SPECIFIER) {
+            return;
+        }
+
+        m.visit_mut_children_with(self);
+    }
+
+    fn visit_mut_module_item(&mut self, s: &mut ModuleItem) {
+        s.visit_mut_children_with(self);
+    }
+
+    fn visit_mut_module_items(&mut self, stmts: &mut Vec<ModuleItem>) {
+        let mut new = vec![];
+
+        for mut stmt in stmts.take() {
+            stmt.visit_mut_with(self);
+
+            new.extend(self.prepend_stmts.drain(..).map(ModuleItem::from));
+
+            new.push(stmt);
+        }
+
+        *stmts = new;
+    }
+
     fn visit_mut_stmts(&mut self, stmts: &mut Vec<Stmt>) {
         let mut new = vec![];
 
@@ -107,18 +131,5 @@ impl VisitMut for Constify {
         }
 
         *stmts = new;
-    }
-
-    fn visit_mut_module_item(&mut self, s: &mut ModuleItem) {
-        s.visit_mut_children_with(self);
-    }
-
-    fn visit_mut_module(&mut self, m: &mut Module) {
-        self.imports = ImportMap::analyze(m);
-        if !self.imports.is_module_imported(&MODULE_SPECIFIER) {
-            return;
-        }
-
-        m.visit_mut_children_with(self);
     }
 }
