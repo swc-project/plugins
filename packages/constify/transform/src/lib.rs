@@ -59,45 +59,6 @@ impl Constify {
         self.s.next_const_id += 1;
         id
     }
-
-    fn visit_mut_stmt_likes<T>(&mut self, stmts: &mut Vec<T>)
-    where
-        T: StmtLike + VisitMutWith<Self> + Vars,
-    {
-        let mut prepended = vec![];
-        let mut buf = vec![];
-
-        for mut stmt in stmts.take() {
-            stmt.visit_mut_with(self);
-
-            let vars_declared_by_stmt = stmt.vars_declared_by_item();
-
-            for item in &mut self.s.vars {
-                let mut did_work = false;
-
-                for var_id in vars_declared_by_stmt.iter() {
-                    item.deps.remove(var_id);
-                    did_work = true;
-                }
-
-                if item.deps.is_empty() {
-                    if let Some(decl) = item.decl.take() {
-                        if did_work {
-                            buf.push(T::from_stmt(Stmt::Decl(decl)));
-                        } else {
-                            prepended.push(T::from_stmt(Stmt::Decl(decl)));
-                        }
-                    }
-                } else {
-                    debug!("{} is not ready", item.name.sym);
-                }
-            }
-
-            buf.push(stmt);
-        }
-
-        *stmts = prepended.into_iter().chain(buf).collect();
-    }
 }
 
 impl VisitMut for Constify {
@@ -172,14 +133,6 @@ impl VisitMut for Constify {
             }
         }
     }
-
-    fn visit_mut_module_items(&mut self, stmts: &mut Vec<ModuleItem>) {
-        self.visit_mut_stmt_likes(stmts)
-    }
-
-    fn visit_mut_stmts(&mut self, stmts: &mut Vec<Stmt>) {
-        self.visit_mut_stmt_likes(stmts)
-    }
 }
 
 trait Vars {
@@ -251,5 +204,62 @@ impl Vars for ModuleItem {
             ModuleItem::ModuleDecl(s) => s.vars_declared_by_item(),
             ModuleItem::Stmt(s) => s.vars_declared_by_item(),
         }
+    }
+}
+
+struct Injector {
+    vars: Vec<ConstItem>,
+}
+
+impl Injector {
+    fn visit_mut_stmt_likes<T>(&mut self, stmts: &mut Vec<T>)
+    where
+        T: StmtLike + VisitMutWith<Self> + Vars,
+    {
+        let mut prepended = vec![];
+        let mut buf = vec![];
+
+        for mut stmt in stmts.take() {
+            stmt.visit_mut_with(self);
+
+            let vars_declared_by_stmt = stmt.vars_declared_by_item();
+
+            for item in &mut self.s.vars {
+                let mut did_work = false;
+
+                for var_id in vars_declared_by_stmt.iter() {
+                    item.deps.remove(var_id);
+                    did_work = true;
+                }
+
+                if item.deps.is_empty() {
+                    if let Some(decl) = item.decl.take() {
+                        if did_work {
+                            buf.push(T::from_stmt(Stmt::Decl(decl)));
+                        } else {
+                            prepended.push(T::from_stmt(Stmt::Decl(decl)));
+                        }
+                    }
+                } else {
+                    debug!("{} is not ready: {:?}", item.name.sym, item.deps);
+                }
+            }
+
+            buf.push(stmt);
+        }
+
+        *stmts = prepended.into_iter().chain(buf).collect();
+    }
+}
+
+impl VisitMut for Injector {
+    noop_visit_mut_type!();
+
+    fn visit_mut_module_items(&mut self, stmts: &mut Vec<ModuleItem>) {
+        self.visit_mut_stmt_likes(stmts)
+    }
+
+    fn visit_mut_stmts(&mut self, stmts: &mut Vec<Stmt>) {
+        self.visit_mut_stmt_likes(stmts)
     }
 }
