@@ -9,11 +9,11 @@ use swc_core::{
     common::{sync::Lazy, util::take::Take, Mark, Span, Spanned, SyntaxContext, DUMMY_SP},
     ecma::{
         ast::{
-            CallExpr, Callee, Decl, Expr, Id, Ident, ImportDecl, Module, ModuleDecl, ModuleItem,
-            Stmt, VarDecl, VarDeclKind, VarDeclarator,
+            CallExpr, Callee, Decl, Expr, Id, Ident, ImportDecl, ImportSpecifier, Module,
+            ModuleDecl, ModuleItem, Stmt, VarDecl, VarDeclKind, VarDeclarator,
         },
         atoms::JsWord,
-        utils::{private_ident, StmtLike},
+        utils::{find_pat_ids, private_ident, StmtLike},
         visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
     },
 };
@@ -179,14 +179,58 @@ trait Vars {
 impl Vars for Stmt {
     fn vars_declared_by_item(&self) -> Vec<Id> {
         match self {
-            Stmt::Decl(s) => match s {
-                Decl::Class(s) => {}
-                Decl::Fn(s) => {}
-                Decl::Var(s) => {}
-                Decl::Using(s) => {}
-                _ => Default::default(),
-            },
+            Stmt::Decl(s) => s.vars_declared_by_item(),
             _ => Default::default(),
+        }
+    }
+}
+
+impl Vars for Decl {
+    fn vars_declared_by_item(&self) -> Vec<Id> {
+        match self {
+            Decl::Class(s) => {
+                vec![s.ident.to_id()]
+            }
+            Decl::Fn(s) => {
+                vec![s.ident.to_id()]
+            }
+            Decl::Var(s) => find_pat_ids(&s.decls),
+            Decl::Using(s) => find_pat_ids(&s.decls),
+            _ => Default::default(),
+        }
+    }
+}
+
+impl Vars for ModuleDecl {
+    fn vars_declared_by_item(&self) -> Vec<Id> {
+        match self {
+            ModuleDecl::Import(s) => {
+                let mut buf = vec![];
+
+                for s in s.specifiers.iter() {
+                    match s {
+                        ImportSpecifier::Named(s) => {
+                            buf.push(s.local.to_id());
+                        }
+                        ImportSpecifier::Default(s) => {
+                            buf.push(s.local.to_id());
+                        }
+                        ImportSpecifier::Namespace(s) => {
+                            buf.push(s.local.to_id());
+                        }
+                    }
+                }
+
+                buf
+            }
+            ModuleDecl::ExportDecl(s) => {}
+            ModuleDecl::ExportNamed(s) => {}
+            ModuleDecl::ExportDefaultDecl(s) => {}
+            ModuleDecl::ExportDefaultExpr(s) => {}
+            ModuleDecl::ExportAll(s) => {}
+            ModuleDecl::TsImportEquals(s) => {}
+            ModuleDecl::TsExportAssignment(s) => {}
+            ModuleDecl::TsNamespaceExport(s) => {}
         }
     }
 }
@@ -194,17 +238,7 @@ impl Vars for Stmt {
 impl Vars for ModuleItem {
     fn vars_declared_by_item(&self) -> Vec<Id> {
         match self {
-            ModuleItem::ModuleDecl(s) => match s {
-                ModuleDecl::Import(s) => {}
-                ModuleDecl::ExportDecl(s) => {}
-                ModuleDecl::ExportNamed(s) => {}
-                ModuleDecl::ExportDefaultDecl(s) => {}
-                ModuleDecl::ExportDefaultExpr(s) => {}
-                ModuleDecl::ExportAll(s) => {}
-                ModuleDecl::TsImportEquals(s) => {}
-                ModuleDecl::TsExportAssignment(s) => {}
-                ModuleDecl::TsNamespaceExport(s) => {}
-            },
+            ModuleItem::ModuleDecl(s) => s.vars_declared_by_item(),
             ModuleItem::Stmt(s) => s.vars_declared_by_item(),
         }
     }
