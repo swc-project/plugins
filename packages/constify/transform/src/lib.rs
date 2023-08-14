@@ -1,7 +1,8 @@
 use swc_core::{
-    common::{Mark, SyntaxContext},
+    common::{collections::AHashMap, Mark, SyntaxContext},
     ecma::{
-        ast::{Expr, ImportDecl, Stmt},
+        ast::{Expr, Id, Ident, ImportDecl, Stmt},
+        atoms::JsWord,
         visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
     },
 };
@@ -13,6 +14,8 @@ pub fn constify() -> impl VisitMut {
         prepend_stmts: vec![],
     }
 }
+
+mod import_analyzer;
 
 struct Constify {
     const_ctxt: SyntaxContext,
