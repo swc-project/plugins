@@ -111,10 +111,6 @@ impl VisitMut for Constify {
         }
     }
 
-    fn visit_mut_import_decl(&mut self, i: &mut ImportDecl) {
-        i.visit_mut_children_with(self);
-    }
-
     fn visit_mut_module(&mut self, m: &mut Module) {
         self.s.imports = ImportMap::analyze(m);
         if !self.s.imports.is_module_imported(&MODULE_SPECIFIER) {
@@ -122,6 +118,12 @@ impl VisitMut for Constify {
         }
 
         m.visit_mut_children_with(self);
+
+        if !self.s.vars.is_empty() {
+            m.visit_mut_with(&mut Injector {
+                vars: self.s.vars.take(),
+            });
+        }
     }
 
     fn visit_mut_module_item(&mut self, s: &mut ModuleItem) {
@@ -216,7 +218,6 @@ impl Injector {
     where
         T: StmtLike + VisitMutWith<Self> + Vars,
     {
-        let mut prepended = vec![];
         let mut buf = vec![];
 
         for mut stmt in stmts.take() {
@@ -224,21 +225,14 @@ impl Injector {
 
             let vars_declared_by_stmt = stmt.vars_declared_by_item();
 
-            for item in &mut self.s.vars {
-                let mut did_work = false;
-
+            for item in &mut self.vars {
                 for var_id in vars_declared_by_stmt.iter() {
                     item.deps.remove(var_id);
-                    did_work = true;
                 }
 
                 if item.deps.is_empty() {
                     if let Some(decl) = item.decl.take() {
-                        if did_work {
-                            buf.push(T::from_stmt(Stmt::Decl(decl)));
-                        } else {
-                            prepended.push(T::from_stmt(Stmt::Decl(decl)));
-                        }
+                        buf.push(T::from_stmt(Stmt::Decl(decl)));
                     }
                 } else {
                     debug!("{} is not ready: {:?}", item.name.sym, item.deps);
@@ -248,7 +242,7 @@ impl Injector {
             buf.push(stmt);
         }
 
-        *stmts = prepended.into_iter().chain(buf).collect();
+        *stmts = buf;
     }
 }
 
