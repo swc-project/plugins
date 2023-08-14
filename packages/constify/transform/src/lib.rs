@@ -4,9 +4,13 @@ use import_analyzer::ImportMap;
 use swc_core::{
     common::{
         collections::AHashMap, sync::Lazy, util::take::Take, Mark, Span, Spanned, SyntaxContext,
+        DUMMY_SP,
     },
     ecma::{
-        ast::{CallExpr, Callee, Expr, Id, Ident, ImportDecl, Module, Stmt},
+        ast::{
+            CallExpr, Callee, Decl, Expr, Id, Ident, ImportDecl, Module, ModuleItem, Stmt, VarDecl,
+            VarDeclKind, VarDeclarator,
+        },
         atoms::JsWord,
         utils::private_ident,
         visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
@@ -56,6 +60,7 @@ impl VisitMut for Constify {
 
         if let Expr::Call(CallExpr {
             callee: Callee::Expr(callee),
+            args,
             ..
         }) = e
         {
@@ -63,13 +68,30 @@ impl VisitMut for Constify {
                 .imports
                 .is_import(&callee, &MODULE_SPECIFIER, "constify")
             {
+                assert_eq!(args.len(), 1, "constify() takes exactly one argument");
+
                 let var_name = self.next_var_name(callee.span());
+                let decl = VarDeclarator {
+                    span: DUMMY_SP,
+                    name: var_name.clone().into(),
+                    init: Some(args.pop().unwrap().expr),
+                    definite: false,
+                };
+                self.prepend_stmts
+                    .push(Stmt::Decl(Decl::Var(Box::new(VarDecl {
+                        span: DUMMY_SP,
+                        kind: VarDeclKind::Let,
+                        declare: false,
+                        decls: vec![decl],
+                    }))));
+                *e = Expr::Ident(var_name);
             } else if self
                 .imports
                 .is_import(&callee, &MODULE_SPECIFIER, "lazyConst")
             {
-                let var_name = self.next_var_name(callee.span());
-            }
+                assert_eq!(args.len(), 1, "lazyConst() takes exactly one argument");
+            } else {
+            };
         }
     }
 
@@ -79,10 +101,16 @@ impl VisitMut for Constify {
         for mut stmt in stmts.take() {
             stmt.visit_mut_with(self);
 
+            new.append(&mut self.prepend_stmts);
+
             new.push(stmt);
         }
 
         *stmts = new;
+    }
+
+    fn visit_mut_module_item(&mut self, s: &mut ModuleItem) {
+        s.visit_mut_children_with(self);
     }
 
     fn visit_mut_module(&mut self, m: &mut Module) {
