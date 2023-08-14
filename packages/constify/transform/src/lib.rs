@@ -10,7 +10,7 @@ use swc_core::{
             VarDeclKind, VarDeclarator,
         },
         atoms::JsWord,
-        utils::private_ident,
+        utils::{private_ident, StmtLike},
         visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
     },
 };
@@ -41,6 +41,8 @@ struct State {
     vars: Vec<ConstItem>,
 
     imports: ImportMap,
+
+    vars_declared_in_current_scope: FxHashSet<Id>,
 }
 
 struct ConstItem {
@@ -53,6 +55,23 @@ impl Constify {
         let id = private_ident!(span, format!("__CONST_{}__", self.s.next_const_id));
         self.s.next_const_id += 1;
         id
+    }
+
+    fn visit_mut_stmt_likes<T>(&mut self, stmts: &mut Vec<T>)
+    where
+        T: StmtLike + VisitMutWith<Self>,
+    {
+        let mut new = vec![];
+
+        for mut stmt in stmts.take() {
+            stmt.visit_mut_with(self);
+
+            new.extend(self.s.prepend_stmts.drain(..).map(T::from));
+
+            new.push(stmt);
+        }
+
+        *stmts = new;
     }
 }
 
@@ -129,30 +148,10 @@ impl VisitMut for Constify {
     }
 
     fn visit_mut_module_items(&mut self, stmts: &mut Vec<ModuleItem>) {
-        let mut new = vec![];
-
-        for mut stmt in stmts.take() {
-            stmt.visit_mut_with(self);
-
-            new.extend(self.s.prepend_stmts.drain(..).map(ModuleItem::from));
-
-            new.push(stmt);
-        }
-
-        *stmts = new;
+        self.visit_mut_stmt_likes(stmts)
     }
 
     fn visit_mut_stmts(&mut self, stmts: &mut Vec<Stmt>) {
-        let mut new = vec![];
-
-        for mut stmt in stmts.take() {
-            stmt.visit_mut_with(self);
-
-            new.append(&mut self.s.prepend_stmts);
-
-            new.push(stmt);
-        }
-
-        *stmts = new;
+        self.visit_mut_stmt_likes(stmts)
     }
 }
