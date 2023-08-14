@@ -1,17 +1,14 @@
 #![feature(box_patterns)]
 
-use std::hash::BuildHasherDefault;
-
 use import_analyzer::ImportMap;
-use indexmap::IndexSet;
-use rustc_hash::{FxHashSet, FxHasher};
+use rustc_hash::FxHashSet;
 use swc_core::{
     common::{sync::Lazy, util::take::Take, Mark, Span, Spanned, SyntaxContext, DUMMY_SP},
     ecma::{
         ast::{
             op, ArrowExpr, AssignExpr, BlockStmt, CallExpr, Callee, Decl, DefaultDecl, Expr,
-            FnDecl, FnExpr, Function, Id, Ident, ImportDecl, ImportSpecifier, Module, ModuleDecl,
-            ModuleItem, ReturnStmt, Stmt, VarDecl, VarDeclKind, VarDeclarator,
+            FnDecl, FnExpr, Function, Id, Ident, ImportSpecifier, Module, ModuleDecl, ModuleItem,
+            ReturnStmt, Stmt, VarDecl, VarDeclKind, VarDeclarator,
         },
         atoms::JsWord,
         utils::{find_pat_ids, private_ident, StmtLike},
@@ -56,7 +53,10 @@ struct ConstItem {
 
 impl Constify {
     fn next_var_name(&mut self, span: Span) -> Ident {
-        let id = private_ident!(span, format!("__CONST_{}__", self.s.next_const_id));
+        let id = Ident::new(
+            format!("__CONST_{}__", self.s.next_const_id).into(),
+            span.with_ctxt(self.const_ctxt),
+        );
         self.s.next_const_id += 1;
         id
     }
@@ -144,7 +144,7 @@ impl VisitMut for Constify {
                                     stmts: {
                                         let s = Stmt::Return(ReturnStmt {
                                             span: DUMMY_SP,
-                                            arg: Some(data_var_name.clone().into()),
+                                            arg: Some(data_var_name.into()),
                                         });
 
                                         vec![s]
