@@ -1,7 +1,10 @@
 #![feature(box_patterns)]
 
+use std::hash::BuildHasherDefault;
+
 use import_analyzer::ImportMap;
-use rustc_hash::FxHashSet;
+use indexmap::IndexSet;
+use rustc_hash::{FxHashSet, FxHasher};
 use swc_core::{
     common::{sync::Lazy, util::take::Take, Mark, Span, Spanned, SyntaxContext, DUMMY_SP},
     ecma::{
@@ -42,11 +45,11 @@ struct State {
 
     imports: ImportMap,
 
-    vars_declared_in_current_scope: FxHashSet<Id>,
+    vars_declared_in_current_scope: IndexSet<Id, BuildHasherDefault<FxHasher>>,
 }
 
 struct ConstItem {
-    decl: Decl,
+    decl: Option<Decl>,
     deps: FxHashSet<Id>,
 }
 
@@ -66,7 +69,19 @@ impl Constify {
         for mut stmt in stmts.take() {
             stmt.visit_mut_with(self);
 
-            new.extend(self.s.prepend_stmts.drain(..).map(T::from));
+            for var_id in self.s.vars_declared_in_current_scope.iter() {
+                for item in &mut self.s.vars {
+                    item.deps.remove(var_id);
+                }
+            }
+
+            for item in &mut self.s.vars {
+                if item.deps.is_empty() {
+                    if let Some(decl) = item.decl.take() {
+                        new.push(T::from_stmt(Stmt::Decl(decl)));
+                    }
+                }
+            }
 
             new.push(stmt);
         }
@@ -104,12 +119,12 @@ impl VisitMut for Constify {
                 let deps = ids_used_by(&decl.init);
 
                 self.s.vars.push(ConstItem {
-                    decl: Decl::Var(Box::new(VarDecl {
+                    decl: Some(Decl::Var(Box::new(VarDecl {
                         span: DUMMY_SP,
                         kind: VarDeclKind::Let,
                         declare: false,
                         decls: vec![decl],
-                    })),
+                    }))),
                     deps,
                 });
                 *e = Expr::Ident(var_name);
