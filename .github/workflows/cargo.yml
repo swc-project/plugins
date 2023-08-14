@@ -75,7 +75,7 @@ jobs:
           override: true
 
       - name: Install cargo-mono
-        uses: baptiste0928/cargo-install@v1.1.0
+        uses: baptiste0928/cargo-install@v2
         with:
           crate: cargo-mono
           version: "0.3.1"

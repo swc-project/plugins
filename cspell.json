@@ -1,8 +1,11 @@
 {
     "words": [
+        "Constify",
         "ctxt",
         "hasher",
         "lightningcss",
-        "quasis"
+        "quasis",
+        "rustc",
+        "swcrc"
     ]
 }

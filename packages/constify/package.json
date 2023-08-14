@@ -1,11 +1,10 @@
 {
-  "name": "@swc/plugin-relay",
-  "version": "1.5.71",
-  "description": "SWC plugin for relay",
-  "main": "swc_plugin_relay.wasm",
-  "types": "./types.d.ts",
+  "name": "@swc/plugin-constify",
+  "version": "0.1.1",
+  "description": "SWC plugin for optimization",
+  "main": "swc_plugin_constify.wasm",
   "scripts": {
-    "prepack": "cp ../../target/wasm32-wasi/release/swc_plugin_relay.wasm ."
+    "prepack": "cp ../../target/wasm32-wasi/release/swc_plugin_constify.wasm ."
   },
   "homepage": "https://swc.rs",
   "repository": {
