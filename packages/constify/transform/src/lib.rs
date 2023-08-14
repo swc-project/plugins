@@ -9,8 +9,9 @@ use swc_core::{
     common::{sync::Lazy, util::take::Take, Mark, Span, Spanned, SyntaxContext, DUMMY_SP},
     ecma::{
         ast::{
-            CallExpr, Callee, Decl, DefaultDecl, Expr, Id, Ident, ImportDecl, ImportSpecifier,
-            Module, ModuleDecl, ModuleItem, Stmt, VarDecl, VarDeclKind, VarDeclarator,
+            ArrowExpr, CallExpr, Callee, Decl, DefaultDecl, Expr, Function, Id, Ident, ImportDecl,
+            ImportSpecifier, Module, ModuleDecl, ModuleItem, Stmt, VarDecl, VarDeclKind,
+            VarDeclarator,
         },
         atoms::JsWord,
         utils::{find_pat_ids, private_ident, StmtLike},
@@ -216,11 +217,27 @@ struct Injector {
 }
 
 impl Injector {
+    fn declare_scope_vars(&mut self, vars: Vec<Id>) {
+        for var_id in vars {
+            for item in &mut self.vars {
+                item.deps.remove(&var_id);
+            }
+        }
+    }
+
     fn visit_mut_stmt_likes<T>(&mut self, stmts: &mut Vec<T>)
     where
         T: StmtLike + VisitMutWith<Self> + Vars,
     {
         let mut buf = vec![];
+
+        for item in &mut self.vars {
+            if item.deps.is_empty() {
+                if let Some(decl) = item.decl.take() {
+                    buf.push(T::from_stmt(Stmt::Decl(decl)));
+                }
+            }
+        }
 
         for mut stmt in stmts.take() {
             stmt.visit_mut_with(self);
@@ -250,6 +267,18 @@ impl Injector {
 
 impl VisitMut for Injector {
     noop_visit_mut_type!();
+
+    fn visit_mut_arrow_expr(&mut self, n: &mut ArrowExpr) {
+        self.declare_scope_vars(find_pat_ids(&n.params));
+
+        n.visit_mut_children_with(self);
+    }
+
+    fn visit_mut_function(&mut self, n: &mut Function) {
+        self.declare_scope_vars(find_pat_ids(&n.params));
+
+        n.visit_mut_children_with(self);
+    }
 
     fn visit_mut_module_items(&mut self, stmts: &mut Vec<ModuleItem>) {
         self.visit_mut_stmt_likes(stmts)
