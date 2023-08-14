@@ -9,8 +9,8 @@ use swc_core::{
     common::{sync::Lazy, util::take::Take, Mark, Span, Spanned, SyntaxContext, DUMMY_SP},
     ecma::{
         ast::{
-            CallExpr, Callee, Decl, Expr, Id, Ident, ImportDecl, Module, ModuleItem, Stmt, VarDecl,
-            VarDeclKind, VarDeclarator,
+            CallExpr, Callee, Decl, Expr, Id, Ident, ImportDecl, Module, ModuleDecl, ModuleItem,
+            Stmt, VarDecl, VarDeclKind, VarDeclarator,
         },
         atoms::JsWord,
         utils::{private_ident, StmtLike},
@@ -44,8 +44,6 @@ struct State {
     vars: Vec<ConstItem>,
 
     imports: ImportMap,
-
-    vars_declared_in_current_scope: IndexSet<Id, BuildHasherDefault<FxHasher>>,
 }
 
 struct ConstItem {
@@ -62,17 +60,19 @@ impl Constify {
 
     fn visit_mut_stmt_likes<T>(&mut self, stmts: &mut Vec<T>)
     where
-        T: StmtLike + VisitMutWith<Self>,
+        T: StmtLike + VisitMutWith<Self> + Vars,
     {
         let mut new = vec![];
 
         for mut stmt in stmts.take() {
             stmt.visit_mut_with(self);
 
+            let vars_declared_by_stmt = stmt.vars_declared_by_item();
+
             for item in &mut self.s.vars {
                 let mut did_work = false;
 
-                for var_id in self.s.vars_declared_in_current_scope.iter() {
+                for var_id in vars_declared_by_stmt.iter() {
                     item.deps.remove(var_id);
                     did_work = true;
                 }
@@ -156,7 +156,7 @@ impl VisitMut for Constify {
     fn visit_mut_module_item(&mut self, s: &mut ModuleItem) {
         s.visit_mut_children_with(self);
 
-        if let ModuleItem::ModuleDecl(swc_core::ecma::ast::ModuleDecl::Import(import)) = s {
+        if let ModuleItem::ModuleDecl(ModuleDecl::Import(import)) = s {
             if import.src.value == *MODULE_SPECIFIER {
                 s.take();
             }
@@ -169,5 +169,43 @@ impl VisitMut for Constify {
 
     fn visit_mut_stmts(&mut self, stmts: &mut Vec<Stmt>) {
         self.visit_mut_stmt_likes(stmts)
+    }
+}
+
+trait Vars {
+    fn vars_declared_by_item(&self) -> Vec<Id>;
+}
+
+impl Vars for Stmt {
+    fn vars_declared_by_item(&self) -> Vec<Id> {
+        match self {
+            Stmt::Decl(s) => match s {
+                Decl::Class(s) => {}
+                Decl::Fn(s) => {}
+                Decl::Var(s) => {}
+                Decl::Using(s) => {}
+                _ => Default::default(),
+            },
+            _ => Default::default(),
+        }
+    }
+}
+
+impl Vars for ModuleItem {
+    fn vars_declared_by_item(&self) -> Vec<Id> {
+        match self {
+            ModuleItem::ModuleDecl(s) => match s {
+                ModuleDecl::Import(s) => {}
+                ModuleDecl::ExportDecl(s) => {}
+                ModuleDecl::ExportNamed(s) => {}
+                ModuleDecl::ExportDefaultDecl(s) => {}
+                ModuleDecl::ExportDefaultExpr(s) => {}
+                ModuleDecl::ExportAll(s) => {}
+                ModuleDecl::TsImportEquals(s) => {}
+                ModuleDecl::TsExportAssignment(s) => {}
+                ModuleDecl::TsNamespaceExport(s) => {}
+            },
+            ModuleItem::Stmt(s) => s.vars_declared_by_item(),
+        }
     }
 }
