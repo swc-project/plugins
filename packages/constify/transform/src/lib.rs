@@ -103,6 +103,12 @@ impl VisitMut for Constify {
 
     fn visit_mut_module_item(&mut self, s: &mut ModuleItem) {
         s.visit_mut_children_with(self);
+
+        if let ModuleItem::ModuleDecl(swc_core::ecma::ast::ModuleDecl::Import(import)) = s {
+            if import.src.value == *MODULE_SPECIFIER {
+                s.take();
+            }
+        }
     }
 
     fn visit_mut_module_items(&mut self, stmts: &mut Vec<ModuleItem>) {
