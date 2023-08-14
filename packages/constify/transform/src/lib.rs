@@ -69,14 +69,15 @@ impl Constify {
         for mut stmt in stmts.take() {
             stmt.visit_mut_with(self);
 
-            for var_id in self.s.vars_declared_in_current_scope.iter() {
-                for item in &mut self.s.vars {
-                    item.deps.remove(var_id);
-                }
-            }
-
             for item in &mut self.s.vars {
-                if item.deps.is_empty() {
+                let mut did_work = false;
+
+                for var_id in self.s.vars_declared_in_current_scope.iter() {
+                    item.deps.remove(var_id);
+                    did_work = true;
+                }
+
+                if did_work && item.deps.is_empty() {
                     if let Some(decl) = item.decl.take() {
                         new.push(T::from_stmt(Stmt::Decl(decl)));
                     }
