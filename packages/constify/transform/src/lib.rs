@@ -111,6 +111,7 @@ impl VisitMut for Constify {
         }
     }
 
+    #[tracing::instrument(name = "Constify::visit_mut_module", skip_all)]
     fn visit_mut_module(&mut self, m: &mut Module) {
         self.s.imports = ImportMap::analyze(m);
         if !self.s.imports.is_module_imported(&MODULE_SPECIFIER) {
@@ -120,6 +121,7 @@ impl VisitMut for Constify {
         m.visit_mut_children_with(self);
 
         if !self.s.vars.is_empty() {
+            let _tracing = tracing::span!(tracing::Level::ERROR, "inject vars").entered();
             m.visit_mut_with(&mut Injector {
                 vars: self.s.vars.take(),
             });
