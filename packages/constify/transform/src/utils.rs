@@ -19,6 +19,18 @@ where
     v.ids
 }
 
+pub(crate) fn ids_used_by_ignoring_nested<N>(n: &N) -> FxHashSet<Id>
+where
+    N: VisitWith<IdentUsageCollector>,
+{
+    let mut v = IdentUsageCollector {
+        ignore_nested: true,
+        ..Default::default()
+    };
+    n.visit_with(&mut v);
+    v.ids
+}
+
 #[derive(Default)]
 pub(crate) struct IdentUsageCollector {
     ids: FxHashSet<Id>,

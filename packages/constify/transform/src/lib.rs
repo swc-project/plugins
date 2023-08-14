@@ -19,7 +19,7 @@ use swc_core::{
 };
 use tracing::debug;
 
-use crate::utils::ids_used_by;
+use crate::utils::{ids_used_by, ids_used_by_ignoring_nested};
 
 pub fn constify() -> impl VisitMut {
     Constify {
@@ -87,7 +87,7 @@ impl VisitMut for Constify {
                     init: Some(args.pop().unwrap().expr),
                     definite: false,
                 };
-                let deps = ids_used_by(&decl.init);
+                let deps = ids_used_by_ignoring_nested(&decl.init);
 
                 self.s.vars.push(ConstItem {
                     name: var_name.clone(),
