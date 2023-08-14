@@ -9,9 +9,9 @@ use swc_core::{
     common::{sync::Lazy, util::take::Take, Mark, Span, Spanned, SyntaxContext, DUMMY_SP},
     ecma::{
         ast::{
-            ArrowExpr, BlockStmt, CallExpr, Callee, Decl, DefaultDecl, Expr, FnDecl, Function, Id,
-            Ident, ImportDecl, ImportSpecifier, Module, ModuleDecl, ModuleItem, Stmt, VarDecl,
-            VarDeclKind, VarDeclarator,
+            op, ArrowExpr, AssignExpr, BlockStmt, CallExpr, Callee, Decl, DefaultDecl, Expr,
+            FnDecl, FnExpr, Function, Id, Ident, ImportDecl, ImportSpecifier, Module, ModuleDecl,
+            ModuleItem, ReturnStmt, Stmt, VarDecl, VarDeclKind, VarDeclarator,
         },
         atoms::JsWord,
         utils::{find_pat_ids, private_ident, StmtLike},
@@ -110,6 +110,38 @@ impl VisitMut for Constify {
 
                 let var_name = self.next_var_name(callee.span());
                 let deps = ids_used_by(&args[0].expr);
+
+                let data_decl = VarDeclarator {};
+
+                let data_decl = Stmt::Decl(Decl::Var(Box::new(VarDecl {
+                    span: DUMMY_SP,
+                    kind: VarDeclKind::Const,
+                    declare: false,
+                    decls: vec![data_decl],
+                })));
+
+                let return_stmt = Stmt::Return(ReturnStmt {
+                    span: DUMMY_SP,
+                    arg: Some(Box::new(Expr::Assign(AssignExpr {
+                        span: DUMMY_SP,
+                        op: op!("="),
+                        left: var_name.clone().into(),
+                        right: Box::new(Expr::Fn(FnExpr {
+                            ident: None,
+                            function: Box::new(Function {
+                                params: Default::default(),
+                                decorators: Default::default(),
+                                span: DUMMY_SP,
+                                body: (),
+                                is_generator: false,
+                                is_async: false,
+                                type_params: Default::default(),
+                                return_type: Default::default(),
+                            }),
+                        })),
+                    }))),
+                });
+
                 let decl = Box::new(Function {
                     params: Default::default(),
                     decorators: Default::default(),
