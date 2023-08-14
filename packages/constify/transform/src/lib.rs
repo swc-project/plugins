@@ -165,7 +165,7 @@ impl VisitMut for Constify {
                     span: DUMMY_SP,
                     body: Some(BlockStmt {
                         span: DUMMY_SP,
-                        stmts: vec![return_stmt],
+                        stmts: vec![data_decl, return_stmt],
                     }),
                     is_generator: false,
                     is_async: false,
