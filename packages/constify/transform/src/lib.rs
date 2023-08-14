@@ -15,6 +15,8 @@ use swc_core::{
     },
 };
 
+use crate::utils::ids_used_by;
+
 pub fn constify() -> impl VisitMut {
     Constify {
         const_ctxt: SyntaxContext::empty().apply_mark(Mark::new()),
@@ -23,6 +25,7 @@ pub fn constify() -> impl VisitMut {
 }
 
 mod import_analyzer;
+mod utils;
 
 static MODULE_SPECIFIER: Lazy<JsWord> = Lazy::new(|| "@swc/constify".into());
 
@@ -79,14 +82,17 @@ impl VisitMut for Constify {
                     init: Some(args.pop().unwrap().expr),
                     definite: false,
                 };
-                self.s
-                    .prepend_stmts
-                    .push(Stmt::Decl(Decl::Var(Box::new(VarDecl {
+                let deps = ids_used_by(&decl.init);
+
+                self.s.vars.push(ConstItem {
+                    decl: Decl::Var(Box::new(VarDecl {
                         span: DUMMY_SP,
                         kind: VarDeclKind::Let,
                         declare: false,
                         decls: vec![decl],
-                    }))));
+                    })),
+                    deps,
+                });
                 *e = Expr::Ident(var_name);
             } else if self
                 .s
