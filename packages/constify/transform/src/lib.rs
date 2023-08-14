@@ -111,7 +111,14 @@ impl VisitMut for Constify {
                 let var_name = self.next_var_name(callee.span());
                 let deps = ids_used_by(&args[0].expr);
 
-                let data_decl = VarDeclarator {};
+                let data_var_name = private_ident!("__data__");
+
+                let data_decl = VarDeclarator {
+                    span: Span::default(),
+                    name: data_var_name.clone().into(),
+                    init: Some(args.pop().unwrap().expr),
+                    definite: false,
+                };
 
                 let data_decl = Stmt::Decl(Decl::Var(Box::new(VarDecl {
                     span: DUMMY_SP,
@@ -132,7 +139,17 @@ impl VisitMut for Constify {
                                 params: Default::default(),
                                 decorators: Default::default(),
                                 span: DUMMY_SP,
-                                body: (),
+                                body: Some(BlockStmt {
+                                    span: DUMMY_SP,
+                                    stmts: {
+                                        let s = Stmt::Return(ReturnStmt {
+                                            span: DUMMY_SP,
+                                            arg: Some(data_var_name.clone().into()),
+                                        });
+
+                                        vec![s]
+                                    },
+                                }),
                                 is_generator: false,
                                 is_async: false,
                                 type_params: Default::default(),
