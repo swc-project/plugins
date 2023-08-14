@@ -1,11 +1,12 @@
 #![feature(box_patterns)]
 
 use import_analyzer::ImportMap;
+use rustc_hash::FxHashSet;
 use swc_core::{
     common::{sync::Lazy, util::take::Take, Mark, Span, Spanned, SyntaxContext, DUMMY_SP},
     ecma::{
         ast::{
-            CallExpr, Callee, Decl, Expr, Ident, ImportDecl, Module, ModuleItem, Stmt, VarDecl,
+            CallExpr, Callee, Decl, Expr, Id, Ident, ImportDecl, Module, ModuleItem, Stmt, VarDecl,
             VarDeclKind, VarDeclarator,
         },
         atoms::JsWord,
@@ -17,9 +18,7 @@ use swc_core::{
 pub fn constify() -> impl VisitMut {
     Constify {
         const_ctxt: SyntaxContext::empty().apply_mark(Mark::new()),
-        next_const_id: 0,
-        prepend_stmts: vec![],
-        imports: Default::default(),
+        s: Default::default(),
     }
 }
 
@@ -29,18 +28,27 @@ static MODULE_SPECIFIER: Lazy<JsWord> = Lazy::new(|| "@swc/constify".into());
 
 struct Constify {
     const_ctxt: SyntaxContext,
+    s: State,
+}
 
+#[derive(Default)]
+struct State {
     next_const_id: u32,
 
-    prepend_stmts: Vec<Stmt>,
+    vars: Vec<ConstItem>,
 
     imports: ImportMap,
 }
 
+struct ConstItem {
+    decl: Decl,
+    deps: FxHashSet<Id>,
+}
+
 impl Constify {
     fn next_var_name(&mut self, span: Span) -> Ident {
-        let id = private_ident!(span, format!("__CONST_{}__", self.next_const_id));
-        self.next_const_id += 1;
+        let id = private_ident!(span, format!("__CONST_{}__", self.s.next_const_id));
+        self.s.next_const_id += 1;
         id
     }
 }
@@ -58,6 +66,7 @@ impl VisitMut for Constify {
         }) = e
         {
             if self
+                .s
                 .imports
                 .is_import(&callee, &MODULE_SPECIFIER, "constify")
             {
@@ -70,7 +79,8 @@ impl VisitMut for Constify {
                     init: Some(args.pop().unwrap().expr),
                     definite: false,
                 };
-                self.prepend_stmts
+                self.s
+                    .prepend_stmts
                     .push(Stmt::Decl(Decl::Var(Box::new(VarDecl {
                         span: DUMMY_SP,
                         kind: VarDeclKind::Let,
@@ -79,6 +89,7 @@ impl VisitMut for Constify {
                     }))));
                 *e = Expr::Ident(var_name);
             } else if self
+                .s
                 .imports
                 .is_import(&callee, &MODULE_SPECIFIER, "lazyConst")
             {
@@ -93,8 +104,8 @@ impl VisitMut for Constify {
     }
 
     fn visit_mut_module(&mut self, m: &mut Module) {
-        self.imports = ImportMap::analyze(m);
-        if !self.imports.is_module_imported(&MODULE_SPECIFIER) {
+        self.s.imports = ImportMap::analyze(m);
+        if !self.s.imports.is_module_imported(&MODULE_SPECIFIER) {
             return;
         }
 
@@ -117,7 +128,7 @@ impl VisitMut for Constify {
         for mut stmt in stmts.take() {
             stmt.visit_mut_with(self);
 
-            new.extend(self.prepend_stmts.drain(..).map(ModuleItem::from));
+            new.extend(self.s.prepend_stmts.drain(..).map(ModuleItem::from));
 
             new.push(stmt);
         }
@@ -131,7 +142,7 @@ impl VisitMut for Constify {
         for mut stmt in stmts.take() {
             stmt.visit_mut_with(self);
 
-            new.append(&mut self.prepend_stmts);
+            new.append(&mut self.s.prepend_stmts);
 
             new.push(stmt);
         }
