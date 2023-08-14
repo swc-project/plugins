@@ -9,8 +9,8 @@ use swc_core::{
     common::{sync::Lazy, util::take::Take, Mark, Span, Spanned, SyntaxContext, DUMMY_SP},
     ecma::{
         ast::{
-            CallExpr, Callee, Decl, Expr, Id, Ident, ImportDecl, ImportSpecifier, Module,
-            ModuleDecl, ModuleItem, Stmt, VarDecl, VarDeclKind, VarDeclarator,
+            CallExpr, Callee, Decl, DefaultDecl, Expr, Id, Ident, ImportDecl, ImportSpecifier,
+            Module, ModuleDecl, ModuleItem, Stmt, VarDecl, VarDeclKind, VarDeclarator,
         },
         atoms::JsWord,
         utils::{find_pat_ids, private_ident, StmtLike},
@@ -223,14 +223,14 @@ impl Vars for ModuleDecl {
 
                 buf
             }
-            ModuleDecl::ExportDecl(s) => {}
-            ModuleDecl::ExportNamed(s) => {}
-            ModuleDecl::ExportDefaultDecl(s) => {}
-            ModuleDecl::ExportDefaultExpr(s) => {}
-            ModuleDecl::ExportAll(s) => {}
-            ModuleDecl::TsImportEquals(s) => {}
-            ModuleDecl::TsExportAssignment(s) => {}
-            ModuleDecl::TsNamespaceExport(s) => {}
+            ModuleDecl::ExportDecl(s) => s.decl.vars_declared_by_item(),
+            ModuleDecl::ExportDefaultDecl(s) => match &s.decl {
+                DefaultDecl::Class(d) => d.ident.iter().map(|i| i.to_id()).collect(),
+                DefaultDecl::Fn(d) => d.ident.iter().map(|i| i.to_id()).collect(),
+
+                _ => Default::default(),
+            },
+            _ => Default::default(),
         }
     }
 }
