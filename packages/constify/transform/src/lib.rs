@@ -77,7 +77,7 @@ impl VisitMut for Constify {
             if self
                 .s
                 .imports
-                .is_import(&callee, &MODULE_SPECIFIER, "constify")
+                .is_import(callee, &MODULE_SPECIFIER, "constify")
             {
                 assert_eq!(args.len(), 1, "constify() takes exactly one argument");
 
@@ -104,7 +104,7 @@ impl VisitMut for Constify {
             } else if self
                 .s
                 .imports
-                .is_import(&callee, &MODULE_SPECIFIER, "lazyConst")
+                .is_import(callee, &MODULE_SPECIFIER, "lazyConst")
             {
                 assert_eq!(args.len(), 1, "lazyConst() takes exactly one argument");
 
