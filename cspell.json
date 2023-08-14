@@ -4,6 +4,7 @@
         "ctxt",
         "hasher",
         "lightningcss",
-        "quasis"
+        "quasis",
+        "rustc"
     ]
 }
