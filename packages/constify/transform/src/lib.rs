@@ -9,9 +9,9 @@ use swc_core::{
     common::{sync::Lazy, util::take::Take, Mark, Span, Spanned, SyntaxContext, DUMMY_SP},
     ecma::{
         ast::{
-            ArrowExpr, CallExpr, Callee, Decl, DefaultDecl, Expr, Function, Id, Ident, ImportDecl,
-            ImportSpecifier, Module, ModuleDecl, ModuleItem, Stmt, VarDecl, VarDeclKind,
-            VarDeclarator,
+            ArrowExpr, BlockStmt, CallExpr, Callee, Decl, DefaultDecl, Expr, FnDecl, Function, Id,
+            Ident, ImportDecl, ImportSpecifier, Module, ModuleDecl, ModuleItem, Stmt, VarDecl,
+            VarDeclKind, VarDeclarator,
         },
         atoms::JsWord,
         utils::{find_pat_ids, private_ident, StmtLike},
@@ -94,7 +94,7 @@ impl VisitMut for Constify {
                     name: var_name.clone(),
                     decl: Some(Decl::Var(Box::new(VarDecl {
                         span: DUMMY_SP,
-                        kind: VarDeclKind::Let,
+                        kind: VarDeclKind::Const,
                         declare: false,
                         decls: vec![decl],
                     }))),
@@ -107,6 +107,33 @@ impl VisitMut for Constify {
                 .is_import(&callee, &MODULE_SPECIFIER, "lazyConst")
             {
                 assert_eq!(args.len(), 1, "lazyConst() takes exactly one argument");
+
+                let var_name = self.next_var_name(callee.span());
+                let deps = ids_used_by(&args[0].expr);
+                let decl = Box::new(Function {
+                    params: Default::default(),
+                    decorators: Default::default(),
+                    span: DUMMY_SP,
+                    body: Some(BlockStmt {
+                        span: DUMMY_SP,
+                        stmts: vec![return_stmt],
+                    }),
+                    is_generator: false,
+                    is_async: false,
+                    type_params: Default::default(),
+                    return_type: Default::default(),
+                });
+
+                self.s.vars.push(ConstItem {
+                    name: var_name.clone(),
+                    decl: Some(Decl::Fn(FnDecl {
+                        ident: var_name,
+                        declare: false,
+                        function: decl,
+                    })),
+                    deps,
+                });
+                *e = Expr::Ident(var_name);
             } else {
             };
         }
