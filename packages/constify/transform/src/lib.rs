@@ -17,6 +17,7 @@ use swc_core::{
         visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
     },
 };
+use tracing::debug;
 
 use crate::utils::ids_used_by;
 
@@ -47,6 +48,7 @@ struct State {
 }
 
 struct ConstItem {
+    name: Ident,
     decl: Option<Decl>,
     deps: FxHashSet<Id>,
 }
@@ -86,6 +88,8 @@ impl Constify {
                             prepended.push(T::from_stmt(Stmt::Decl(decl)));
                         }
                     }
+                } else {
+                    debug!("{} is not ready", item.name.sym);
                 }
             }
 
@@ -125,6 +129,7 @@ impl VisitMut for Constify {
                 let deps = ids_used_by(&decl.init);
 
                 self.s.vars.push(ConstItem {
+                    name: var_name.clone(),
                     decl: Some(Decl::Var(Box::new(VarDecl {
                         span: DUMMY_SP,
                         kind: VarDeclKind::Let,
