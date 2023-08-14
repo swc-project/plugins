@@ -1,8 +1,8 @@
 use swc_core::{
     common::{Mark, SyntaxContext},
     ecma::{
-        ast::Stmt,
-        visit::{noop_visit_mut_type, VisitMut},
+        ast::{Expr, ImportDecl, Stmt},
+        visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
     },
 };
 
@@ -24,4 +24,12 @@ struct Constify {
 
 impl VisitMut for Constify {
     noop_visit_mut_type!();
+
+    fn visit_mut_import_decl(&mut self, i: &mut ImportDecl) {
+        i.visit_mut_children_with(self);
+    }
+
+    fn visit_mut_expr(&mut self, e: &mut Expr) {
+        e.visit_mut_children_with(self);
+    }
 }
