@@ -1,5 +1,5 @@
 use swc_core::{
-    common::collections::AHashMap,
+    common::collections::{AHashMap, AHashSet},
     ecma::{
         ast::{
             Expr, Id, ImportDecl, ImportNamedSpecifier, ImportSpecifier, MemberExpr, MemberProp,
@@ -16,9 +16,15 @@ pub(crate) struct ImportMap {
     imports: AHashMap<Id, (JsWord, JsWord)>,
 
     namespace_imports: AHashMap<Id, JsWord>,
+
+    imported_modules: AHashSet<JsWord>,
 }
 
 impl ImportMap {
+    pub fn is_module_imported(&mut self, module: &JsWord) -> bool {
+        self.imported_modules.contains(module)
+    }
+
     /// Returns true if `e` is an import of `orig_name` from `module`.
     pub fn is_import(&self, e: &Expr, module: &str, orig_name: &str) -> bool {
         match e {
@@ -47,10 +53,7 @@ impl ImportMap {
     }
 
     pub fn analyze(m: &Module) -> Self {
-        let mut data = ImportMap {
-            imports: Default::default(),
-            namespace_imports: Default::default(),
-        };
+        let mut data = ImportMap::default();
 
         m.visit_with(&mut Analyzer { data: &mut data });
 
@@ -66,6 +69,8 @@ impl Visit for Analyzer<'_> {
     noop_visit_type!();
 
     fn visit_import_decl(&mut self, import: &ImportDecl) {
+        self.data.imported_modules.insert(import.src.value.clone());
+
         for s in &import.specifiers {
             let (local, orig_sym) = match s {
                 ImportSpecifier::Named(ImportNamedSpecifier {
