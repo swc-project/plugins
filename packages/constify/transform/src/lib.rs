@@ -1,3 +1,5 @@
+#![feature(box_patterns)]
+
 use swc_core::{
     common::{collections::AHashMap, Mark, SyntaxContext},
     ecma::{

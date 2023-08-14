@@ -1,3 +1,15 @@
+use swc_core::{
+    common::collections::AHashMap,
+    ecma::{
+        ast::{
+            Expr, Id, ImportDecl, ImportNamedSpecifier, ImportSpecifier, MemberExpr, MemberProp,
+            Module, ModuleExportName,
+        },
+        atoms::JsWord,
+        visit::{noop_visit_type, Visit, VisitWith},
+    },
+};
+
 #[derive(Debug)]
 pub(crate) struct ImportMap {
     /// Map from module name to (module path, exported symbol)
@@ -51,6 +63,8 @@ struct Analyzer<'a> {
 }
 
 impl Visit for Analyzer<'_> {
+    noop_visit_type!();
+
     fn visit_import_decl(&mut self, import: &ImportDecl) {
         for s in &import.specifiers {
             let (local, orig_sym) = match s {
