@@ -62,7 +62,8 @@ impl Constify {
     where
         T: StmtLike + VisitMutWith<Self> + Vars,
     {
-        let mut new = vec![];
+        let mut prepended = vec![];
+        let mut buf = vec![];
 
         for mut stmt in stmts.take() {
             stmt.visit_mut_with(self);
@@ -77,17 +78,21 @@ impl Constify {
                     did_work = true;
                 }
 
-                if did_work && item.deps.is_empty() {
+                if item.deps.is_empty() {
                     if let Some(decl) = item.decl.take() {
-                        new.push(T::from_stmt(Stmt::Decl(decl)));
+                        if did_work {
+                            buf.push(T::from_stmt(Stmt::Decl(decl)));
+                        } else {
+                            prepended.push(T::from_stmt(Stmt::Decl(decl)));
+                        }
                     }
                 }
             }
 
-            new.push(stmt);
+            buf.push(stmt);
         }
 
-        *stmts = new;
+        *stmts = prepended.into_iter().chain(buf).collect();
     }
 }
 
