@@ -176,7 +176,7 @@ impl VisitMut for Constify {
                 self.s.vars.push(ConstItem {
                     name: var_name.clone(),
                     decl: Some(Decl::Fn(FnDecl {
-                        ident: var_name,
+                        ident: var_name.clone(),
                         declare: false,
                         function: decl,
                     })),
