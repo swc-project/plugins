@@ -1,9 +1,10 @@
 #![feature(box_patterns)]
 
+use import_analyzer::ImportMap;
 use swc_core::{
     common::{collections::AHashMap, Mark, SyntaxContext},
     ecma::{
-        ast::{Expr, Id, Ident, ImportDecl, Stmt},
+        ast::{Expr, Id, Ident, ImportDecl, Module, Stmt},
         atoms::JsWord,
         visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
     },
@@ -14,6 +15,7 @@ pub fn constify() -> impl VisitMut {
         const_ctxt: SyntaxContext::empty().apply_mark(Mark::new()),
         next_const_id: 0,
         prepend_stmts: vec![],
+        imports: Default::default(),
     }
 }
 
@@ -25,6 +27,8 @@ struct Constify {
     next_const_id: u32,
 
     prepend_stmts: Vec<Stmt>,
+
+    imports: ImportMap,
 }
 
 impl VisitMut for Constify {
@@ -36,5 +40,11 @@ impl VisitMut for Constify {
 
     fn visit_mut_expr(&mut self, e: &mut Expr) {
         e.visit_mut_children_with(self);
+    }
+
+    fn visit_mut_module(&mut self, m: &mut Module) {
+        self.imports = ImportMap::analyze(m);
+
+        m.visit_mut_children_with(self);
     }
 }

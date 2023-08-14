@@ -10,7 +10,7 @@ use swc_core::{
     },
 };
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub(crate) struct ImportMap {
     /// Map from module name to (module path, exported symbol)
     imports: AHashMap<Id, (JsWord, JsWord)>,
