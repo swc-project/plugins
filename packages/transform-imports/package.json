@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-transform-imports",
-  "version": "1.5.71",
+  "version": "1.5.72",
   "description": "SWC plugin for https://www.npmjs.com/package/babel-plugin-transform-imports",
   "main": "swc_plugin_transform_imports.wasm",
   "scripts": {
