@@ -1,12 +1,14 @@
 #![deny(unused)]
 
 use std::{fs::read_to_string, path::PathBuf};
+
 use styled_components::{styled_components, Config};
 use swc_core::{
     common::{chain, Mark},
-    ecma::parser::{EsConfig, Syntax},
-    ecma::transforms::base::resolver,
-    ecma::transforms::testing::test_fixture,
+    ecma::{
+        parser::{EsConfig, Syntax},
+        transforms::{base::resolver, testing::test_fixture},
+    },
 };
 
 #[testing::fixture("tests/fixtures/**/code.js")]

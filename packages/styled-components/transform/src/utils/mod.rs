@@ -1,10 +1,11 @@
-pub use self::analyzer::{analyze, analyzer};
 use std::{borrow::Cow, cell::RefCell};
+
 use swc_core::{
     common::{collections::AHashMap, SyntaxContext},
-    ecma::ast::*,
-    ecma::atoms::js_word,
+    ecma::{ast::*, atoms::js_word},
 };
+
+pub use self::analyzer::{analyze, analyzer};
 
 mod analyzer;
 
