@@ -1,10 +1,12 @@
 use swc_core::{
     common::collections::AHashSet,
-    ecma::ast::{
-        ArrowExpr, ClassDecl, FnDecl, Function, Id, ImportDefaultSpecifier, ImportNamedSpecifier,
-        ImportStarAsSpecifier, ObjectPatProp, Pat, VarDeclarator,
+    ecma::{
+        ast::{
+            ArrowExpr, ClassDecl, FnDecl, Function, Id, ImportDefaultSpecifier,
+            ImportNamedSpecifier, ImportStarAsSpecifier, ObjectPatProp, Pat, VarDeclarator,
+        },
+        visit::{noop_visit_type, Visit, VisitWith},
     },
-    ecma::visit::{noop_visit_type, Visit, VisitWith},
 };
 
 // Modified from swc_ecma_utils/src/lib.rs:BindingCollector.
@@ -58,6 +60,7 @@ impl Visit for TopLevelBindingCollector {
     }
 
     fn visit_arrow_expr(&mut self, _: &ArrowExpr) {}
+
     fn visit_function(&mut self, _: &Function) {}
 
     fn visit_import_default_specifier(&mut self, node: &ImportDefaultSpecifier) {

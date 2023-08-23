@@ -867,7 +867,7 @@ dependencies = [
 
 [[package]]
 name = "modularize_imports"
-version = "0.34.0"
+version = "0.35.0"
 dependencies = [
  "convert_case",
  "handlebars",
@@ -1716,7 +1716,7 @@ dependencies = [
 
 [[package]]
 name = "styled_components"
-version = "0.61.0"
+version = "0.62.0"
 dependencies = [
  "Inflector",
  "once_cell",
@@ -1730,7 +1730,7 @@ dependencies = [
 
 [[package]]
 name = "styled_jsx"
-version = "0.38.0"
+version = "0.39.0"
 dependencies = [
  "easy-error",
  "lightningcss",
@@ -1859,7 +1859,7 @@ dependencies = [
 
 [[package]]
 name = "swc_constify"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "rustc-hash",
  "serde_json",
@@ -2196,7 +2196,7 @@ dependencies = [
 
 [[package]]
 name = "swc_emotion"
-version = "0.37.0"
+version = "0.38.0"
 dependencies = [
  "base64",
  "byteorder",
@@ -2400,7 +2400,7 @@ dependencies = [
 
 [[package]]
 name = "swc_relay"
-version = "0.9.0"
+version = "0.10.0"
 dependencies = [
  "once_cell",
  "regex",

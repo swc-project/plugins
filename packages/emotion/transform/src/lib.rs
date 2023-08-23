@@ -17,7 +17,8 @@ use swc_core::{
             ArrayLit, CallExpr, Callee, Expr, ExprOrSpread, Id, Ident, ImportDecl, ImportSpecifier,
             JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElement, JSXElementName,
             JSXExpr, JSXExprContainer, JSXObject, KeyValueProp, MemberProp, ModuleExportName,
-            ObjectLit, Pat, Prop, PropName, PropOrSpread, SourceMapperExt, Tpl, VarDeclarator,
+            ObjectLit, Pat, Prop, PropName, PropOrSpread, SourceMapperExt, SpreadElement, Tpl,
+            VarDeclarator,
         },
         atoms::JsWord,
         utils::ExprFactory,
@@ -482,17 +483,32 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
                                         expr.args.push(cm.as_arg());
                                     }
                                     if let Some(ExprOrSpread { expr, .. }) = c.args.get_mut(1) {
-                                        if let Expr::Object(ObjectLit { props, .. }) = expr.as_mut()
-                                        {
-                                            props.extend(args_props);
-                                        } else {
-                                            c.args.push(
-                                                Expr::Object(ObjectLit {
+                                        match expr.as_mut() {
+                                            Expr::Object(ObjectLit { props, .. }) => {
+                                                props.extend(args_props);
+                                            }
+                                            Expr::Call(_) => {
+                                                args_props.push(PropOrSpread::Spread(
+                                                    SpreadElement {
+                                                        dot3_token: DUMMY_SP,
+                                                        expr: expr.take(),
+                                                    },
+                                                ));
+
+                                                *expr = Box::new(Expr::Object(ObjectLit {
                                                     span: DUMMY_SP,
                                                     props: args_props,
-                                                })
-                                                .as_arg(),
-                                            );
+                                                }));
+                                            }
+                                            _ => {
+                                                c.args.push(
+                                                    Expr::Object(ObjectLit {
+                                                        span: DUMMY_SP,
+                                                        props: args_props,
+                                                    })
+                                                    .as_arg(),
+                                                );
+                                            }
                                         }
                                     } else {
                                         c.args.push(
@@ -609,16 +625,32 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
                                     )));
                                 }
                                 if let Some(ExprOrSpread { expr, .. }) = callee.args.get_mut(1) {
-                                    if let Expr::Object(ObjectLit { props, .. }) = expr.as_mut() {
-                                        props.extend(object_props);
-                                    } else {
-                                        callee.args.push(
-                                            Expr::Object(ObjectLit {
+                                    match expr.as_mut() {
+                                        Expr::Object(ObjectLit { props, .. }) => {
+                                            props.extend(object_props);
+                                        }
+                                        Expr::Call(_) => {
+                                            object_props.push(PropOrSpread::Spread(
+                                                SpreadElement {
+                                                    dot3_token: DUMMY_SP,
+                                                    expr: expr.take(),
+                                                },
+                                            ));
+
+                                            *expr = Box::new(Expr::Object(ObjectLit {
                                                 span: DUMMY_SP,
                                                 props: object_props,
-                                            })
-                                            .as_arg(),
-                                        );
+                                            }));
+                                        }
+                                        _ => {
+                                            callee.args.push(
+                                                Expr::Object(ObjectLit {
+                                                    span: DUMMY_SP,
+                                                    props: object_props,
+                                                })
+                                                .as_arg(),
+                                            );
+                                        }
                                     }
                                 } else {
                                     callee.args.push(

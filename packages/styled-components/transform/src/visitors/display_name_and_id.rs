@@ -1,18 +1,22 @@
+use std::{cell::RefCell, convert::TryInto, path::Path, rc::Rc};
+
+use once_cell::sync::Lazy;
+use regex::Regex;
+use swc_core::{
+    common::{util::take::Take, FileName, DUMMY_SP},
+    ecma::{
+        ast::*,
+        atoms::{js_word, JsWord},
+        utils::{quote_ident, ExprFactory},
+        visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith},
+    },
+};
+use tracing::{debug, span, trace, Level};
+
 use crate::{
     utils::{get_prop_name, prefix_leading_digit, State},
     Config,
 };
-use once_cell::sync::Lazy;
-use regex::Regex;
-use std::{cell::RefCell, convert::TryInto, path::Path, rc::Rc};
-use swc_core::{
-    common::{util::take::Take, FileName, DUMMY_SP},
-    ecma::ast::*,
-    ecma::atoms::{js_word, JsWord},
-    ecma::utils::{quote_ident, ExprFactory},
-    ecma::visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith},
-};
-use tracing::{debug, span, trace, Level};
 
 pub fn display_name_and_id(
     file_name: FileName,

@@ -1,12 +1,12 @@
+use std::{cell::RefCell, rc::Rc};
+
+use swc_core::ecma::{
+    ast::*,
+    visit::{as_folder, noop_visit_mut_type, noop_visit_type, Fold, Visit, VisitMut, VisitWith},
+};
+
 use super::State;
 use crate::Config;
-use std::{cell::RefCell, rc::Rc};
-use swc_core::{
-    ecma::ast::*,
-    ecma::visit::{
-        as_folder, noop_visit_mut_type, noop_visit_type, Fold, Visit, VisitMut, VisitWith,
-    },
-};
 
 pub fn analyzer(config: Rc<Config>, state: Rc<RefCell<State>>) -> impl VisitMut + Fold {
     as_folder(AsAnalyzer { config, state })
