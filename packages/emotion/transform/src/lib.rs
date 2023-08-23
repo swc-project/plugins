@@ -491,7 +491,7 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
                                                 args_props.push(PropOrSpread::Spread(
                                                     SpreadElement {
                                                         dot3_token: DUMMY_SP,
-                                                        expr: expr.to_owned(),
+                                                        expr: expr.take(),
                                                     },
                                                 ));
 
@@ -633,7 +633,7 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
                                             object_props.push(PropOrSpread::Spread(
                                                 SpreadElement {
                                                     dot3_token: DUMMY_SP,
-                                                    expr: expr.to_owned(),
+                                                    expr: expr.take(),
                                                 },
                                             ));
 
