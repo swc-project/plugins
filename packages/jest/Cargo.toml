@@ -13,8 +13,8 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 phf = { version = "0.10.0", features = ["macros"] }
 serde = { version = "1.0.130", features = ["derive"] }
-swc_common = { version = "0.31.18", features = ["concurrent"] }
-swc_core = { version = "0.79.56", features = [
+swc_common = { version = "0.31.21", features = ["concurrent"] }
+swc_core = { version = "0.79.70", features = [
   "ecma_plugin_transform",
   "ecma_utils",
   "ecma_visit",
