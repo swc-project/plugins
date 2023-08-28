@@ -170,7 +170,7 @@ impl<'a> Rewriter<'a> {
                         src: Box::new(Str::from(new_path.as_ref())),
                         span: old_decl.span,
                         type_only: false,
-                        asserts: None,
+                        with: None,
                     });
                 }
                 _ => {

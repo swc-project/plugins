@@ -296,7 +296,7 @@ pub fn get_usable_import_specifier(_items: &[ModuleItem]) -> String {
 
 pub fn styled_jsx_import_decl(style_import_name: &str) -> ModuleItem {
     ModuleItem::ModuleDecl(ModuleDecl::Import(ImportDecl {
-        asserts: None,
+        with: None,
         span: DUMMY_SP,
         type_only: false,
         specifiers: vec![ImportSpecifier::Default(ImportDefaultSpecifier {

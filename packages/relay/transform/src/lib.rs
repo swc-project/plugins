@@ -63,7 +63,7 @@ impl RelayImport {
             })],
             src: Box::new(self.path.clone().into()),
             type_only: false,
-            asserts: None,
+            with: None,
         }))
     }
 }
