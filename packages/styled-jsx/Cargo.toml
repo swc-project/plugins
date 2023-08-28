@@ -16,7 +16,7 @@ custom_transform = ["swc_core/common_concurrent"]
 [dependencies]
 easy-error = "1.0.0"
 styled_jsx = { path = "./transform" }
-swc_core = { version = "0.81.5", features = [
+swc_core = { version = "0.82.1", features = [
   "common",
   "ecma_ast",
   "ecma_plugin_transform",
@@ -28,5 +28,5 @@ swc_core = { version = "0.81.5", features = [
 tracing = { version = "0.1.37", features = ["release_max_level_off"] }
 
 [dev-dependencies]
-swc_core = { features = ["testing_transform"], version = "0.81.5" }
+swc_core = { features = ["testing_transform"], version = "0.82.1" }
 testing = "0.34.0"
