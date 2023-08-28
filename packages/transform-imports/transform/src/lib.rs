@@ -63,7 +63,7 @@ struct Rewriter<'a> {
 
 impl<'a> Rewriter<'a> {
     fn rewrite(&self, old_decl: &ImportDecl) -> Vec<ImportDecl> {
-        if old_decl.type_only || old_decl.asserts.is_some() {
+        if old_decl.type_only || old_decl.with.is_some() {
             return vec![old_decl.clone()];
         }
 
