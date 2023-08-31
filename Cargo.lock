@@ -723,9 +723,8 @@ checksum = "b4668fb0ea861c1df094127ac5f1da3409a82116a4ba74fca2e58ef927159bb3"
 
 [[package]]
 name = "lightningcss"
-version = "1.0.0-alpha.44"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "97cc864b2dc5f078725908d7be7b35ce934e156ff52db40643ba6cb55f813c14"
+version = "1.0.0-alpha.45"
+source = "git+https://github.com/kdy1/lightningcss.git?branch=kdy1/dev#661a7354bcd3495a8bdf3887831a447a45f97370"
 dependencies = [
  "ahash 0.7.6",
  "bitflags 2.4.0",
@@ -748,8 +747,7 @@ dependencies = [
 [[package]]
 name = "lightningcss-derive"
 version = "1.0.0-alpha.39"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "80f9c05013e43faeef3f09a4c425f926b91a64fee540887a9857a5556b70ea5a"
+source = "git+https://github.com/kdy1/lightningcss.git?branch=kdy1/dev#661a7354bcd3495a8bdf3887831a447a45f97370"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -953,9 +951,8 @@ checksum = "c1b04fb49957986fdce4d6ee7a65027d55d4b6d2265e5848bbb507b58ccfdb6f"
 
 [[package]]
 name = "parcel_selectors"
-version = "0.26.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d3e808c7a75aedcc522bd24187de6903adab3265d690a61f8b8181edaa988377"
+version = "0.26.1"
+source = "git+https://github.com/kdy1/lightningcss.git?branch=kdy1/dev#661a7354bcd3495a8bdf3887831a447a45f97370"
 dependencies = [
  "bitflags 2.4.0",
  "cssparser",
