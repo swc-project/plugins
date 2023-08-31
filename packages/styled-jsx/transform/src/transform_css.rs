@@ -500,6 +500,11 @@ fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Selector<'i> {
             }
         }
     }
+
+    if cfg!(debug_assertions) {
+        debug!("Parsing: {:?}", buf)
+    }
+
     let selector = Selector::parse_string_with_options(&buf, Default::default())
         .expect("failed to parse selector list");
 
