@@ -400,13 +400,10 @@ impl CssNamespace {
 
             // result.push(Component::Combinator(Combinator::Descendant));
 
-            dbg!(&complex_selectors);
             complex_selectors.reverse();
 
             result.extend(complex_selectors);
             result.extend(node.into_iter().skip(i + 1));
-
-            dbg!(&result);
 
             if let Some(combinator) = combinator {
                 result.push(Component::Combinator(combinator));
