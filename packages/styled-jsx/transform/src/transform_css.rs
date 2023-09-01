@@ -394,11 +394,6 @@ impl CssNamespace {
 
             if let Some(Component::Combinator(Combinator::Descendant)) = complex_selectors.last() {
                 complex_selectors.pop();
-            } else if let Some(Component::Combinator(c)) = complex_selectors.last() {
-                let c = *c;
-                complex_selectors.pop();
-
-                complex_selectors.insert(0, Component::Combinator(c))
             }
 
             if let Component::Combinator(Combinator::Descendant) = complex_selectors[0] {
