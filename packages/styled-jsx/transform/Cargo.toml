@@ -17,12 +17,6 @@ lightningcss = { version = "1.0.0-alpha.44", features = [
   "into_owned",
 ] }
 parcel_selectors = "0.26.0"
-# lightningcss = { version = "1.0.0-alpha.44", features = [
-#   "visitor",
-#   "into_owned",
-# ] }
-# parcel_selectors = "0.26.0"
-
 
 swc_core = { version = "0.82.10", features = [
   "common",
