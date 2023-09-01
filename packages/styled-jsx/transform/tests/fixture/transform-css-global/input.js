@@ -9,19 +9,19 @@ export default () => (
       }
       
       :global(p) {
-        color: blue
+        color: #001
       }
       
-      :global(p){
-        color: blue;
+      :global(h1){
+        color: #002;
       }
       
-      :global(p), a {
-        color: blue;
+      :global(h2), a {
+        color: #003;
       }
       
       :global(.foo + a) {
-        color: red;
+        color: #004;
       }
       
       :global(body) {
