@@ -378,8 +378,20 @@ impl CssNamespace {
 
             let mut complex_selectors =
                 children.iter_raw_match_order().cloned().collect::<Vec<_>>();
+
+            #[cfg(debug_assertions)]
+            {
+                debug!("complex_selectors: {:?}", SafeDebug(&complex_selectors))
+            }
+
             // Remove `a`
             complex_selectors.pop();
+
+            #[cfg(debug_assertions)]
+            {
+                debug!("complex_selectors: {:?}", SafeDebug(&complex_selectors))
+            }
+
             if let Some(Component::Combinator(Combinator::Descendant)) = complex_selectors.last() {
                 complex_selectors.pop();
             } else if let Some(Component::Combinator(c)) = complex_selectors.last() {
@@ -393,6 +405,11 @@ impl CssNamespace {
                 complex_selectors.remove(0);
             }
 
+            #[cfg(debug_assertions)]
+            {
+                debug!("complex_selectors: {:?}", SafeDebug(&complex_selectors))
+            }
+
             if complex_selectors.is_empty() {
                 bail!("Failed to transform one off global selector");
             }
@@ -403,8 +420,12 @@ impl CssNamespace {
 
             // result.push(Component::Combinator(Combinator::Descendant));
 
+            dbg!(&complex_selectors);
+
             result.extend(complex_selectors);
             result.extend(node.into_iter().skip(i + 1));
+
+            dbg!(&result);
 
             if let Some(combinator) = combinator {
                 result.push(Component::Combinator(combinator));
