@@ -74,12 +74,6 @@ pub fn transform_css(
         }
     };
 
-    // Apply auto prefixer
-    // TODO:
-    ss.minify(MinifyOptions {
-        ..Default::default()
-    })
-    .expect("failed to minify/auto-prefix css");
     ss.visit(&mut CssNamespace {
         class_name: match class_name {
             Some(s) => s.clone(),
@@ -89,6 +83,13 @@ pub fn transform_css(
         is_dynamic: style_info.is_dynamic,
     })
     .expect("failed to transform css");
+
+    // Apply auto prefixer
+    // TODO:
+    ss.minify(MinifyOptions {
+        ..Default::default()
+    })
+    .expect("failed to minify/auto-prefix css");
 
     let res = ss
         .to_css(PrinterOptions {
@@ -377,15 +378,12 @@ impl CssNamespace {
 
             let mut complex_selectors =
                 children.iter_raw_match_order().cloned().collect::<Vec<_>>();
+
             // Remove `a`
             complex_selectors.pop();
+
             if let Some(Component::Combinator(Combinator::Descendant)) = complex_selectors.last() {
                 complex_selectors.pop();
-            } else if let Some(Component::Combinator(c)) = complex_selectors.last() {
-                let c = *c;
-                complex_selectors.pop();
-
-                complex_selectors.insert(0, Component::Combinator(c))
             }
 
             if let Component::Combinator(Combinator::Descendant) = complex_selectors[0] {
@@ -401,6 +399,8 @@ impl CssNamespace {
             // trace!("complex_selectors: {:?}", complex_selectors);
 
             // result.push(Component::Combinator(Combinator::Descendant));
+
+            complex_selectors.reverse();
 
             result.extend(complex_selectors);
             result.extend(node.into_iter().skip(i + 1));
@@ -499,6 +499,11 @@ fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Selector<'i> {
             }
         }
     }
+
+    if cfg!(debug_assertions) {
+        debug!("Parsing: {:?}", buf)
+    }
+
     let selector = Selector::parse_string_with_options(&buf, Default::default())
         .expect("failed to parse selector list");
 
