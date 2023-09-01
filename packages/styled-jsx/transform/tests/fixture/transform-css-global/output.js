@@ -1,8 +1,8 @@
 import _JSXStyle from "styled-jsx/style";
-export default (()=><div className={"jsx-53fd644ab080300c"}>
+export default (() => <div className={"jsx-6881055ff9b1aeb6"}>
 
-    <p className={"jsx-53fd644ab080300c"}>test</p>
+  <p className={"jsx-6881055ff9b1aeb6"}>test</p>
 
-    <_JSXStyle id={"53fd644ab080300c"}>{"html.jsx-53fd644ab080300c{background-image:linear-gradient(#fffc,#fffc),url(/static/background.svg)}p{color:#00f}a.jsx-53fd644ab080300c{color:#00f}p{color:#00f}a+.foo{color:red}body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif}"}</_JSXStyle>
+  <_JSXStyle id={"6881055ff9b1aeb6"}>{"html.jsx-6881055ff9b1aeb6{background-image:linear-gradient(#fffc,#fffc),url(/static/background.svg)}p{color:#001}h1{color:#002}a.jsx-6881055ff9b1aeb6{color:#003}h2{color:#003}a+.foo{color:#004}body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif}"}</_JSXStyle>
 
-  </div>);
+</div>);
