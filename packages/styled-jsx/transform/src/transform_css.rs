@@ -379,18 +379,8 @@ impl CssNamespace {
             let mut complex_selectors =
                 children.iter_raw_match_order().cloned().collect::<Vec<_>>();
 
-            #[cfg(debug_assertions)]
-            {
-                debug!("complex_selectors: {:?}", SafeDebug(&complex_selectors))
-            }
-
             // Remove `a`
             complex_selectors.pop();
-
-            #[cfg(debug_assertions)]
-            {
-                debug!("complex_selectors: {:?}", SafeDebug(&complex_selectors))
-            }
 
             if let Some(Component::Combinator(Combinator::Descendant)) = complex_selectors.last() {
                 complex_selectors.pop();
@@ -398,11 +388,6 @@ impl CssNamespace {
 
             if let Component::Combinator(Combinator::Descendant) = complex_selectors[0] {
                 complex_selectors.remove(0);
-            }
-
-            #[cfg(debug_assertions)]
-            {
-                debug!("complex_selectors: {:?}", SafeDebug(&complex_selectors))
             }
 
             if complex_selectors.is_empty() {
