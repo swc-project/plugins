@@ -15,7 +15,7 @@ regex = "1.5"
 serde = "1"
 serde_json = "1"
 swc_common = { version = "0.32.1", features = ["concurrent"] }
-swc_core = { version = "0.82.10", features = [
+swc_core = { version = "0.83.0", features = [
   "ecma_utils",
   "ecma_visit",
   "ecma_ast",

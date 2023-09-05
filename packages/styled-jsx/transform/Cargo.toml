@@ -18,7 +18,7 @@ lightningcss = { version = "1.0.0-alpha.44", features = [
 ] }
 parcel_selectors = "0.26.0"
 
-swc_core = { version = "0.82.10", features = [
+swc_core = { version = "0.83.0", features = [
   "common",
   "ecma_ast",
   "ecma_parser",
@@ -29,4 +29,4 @@ swc_core = { version = "0.82.10", features = [
 
 [dev-dependencies]
 testing = "0.34.1"
-swc_core = { features = ["testing_transform"], version = "0.82.10" }
+swc_core = { features = ["testing_transform"], version = "0.83.0" }
