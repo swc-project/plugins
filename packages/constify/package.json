@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-constify",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "SWC plugin for optimization",
   "main": "swc_plugin_constify.wasm",
   "scripts": {
