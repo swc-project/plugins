@@ -6,8 +6,12 @@ use std::{
 };
 
 use easy_error::{bail, Error};
+use serde::Deserialize;
 use swc_core::{
-    common::{collections::AHashSet, errors::HANDLER, FileName, SourceMap, Span, DUMMY_SP},
+    common::{
+        collections::AHashSet, errors::HANDLER, DeserializeEnum, FileName, SourceMap, Span,
+        DUMMY_SP,
+    },
     ecma::{
         ast::*,
         minifier::{
@@ -27,9 +31,13 @@ use crate::{
         string_literal_expr, styled_jsx_import_decl,
     },
 };
-//use external::external_styles;
 
-pub fn styled_jsx(cm: Arc<SourceMap>, file_name: FileName, use_lightningcss: bool) -> impl Fold {
+#[derive(Deserialize)]
+pub struct Config {
+    pub use_lightningcss: bool,
+}
+
+pub fn styled_jsx(cm: Arc<SourceMap>, file_name: FileName, config: Config) -> impl Fold {
     let file_name = match file_name {
         FileName::Real(real_file_name) => real_file_name
             .to_str()
@@ -39,6 +47,7 @@ pub fn styled_jsx(cm: Arc<SourceMap>, file_name: FileName, use_lightningcss: boo
 
     StyledJSXTransformer {
         cm,
+        config,
         file_name,
         styles: Default::default(),
         static_class_name: Default::default(),
@@ -57,12 +66,13 @@ pub fn styled_jsx(cm: Arc<SourceMap>, file_name: FileName, use_lightningcss: boo
         in_function_params: Default::default(),
         evaluator: Default::default(),
         visiting_styled_jsx_descendants: Default::default(),
-        use_lightningcss,
     }
 }
 
 struct StyledJSXTransformer {
     cm: Arc<SourceMap>,
+    config: Config,
+
     file_name: Option<String>,
     styles: Vec<JSXStyle>,
     static_class_name: Option<String>,
@@ -81,8 +91,6 @@ struct StyledJSXTransformer {
     in_function_params: bool,
     evaluator: Option<Evaluator>,
     visiting_styled_jsx_descendants: bool,
-
-    use_lightningcss: bool,
 }
 
 enum StyleExpr<'a> {
@@ -566,7 +574,7 @@ impl StyledJSXTransformer {
 
         match &style_info {
             JSXStyle::Local(style_info) => {
-                let css = if self.use_lightningcss {
+                let css = if self.config.use_lightningcss {
                     crate::transform_css_lightningcss::transform_css(
                         self.cm.clone(),
                         style_info,
@@ -630,7 +638,7 @@ impl StyledJSXTransformer {
         } else {
             bail!("This shouldn't happen, we already know that this is a template literal");
         };
-        let css = if self.use_lightningcss {
+        let css = if self.config.use_lightningcss {
             crate::transform_css_lightningcss::transform_css(
                 self.cm.clone(),
                 style,
