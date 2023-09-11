@@ -17,6 +17,7 @@ lightningcss = { version = "1.0.0-alpha.44", features = [
   "into_owned",
 ] }
 parcel_selectors = "0.26.0"
+serde = { version = "1", features = ["derive"] }
 
 swc_core = { version = "0.83.0", features = [
   "common",
