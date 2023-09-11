@@ -20,6 +20,10 @@ parcel_selectors = "0.26.0"
 
 swc_core = { version = "0.83.0", features = [
   "common",
+  "css_ast",
+  "css_parser",
+  "css_codegen",
+  "css_visit",
   "ecma_ast",
   "ecma_parser",
   "ecma_minifier",
