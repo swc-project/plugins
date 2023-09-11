@@ -7,8 +7,10 @@ use std::{
 
 use easy_error::{bail, Error};
 use serde::Deserialize;
-use swc_common::{collections::AHashSet, FileName, SourceMap, DUMMY_SP};
+use swc_common::{collections::AHashSet, errors::HANDLER, FileName, SourceMap, DUMMY_SP};
 use swc_ecma_ast::*;
+use swc_ecma_minifier::{eval::Evaluator, marks::Marks};
+use swc_ecma_utils::collect_decls;
 use swc_ecma_visit::Fold;
 
 use crate::{

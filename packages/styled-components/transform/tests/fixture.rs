@@ -3,13 +3,10 @@
 use std::{fs::read_to_string, path::PathBuf};
 
 use styled_components::{styled_components, Config};
-use swc_core::{
-    common::{chain, Mark},
-    ecma::{
-        parser::{EsConfig, Syntax},
-        transforms::{base::resolver, testing::test_fixture},
-    },
-};
+use swc_common::{chain, Mark};
+use swc_ecma_parser::{EsConfig, Syntax};
+use swc_ecma_transforms::resolver;
+use swc_ecma_transforms_testing::test_fixture;
 
 #[testing::fixture("tests/fixtures/**/code.js")]
 fn fixture(input: PathBuf) {
