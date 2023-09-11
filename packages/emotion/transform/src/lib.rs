@@ -18,6 +18,9 @@ use swc_ecma_ast::{
     JSXExprContainer, JSXObject, KeyValueProp, MemberProp, ModuleExportName, ObjectLit, Pat, Prop,
     PropName, PropOrSpread, SourceMapperExt, SpreadElement, Tpl, VarDeclarator,
 };
+use swc_ecma_utils::ExprFactory;
+use swc_ecma_visit::{Fold, FoldWith};
+use swc_trace_macro::swc_trace;
 
 mod import_map;
 

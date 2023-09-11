@@ -1,6 +1,10 @@
 use std::path::PathBuf;
 
+use swc_common::{chain, Mark};
 use swc_constify::constify;
+use swc_ecma_transforms_base::resolver;
+use swc_ecma_transforms_testing::test_fixture;
+use swc_ecma_visit::as_folder;
 
 #[testing::fixture("tests/fixture/**/input.js")]
 fn fixture(input: PathBuf) {

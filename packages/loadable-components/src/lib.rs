@@ -7,19 +7,9 @@ use swc_common::{
     util::take::Take,
     BytePos, DUMMY_SP,
 };
-use swc_core::{
-    common::Spanned,
-    ecma::{
-        ast::*,
-        utils::{quote_ident, ExprFactory},
-        visit::{Visit, VisitMut, VisitMutWith, VisitWith},
-    },
-    plugin::{
-        plugin_transform,
-        proxies::{PluginCommentsProxy, TransformPluginProgramMetadata},
-    },
-    quote,
-};
+use swc_ecma_ast::*;
+use swc_ecma_visit::VisitMut;
+use swc_plugin_macro::plugin_transform;
 use tracing::debug;
 
 use crate::util::get_import_arg;
