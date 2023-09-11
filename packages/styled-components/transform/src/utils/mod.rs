@@ -1,6 +1,6 @@
 use std::{borrow::Cow, cell::RefCell};
 
-use swc_atoms::JsWord;
+use swc_atoms::js_word;
 use swc_common::{collections::AHashMap, SyntaxContext};
 use swc_ecma_ast::*;
 
