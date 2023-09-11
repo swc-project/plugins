@@ -2722,6 +2722,7 @@ name = "swc_plugin_styled_jsx"
 version = "0.14.3"
 dependencies = [
  "easy-error",
+ "serde_json",
  "styled_jsx",
  "swc_core",
  "testing",
