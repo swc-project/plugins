@@ -630,7 +630,21 @@ impl StyledJSXTransformer {
         } else {
             bail!("This shouldn't happen, we already know that this is a template literal");
         };
-        let css = transform_css(self.cm.clone(), style, tag == "global", &static_class_name)?;
+        let css = if self.use_lightningcss {
+            crate::transform_css_lightningcss::transform_css(
+                self.cm.clone(),
+                style,
+                tag == "global",
+                &static_class_name,
+            )?
+        } else {
+            crate::transform_css_swc::transform_css(
+                self.cm.clone(),
+                style,
+                tag == "global",
+                &static_class_name,
+            )?
+        };
         if tag == "resolve" {
             self.file_has_css_resolve = true;
             return Ok(Expr::Object(ObjectLit {
