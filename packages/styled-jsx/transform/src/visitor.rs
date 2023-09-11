@@ -31,6 +31,7 @@ use crate::{
 
 #[derive(Deserialize)]
 pub struct Config {
+    #[serde(default)]
     pub use_lightningcss: bool,
 }
 
