@@ -1,33 +1,31 @@
 use std::{panic, sync::Arc};
 
 use easy_error::{bail, Error};
-use swc_core::{
-    common::{
-        errors::HANDLER, source_map::Pos, util::take::Take, BytePos, SourceMap, Span, Spanned,
-        SyntaxContext, DUMMY_SP,
-    },
-    css::{
-        ast::*,
-        codegen::{
-            writer::basic::{BasicCssWriter, BasicCssWriterConfig},
-            CodeGenerator, CodegenConfig, Emit,
-        },
-        parser::{
-            lexer::Lexer,
-            parse_input,
-            parser::{
-                input::{InputType, Tokens},
-                Parser, ParserConfig,
-            },
-        },
-        prefixer::prefixer,
-        visit::{VisitMut, VisitMutWith},
-    },
-    ecma::{
-        ast::{Expr, Tpl, TplElement},
-        parser::StringInput,
+use swc_common::{
+    errors::HANDLER, source_map::Pos, util::take::Take, BytePos, SourceMap, Span, Spanned,
+    SyntaxContext, DUMMY_SP,
+};
+use swc_css_ast::{
+    ClassSelector, Combinator, CombinatorValue, ComplexSelector, ComplexSelectorChildren,
+    CompoundSelector, Ident, PseudoClassSelector, PseudoClassSelectorChildren, Stylesheet,
+    SubclassSelector, Token, TokenAndSpan,
+};
+use swc_css_codegen::{
+    writer::basic::{BasicCssWriter, BasicCssWriterConfig},
+    CodeGenerator, CodegenConfig, Emit,
+};
+use swc_css_parser::{
+    lexer::Lexer,
+    parse_input,
+    parser::{
+        input::{InputType, Tokens},
+        Parser, ParserConfig,
     },
 };
+use swc_css_prefixer::prefixer;
+use swc_css_visit::{VisitMut, VisitMutWith};
+use swc_ecma_ast::*;
+use swc_ecma_parser::StringInput;
 use tracing::{debug, trace};
 
 use crate::{

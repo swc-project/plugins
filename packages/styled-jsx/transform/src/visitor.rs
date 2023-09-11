@@ -11,7 +11,7 @@ use swc_common::{collections::AHashSet, errors::HANDLER, FileName, SourceMap, DU
 use swc_ecma_ast::*;
 use swc_ecma_minifier::{eval::Evaluator, marks::Marks};
 use swc_ecma_utils::collect_decls;
-use swc_ecma_visit::Fold;
+use swc_ecma_visit::{Fold, FoldWith};
 
 use crate::{
     style::{ExternalStyle, JSXStyle, LocalStyle},
