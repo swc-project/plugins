@@ -2,15 +2,11 @@ use std::{cell::RefCell, convert::TryInto, path::Path, rc::Rc};
 
 use once_cell::sync::Lazy;
 use regex::Regex;
-use swc_core::{
-    common::{util::take::Take, FileName, DUMMY_SP},
-    ecma::{
-        ast::*,
-        atoms::{js_word, JsWord},
-        utils::{quote_ident, ExprFactory},
-        visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith},
-    },
-};
+use swc_atoms::{js_word, JsWord};
+use swc_common::{util::take::Take, FileName, DUMMY_SP};
+use swc_ecma_ast::*;
+use swc_ecma_utils::{quote_ident, ExprFactory};
+use swc_ecma_visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith};
 use tracing::{debug, span, trace, Level};
 
 use crate::{

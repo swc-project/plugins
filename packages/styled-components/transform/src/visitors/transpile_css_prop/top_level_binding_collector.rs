@@ -1,13 +1,6 @@
-use swc_core::{
-    common::collections::AHashSet,
-    ecma::{
-        ast::{
-            ArrowExpr, ClassDecl, FnDecl, Function, Id, ImportDefaultSpecifier,
-            ImportNamedSpecifier, ImportStarAsSpecifier, ObjectPatProp, Pat, VarDeclarator,
-        },
-        visit::{noop_visit_type, Visit, VisitWith},
-    },
-};
+use swc_common::collections::AHashSet;
+use swc_ecma_ast::*;
+use swc_ecma_visit::{noop_visit_type, Visit, VisitWith};
 
 // Modified from swc_ecma_utils/src/lib.rs:BindingCollector.
 pub struct TopLevelBindingCollector {

@@ -11,23 +11,23 @@ version = "0.14.3"
 crate-type = ["cdylib", "rlib"]
 
 [features]
-custom_transform = ["swc_core/common_concurrent"]
+custom_transform = ["swc_common/concurrent"]
 
 [dependencies]
 easy-error = "1.0.0"
 styled_jsx = { path = "./transform" }
-swc_core = { version = "0.83.0", features = [
-  "common",
-  "ecma_ast",
-  "ecma_plugin_transform",
-  "ecma_parser",
-  "ecma_minifier",
-  "ecma_utils",
-  "ecma_visit",
-] }
 tracing = { version = "0.1.37", features = ["release_max_level_off"] }
 serde_json = "1"
+swc_common = "0.32.1"
+swc_ecma_ast = "0.109.1"
+swc_ecma_parser = "0.140.0"
+swc_ecma_minifier = "0.187.4"
+swc_ecma_utils = "0.123.0"
+swc_ecma_visit = "0.95.1"
+swc_plugin_macro = "0.9.15"
+swc_atoms = "0.5.9"
+swc_core = { version = "0.83.5", features = ["ecma_plugin_transform"] }
 
 [dev-dependencies]
-swc_core = { features = ["testing_transform"], version = "0.83.0" }
+swc_ecma_transforms_testing = "0.136.2"
 testing = "0.34.1"

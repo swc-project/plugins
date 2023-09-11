@@ -7,18 +7,14 @@ use std::{
 
 use easy_error::{bail, Error};
 use serde::Deserialize;
-use swc_core::{
-    common::{collections::AHashSet, errors::HANDLER, FileName, SourceMap, Span, DUMMY_SP},
-    ecma::{
-        ast::*,
-        minifier::{
-            eval::{EvalResult, Evaluator},
-            marks::Marks,
-        },
-        utils::{collect_decls, drop_span, prepend_stmt, private_ident},
-        visit::{Fold, FoldWith},
-    },
+use swc_common::{collections::AHashSet, errors::HANDLER, FileName, SourceMap, Span, DUMMY_SP};
+use swc_ecma_ast::*;
+use swc_ecma_minifier::{
+    eval::{EvalResult, Evaluator},
+    marks::Marks,
 };
+use swc_ecma_utils::{collect_decls, drop_span, prepend_stmt, private_ident};
+use swc_ecma_visit::{Fold, FoldWith};
 
 use crate::{
     style::{ExternalStyle, JSXStyle, LocalStyle},

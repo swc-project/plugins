@@ -18,10 +18,8 @@ use lightningcss::{
     visitor::{Visit, VisitTypes, Visitor},
 };
 use parcel_selectors::{parser::SelectorIter, SelectorImpl};
-use swc_core::{
-    common::{errors::HANDLER, SourceMap, DUMMY_SP},
-    ecma::ast::{Expr, Tpl, TplElement},
-};
+use swc_common::{errors::HANDLER, SourceMap, DUMMY_SP};
+use swc_ecma_ast::*;
 use tracing::{debug, error, trace};
 
 use crate::{

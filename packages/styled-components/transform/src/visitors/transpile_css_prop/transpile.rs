@@ -5,19 +5,15 @@ use std::{borrow::Cow, cell::RefCell, collections::HashMap, rc::Rc};
 use inflector::Inflector;
 use once_cell::sync::Lazy;
 use regex::Regex;
-use swc_core::{
-    common::{
-        collections::{AHashMap, AHashSet},
-        util::take::Take,
-        Spanned, DUMMY_SP,
-    },
-    ecma::{
-        ast::*,
-        atoms::{js_word, JsWord},
-        utils::{prepend_stmt, private_ident, quote_ident, ExprFactory},
-        visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith},
-    },
+use swc_atoms::{js_word, JsWord};
+use swc_common::{
+    collections::{AHashMap, AHashSet},
+    util::take::Take,
+    Spanned, DUMMY_SP,
 };
+use swc_ecma_ast::*;
+use swc_ecma_utils::{prepend_stmt, private_ident, quote_ident, ExprFactory};
+use swc_ecma_visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith};
 
 use super::top_level_binding_collector::collect_top_level_decls;
 use crate::{

@@ -1,6 +1,7 @@
 use std::{collections::hash_map::DefaultHasher, hash::Hasher};
 
-use swc_core::{common::DUMMY_SP, ecma::ast::*};
+use swc_common::DUMMY_SP;
+use swc_ecma_ast::*;
 
 use crate::style::{ExternalStyle, JSXStyle, LocalStyle};
 

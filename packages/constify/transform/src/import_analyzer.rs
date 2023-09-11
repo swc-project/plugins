@@ -1,14 +1,7 @@
-use swc_core::{
-    common::collections::{AHashMap, AHashSet},
-    ecma::{
-        ast::{
-            Expr, Id, ImportDecl, ImportNamedSpecifier, ImportSpecifier, MemberExpr, MemberProp,
-            Module, ModuleExportName,
-        },
-        atoms::JsWord,
-        visit::{noop_visit_type, Visit, VisitWith},
-    },
-};
+use swc_atoms::JsWord;
+use swc_common::collections::{AHashMap, AHashSet};
+use swc_ecma_ast::*;
+use swc_ecma_visit::{noop_visit_type, Visit, VisitWith};
 
 #[derive(Debug, Default)]
 pub(crate) struct ImportMap {

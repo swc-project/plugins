@@ -1,11 +1,8 @@
 use rustc_hash::FxHashSet;
-use swc_core::ecma::{
-    ast::{
-        BlockStmtOrExpr, Constructor, Function, GetterProp, Id, Ident, MemberProp, PropName,
-        SetterProp,
-    },
-    visit::{noop_visit_type, visit_obj_and_computed, Visit, VisitWith},
+use swc_ecma_ast::{
+    BlockStmtOrExpr, Constructor, Function, GetterProp, Id, Ident, MemberProp, PropName, SetterProp,
 };
+use swc_ecma_visit::{noop_visit_type, visit_obj_and_computed, Visit, VisitWith};
 
 pub(crate) fn ids_used_by<N>(n: &N) -> FxHashSet<Id>
 where
