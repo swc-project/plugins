@@ -7,7 +7,7 @@ name = "styled_jsx"
 version = "0.44.0"
 
 [features]
-custom_transform = ["swc_core/common_concurrent"]
+custom_transform = ["swc_common/concurrent"]
 
 [dependencies]
 easy-error = "1.0.0"
