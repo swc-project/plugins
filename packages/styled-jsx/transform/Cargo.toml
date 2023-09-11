@@ -22,6 +22,7 @@ swc_core = { version = "0.83.0", features = [
   "common",
   "css_ast",
   "css_parser",
+  "css_prefixer",
   "css_codegen",
   "css_visit",
   "ecma_ast",
