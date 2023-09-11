@@ -5,10 +5,12 @@ use once_cell::sync::Lazy;
 use swc_common::{
     comments::{Comment, CommentKind, Comments},
     util::take::Take,
-    BytePos, DUMMY_SP,
+    BytePos, Spanned, DUMMY_SP,
 };
+use swc_core::quote;
 use swc_ecma_ast::*;
-use swc_ecma_visit::VisitMut;
+use swc_ecma_utils::{quote_ident, ExprFactory};
+use swc_ecma_visit::{Visit, VisitMut, VisitMutWith, VisitWith};
 use swc_plugin_macro::plugin_transform;
 use swc_plugin_proxy::{PluginCommentsProxy, TransformPluginProgramMetadata};
 use tracing::debug;

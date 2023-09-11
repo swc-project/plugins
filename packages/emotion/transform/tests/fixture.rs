@@ -1,15 +1,9 @@
 use std::path::PathBuf;
 
-use swc_core::{
-    common::{chain, comments::SingleThreadedComments, Mark},
-    ecma::{
-        parser::{Syntax, TsConfig},
-        transforms::{
-            react::{jsx, Runtime},
-            testing::test_fixture,
-        },
-    },
-};
+use swc_common::{chain, comments::SingleThreadedComments, Mark};
+use swc_ecma_parser::{Syntax, TsConfig};
+use swc_ecma_transforms_react::{jsx, Runtime};
+use swc_ecma_transforms_testing::test_fixture;
 use swc_emotion::EmotionOptions;
 use testing::fixture;
 
@@ -31,7 +25,7 @@ fn next_emotion_fixture(input: PathBuf) {
             let jsx = jsx::<SingleThreadedComments>(
                 tr.cm.clone(),
                 Some(tr.comments.as_ref().clone()),
-                swc_core::ecma::transforms::react::Options {
+                swc_ecma_transforms_react::Options {
                     next: false.into(),
                     runtime: Some(Runtime::Automatic),
                     throw_if_namespace: false.into(),
@@ -108,7 +102,7 @@ fn emotion_label_fixture(output: PathBuf) {
             let jsx = jsx::<SingleThreadedComments>(
                 tr.cm.clone(),
                 Some(tr.comments.as_ref().clone()),
-                swc_core::ecma::transforms::react::Options {
+                swc_ecma_transforms_react::Options {
                     next: false.into(),
                     runtime: Some(Runtime::Automatic),
                     throw_if_namespace: false.into(),
@@ -163,7 +157,7 @@ fn emotion_label_sanitisation(input: PathBuf) {
             let jsx = jsx::<SingleThreadedComments>(
                 tr.cm.clone(),
                 Some(tr.comments.as_ref().clone()),
-                swc_core::ecma::transforms::react::Options {
+                swc_ecma_transforms_react::Options {
                     next: false.into(),
                     runtime: Some(Runtime::Automatic),
                     throw_if_namespace: false.into(),

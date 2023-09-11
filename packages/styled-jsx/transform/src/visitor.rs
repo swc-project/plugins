@@ -7,7 +7,9 @@ use std::{
 
 use easy_error::{bail, Error};
 use serde::Deserialize;
+use swc_common::{collections::AHashSet, FileName, SourceMap};
 use swc_ecma_ast::*;
+use swc_ecma_visit::Fold;
 
 use crate::{
     style::{ExternalStyle, JSXStyle, LocalStyle},
