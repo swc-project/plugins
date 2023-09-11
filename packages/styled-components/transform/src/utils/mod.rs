@@ -1,9 +1,8 @@
 use std::{borrow::Cow, cell::RefCell};
 
-use swc_core::{
-    common::{collections::AHashMap, SyntaxContext},
-    ecma::{ast::*, atoms::js_word},
-};
+use swc_atoms::JsWord;
+use swc_common::{collections::AHashMap, SyntaxContext};
+use swc_ecma_ast::*;
 
 pub use self::analyzer::{analyze, analyzer};
 

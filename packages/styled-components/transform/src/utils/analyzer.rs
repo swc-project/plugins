@@ -1,8 +1,8 @@
 use std::{cell::RefCell, rc::Rc};
 
-use swc_core::ecma::{
-    ast::*,
-    visit::{as_folder, noop_visit_mut_type, noop_visit_type, Fold, Visit, VisitMut, VisitWith},
+use swc_ecma_ast::*;
+use swc_ecma_visit::{
+    as_folder, noop_visit_mut_type, noop_visit_type, Fold, Visit, VisitMut, VisitWith,
 };
 
 use super::State;
