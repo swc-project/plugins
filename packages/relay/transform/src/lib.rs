@@ -7,15 +7,7 @@ use std::path::{Path, PathBuf};
 use once_cell::sync::Lazy;
 use regex::Regex;
 use serde::Deserialize;
-use swc_core::{
-    common::{FileName, Mark, DUMMY_SP},
-    ecma::{
-        ast::*,
-        atoms::JsWord,
-        utils::{quote_ident, ExprFactory},
-        visit::{Fold, FoldWith},
-    },
-};
+use swc_ecma_ast::*;
 
 #[derive(Copy, Clone, Debug, Deserialize)]
 #[serde(rename_all = "lowercase")]

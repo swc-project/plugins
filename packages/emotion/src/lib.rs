@@ -4,15 +4,8 @@ use std::path::Path;
 
 use serde::Deserialize;
 use swc_common::SourceMapper;
-use swc_core::{
-    common::Spanned,
-    ecma::{ast::Program, visit::FoldWith},
-    plugin::{
-        metadata::TransformPluginMetadataContextKind, plugin_transform,
-        proxies::TransformPluginProgramMetadata,
-    },
-};
 use swc_emotion::EmotionOptions;
+use swc_plugin_macro::plugin_transform;
 pub struct TransformVisitor;
 
 #[derive(Deserialize)]

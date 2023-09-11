@@ -22,5 +22,6 @@ swc_ecma_ast = "0.109.1"
 swc_ecma_utils = "0.123.0"
 swc_ecma_visit = "0.95.1"
 swc_plugin_macro = "0.9.15"
+swc_core = "0.83.5"
 
 [dev-dependencies]
