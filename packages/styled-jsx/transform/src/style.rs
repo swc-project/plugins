@@ -1,4 +1,5 @@
-use swc_core::{common::Span, ecma::ast::*};
+use swc_common::Span;
+use swc_ecma_ast::*;
 
 pub struct ExternalStyle {
     pub expr: Expr,
