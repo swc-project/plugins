@@ -4,7 +4,7 @@ description = "AST transforms visitor for styled-jsx"
 edition = "2021"
 license = "Apache-2.0"
 name = "styled_jsx"
-version = "0.43.0"
+version = "0.44.0"
 
 [features]
 custom_transform = ["swc_core/common_concurrent"]
@@ -17,9 +17,16 @@ lightningcss = { version = "1.0.0-alpha.44", features = [
   "into_owned",
 ] }
 parcel_selectors = "0.26.0"
+serde = { version = "1", features = ["derive"] }
 
 swc_core = { version = "0.83.0", features = [
   "common",
+  "css_ast",
+  "css_codegen",
+  "css_parser",
+  "css_prefixer",
+  "css_minifier",
+  "css_visit",
   "ecma_ast",
   "ecma_parser",
   "ecma_minifier",

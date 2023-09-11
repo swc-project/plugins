@@ -20,5 +20,4 @@ const Title = styled.h1`
   font-size: 50px;
 `;
 const AnotherTitle = Title.extend`color: blue;`;
-export const Component = ()=><AnotherTitle >My page</AnotherTitle>
-;
+export const Component = ()=><AnotherTitle>My page</AnotherTitle>;

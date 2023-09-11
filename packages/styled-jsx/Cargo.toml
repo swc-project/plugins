@@ -26,6 +26,7 @@ swc_core = { version = "0.83.0", features = [
   "ecma_visit",
 ] }
 tracing = { version = "0.1.37", features = ["release_max_level_off"] }
+serde_json = "1"
 
 [dev-dependencies]
 swc_core = { features = ["testing_transform"], version = "0.83.0" }
