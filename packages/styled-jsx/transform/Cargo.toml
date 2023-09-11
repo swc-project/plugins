@@ -36,3 +36,4 @@ swc_css_visit = "0.138.1"
 [dev-dependencies]
 testing = "0.34.1"
 swc_ecma_transforms_testing = "0.136.1"
+swc_ecma_transforms = "0.224.4"

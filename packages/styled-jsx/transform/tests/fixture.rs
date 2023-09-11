@@ -1,16 +1,9 @@
 use std::path::PathBuf;
 
 use styled_jsx::visitor::styled_jsx;
-use swc_core::{
-    common::{chain, FileName, Mark, Span, DUMMY_SP},
-    ecma::{
-        parser::{EsConfig, Syntax},
-        transforms::{
-            base::resolver,
-            testing::{test_fixture, FixtureTestConfig},
-        },
-    },
-};
+use swc_common::{chain, FileName, Mark};
+use swc_ecma_parser::{EsConfig, Syntax};
+use swc_ecma_transforms_testing::test_fixture;
 use testing::fixture;
 
 fn syntax() -> Syntax {
