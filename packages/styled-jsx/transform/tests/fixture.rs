@@ -22,47 +22,51 @@ fn syntax() -> Syntax {
 
 #[fixture("tests/fixture/**/input.js")]
 fn styled_jsx_fixture(input: PathBuf) {
-    let output = input.parent().unwrap().join("output.js");
-    test_fixture(
-        syntax(),
-        &|t| {
-            chain!(
-                resolver(Mark::new(), Mark::new(), false),
-                styled_jsx(
-                    t.cm.clone(),
-                    FileName::Real(PathBuf::from("/some-project/src/some-file.js"))
+    for use_lightningcss in [true, false] {
+        let output = input.parent().unwrap().join("output.js");
+        test_fixture(
+            syntax(),
+            &|t| {
+                chain!(
+                    resolver(Mark::new(), Mark::new(), false),
+                    styled_jsx(
+                        t.cm.clone(),
+                        FileName::Real(PathBuf::from("/some-project/src/some-file.js")),
+                        styled_jsx::visitor::Config { use_lightningcss }
+                    )
                 )
-            )
-        },
-        &input,
-        &output,
-        Default::default(),
-    );
+            },
+            &input,
+            &output,
+            Default::default(),
+        );
 
-    test_fixture(
-        syntax(),
-        &|t| {
-            // `resolver` uses `Mark` which is stored in a thread-local storage (namely
-            // swc_common::GLOBALS), and this loop will make `Mark` to be different from the
-            // invocation above.
-            //
-            // 1000 is used because in future I (kdy1) may optimize logic of resolver.
-            for _ in 0..1000 {
-                let _mark = Mark::fresh(Mark::root());
-            }
+        test_fixture(
+            syntax(),
+            &|t| {
+                // `resolver` uses `Mark` which is stored in a thread-local storage (namely
+                // swc_common::GLOBALS), and this loop will make `Mark` to be different from the
+                // invocation above.
+                //
+                // 1000 is used because in future I (kdy1) may optimize logic of resolver.
+                for _ in 0..1000 {
+                    let _mark = Mark::fresh(Mark::root());
+                }
 
-            chain!(
-                resolver(Mark::new(), Mark::new(), false),
-                styled_jsx(
-                    t.cm.clone(),
-                    FileName::Real(PathBuf::from("/some-project/src/some-file.js"))
+                chain!(
+                    resolver(Mark::new(), Mark::new(), false),
+                    styled_jsx(
+                        t.cm.clone(),
+                        FileName::Real(PathBuf::from("/some-project/src/some-file.js")),
+                        styled_jsx::visitor::Config { use_lightningcss }
+                    )
                 )
-            )
-        },
-        &input,
-        &output,
-        Default::default(),
-    );
+            },
+            &input,
+            &output,
+            Default::default(),
+        );
+    }
 }
 
 pub struct DropSpan;
@@ -82,7 +86,15 @@ fn styled_jsx_errors(input: PathBuf) {
 
     test_fixture(
         syntax(),
-        &|t| styled_jsx(t.cm.clone(), file_name.clone()),
+        &|t| {
+            styled_jsx(
+                t.cm.clone(),
+                file_name.clone(),
+                styled_jsx::visitor::Config {
+                    use_lightningcss: false,
+                },
+            )
+        },
         &input,
         &output,
         FixtureTestConfig {
