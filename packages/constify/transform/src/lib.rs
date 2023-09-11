@@ -2,19 +2,15 @@
 
 use import_analyzer::ImportMap;
 use rustc_hash::FxHashSet;
-use swc_core::{
-    common::{sync::Lazy, util::take::Take, Mark, Span, Spanned, SyntaxContext, DUMMY_SP},
-    ecma::{
-        ast::{
-            op, ArrowExpr, AssignExpr, BlockStmt, CallExpr, Callee, Decl, DefaultDecl, Expr,
-            FnDecl, FnExpr, Function, Id, Ident, ImportSpecifier, Module, ModuleDecl, ModuleItem,
-            ReturnStmt, Stmt, VarDecl, VarDeclKind, VarDeclarator,
-        },
-        atoms::JsWord,
-        utils::{find_pat_ids, private_ident, StmtLike},
-        visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
-    },
+use swc_atoms::JsWord;
+use swc_common::{sync::Lazy, util::take::Take, Mark, Span, Spanned, SyntaxContext, DUMMY_SP};
+use swc_ecma_ast::{
+    op, ArrowExpr, AssignExpr, BlockStmt, CallExpr, Callee, Decl, DefaultDecl, Expr, FnDecl,
+    FnExpr, Function, Id, Ident, ImportSpecifier, Module, ModuleDecl, ModuleItem, ReturnStmt, Stmt,
+    VarDecl, VarDeclKind, VarDeclarator,
 };
+use swc_ecma_utils::{find_pat_ids, private_ident, StmtLike};
+use swc_ecma_visit::{noop_visit_mut_type, VisitMut, VisitMutWith};
 use tracing::debug;
 
 use crate::utils::{ids_used_by, ids_used_by_ignoring_nested};
