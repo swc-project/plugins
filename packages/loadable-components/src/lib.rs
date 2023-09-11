@@ -10,6 +10,7 @@ use swc_common::{
 use swc_ecma_ast::*;
 use swc_ecma_visit::VisitMut;
 use swc_plugin_macro::plugin_transform;
+use swc_plugin_proxy::{PluginCommentsProxy, TransformPluginProgramMetadata};
 use tracing::debug;
 
 use crate::util::get_import_arg;
