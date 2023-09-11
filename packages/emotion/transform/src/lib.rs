@@ -10,21 +10,13 @@ use once_cell::sync::Lazy;
 use regex::{Regex, RegexBuilder};
 use serde::{Deserialize, Serialize};
 use sourcemap::{RawToken, SourceMap as RawSourcemap};
-use swc_core::{
-    common::{comments::Comments, util::take::Take, BytePos, SourceMapperDyn, DUMMY_SP},
-    ecma::{
-        ast::{
-            ArrayLit, CallExpr, Callee, Expr, ExprOrSpread, Id, Ident, ImportDecl, ImportSpecifier,
-            JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElement, JSXElementName,
-            JSXExpr, JSXExprContainer, JSXObject, KeyValueProp, MemberProp, ModuleExportName,
-            ObjectLit, Pat, Prop, PropName, PropOrSpread, SourceMapperExt, SpreadElement, Tpl,
-            VarDeclarator,
-        },
-        atoms::JsWord,
-        utils::ExprFactory,
-        visit::{Fold, FoldWith},
-    },
-    trace_macro::swc_trace,
+use swc_atoms::JsWord;
+use swc_common::{comments::Comments, util::take::Take, BytePos, SourceMapperDyn, DUMMY_SP};
+use swc_ecma_ast::{
+    ArrayLit, CallExpr, Callee, Expr, ExprOrSpread, Id, Ident, ImportDecl, ImportSpecifier,
+    JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElement, JSXElementName, JSXExpr,
+    JSXExprContainer, JSXObject, KeyValueProp, MemberProp, ModuleExportName, ObjectLit, Pat, Prop,
+    PropName, PropOrSpread, SourceMapperExt, SpreadElement, Tpl, VarDeclarator,
 };
 
 mod import_map;
