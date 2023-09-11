@@ -19,20 +19,19 @@ lightningcss = { version = "1.0.0-alpha.44", features = [
 parcel_selectors = "0.26.0"
 serde = { version = "1", features = ["derive"] }
 
-swc_core = { version = "0.83.0", features = [
-  "common",
-  "css_ast",
-  "css_codegen",
-  "css_parser",
-  "css_prefixer",
-  "css_minifier",
-  "css_visit",
-  "ecma_ast",
-  "ecma_parser",
-  "ecma_minifier",
-  "ecma_utils",
-  "ecma_visit",
-] }
+swc_common = "0.32.1"
+swc_ecma_ast = "0.109.1"
+swc_ecma_utils = "0.123.0"
+swc_ecma_visit = "0.95.1"
+swc_plugin_macro = "0.9.15"
+swc_ecma_parser = "0.140.0"
+swc_ecma_minifier = "0.187.4"
+swc_css_ast = "0.139.1"
+swc_css_codegen = "0.149.1"
+swc_css_parser = "0.148.1"
+swc_css_prefixer = "0.151.1"
+swc_css_minifier = "0.114.1"
+swc_css_visit = "0.138.1"
 
 [dev-dependencies]
 testing = "0.34.1"
