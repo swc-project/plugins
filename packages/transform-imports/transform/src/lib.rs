@@ -5,6 +5,7 @@ use handlebars::{Context, Handlebars, Helper, HelperResult, Output, RenderContex
 use once_cell::sync::Lazy;
 use regex::{Captures, Regex};
 use serde::{Deserialize, Serialize};
+use swc_cached::regex::CachedRegex;
 use swc_ecma_ast::{ImportDecl, ImportSpecifier, ModuleExportName};
 
 static DUP_SLASH_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"//").unwrap());
