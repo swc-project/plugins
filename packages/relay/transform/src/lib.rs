@@ -10,7 +10,8 @@ use serde::Deserialize;
 use swc_atoms::JsWord;
 use swc_common::{FileName, Mark, DUMMY_SP};
 use swc_ecma_ast::*;
-use swc_ecma_utils::quote_ident;
+use swc_ecma_utils::{quote_ident, ExprFactory};
+use swc_ecma_visit::{Fold, FoldWith};
 
 #[derive(Copy, Clone, Debug, Deserialize)]
 #[serde(rename_all = "lowercase")]

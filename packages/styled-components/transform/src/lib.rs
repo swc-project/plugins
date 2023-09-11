@@ -3,13 +3,7 @@
 use std::{cell::RefCell, rc::Rc};
 
 use serde::Deserialize;
-use swc_core::{
-    common::{chain, pass::Optional, FileName},
-    ecma::{
-        atoms::JsWord,
-        visit::{Fold, VisitMut},
-    },
-};
+use swc_atoms::JsWord;
 
 pub use crate::{
     utils::{analyze, analyzer, State},

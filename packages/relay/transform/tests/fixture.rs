@@ -1,7 +1,6 @@
 use std::path::PathBuf;
 
 use swc_common::FileName;
-use swc_core::ecma::transforms::testing::test_fixture;
 use swc_relay::{relay, Config, RelayLanguageConfig};
 
 #[testing::fixture("tests/fixture/simple/**/input.js")]
