@@ -21,7 +21,6 @@ use swc_core::{
 
 use crate::{
     style::{ExternalStyle, JSXStyle, LocalStyle},
-    transform_css::transform_css,
     utils::{
         add, and, compute_class_names, get_usable_import_specifier, hash_string, ident,
         is_capitalized, make_external_styled_jsx_el, make_local_styled_jsx_el, not_eq, or,
@@ -30,7 +29,7 @@ use crate::{
 };
 //use external::external_styles;
 
-pub fn styled_jsx(cm: Arc<SourceMap>, file_name: FileName) -> impl Fold {
+pub fn styled_jsx(cm: Arc<SourceMap>, file_name: FileName, use_lightningcss: bool) -> impl Fold {
     let file_name = match file_name {
         FileName::Real(real_file_name) => real_file_name
             .to_str()
@@ -58,6 +57,7 @@ pub fn styled_jsx(cm: Arc<SourceMap>, file_name: FileName) -> impl Fold {
         in_function_params: Default::default(),
         evaluator: Default::default(),
         visiting_styled_jsx_descendants: Default::default(),
+        use_lightningcss,
     }
 }
 
@@ -81,6 +81,8 @@ struct StyledJSXTransformer {
     in_function_params: bool,
     evaluator: Option<Evaluator>,
     visiting_styled_jsx_descendants: bool,
+
+    use_lightningcss: bool,
 }
 
 enum StyleExpr<'a> {
@@ -564,12 +566,22 @@ impl StyledJSXTransformer {
 
         match &style_info {
             JSXStyle::Local(style_info) => {
-                let css = transform_css(
-                    self.cm.clone(),
-                    style_info,
-                    is_global,
-                    &self.static_class_name,
-                )?;
+                let css = if self.use_lightningcss {
+                    crate::transform_css_lightningcss::transform_css(
+                        self.cm.clone(),
+                        style_info,
+                        is_global,
+                        &self.static_class_name,
+                    )?
+                } else {
+                    crate::transform_css_swc::transform_css(
+                        self.cm.clone(),
+                        style_info,
+                        is_global,
+                        &self.static_class_name,
+                    )?
+                };
+
                 Ok(make_local_styled_jsx_el(
                     style_info,
                     css,
