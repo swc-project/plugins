@@ -23,7 +23,12 @@ fn syntax() -> Syntax {
 #[fixture("tests/fixture/**/input.js")]
 fn styled_jsx_fixture(input: PathBuf) {
     for use_lightningcss in [true, false] {
-        let output = input.parent().unwrap().join("output.js");
+        let output = input.parent().unwrap().join(if use_lightningcss {
+            "output.lightningcss.js"
+        } else {
+            "output.swc.js"
+        });
+
         test_fixture(
             syntax(),
             &|t| {
