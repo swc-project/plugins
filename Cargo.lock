@@ -1960,6 +1960,7 @@ dependencies = [
  "easy-error",
  "lightningcss",
  "parcel_selectors",
+ "serde",
  "swc_core",
  "testing",
  "tracing",
