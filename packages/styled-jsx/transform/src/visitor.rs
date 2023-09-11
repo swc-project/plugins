@@ -8,10 +8,7 @@ use std::{
 use easy_error::{bail, Error};
 use serde::Deserialize;
 use swc_core::{
-    common::{
-        collections::AHashSet, errors::HANDLER, DeserializeEnum, FileName, SourceMap, Span,
-        DUMMY_SP,
-    },
+    common::{collections::AHashSet, errors::HANDLER, FileName, SourceMap, Span, DUMMY_SP},
     ecma::{
         ast::*,
         minifier::{
