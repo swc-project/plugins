@@ -180,7 +180,9 @@ struct CssNamespace {
 impl<'i> Visitor<'i> for CssNamespace {
     type Error = Infallible;
 
-    const TYPES: VisitTypes = visit_types!(SELECTORS);
+    fn visit_types(&self) -> VisitTypes {
+        visit_types!(SELECTORS)
+    }
 
     fn visit_selector(&mut self, selector: &mut Selector<'i>) -> Result<(), Self::Error> {
         let mut new_selectors = vec![];
