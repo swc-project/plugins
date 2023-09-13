@@ -25,7 +25,7 @@ use crate::{
     },
 };
 
-#[derive(Deserialize)]
+#[derive(Debug, Clone, Copy, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Config {
     #[serde(default)]
