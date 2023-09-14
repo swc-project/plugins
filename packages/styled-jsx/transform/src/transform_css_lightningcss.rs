@@ -32,16 +32,16 @@ use crate::{
     utils::{hash_string, string_literal_expr},
 };
 
-fn report(err: &lightningcss::error::Error<ParserError>, level: Level) {
+fn report(cm: &SourceMap, err: &lightningcss::error::Error<ParserError>, level: Level) {
     HANDLER.with(|handler| {});
 }
 
 #[cfg_attr(
     debug_assertions,
-    tracing::instrument(skip(_cm, style_info, class_name))
+    tracing::instrument(skip(cm, style_info, class_name))
 )]
 pub fn transform_css(
-    _cm: Arc<SourceMap>,
+    cm: Arc<SourceMap>,
     style_info: &LocalStyle,
     is_global: bool,
     class_name: &Option<String>,
@@ -68,7 +68,7 @@ pub fn transform_css(
         Ok(ss) => ss,
         Err(err) => {
             HANDLER.with(|handler| {
-                report(&err, Level::Error);
+                report(&cm, &err, Level::Error);
 
                 handler
                     .struct_span_err(
@@ -84,7 +84,7 @@ pub fn transform_css(
 
     if let Ok(warnings) = warnings.read() {
         for warning in warnings.iter() {
-            report(warning, Level::Warning);
+            report(&cm, warning, Level::Warning);
         }
     }
 
