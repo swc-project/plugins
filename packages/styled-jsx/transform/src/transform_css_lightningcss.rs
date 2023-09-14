@@ -21,7 +21,7 @@ use lightningcss::{
 use parcel_selectors::{parser::SelectorIter, SelectorImpl};
 use swc_common::{
     errors::{DiagnosticBuilder, Level, HANDLER},
-    BytePos, FileLines, Loc, SourceMap, Span, DUMMY_SP,
+    BytePos, Loc, SourceMap, Span, DUMMY_SP,
 };
 use swc_ecma_ast::*;
 use tracing::{debug, error, trace};
