@@ -4,11 +4,12 @@ use std::{
     fmt::Debug,
     mem::transmute,
     panic::{catch_unwind, AssertUnwindSafe},
-    sync::Arc,
+    sync::{Arc, RwLock},
 };
 
 use easy_error::{bail, Error, ResultExt};
 use lightningcss::{
+    error::ParserError,
     properties::custom::{TokenList, TokenOrValue},
     selector::{Combinator, Component, PseudoClass, Selector},
     stylesheet::{MinifyOptions, ParserOptions, PrinterOptions, StyleSheet},
@@ -18,7 +19,10 @@ use lightningcss::{
     visitor::{Visit, VisitTypes, Visitor},
 };
 use parcel_selectors::{parser::SelectorIter, SelectorImpl};
-use swc_common::{errors::HANDLER, SourceMap, DUMMY_SP};
+use swc_common::{
+    errors::{Level, HANDLER},
+    SourceMap, DUMMY_SP,
+};
 use swc_ecma_ast::*;
 use tracing::{debug, error, trace};
 
@@ -41,24 +45,29 @@ pub fn transform_css(
     debug!("CSS: \n{}", style_info.css);
     let css_str = strip_comments(&style_info.css);
 
+    let warnings: Arc<RwLock<Vec<lightningcss::error::Error<ParserError>>>> = Arc::default();
+
     let result: Result<StyleSheet, _> = StyleSheet::parse(
         &css_str,
         ParserOptions {
             // We cannot use css_modules for `:global` because lightningcss does not support
             // parsing-only mode.
             css_modules: None,
+            error_recovery: true,
+            warnings: Some(warnings.clone()),
             ..Default::default()
         },
     );
+
+    let report = |err, level| {
+        HANDLER.with(|handler| {});
+    };
+
     let mut ss = match result {
         Ok(ss) => ss,
-        Err(_err) => {
+        Err(err) => {
             HANDLER.with(|handler| {
-                // Print css parsing errors
-                // TODO:
-                // err.to_diagnostics(handler).emit();
-
-                // TODO(kdy1): We may print css so the user can see the error, and report it.
+                report(&err, Level::Error);
 
                 handler
                     .struct_span_err(
@@ -72,6 +81,12 @@ pub fn transform_css(
         }
     };
 
+    if let Ok(warnings) = warnings.read() {
+        for warning in warnings.iter() {
+            report(warning, Level::Warning);
+        }
+    }
+
     ss.visit(&mut CssNamespace {
         class_name: match class_name {
             Some(s) => s.clone(),
@@ -83,7 +98,6 @@ pub fn transform_css(
     .expect("failed to transform css");
 
     // Apply auto prefixer
-    // TODO:
     ss.minify(MinifyOptions {
         ..Default::default()
     })
