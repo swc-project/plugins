@@ -39,6 +39,13 @@ fn report(
     err: &lightningcss::error::Error<ParserError>,
     level: Level,
 ) {
+    let file_lines = file_lines_cache.get_or_insert_with(|| {
+        cm.span_to_lines(css_span)
+            .expect("failed to get span to lines for error reporting")
+    });
+
+    let mut lo = None;
+
     HANDLER.with(|handler| {
         //
     });
