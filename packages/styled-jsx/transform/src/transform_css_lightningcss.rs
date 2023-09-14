@@ -21,7 +21,7 @@ use lightningcss::{
 use parcel_selectors::{parser::SelectorIter, SelectorImpl};
 use swc_common::{
     errors::{Level, HANDLER},
-    SourceMap, Span, DUMMY_SP,
+    FileLines, SourceMap, Span, DUMMY_SP,
 };
 use swc_ecma_ast::*;
 use tracing::{debug, error, trace};
@@ -35,6 +35,7 @@ use crate::{
 fn report(
     cm: &SourceMap,
     css_span: Span,
+    file_lines_cache: &mut Option<FileLines>,
     err: &lightningcss::error::Error<ParserError>,
     level: Level,
 ) {
@@ -53,6 +54,8 @@ pub fn transform_css(
     is_global: bool,
     class_name: &Option<String>,
 ) -> Result<Expr, Error> {
+    let mut file_lines_cache = None;
+
     debug!("CSS: \n{}", style_info.css);
     let css_str = strip_comments(&style_info.css);
 
@@ -75,7 +78,13 @@ pub fn transform_css(
         Ok(ss) => ss,
         Err(err) => {
             HANDLER.with(|handler| {
-                report(&cm, style_info.css_span, &err, Level::Error);
+                report(
+                    &cm,
+                    style_info.css_span,
+                    &mut file_lines_cache,
+                    &err,
+                    Level::Error,
+                );
 
                 handler
                     .struct_span_err(
@@ -91,7 +100,13 @@ pub fn transform_css(
 
     if let Ok(warnings) = warnings.read() {
         for warning in warnings.iter() {
-            report(&cm, style_info.css_span, warning, Level::Warning);
+            report(
+                &cm,
+                style_info.css_span,
+                &mut file_lines_cache,
+                warning,
+                Level::Warning,
+            );
         }
     }
 
