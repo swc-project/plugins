@@ -21,7 +21,7 @@ use lightningcss::{
 use parcel_selectors::{parser::SelectorIter, SelectorImpl};
 use swc_common::{
     errors::{DiagnosticBuilder, Level, HANDLER},
-    BytePos, FileLines, SourceMap, Span, DUMMY_SP,
+    BytePos, FileLines, Loc, SourceMap, Span, DUMMY_SP,
 };
 use swc_ecma_ast::*;
 use tracing::{debug, error, trace};
@@ -35,17 +35,14 @@ use crate::{
 fn report(
     cm: &SourceMap,
     css_span: Span,
-    file_lines_cache: &mut Option<FileLines>,
+    file_lines_cache: &mut Option<Loc>,
     err: &lightningcss::error::Error<ParserError>,
     level: Level,
 ) {
-    let file_lines = file_lines_cache.get_or_insert_with(|| {
-        cm.span_to_lines(css_span)
-            .expect("failed to get span to lines for error reporting")
-    });
+    let file = file_lines_cache.get_or_insert_with(|| cm.lookup_char_pos(css_span.lo));
 
     let lo = if let Some(loc) = &err.loc {
-        Some(file_lines.file.lines[loc.line as usize] + BytePos(loc.column))
+        Some(file.file.lines[loc.line as usize] + BytePos(loc.column))
     } else {
         None
     };
