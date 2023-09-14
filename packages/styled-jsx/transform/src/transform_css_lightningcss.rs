@@ -12,7 +12,7 @@ use lightningcss::{
     error::ParserError,
     properties::custom::{TokenList, TokenOrValue},
     selector::{Combinator, Component, PseudoClass, Selector},
-    stylesheet::{MinifyOptions, ParserOptions, PrinterOptions, StyleSheet},
+    stylesheet::{MinifyOptions, ParserFlags, ParserOptions, PrinterOptions, StyleSheet},
     traits::{ParseWithOptions, ToCss},
     values::ident::Ident,
     visit_types,
@@ -31,6 +31,10 @@ use crate::{
     style::LocalStyle,
     utils::{hash_string, string_literal_expr},
 };
+
+fn report(err: &lightningcss::error::Error<ParserError>, level: Level) {
+    HANDLER.with(|handler| {});
+}
 
 #[cfg_attr(
     debug_assertions,
@@ -55,13 +59,10 @@ pub fn transform_css(
             css_modules: None,
             error_recovery: true,
             warnings: Some(warnings.clone()),
+            flags: ParserFlags::all(),
             ..Default::default()
         },
     );
-
-    let report = |err, level| {
-        HANDLER.with(|handler| {});
-    };
 
     let mut ss = match result {
         Ok(ss) => ss,
