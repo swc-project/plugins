@@ -21,7 +21,7 @@ use lightningcss::{
 use parcel_selectors::{parser::SelectorIter, SelectorImpl};
 use swc_common::{
     errors::{Level, HANDLER},
-    SourceMap, DUMMY_SP,
+    SourceMap, Span, DUMMY_SP,
 };
 use swc_ecma_ast::*;
 use tracing::{debug, error, trace};
@@ -32,8 +32,15 @@ use crate::{
     utils::{hash_string, string_literal_expr},
 };
 
-fn report(cm: &SourceMap, err: &lightningcss::error::Error<ParserError>, level: Level) {
-    HANDLER.with(|handler| {});
+fn report(
+    cm: &SourceMap,
+    css_span: Span,
+    err: &lightningcss::error::Error<ParserError>,
+    level: Level,
+) {
+    HANDLER.with(|handler| {
+        //
+    });
 }
 
 #[cfg_attr(
@@ -68,7 +75,7 @@ pub fn transform_css(
         Ok(ss) => ss,
         Err(err) => {
             HANDLER.with(|handler| {
-                report(&cm, &err, Level::Error);
+                report(&cm, style_info.css_span, &err, Level::Error);
 
                 handler
                     .struct_span_err(
@@ -84,7 +91,7 @@ pub fn transform_css(
 
     if let Ok(warnings) = warnings.read() {
         for warning in warnings.iter() {
-            report(&cm, warning, Level::Warning);
+            report(&cm, style_info.css_span, warning, Level::Warning);
         }
     }
 
