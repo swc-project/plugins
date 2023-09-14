@@ -39,6 +39,14 @@ fn report(
     err: &lightningcss::error::Error<ParserError>,
     level: Level,
 ) {
+    // We need :global(selector) to be parsed as a selector.
+    if let ParserError::SelectorError(
+        lightningcss::error::SelectorError::UnsupportedPseudoClassOrElement(..),
+    ) = &err.kind
+    {
+        return;
+    }
+
     let file = file_lines_cache.get_or_insert_with(|| cm.lookup_char_pos(css_span.lo));
 
     let lo = if let Some(loc) = &err.loc {
