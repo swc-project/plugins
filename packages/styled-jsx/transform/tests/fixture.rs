@@ -77,28 +77,53 @@ impl swc_ecma_visit::VisitMut for DropSpan {
 
 #[fixture("tests/errors/**/input.js")]
 fn styled_jsx_errors(input: PathBuf) {
-    let output = input.parent().unwrap().join("output.js");
     let file_name = match input.to_str().unwrap().contains("ts-with-css-resolve") {
         true => FileName::Real(PathBuf::from("/some-project/src/some-file.ts")),
         false => FileName::Real(PathBuf::from("/some-project/src/some-file.js")),
     };
+    {
+        let output = input.parent().unwrap().join("output-swc.js");
 
-    test_fixture(
-        syntax(),
-        &|t| {
-            styled_jsx(
-                t.cm.clone(),
-                file_name.clone(),
-                styled_jsx::visitor::Config {
-                    use_lightningcss: false,
-                },
-            )
-        },
-        &input,
-        &output,
-        FixtureTestConfig {
-            allow_error: true,
-            ..Default::default()
-        },
-    );
+        test_fixture(
+            syntax(),
+            &|t| {
+                styled_jsx(
+                    t.cm.clone(),
+                    file_name.clone(),
+                    styled_jsx::visitor::Config {
+                        use_lightningcss: false,
+                    },
+                )
+            },
+            &input,
+            &output,
+            FixtureTestConfig {
+                allow_error: true,
+                ..Default::default()
+            },
+        );
+    }
+
+    {
+        let output = input.parent().unwrap().join("output-lightningcss.js");
+
+        test_fixture(
+            syntax(),
+            &|t| {
+                styled_jsx(
+                    t.cm.clone(),
+                    file_name.clone(),
+                    styled_jsx::visitor::Config {
+                        use_lightningcss: true,
+                    },
+                )
+            },
+            &input,
+            &output,
+            FixtureTestConfig {
+                allow_error: true,
+                ..Default::default()
+            },
+        );
+    }
 }

@@ -4,21 +4,25 @@ use std::{
     fmt::Debug,
     mem::transmute,
     panic::{catch_unwind, AssertUnwindSafe},
-    sync::Arc,
+    sync::{Arc, RwLock},
 };
 
 use easy_error::{bail, Error, ResultExt};
 use lightningcss::{
+    error::ParserError,
     properties::custom::{TokenList, TokenOrValue},
     selector::{Combinator, Component, PseudoClass, Selector},
-    stylesheet::{MinifyOptions, ParserOptions, PrinterOptions, StyleSheet},
+    stylesheet::{MinifyOptions, ParserFlags, ParserOptions, PrinterOptions, StyleSheet},
     traits::{ParseWithOptions, ToCss},
     values::ident::Ident,
     visit_types,
     visitor::{Visit, VisitTypes, Visitor},
 };
 use parcel_selectors::{parser::SelectorIter, SelectorImpl};
-use swc_common::{errors::HANDLER, SourceMap, DUMMY_SP};
+use swc_common::{
+    errors::{DiagnosticBuilder, Level, HANDLER},
+    BytePos, Loc, SourceMap, Span, DUMMY_SP,
+};
 use swc_ecma_ast::*;
 use tracing::{debug, error, trace};
 
@@ -28,18 +32,57 @@ use crate::{
     utils::{hash_string, string_literal_expr},
 };
 
+fn report(
+    cm: &SourceMap,
+    css_span: Span,
+    file_lines_cache: &mut Option<Loc>,
+    err: &lightningcss::error::Error<ParserError>,
+    level: Level,
+) {
+    // We need :global(selector) to be parsed as a selector.
+    if let ParserError::SelectorError(
+        lightningcss::error::SelectorError::UnsupportedPseudoClassOrElement(..),
+    ) = &err.kind
+    {
+        return;
+    }
+
+    let file = file_lines_cache.get_or_insert_with(|| cm.lookup_char_pos(css_span.lo));
+
+    let lo = if let Some(loc) = &err.loc {
+        Some(file.file.lines[(loc.line + 1) as usize] + BytePos(loc.column))
+    } else {
+        None
+    };
+
+    HANDLER.with(|handler| {
+        //
+
+        let mut db = DiagnosticBuilder::new(handler, level, &err.kind.to_string());
+        if let Some(lo) = lo {
+            db.set_span(Span::new(lo, lo, Default::default()));
+        }
+
+        db.emit();
+    });
+}
+
 #[cfg_attr(
     debug_assertions,
-    tracing::instrument(skip(_cm, style_info, class_name))
+    tracing::instrument(skip(cm, style_info, class_name))
 )]
 pub fn transform_css(
-    _cm: Arc<SourceMap>,
+    cm: Arc<SourceMap>,
     style_info: &LocalStyle,
     is_global: bool,
     class_name: &Option<String>,
 ) -> Result<Expr, Error> {
+    let mut file_lines_cache = None;
+
     debug!("CSS: \n{}", style_info.css);
     let css_str = strip_comments(&style_info.css);
+
+    let warnings: Arc<RwLock<Vec<lightningcss::error::Error<ParserError>>>> = Arc::default();
 
     let result: Result<StyleSheet, _> = StyleSheet::parse(
         &css_str,
@@ -47,18 +90,24 @@ pub fn transform_css(
             // We cannot use css_modules for `:global` because lightningcss does not support
             // parsing-only mode.
             css_modules: None,
+            error_recovery: true,
+            warnings: Some(warnings.clone()),
+            flags: ParserFlags::all(),
             ..Default::default()
         },
     );
+
     let mut ss = match result {
         Ok(ss) => ss,
-        Err(_err) => {
+        Err(err) => {
             HANDLER.with(|handler| {
-                // Print css parsing errors
-                // TODO:
-                // err.to_diagnostics(handler).emit();
-
-                // TODO(kdy1): We may print css so the user can see the error, and report it.
+                report(
+                    &cm,
+                    style_info.css_span,
+                    &mut file_lines_cache,
+                    &err,
+                    Level::Error,
+                );
 
                 handler
                     .struct_span_err(
@@ -72,6 +121,18 @@ pub fn transform_css(
         }
     };
 
+    if let Ok(warnings) = warnings.read() {
+        for warning in warnings.iter() {
+            report(
+                &cm,
+                style_info.css_span,
+                &mut file_lines_cache,
+                warning,
+                Level::Warning,
+            );
+        }
+    }
+
     ss.visit(&mut CssNamespace {
         class_name: match class_name {
             Some(s) => s.clone(),
@@ -83,7 +144,6 @@ pub fn transform_css(
     .expect("failed to transform css");
 
     // Apply auto prefixer
-    // TODO:
     ss.minify(MinifyOptions {
         ..Default::default()
     })
