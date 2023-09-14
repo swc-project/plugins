@@ -20,8 +20,8 @@ use lightningcss::{
 };
 use parcel_selectors::{parser::SelectorIter, SelectorImpl};
 use swc_common::{
-    errors::{Level, HANDLER},
-    FileLines, SourceMap, Span, DUMMY_SP,
+    errors::{DiagnosticBuilder, Level, HANDLER},
+    BytePos, FileLines, SourceMap, Span, DUMMY_SP,
 };
 use swc_ecma_ast::*;
 use tracing::{debug, error, trace};
@@ -44,10 +44,21 @@ fn report(
             .expect("failed to get span to lines for error reporting")
     });
 
-    let mut lo = None;
+    let lo = if let Some(loc) = &err.loc {
+        Some(file_lines.file.lines[loc.line as usize] + BytePos(loc.column))
+    } else {
+        None
+    };
 
     HANDLER.with(|handler| {
         //
+
+        let mut db = DiagnosticBuilder::new(handler, level, &err.kind.to_string());
+        if let Some(lo) = lo {
+            db.set_span(Span::new(lo, lo, Default::default()));
+        }
+
+        db.emit();
     });
 }
 
