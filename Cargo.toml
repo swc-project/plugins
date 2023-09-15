@@ -4,11 +4,12 @@ members = [
   "packages/emotion",
   "packages/jest",
   "packages/loadable-components",
+  "packages/noop",
+  "packages/relay",
+  "packages/remove-console",
   "packages/styled-components",
   "packages/styled-jsx",
   "packages/transform-imports",
-  "packages/relay",
-  "packages/noop",
 ]
 
 [profile.release]
