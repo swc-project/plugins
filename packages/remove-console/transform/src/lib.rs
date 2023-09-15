@@ -1,6 +1,8 @@
 use serde::Deserialize;
-
-use crate::top_level_binding_collector::collect_top_level_decls;
+use swc_atoms::JsWord;
+use swc_common::{SyntaxContext, DUMMY_SP};
+use swc_ecma_ast::*;
+use swc_ecma_visit::{noop_fold_type, Fold, FoldWith};
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(untagged)]
@@ -26,12 +28,12 @@ pub struct Options {
 
 struct RemoveConsole {
     exclude: Vec<JsWord>,
-    bindings: Vec<AHashSet<Id>>,
+    unresolved_ctxt: SyntaxContext,
 }
 
 impl RemoveConsole {
     fn is_global_console(&self, ident: &Ident) -> bool {
-        &ident.sym == "console" && !self.bindings.iter().any(|x| x.contains(&ident.to_id()))
+        &ident.sym == "console" && ident.span.ctxt == self.unresolved_ctxt
     }
 
     fn should_remove_call(&mut self, n: &CallExpr) -> bool {
@@ -81,43 +83,15 @@ impl Fold for RemoveConsole {
         }
         stmt.fold_children_with(self)
     }
-
-    fn fold_function(&mut self, mut func: Function) -> Function {
-        let mut new_params: AHashSet<Id> = AHashSet::default();
-        for param in &func.params {
-            new_params.extend(collect_top_level_decls(param));
-        }
-
-        self.bindings.push(new_params);
-        self.bindings.push(collect_top_level_decls(&func));
-        func.body = func.body.fold_with(self);
-        self.bindings.pop().unwrap();
-        self.bindings.pop().unwrap();
-        func
-    }
-
-    fn fold_module(&mut self, module: Module) -> Module {
-        self.bindings.push(collect_top_level_decls(&module));
-        let m = module.fold_children_with(self);
-        self.bindings.pop().unwrap();
-        m
-    }
-
-    fn fold_script(&mut self, script: Script) -> Script {
-        self.bindings.push(collect_top_level_decls(&script));
-        let s = script.fold_with(self);
-        self.bindings.pop().unwrap();
-        s
-    }
 }
 
-pub fn remove_console(config: Config) -> impl Fold {
+pub fn remove_console(config: Config, unresolved_ctxt: SyntaxContext) -> impl Fold {
     let exclude = match config {
         Config::WithOptions(x) => x.exclude,
         _ => vec![],
     };
     RemoveConsole {
         exclude,
-        bindings: Default::default(),
+        unresolved_ctxt,
     }
 }

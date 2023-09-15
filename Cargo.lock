@@ -1599,6 +1599,7 @@ name = "remove_console"
 version = "0.44.0"
 dependencies = [
  "serde",
+ "swc_atoms",
  "swc_cached",
  "swc_common",
  "swc_ecma_ast",

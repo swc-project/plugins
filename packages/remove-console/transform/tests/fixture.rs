@@ -1,9 +1,7 @@
 use std::path::PathBuf;
 
-use modularize_imports::{modularize_imports, PackageConfig};
 use swc_ecma_parser::{EsConfig, Syntax};
 use swc_ecma_transforms_testing::{test_fixture, FixtureTestConfig};
-use testing::fixture;
 
 fn syntax() -> Syntax {
     Syntax::Es(EsConfig {
@@ -12,8 +10,8 @@ fn syntax() -> Syntax {
     })
 }
 
-#[fixture("tests/fixture/**/input.js")]
-fn modularize_imports_fixture(input: PathBuf) {
+#[testing::fixture("tests/fixture/**/input.js")]
+fn fixture(input: PathBuf) {
     let output = input.parent().unwrap().join("output.js");
     test_fixture(
         syntax(),
