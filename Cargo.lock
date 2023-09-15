@@ -2774,6 +2774,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "swc_plugin_remove_console"
+version = "0.12.3"
+dependencies = [
+ "swc_common",
+ "swc_core",
+ "swc_ecma_ast",
+ "swc_ecma_utils",
+ "swc_ecma_visit",
+ "swc_plugin_macro",
+ "tracing",
+]
+
+[[package]]
 name = "swc_plugin_styled_components"
 version = "0.34.3"
 dependencies = [
