@@ -1,6 +1,8 @@
 use std::path::PathBuf;
 
+use swc_common::{chain, Mark, SyntaxContext};
 use swc_ecma_parser::{EsConfig, Syntax};
+use swc_ecma_transforms_base::resolver;
 use swc_ecma_transforms_testing::{test_fixture, FixtureTestConfig};
 
 fn syntax() -> Syntax {
@@ -16,70 +18,16 @@ fn fixture(input: PathBuf) {
     test_fixture(
         syntax(),
         &|_tr| {
-            modularize_imports(modularize_imports::Config {
-                packages: vec![
-                    (
-                        "react-bootstrap".to_string(),
-                        PackageConfig {
-                            transform: "react-bootstrap/lib/{{member}}".into(),
-                            prevent_full_import: false,
-                            skip_default_conversion: false,
-                        },
-                    ),
-                    (
-                        "my-library/?(((\\w*)?/?)*)".to_string(),
-                        PackageConfig {
-                            transform: "my-library/{{ matches.[1] }}/{{member}}".into(),
-                            prevent_full_import: false,
-                            skip_default_conversion: false,
-                        },
-                    ),
-                    (
-                        "my-library-2".to_string(),
-                        PackageConfig {
-                            transform: "my-library-2/{{ camelCase member }}".into(),
-                            prevent_full_import: false,
-                            skip_default_conversion: true,
-                        },
-                    ),
-                    (
-                        "my-library-3".to_string(),
-                        PackageConfig {
-                            transform: "my-library-3/{{ kebabCase member }}".into(),
-                            prevent_full_import: false,
-                            skip_default_conversion: true,
-                        },
-                    ),
-                    (
-                        "my-library-4".to_string(),
-                        PackageConfig {
-                            transform: Vec::from([
-                                ("foo".to_string(), "my-library-4/this_is_foo".to_string()),
-                                ("bar".to_string(), "my-library-4/bar".to_string()),
-                                (
-                                    "use(\\w*)".to_string(),
-                                    "my-library-4/{{ kebabCase member }}/{{ kebabCase \
-                                     memberMatches.[1] }}"
-                                        .to_string(),
-                                ),
-                                (
-                                    "(\\w*)Icon".to_string(),
-                                    "my-library-4/{{ kebabCase memberMatches.[1] }}".to_string(),
-                                ),
-                                (
-                                    "*".to_string(),
-                                    "my-library-4/{{ upperCase member }}".to_string(),
-                                ),
-                            ])
-                            .into(),
-                            prevent_full_import: false,
-                            skip_default_conversion: true,
-                        },
-                    ),
-                ]
-                .into_iter()
-                .collect(),
-            })
+            let unresolved_mark = Mark::new();
+            let top_level_mark = Mark::new();
+
+            chain!(
+                resolver(unresolved_mark, top_level_mark, false),
+                remove_console::remove_console(
+                    remove_console::Config::All(true),
+                    SyntaxContext::empty().apply_mark(unresolved_mark)
+                )
+            )
         },
         &input,
         &output,
