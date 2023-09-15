@@ -1,17 +1,20 @@
 # remove-console
 
+See https://nextjs.org/docs/architecture/nextjs-compiler#remove-console for more information.
+
 ## Config
+
+```json
+["remove-console"]
+```
+
+or
 
 ```json
 [
   "remove-console",
   {
-    "react-bootstrap": {
-      "transform": "react-bootstrap/lib/{{member}}"
-    },
-    "lodash": {
-      "transform": "lodash/{{member}}"
-    }
+    "exclude": ["error"]
   }
 ]
 ```
