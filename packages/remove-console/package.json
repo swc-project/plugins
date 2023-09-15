@@ -1,7 +1,7 @@
 {
   "name": "@swc/plugin-remove-console",
-  "version": "1.5.80",
-  "description": "Noop SWC plugin, for debugging",
+  "version": "1.5.82",
+  "description": "SWC plugin for https://www.npmjs.com/package/babel-plugin-remove-console",
   "main": "swc_plugin_remove_console.wasm",
   "scripts": {
     "prepack": "cp ../../target/wasm32-wasi/release/swc_plugin_remove_console.wasm ."
