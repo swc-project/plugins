@@ -25,7 +25,6 @@ fn fixture(input: PathBuf) {
                 resolver(unresolved_mark, top_level_mark, false),
                 react_remove_properties::react_remove_properties(
                     react_remove_properties::Config::All(true),
-                    SyntaxContext::empty().apply_mark(unresolved_mark)
                 )
             )
         },
