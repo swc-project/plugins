@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 
-use swc_common::{chain, Mark, SyntaxContext};
+use react_remove_properties::Options;
+use swc_common::{chain, Mark};
 use swc_ecma_parser::{EsConfig, Syntax};
 use swc_ecma_transforms_base::resolver;
 use swc_ecma_transforms_testing::{test_fixture, FixtureTestConfig};
@@ -24,7 +25,13 @@ fn fixture(input: PathBuf) {
             chain!(
                 resolver(unresolved_mark, top_level_mark, false),
                 react_remove_properties::react_remove_properties(
-                    react_remove_properties::Config::All(true),
+                    if input.to_string_lossy().contains("custom") {
+                        react_remove_properties::Config::WithOptions(Options {
+                            properties: vec!["^data-custom$".into()],
+                        })
+                    } else {
+                        react_remove_properties::Config::All(true)
+                    }
                 )
             )
         },
