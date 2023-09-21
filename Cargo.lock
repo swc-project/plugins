@@ -1042,7 +1042,7 @@ dependencies = [
 
 [[package]]
 name = "modularize_imports"
-version = "0.45.0"
+version = "0.46.0"
 dependencies = [
  "convert_case",
  "handlebars",
@@ -1536,6 +1536,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "react_remove_properties"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "swc_atoms",
+ "swc_cached",
+ "swc_common",
+ "swc_ecma_ast",
+ "swc_ecma_parser",
+ "swc_ecma_transforms_base",
+ "swc_ecma_transforms_testing",
+ "swc_ecma_visit",
+ "testing",
+]
+
+[[package]]
 name = "redox_syscall"
 version = "0.3.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1596,7 +1612,7 @@ checksum = "c707298afce11da2efef2f600116fa93ffa7a032b5d7b628aa17711ec81383ca"
 
 [[package]]
 name = "remove_console"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -1962,7 +1978,7 @@ dependencies = [
 
 [[package]]
 name = "styled_components"
-version = "0.72.0"
+version = "0.73.0"
 dependencies = [
  "Inflector",
  "once_cell",
@@ -1983,7 +1999,7 @@ dependencies = [
 
 [[package]]
 name = "styled_jsx"
-version = "0.49.0"
+version = "0.50.0"
 dependencies = [
  "easy-error",
  "lightningcss",
@@ -2126,7 +2142,7 @@ dependencies = [
 
 [[package]]
 name = "swc_constify"
-version = "0.12.0"
+version = "0.13.0"
 dependencies = [
  "rustc-hash",
  "serde_json",
@@ -2587,7 +2603,7 @@ dependencies = [
 
 [[package]]
 name = "swc_emotion"
-version = "0.48.0"
+version = "0.49.0"
 dependencies = [
  "base64",
  "byteorder",
@@ -2772,6 +2788,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "swc_plugin_react_remove_properties"
+version = "0.13.3"
+dependencies = [
+ "react_remove_properties",
+ "serde_json",
+ "swc_cached",
+ "swc_common",
+ "swc_core",
+ "swc_ecma_ast",
+ "swc_ecma_utils",
+ "swc_ecma_visit",
+ "swc_plugin_macro",
+ "tracing",
+]
+
+[[package]]
 name = "swc_plugin_relay"
 version = "0.1.0"
 dependencies = [
@@ -2859,7 +2891,7 @@ dependencies = [
 
 [[package]]
 name = "swc_relay"
-version = "0.20.0"
+version = "0.21.0"
 dependencies = [
  "once_cell",
  "regex",

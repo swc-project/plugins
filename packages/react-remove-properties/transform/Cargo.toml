@@ -3,9 +3,9 @@ authors = ["강동윤 <kdy1997.dev@gmail.com>"]
 description = "AST Transforms for import modularizer"
 edition = "2021"
 license = "Apache-2.0"
-name = "remove_console"
+name = "react_remove_properties"
 repository = "https://github.com/swc-project/plugins.git"
-version = "0.2.0"
+version = "0.1.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

@@ -5,6 +5,7 @@ members = [
   "packages/jest",
   "packages/loadable-components",
   "packages/noop",
+  "packages/react-remove-properties",
   "packages/relay",
   "packages/remove-console",
   "packages/styled-components",
