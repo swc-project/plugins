@@ -2793,6 +2793,7 @@ version = "0.13.3"
 dependencies = [
  "react_remove_properties",
  "serde_json",
+ "swc_cached",
  "swc_common",
  "swc_core",
  "swc_ecma_ast",
