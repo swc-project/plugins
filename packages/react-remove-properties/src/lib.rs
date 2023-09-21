@@ -1,5 +1,4 @@
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
-use swc_common::SyntaxContext;
 use swc_core::{
     ecma::{ast::Program, visit::FoldWith},
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
@@ -17,6 +16,5 @@ fn swc_plugin(program: Program, data: TransformPluginProgramMetadata) -> Program
 
     program.fold_with(&mut react_remove_properties::react_remove_properties(
         config,
-        SyntaxContext::empty().apply_mark(data.unresolved_mark),
     ))
 }

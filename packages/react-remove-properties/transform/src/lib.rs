@@ -1,6 +1,5 @@
 use serde::Deserialize;
-use swc_atoms::JsWord;
-use swc_common::{SyntaxContext, DUMMY_SP};
+use swc_cached::regex::CachedRegex;
 use swc_ecma_ast::*;
 use swc_ecma_visit::{noop_fold_type, Fold, FoldWith};
 
@@ -23,75 +22,49 @@ impl Config {
 #[derive(Clone, Debug, Deserialize)]
 pub struct Options {
     #[serde(default)]
-    pub exclude: Vec<JsWord>,
+    pub properties: Vec<String>,
 }
 
-struct RemoveConsole {
-    exclude: Vec<JsWord>,
-    unresolved_ctxt: SyntaxContext,
-}
-
-impl RemoveConsole {
-    fn is_global_console(&self, ident: &Ident) -> bool {
-        &ident.sym == "console" && ident.span.ctxt == self.unresolved_ctxt
-    }
-
-    fn should_remove_call(&mut self, n: &CallExpr) -> bool {
-        let callee = &n.callee;
-        let member_expr = match callee {
-            Callee::Expr(e) => match &**e {
-                Expr::Member(m) => m,
-                _ => return false,
-            },
-            _ => return false,
-        };
-
-        // Don't attempt to evaluate computed properties.
-
-        if matches!(&member_expr.prop, MemberProp::Computed(..)) {
-            return false;
-        }
-
-        // Only proceed if the object is the global `console` object.
-        match &*member_expr.obj {
-            Expr::Ident(i) if self.is_global_console(i) => {}
-            _ => return false,
-        }
-
-        // Check if the property is requested to be excluded.
-        // Here we do an O(n) search on the list of excluded properties because the size
-        // should be small.
-        match &member_expr.prop {
-            MemberProp::Ident(i) if !self.exclude.iter().any(|x| *x == i.sym) => {}
-            _ => return false,
-        }
-
-        true
-    }
-}
-
-impl Fold for RemoveConsole {
-    noop_fold_type!();
-
-    fn fold_stmt(&mut self, stmt: Stmt) -> Stmt {
-        if let Stmt::Expr(e) = &stmt {
-            if let Expr::Call(c) = &*e.expr {
-                if self.should_remove_call(c) {
-                    return Stmt::Empty(EmptyStmt { span: DUMMY_SP });
-                }
-            }
-        }
-        stmt.fold_children_with(self)
-    }
-}
-
-pub fn react_remove_properties(config: Config, unresolved_ctxt: SyntaxContext) -> impl Fold {
-    let exclude = match config {
-        Config::WithOptions(x) => x.exclude,
+pub fn react_remove_properties(config: Config) -> impl Fold {
+    let mut properties: Vec<CachedRegex> = match config {
+        Config::WithOptions(x) => x
+            .properties
+            .iter()
+            .map(|pattern| {
+                CachedRegex::new(pattern).unwrap_or_else(|e| {
+                    panic!("error compiling property regex `{}`: {}", pattern, e);
+                })
+            })
+            .collect(),
         _ => vec![],
     };
-    RemoveConsole {
-        exclude,
-        unresolved_ctxt,
+    if properties.is_empty() {
+        // Keep the default regex identical to `babel-plugin-react-remove-properties`.
+        properties.push(CachedRegex::new(r"^data-test").unwrap());
+    }
+    RemoveProperties { properties }
+}
+
+struct RemoveProperties {
+    properties: Vec<CachedRegex>,
+}
+
+impl RemoveProperties {
+    fn should_remove_property(&self, name: &str) -> bool {
+        self.properties.iter().any(|p| p.is_match(name))
+    }
+}
+
+impl Fold for RemoveProperties {
+    noop_fold_type!();
+
+    fn fold_jsx_opening_element(&mut self, mut el: JSXOpeningElement) -> JSXOpeningElement {
+        el.attrs.retain(|attr| {
+            !matches!(attr, JSXAttrOrSpread::JSXAttr(JSXAttr {
+              name: JSXAttrName::Ident(ident),
+              ..
+            }) if self.should_remove_property(ident.sym.as_ref()))
+        });
+        el.fold_children_with(self)
     }
 }
