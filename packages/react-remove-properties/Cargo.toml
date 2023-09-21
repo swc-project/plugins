@@ -13,6 +13,7 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 react_remove_properties = { path = "./transform" }
 serde_json = "1.0.79"
+swc_cached = "0.3.17"
 swc_common = { version = "0.32.1", features = ["concurrent"] }
 swc_core = { version = "0.83.5", features = ["ecma_plugin_transform"] }
 swc_ecma_ast = "0.109.1"
