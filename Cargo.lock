@@ -2142,7 +2142,7 @@ dependencies = [
 
 [[package]]
 name = "swc_constify"
-version = "0.12.0"
+version = "0.13.0"
 dependencies = [
  "rustc-hash",
  "serde_json",
