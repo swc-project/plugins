@@ -2,7 +2,7 @@ import { AppProps } from "next/app";
 
 const someVar = "--var-1";
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({ Component, pageProps }) {
     return (
         <>
             <style jsx global>{`
