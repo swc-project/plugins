@@ -1612,7 +1612,7 @@ checksum = "c707298afce11da2efef2f600116fa93ffa7a032b5d7b628aa17711ec81383ca"
 
 [[package]]
 name = "remove_console"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "serde",
  "swc_atoms",
