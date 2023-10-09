@@ -12,11 +12,11 @@ custom_transform = ["swc_common/concurrent"]
 [dependencies]
 easy-error = "1.0.0"
 tracing = "0.1.37"
-lightningcss = { version = "1.0.0-alpha.46", features = [
+lightningcss = { version = "1.0.0-alpha.48", features = [
   "visitor",
   "into_owned",
 ] }
-parcel_selectors = "0.26.0"
+parcel_selectors = "0.26.2"
 serde = { version = "1", features = ["derive"] }
 
 swc_common = "0.33.0"
