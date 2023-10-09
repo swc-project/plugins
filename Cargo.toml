@@ -1,5 +1,6 @@
 [workspace]
 members = [
+  "xtask",
   "packages/constify",
   "packages/emotion",
   "packages/jest",
@@ -11,6 +12,7 @@ members = [
   "packages/styled-components",
   "packages/styled-jsx",
   "packages/transform-imports",
+
 ]
 
 [profile.release]
