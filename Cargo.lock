@@ -1651,7 +1651,7 @@ dependencies = [
 
 [[package]]
 name = "react_remove_properties"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "serde",
  "swc_atoms",
