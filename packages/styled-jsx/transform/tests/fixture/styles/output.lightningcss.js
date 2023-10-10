@@ -6,26 +6,26 @@ bar.__hash = "aaed0341accea8f";
 const baz = new String("div{font-size:3em}");
 baz.__hash = "aaed0341accea8f";
 const a = new String(`div{font-size:${size}em}`);
-a.__hash = "b4e02b3e84cc50c";
+a.__hash = "c82345d11d3b02f5";
 export const uh = bar;
-export const foo = new String(`div.jsx-1a001e3709d54ba4{color:${color}}`);
-foo.__hash = "1a001e3709d54ba4";
+export const foo = new String(`div.jsx-611c1f2c95744b70{color:${color}}`);
+foo.__hash = "611c1f2c95744b70";
 ({
-    styles: <_JSXStyle id={"7a7480dd17e82e07"}>{`div.jsx-7a7480dd17e82e07{color:${colors.green.light}}a.jsx-7a7480dd17e82e07{color:red}`}</_JSXStyle>,
-    className: "jsx-7a7480dd17e82e07"
+    styles: <_JSXStyle id={"141b18386ca7cbc5"}>{`div.jsx-141b18386ca7cbc5{color:${colors.green.light}}a.jsx-141b18386ca7cbc5{color:red}`}</_JSXStyle>,
+    className: "jsx-141b18386ca7cbc5"
 });
 const b = {
-    styles: <_JSXStyle id={"7a7480dd17e82e07"}>{`div.jsx-7a7480dd17e82e07{color:${colors.green.light}}a.jsx-7a7480dd17e82e07{color:red}`}</_JSXStyle>,
-    className: "jsx-7a7480dd17e82e07"
+    styles: <_JSXStyle id={"141b18386ca7cbc5"}>{`div.jsx-141b18386ca7cbc5{color:${colors.green.light}}a.jsx-141b18386ca7cbc5{color:red}`}</_JSXStyle>,
+    className: "jsx-141b18386ca7cbc5"
 };
 const dynamic = (colors)=>{
     const b = {
-        styles: <_JSXStyle id={"9f775f199a8dfb95"} dynamic={[
+        styles: <_JSXStyle id={"a6aaef75eecc989e"} dynamic={[
             colors.green.light
         ]}>{`div.__jsx-style-dynamic-selector{color:${colors.green.light}}a.__jsx-style-dynamic-selector{color:red}`}</_JSXStyle>,
         className: _JSXStyle.dynamic([
             [
-                "9f775f199a8dfb95",
+                "a6aaef75eecc989e",
                 [
                     colors.green.light
                 ]
@@ -34,6 +34,6 @@ const dynamic = (colors)=>{
     };
 };
 export default {
-    styles: <_JSXStyle id={"e14aa5a1efa47449"}>{`div.jsx-e14aa5a1efa47449{font-size:3em}p.jsx-e14aa5a1efa47449{color:${color}}`}</_JSXStyle>,
-    className: "jsx-e14aa5a1efa47449"
+    styles: <_JSXStyle id={"c1431f6a913dbbc9"}>{`div.jsx-c1431f6a913dbbc9{font-size:3em}p.jsx-c1431f6a913dbbc9{color:${color}}`}</_JSXStyle>,
+    className: "jsx-c1431f6a913dbbc9"
 };
