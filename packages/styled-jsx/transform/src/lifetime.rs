@@ -3,6 +3,7 @@
 use lightningcss::{
     properties::custom::TokenList,
     selector::{Component, Selector, ViewTransitionPartName},
+    traits::IntoOwned,
 };
 use parcel_selectors::{
     attr::{AttrSelectorWithOptionalNamespace, NamespaceConstraint, ParsedAttrSelectorOperation},

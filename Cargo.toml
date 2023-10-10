@@ -1,5 +1,6 @@
 [workspace]
 members = [
+  "xtask",
   "packages/constify",
   "packages/emotion",
   "packages/jest",
@@ -11,7 +12,12 @@ members = [
   "packages/styled-components",
   "packages/styled-jsx",
   "packages/transform-imports",
+
 ]
+
+
+resolver = "2"
+
 
 [profile.release]
 codegen-units = 1

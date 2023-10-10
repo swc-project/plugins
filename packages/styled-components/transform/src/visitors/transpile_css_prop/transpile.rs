@@ -5,7 +5,7 @@ use std::{borrow::Cow, cell::RefCell, collections::HashMap, rc::Rc};
 use inflector::Inflector;
 use once_cell::sync::Lazy;
 use regex::Regex;
-use swc_atoms::{js_word, JsWord};
+use swc_atoms::JsWord;
 use swc_common::{
     collections::{AHashMap, AHashSet},
     util::take::Take,
@@ -333,13 +333,10 @@ impl VisitMut for TranspileCssProp {
         elem.opening.attrs.retain(|attr| {
             match attr {
                 JSXAttrOrSpread::JSXAttr(attr) => {
-                    if matches!(
-                        attr.name,
-                        JSXAttrName::Ident(Ident {
-                            sym: js_word!(""),
-                            ..
-                        })
-                    ) {
+                    if match &attr.name {
+                        JSXAttrName::Ident(Ident { sym, .. }) => sym.is_empty(),
+                        _ => false,
+                    } {
                         return false;
                     }
                 }
