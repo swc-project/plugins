@@ -1028,9 +1028,9 @@ checksum = "b4668fb0ea861c1df094127ac5f1da3409a82116a4ba74fca2e58ef927159bb3"
 
 [[package]]
 name = "lightningcss"
-version = "1.0.0-alpha.48"
+version = "1.0.0-alpha.49"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4e4ad4e02e13f56868abfa90bbf561828d9380836efee294d08a6b1b1be934a1"
+checksum = "06476660ee1e593a2672e4a342a1289708fd9936dcdf3e74433ad078145e9e3d"
 dependencies = [
  "ahash 0.7.6",
  "bitflags 2.4.0",
@@ -1049,13 +1049,14 @@ dependencies = [
  "rayon",
  "serde",
  "smallvec",
+ "static-self",
 ]
 
 [[package]]
 name = "lightningcss-derive"
-version = "1.0.0-alpha.41"
+version = "1.0.0-alpha.42"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "98e77e7507dd3ab2baa6007b68aa2cb65959b2c3940c910a6ae938003e928974"
+checksum = "8f02a09f0b79d31f1ee13ea55e2f7021037c6b72e0a3ab6c1cb0e9bd7ac8a295"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1280,9 +1281,9 @@ checksum = "c1b04fb49957986fdce4d6ee7a65027d55d4b6d2265e5848bbb507b58ccfdb6f"
 
 [[package]]
 name = "parcel_selectors"
-version = "0.26.2"
+version = "0.26.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5f0fbe4365a6ec3fda13f9551aa5ea9f1e1ee8da513953b153de29ac00cf684a"
+checksum = "0f000cdd23df6cebe999cf2b02a3bf40d55758f74883d7fd43a33690565618c8"
 dependencies = [
  "bitflags 2.4.0",
  "cssparser",
@@ -1292,6 +1293,7 @@ dependencies = [
  "phf_codegen",
  "precomputed-hash",
  "smallvec",
+ "static-self",
 ]
 
 [[package]]
@@ -1973,9 +1975,9 @@ checksum = "7bd3e3206899af3f8b12af284fafc038cc1dc2b41d1b89dd17297221c5d225de"
 
 [[package]]
 name = "smallvec"
-version = "1.11.0"
+version = "1.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "62bb4feee49fdd9f707ef802e22365a35de4b7b299de4763d44bfea899442ff9"
+checksum = "942b4a808e05215192e39f4ab80813e599068285906cc91aa64f923db842bd5a"
 
 [[package]]
 name = "smartstring"
@@ -2049,6 +2051,27 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.32",
+]
+
+[[package]]
+name = "static-self"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e2978fa810a31711d7162d0bb843df1f36d84e393e335ce31ec2c485b2464c44"
+dependencies = [
+ "smallvec",
+ "static-self-derive",
+]
+
+[[package]]
+name = "static-self-derive"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bc53c080b79432d9babd26457df68fb4b002cc7d2ce36a1a5195091cf9fecc14"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 1.0.109",
 ]
 
 [[package]]
