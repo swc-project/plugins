@@ -5,7 +5,7 @@ edition = "2021"
 license = "Apache-2.0"
 name = "remove_console"
 repository = "https://github.com/swc-project/plugins.git"
-version = "0.5.0"
+version = "0.6.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -18,7 +18,7 @@ swc_ecma_ast = "0.110.0"
 swc_ecma_visit = "0.96.0"
 
 [dev-dependencies]
-swc_ecma_parser = "0.141.0"
-swc_ecma_transforms_base = "0.134.0"
-swc_ecma_transforms_testing = "0.137.0"
+swc_ecma_parser = "0.141.1"
+swc_ecma_transforms_base = "0.134.3"
+swc_ecma_transforms_testing = "0.137.3"
 testing = "0.35.0"

@@ -53,6 +53,7 @@ pub fn transform_css(
             style_info.css_span.lo,
             style_info.css_span.hi,
         ),
+        None,
         config,
     );
     let mut parser = Parser::new(lexer, config);

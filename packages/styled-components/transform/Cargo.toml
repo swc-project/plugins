@@ -6,7 +6,7 @@ include = ["Cargo.toml", "src/**/*.rs"]
 license = "Apache-2.0"
 name = "styled_components"
 repository = "https://github.com/swc-project/plugins.git"
-version = "0.76.0"
+version = "0.77.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -21,13 +21,13 @@ serde = { version = "1.0.130", features = ["derive"] }
 swc_atoms = "0.6.0"
 swc_common = "0.33.0"
 swc_ecma_ast = "0.110.0"
-swc_ecma_utils = "0.124.0"
+swc_ecma_utils = "0.124.3"
 swc_ecma_visit = "0.96.0"
 tracing = "0.1.37"
 
 [dev-dependencies]
 serde_json = "1"
-swc_ecma_parser = "0.141.0"
-swc_ecma_transforms = "0.225.0"
-swc_ecma_transforms_testing = "0.137.0"
+swc_ecma_parser = "0.141.1"
+swc_ecma_transforms = "0.225.6"
+swc_ecma_transforms_testing = "0.137.3"
 testing = "0.35.0"
