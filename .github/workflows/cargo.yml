@@ -30,7 +30,7 @@ jobs:
         with:
           submodules: true
 
-      - name: Setup node
+      - name: Setupz node
         uses: actions/setup-node@v2
         with:
           node-version: 16
@@ -78,7 +78,7 @@ jobs:
         uses: baptiste0928/cargo-install@v2
         with:
           crate: cargo-mono
-          version: "0.3.1"
+          version: "0.3.6"
           locked: true
 
       - name: Publish
