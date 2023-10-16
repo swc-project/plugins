@@ -1,9 +1,10 @@
 #![feature(box_patterns)]
 
 use import_analyzer::ImportMap;
+use once_cell::sync::Lazy;
 use rustc_hash::FxHashSet;
 use swc_atoms::JsWord;
-use swc_common::{sync::Lazy, util::take::Take, Mark, Span, Spanned, SyntaxContext, DUMMY_SP};
+use swc_common::{util::take::Take, Mark, Span, Spanned, SyntaxContext, DUMMY_SP};
 use swc_ecma_ast::{
     op, ArrowExpr, AssignExpr, BlockStmt, CallExpr, Callee, Decl, DefaultDecl, Expr, FnDecl,
     FnExpr, Function, Id, Ident, ImportSpecifier, Module, ModuleDecl, ModuleItem, ReturnStmt, Stmt,
