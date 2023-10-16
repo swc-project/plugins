@@ -28,7 +28,6 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          override: true
 
       - name: Install wasm target
         shell: bash
