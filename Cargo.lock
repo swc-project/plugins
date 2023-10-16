@@ -2293,6 +2293,7 @@ dependencies = [
 name = "swc_constify"
 version = "0.17.0"
 dependencies = [
+ "once_cell",
  "rustc-hash",
  "serde_json",
  "swc_atoms",
