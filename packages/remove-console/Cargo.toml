@@ -14,9 +14,9 @@ crate-type = ["cdylib", "rlib"]
 remove_console = { path = "./transform" }
 serde_json = "1.0.79"
 swc_common = { version = "0.33.0", features = ["concurrent"] }
-swc_core = { version = "0.85.8", features = ["ecma_plugin_transform"] }
+swc_core = { version = "0.86.1", features = ["ecma_plugin_transform"] }
 swc_ecma_ast = "0.110.0"
-swc_ecma_utils = "0.124.3"
+swc_ecma_utils = "0.124.4"
 swc_ecma_visit = "0.96.0"
 swc_plugin_macro = "0.9.15"
 tracing = { version = "0.1.37", features = ["release_max_level_off"] }
