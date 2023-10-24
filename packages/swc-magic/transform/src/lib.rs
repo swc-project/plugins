@@ -1,21 +1,24 @@
 #![feature(box_patterns)]
 
 use import_analyzer::ImportMap;
+use serde::Deserialize;
 use swc_atoms::Atom;
-use swc_common::{comments::Comments, errors::HANDLER, util::take::Take, Span, Spanned, DUMMY_SP};
+use swc_common::{
+    comments::Comments, errors::HANDLER, util::take::Take, Mark, Span, Spanned, DUMMY_SP,
+};
 use swc_ecma_ast::{CallExpr, Callee, EmptyStmt, Expr, Module, ModuleDecl, ModuleItem, Stmt};
 use swc_ecma_visit::{VisitMut, VisitMutWith};
 
 mod import_analyzer;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct Config {
     import_path: Atom,
 }
 
 impl Config {}
 
-pub fn magic<C>(config: Config, comments: C) -> impl VisitMut
+pub fn swc_magic<C>(_unreolved_mark: Mark, config: Config, comments: C) -> impl VisitMut
 where
     C: Comments,
 {

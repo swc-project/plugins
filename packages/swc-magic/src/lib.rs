@@ -3,21 +3,36 @@
 
 use swc_core::{
     common::{sync::Lrc, FileName, SourceMap},
-    ecma::{ast::Program, visit::FoldWith},
-    plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
+    ecma::{
+        ast::Program,
+        transforms::base::hygiene::Config,
+        visit::{FoldWith, VisitMutWith},
+    },
+    plugin::{
+        plugin_transform,
+        proxies::{PluginCommentsProxy, TransformPluginProgramMetadata},
+    },
 };
 
 #[plugin_transform]
-fn swc_magic_plugin(program: Program, data: TransformPluginProgramMetadata) -> Program {
-    let config = serde_json::from_str::<Config>(
+fn swc_magic_plugin(mut program: Program, data: TransformPluginProgramMetadata) -> Program {
+    let config = serde_json::from_str::<swc_magic::Config>(
         &data
             .get_transform_plugin_config()
             .expect("failed to get plugin config for swc-magic"),
     )
     .expect("invalid config for swc-magic");
 
+    let unresolved_mark = data.unresolved_mark;
+
     // TODO(kdy1): This is wrong, but it does not use cm
     let cm = Lrc::new(SourceMap::default());
 
-    program.fold_with(&mut visitor::swc_magic(cm, FileName::Anon, config))
+    program.visit_mut_with(&mut swc_magic::swc_magic(
+        unresolved_mark,
+        config,
+        PluginCommentsProxy,
+    ));
+
+    program
 }
