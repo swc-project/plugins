@@ -24,9 +24,6 @@ fn swc_magic_plugin(mut program: Program, data: TransformPluginProgramMetadata) 
 
     let unresolved_mark = data.unresolved_mark;
 
-    // TODO(kdy1): This is wrong, but it does not use cm
-    let cm = Lrc::new(SourceMap::default());
-
     program.visit_mut_with(&mut swc_magic::swc_magic(
         unresolved_mark,
         config,

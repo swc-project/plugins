@@ -13,3 +13,8 @@ swc_common = "0.33.1"
 swc_ecma_ast = "0.110.1"
 swc_ecma_utils = "0.124.8"
 swc_ecma_visit = "0.96.1"
+
+[dev-dependencies]
+swc_ecma_parser = "0.141.4"
+swc_ecma_transforms_testing = "0.137.9"
+testing = "0.35.1"

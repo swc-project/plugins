@@ -4,8 +4,7 @@ use import_analyzer::ImportMap;
 use serde::Deserialize;
 use swc_atoms::Atom;
 use swc_common::{
-    comments::Comments, errors::HANDLER, util::take::Take, DeserializeEnum, Mark, Span, Spanned,
-    DUMMY_SP,
+    comments::Comments, errors::HANDLER, util::take::Take, Mark, Span, Spanned, DUMMY_SP,
 };
 use swc_ecma_ast::{CallExpr, Callee, EmptyStmt, Expr, Module, ModuleDecl, ModuleItem, Stmt};
 use swc_ecma_visit::{VisitMut, VisitMutWith};

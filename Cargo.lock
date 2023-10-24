@@ -2844,8 +2844,11 @@ dependencies = [
  "swc_atoms",
  "swc_common",
  "swc_ecma_ast",
+ "swc_ecma_parser",
+ "swc_ecma_transforms_testing",
  "swc_ecma_utils",
  "swc_ecma_visit",
+ "testing",
 ]
 
 [[package]]
