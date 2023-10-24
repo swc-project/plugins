@@ -3025,6 +3025,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "swc_plugin_swc_magic"
+version = "0.1.0"
+
+[[package]]
 name = "swc_plugin_transform_imports"
 version = "0.13.3"
 dependencies = [
