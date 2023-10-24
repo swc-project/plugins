@@ -2828,6 +2828,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "swc_magic"
+version = "0.1.0"
+
+[[package]]
 name = "swc_plugin"
 version = "0.90.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3027,6 +3031,9 @@ dependencies = [
 [[package]]
 name = "swc_plugin_swc_magic"
 version = "0.1.0"
+dependencies = [
+ "swc_magic",
+]
 
 [[package]]
 name = "swc_plugin_transform_imports"
