@@ -13,7 +13,12 @@ mod import_analyzer;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Config {
+    #[serde(default = "default_import_path")]
     pub import_path: Atom,
+}
+
+fn default_import_path() -> Atom {
+    Atom::from("@swc/magic")
 }
 
 impl Config {}
