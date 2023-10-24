@@ -6,7 +6,6 @@ use swc_core::{
     ecma::{ast::Program, visit::FoldWith},
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
 };
-use swc_magic::{visitor, visitor::Config};
 
 #[plugin_transform]
 fn swc_magic_plugin(program: Program, data: TransformPluginProgramMetadata) -> Program {

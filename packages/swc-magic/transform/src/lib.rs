@@ -8,12 +8,19 @@ use swc_ecma_visit::{VisitMut, VisitMutWith};
 
 mod import_analyzer;
 
-pub fn magic<C>(import_path: Atom, comments: C) -> impl VisitMut
+#[derive(Debug, Clone)]
+pub struct Config {
+    import_path: Atom,
+}
+
+impl Config {}
+
+pub fn magic<C>(config: Config, comments: C) -> impl VisitMut
 where
     C: Comments,
 {
     Magic {
-        import_path,
+        config,
         comments,
         imports: Default::default(),
     }
@@ -26,9 +33,9 @@ struct Magic<C>
 where
     C: Comments,
 {
-    imports: ImportMap,
+    config: Config,
     comments: C,
-    import_path: Atom,
+    imports: ImportMap,
 }
 
 impl<C> VisitMut for Magic<C>
@@ -47,7 +54,7 @@ where
         {
             if !self
                 .imports
-                .is_import(callee, &self.import_path, MARK_AS_PURE_FN_NAME)
+                .is_import(callee, &self.config.import_path, MARK_AS_PURE_FN_NAME)
             {
                 return;
             }
@@ -80,7 +87,7 @@ where
 
     fn visit_mut_module_item(&mut self, m: &mut ModuleItem) {
         if let ModuleItem::ModuleDecl(ModuleDecl::Import(import)) = m {
-            if import.src.value == self.import_path {
+            if import.src.value == self.config.import_path {
                 *m = ModuleItem::Stmt(Stmt::Empty(EmptyStmt { span: DUMMY_SP }));
                 return;
             }
