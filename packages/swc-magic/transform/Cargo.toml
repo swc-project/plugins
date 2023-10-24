@@ -4,36 +4,6 @@ description = "AST transforms visitor for swc-magic"
 edition = "2021"
 license = "Apache-2.0"
 name = "swc_magic"
-version = "0.54.0"
-
-[features]
-custom_transform = ["swc_common/concurrent"]
+version = "0.1.0"
 
 [dependencies]
-easy-error = "1.0.0"
-tracing = "0.1.37"
-lightningcss = { version = "1.0.0-alpha.49", features = [
-  "visitor",
-  "into_owned",
-] }
-parcel_selectors = "0.26.3"
-serde = { version = "1", features = ["derive"] }
-
-swc_common = "0.33.0"
-swc_ecma_ast = "0.110.0"
-swc_ecma_utils = "0.124.4"
-swc_ecma_visit = "0.96.0"
-swc_plugin_macro = "0.9.15"
-swc_ecma_parser = "0.141.1"
-swc_ecma_minifier = "0.189.1"
-swc_css_ast = "0.140.0"
-swc_css_codegen = "0.151.0"
-swc_css_parser = "0.150.0"
-swc_css_prefixer = "0.153.0"
-swc_css_minifier = "0.116.0"
-swc_css_visit = "0.139.0"
-
-[dev-dependencies]
-testing = "0.35.0"
-swc_ecma_transforms_testing = "0.137.4"
-swc_ecma_transforms = "0.226.1"
