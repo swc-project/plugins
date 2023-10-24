@@ -5,7 +5,6 @@ use swc_core::{
     common::{sync::Lrc, FileName, SourceMap},
     ecma::{
         ast::Program,
-        transforms::base::hygiene::Config,
         visit::{FoldWith, VisitMutWith},
     },
     plugin::{

@@ -4,7 +4,8 @@ use import_analyzer::ImportMap;
 use serde::Deserialize;
 use swc_atoms::Atom;
 use swc_common::{
-    comments::Comments, errors::HANDLER, util::take::Take, Mark, Span, Spanned, DUMMY_SP,
+    comments::Comments, errors::HANDLER, util::take::Take, DeserializeEnum, Mark, Span, Spanned,
+    DUMMY_SP,
 };
 use swc_ecma_ast::{CallExpr, Callee, EmptyStmt, Expr, Module, ModuleDecl, ModuleItem, Stmt};
 use swc_ecma_visit::{VisitMut, VisitMutWith};
@@ -86,6 +87,15 @@ where
         self.imports = ImportMap::analyze(&m);
 
         m.visit_mut_children_with(self);
+
+        // Remove Stmt::Empty
+        m.body.retain(|item| {
+            if let ModuleItem::Stmt(Stmt::Empty(..)) = item {
+                false
+            } else {
+                true
+            }
+        });
     }
 
     fn visit_mut_module_item(&mut self, m: &mut ModuleItem) {
