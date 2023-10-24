@@ -11,3 +11,6 @@ version = "0.1.0"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
+
+
+swc_magic = { path = "./transform" }
