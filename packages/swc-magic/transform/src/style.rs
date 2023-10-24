@@ -15,7 +15,7 @@ pub struct LocalStyle {
     #[allow(clippy::vec_box)]
     pub expressions: Vec<Box<Expr>>,
 
-    /// If true, `format!("__styled-jsx-placeholder-{}__: 0", i)` is used.
+    /// If true, `format!("__swc-magic-placeholder-{}__: 0", i)` is used.
     pub is_expr_property: Vec<bool>,
 }
 

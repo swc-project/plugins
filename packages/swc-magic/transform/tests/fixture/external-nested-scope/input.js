@@ -1,4 +1,4 @@
-import css from 'styled-jsx/css'
+import css from 'swc-magic/css'
 
 function test() {
   css.resolve`div { color: red }`

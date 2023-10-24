@@ -1,6 +1,6 @@
 
   x Expected one child under JSX style tag, but got 0.
-  | Read more: https://nextjs.org/docs/messages/invalid-styled-jsx-children
+  | Read more: https://nextjs.org/docs/messages/invalid-swc-magic-children
    ,-[input.js:2:1]
  2 |       <div>
  3 | ,->     <style jsx>

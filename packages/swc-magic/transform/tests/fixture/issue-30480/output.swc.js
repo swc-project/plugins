@@ -1,4 +1,4 @@
-import _JSXStyle from "styled-jsx/style";
+import _JSXStyle from "swc-magic/style";
 export default (({ breakPoint })=><div className={_JSXStyle.dynamic([
         [
             "8ab1d380e1497d05",

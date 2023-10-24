@@ -1,10 +1,10 @@
 {
-  "name": "@swc/plugin-styled-jsx",
+  "name": "@swc/plugin-swc-magic",
   "version": "1.5.92",
-  "description": "SWC plugin for styled-jsx",
-  "main": "swc_plugin_styled_jsx.wasm",
+  "description": "SWC plugin for swc-magic",
+  "main": "swc_plugin_swc_magic.wasm",
   "scripts": {
-    "prepack": "cp ../../target/wasm32-wasi/release/swc_plugin_styled_jsx.wasm ."
+    "prepack": "cp ../../target/wasm32-wasi/release/swc_plugin_swc_magic.wasm ."
   },
   "homepage": "https://swc.rs",
   "repository": {

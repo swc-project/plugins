@@ -1,5 +1,5 @@
 // TODO
-// import css from 'styled-jsx/css'
+// import css from 'swc-magic/css'
 // const color = 'red'
 // export const foo = css`div { color: ${color}}`
 // const props = { color: 'red ' }

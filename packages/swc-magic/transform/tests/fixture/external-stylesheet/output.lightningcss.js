@@ -1,4 +1,4 @@
-import _JSXStyle from "styled-jsx/style";
+import _JSXStyle from "swc-magic/style";
 import styles from './styles';
 const styles2 = require('./styles2');
 import { foo as styles3 } from './styles';

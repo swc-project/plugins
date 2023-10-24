@@ -1,4 +1,4 @@
-import _JSXStyle from "styled-jsx/style";
+import _JSXStyle from "swc-magic/style";
 export default (({ children })=><div className={`jsx-${styles.__hash}`}>
 
     <p className={`jsx-${styles.__hash}`}>{children}</p>

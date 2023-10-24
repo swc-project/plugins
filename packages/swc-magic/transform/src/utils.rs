@@ -159,7 +159,7 @@ pub fn compute_class_names(
     (static_class_name, class_name_expr)
 }
 
-pub fn make_external_styled_jsx_el(style: &ExternalStyle, style_import_name: &str) -> JSXElement {
+pub fn make_external_swc_magic_el(style: &ExternalStyle, style_import_name: &str) -> JSXElement {
     let attrs = vec![JSXAttrOrSpread::JSXAttr(JSXAttr {
         name: JSXAttrName::Ident(Ident {
             sym: "id".into(),
@@ -205,7 +205,7 @@ pub fn make_external_styled_jsx_el(style: &ExternalStyle, style_import_name: &st
     }
 }
 
-pub fn make_local_styled_jsx_el(
+pub fn make_local_swc_magic_el(
     style_info: &LocalStyle,
     css_expr: Expr,
     style_import_name: &str,
@@ -295,7 +295,7 @@ pub fn get_usable_import_specifier(_items: &[ModuleItem]) -> String {
     String::from("_JSXStyle")
 }
 
-pub fn styled_jsx_import_decl(style_import_name: &str) -> ModuleItem {
+pub fn swc_magic_import_decl(style_import_name: &str) -> ModuleItem {
     ModuleItem::ModuleDecl(ModuleDecl::Import(ImportDecl {
         with: None,
         span: DUMMY_SP,
@@ -310,7 +310,7 @@ pub fn styled_jsx_import_decl(style_import_name: &str) -> ModuleItem {
         })],
         src: Box::new(Str {
             span: DUMMY_SP,
-            value: "styled-jsx/style".into(),
+            value: "swc-magic/style".into(),
             raw: None,
         }),
     }))

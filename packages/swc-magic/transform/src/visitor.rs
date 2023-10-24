@@ -20,8 +20,8 @@ use crate::{
     style::{ExternalStyle, JSXStyle, LocalStyle},
     utils::{
         add, and, compute_class_names, get_usable_import_specifier, hash_string, ident,
-        is_capitalized, make_external_styled_jsx_el, make_local_styled_jsx_el, not_eq, or,
-        string_literal_expr, styled_jsx_import_decl,
+        is_capitalized, make_external_swc_magic_el, make_local_swc_magic_el, not_eq, or,
+        string_literal_expr, swc_magic_import_decl,
     },
 };
 
@@ -32,7 +32,7 @@ pub struct Config {
     pub use_lightningcss: bool,
 }
 
-pub fn styled_jsx(cm: Arc<SourceMap>, file_name: FileName, config: Config) -> impl Fold {
+pub fn swc_magic(cm: Arc<SourceMap>, file_name: FileName, config: Config) -> impl Fold {
     let file_name = match file_name {
         FileName::Real(real_file_name) => real_file_name
             .to_str()
@@ -47,8 +47,8 @@ pub fn styled_jsx(cm: Arc<SourceMap>, file_name: FileName, config: Config) -> im
         styles: Default::default(),
         static_class_name: Default::default(),
         class_name: Default::default(),
-        file_has_styled_jsx: Default::default(),
-        has_styled_jsx: Default::default(),
+        file_has_swc_magic: Default::default(),
+        has_swc_magic: Default::default(),
         bindings: Default::default(),
         nearest_scope_bindings: Default::default(),
         func_scope_level: Default::default(),
@@ -60,7 +60,7 @@ pub fn styled_jsx(cm: Arc<SourceMap>, file_name: FileName, config: Config) -> im
         add_default_decl: Default::default(),
         in_function_params: Default::default(),
         evaluator: Default::default(),
-        visiting_styled_jsx_descendants: Default::default(),
+        visiting_swc_magic_descendants: Default::default(),
     }
 }
 
@@ -72,8 +72,8 @@ struct StyledJSXTransformer {
     styles: Vec<JSXStyle>,
     static_class_name: Option<String>,
     class_name: Option<Expr>,
-    file_has_styled_jsx: bool,
-    has_styled_jsx: bool,
+    file_has_swc_magic: bool,
+    has_swc_magic: bool,
     bindings: AHashSet<Id>,
     nearest_scope_bindings: AHashSet<Id>,
     func_scope_level: u8,
@@ -85,7 +85,7 @@ struct StyledJSXTransformer {
     add_default_decl: Option<(Id, Expr)>,
     in_function_params: bool,
     evaluator: Option<Evaluator>,
-    visiting_styled_jsx_descendants: bool,
+    visiting_swc_magic_descendants: bool,
 }
 
 enum StyleExpr<'a> {
@@ -96,21 +96,21 @@ enum StyleExpr<'a> {
 
 impl Fold for StyledJSXTransformer {
     fn fold_jsx_element(&mut self, el: JSXElement) -> JSXElement {
-        if is_styled_jsx(&el) {
-            if self.visiting_styled_jsx_descendants {
+        if is_swc_magic(&el) {
+            if self.visiting_swc_magic_descendants {
                 HANDLER.with(|handler| {
                     handler
                         .struct_span_err(
                             el.span,
-                            "Detected nested styled-jsx tag.\nRead more: https://nextjs.org/docs/messages/nested-styled-jsx-tags",
+                            "Detected nested swc-magic tag.\nRead more: https://nextjs.org/docs/messages/nested-swc-magic-tags",
                         )
                         .emit()
                 });
                 return el;
             }
 
-            let parent_has_styled_jsx = self.has_styled_jsx;
-            if !parent_has_styled_jsx && self.check_for_jsx_styles(Some(&el), &el.children).is_err()
+            let parent_has_swc_magic = self.has_swc_magic;
+            if !parent_has_swc_magic && self.check_for_jsx_styles(Some(&el), &el.children).is_err()
             {
                 return el;
             }
@@ -118,16 +118,16 @@ impl Fold for StyledJSXTransformer {
                 Ok(el) => el,
                 Err(_) => el,
             };
-            if !parent_has_styled_jsx {
+            if !parent_has_swc_magic {
                 self.reset_styles_state();
             }
             return el;
         }
 
-        if self.has_styled_jsx {
-            self.visiting_styled_jsx_descendants = true;
+        if self.has_swc_magic {
+            self.visiting_swc_magic_descendants = true;
             let el = el.fold_children_with(self);
-            self.visiting_styled_jsx_descendants = false;
+            self.visiting_swc_magic_descendants = false;
             return el;
         }
 
@@ -141,10 +141,10 @@ impl Fold for StyledJSXTransformer {
     }
 
     fn fold_jsx_fragment(&mut self, fragment: JSXFragment) -> JSXFragment {
-        if self.has_styled_jsx {
-            self.visiting_styled_jsx_descendants = true;
+        if self.has_swc_magic {
+            self.visiting_swc_magic_descendants = true;
             let fragment = fragment.fold_children_with(self);
-            self.visiting_styled_jsx_descendants = false;
+            self.visiting_swc_magic_descendants = false;
             return fragment;
         }
 
@@ -158,7 +158,7 @@ impl Fold for StyledJSXTransformer {
     }
 
     fn fold_jsx_opening_element(&mut self, mut el: JSXOpeningElement) -> JSXOpeningElement {
-        if !self.has_styled_jsx {
+        if !self.has_swc_magic {
             return el;
         }
 
@@ -214,7 +214,7 @@ impl Fold for StyledJSXTransformer {
             ref specifiers,
             ..
         } = decl;
-        if &src.value == "styled-jsx/css" {
+        if &src.value == "swc-magic/css" {
             for specifier in specifiers {
                 match specifier {
                     ImportSpecifier::Default(default_specifier) => {
@@ -344,10 +344,10 @@ impl Fold for StyledJSXTransformer {
             }
         }
 
-        if self.file_has_styled_jsx || self.file_has_css_resolve {
+        if self.file_has_swc_magic || self.file_has_css_resolve {
             prepend_stmt(
                 &mut new_items,
-                styled_jsx_import_decl(self.style_import_name.as_ref().unwrap()),
+                swc_magic_import_decl(self.style_import_name.as_ref().unwrap()),
             );
         }
 
@@ -432,8 +432,8 @@ impl StyledJSXTransformer {
     ) -> Result<(), Error> {
         let mut styles = vec![];
         let mut process_style = |el: &JSXElement| {
-            self.file_has_styled_jsx = true;
-            self.has_styled_jsx = true;
+            self.file_has_swc_magic = true;
+            self.has_swc_magic = true;
             let expr = get_style_expr(el)?;
             let style_info = self.get_jsx_style(expr, is_global(el));
             styles.insert(0, style_info);
@@ -441,19 +441,19 @@ impl StyledJSXTransformer {
             Ok(())
         };
 
-        if el.is_some() && is_styled_jsx(el.unwrap()) {
+        if el.is_some() && is_swc_magic(el.unwrap()) {
             process_style(el.unwrap())?;
         } else {
             for i in children {
                 if let JSXElementChild::JSXElement(child_el) = &i {
-                    if is_styled_jsx(child_el) {
+                    if is_swc_magic(child_el) {
                         process_style(child_el)?;
                     }
                 }
             }
         };
 
-        if self.has_styled_jsx {
+        if self.has_swc_magic {
             let (static_class_name, class_name) =
                 compute_class_names(&styles, self.style_import_name.as_ref().unwrap());
             self.styles = styles;
@@ -505,10 +505,10 @@ impl StyledJSXTransformer {
                             String::new()
                         } else if self.config.use_lightningcss && before.ends_with([';', '{']) {
                             is_expr_property.push(true);
-                            format!("__styled-jsx-placeholder-{}__: 0", i)
+                            format!("__swc-magic-placeholder-{}__: 0", i)
                         } else {
                             is_expr_property.push(false);
-                            format!("__styled-jsx-placeholder-{}__", i)
+                            format!("__swc-magic-placeholder-{}__", i)
                         };
                         s.push_str(&quasis[i].raw);
                         s.push_str(&placeholder);
@@ -585,14 +585,14 @@ impl StyledJSXTransformer {
                     )?
                 };
 
-                Ok(make_local_styled_jsx_el(
+                Ok(make_local_swc_magic_el(
                     style_info,
                     css,
                     self.style_import_name.as_ref().unwrap(),
                     self.static_class_name.as_ref(),
                 ))
             }
-            JSXStyle::External(style) => Ok(make_external_styled_jsx_el(
+            JSXStyle::External(style) => Ok(make_external_swc_magic_el(
                 style,
                 self.style_import_name.as_ref().unwrap(),
             )),
@@ -623,7 +623,7 @@ impl StyledJSXTransformer {
                 prop: MemberProp::Ident(Ident { sym, .. }),
                 ..
             }) => sym.to_string(),
-            _ => String::from("not_styled_jsx_tag"),
+            _ => String::from("not_swc_magic_tag"),
         };
         let style = if let JSXStyle::Local(style) = &styles[0] {
             if tag != "resolve" {
@@ -658,7 +658,7 @@ impl StyledJSXTransformer {
                             span: DUMMY_SP,
                             optional: false,
                         }),
-                        value: Box::new(Expr::JSXElement(Box::new(make_local_styled_jsx_el(
+                        value: Box::new(Expr::JSXElement(Box::new(make_local_swc_magic_el(
                             style,
                             css,
                             self.style_import_name.as_ref().unwrap(),
@@ -693,14 +693,14 @@ impl StyledJSXTransformer {
     }
 
     fn reset_styles_state(&mut self) {
-        self.has_styled_jsx = false;
+        self.has_swc_magic = false;
         self.static_class_name = None;
         self.class_name = None;
         self.styles = vec![];
     }
 }
 
-fn is_styled_jsx(el: &JSXElement) -> bool {
+fn is_swc_magic(el: &JSXElement) -> bool {
     if let JSXElementName::Ident(Ident { sym, .. }) = &el.opening.name {
         if sym != "style" {
             return false;
@@ -762,13 +762,13 @@ fn get_style_expr(el: &JSXElement) -> Result<StyleExpr, Error> {
                 .struct_span_err(
                     el.span,
                     &format!(
-                        "Expected one child under JSX style tag, but got {}.\nRead more: https://nextjs.org/docs/messages/invalid-styled-jsx-children",
+                        "Expected one child under JSX style tag, but got {}.\nRead more: https://nextjs.org/docs/messages/invalid-swc-magic-children",
                         non_whitespace_children.len()
                     ),
                 )
                 .emit()
         });
-        bail!("styled-jsx style error");
+        bail!("swc-magic style error");
     }
 
     if let JSXElementChild::JSXExprContainer(JSXExprContainer {
@@ -785,7 +785,7 @@ fn get_style_expr(el: &JSXElement) -> Result<StyleExpr, Error> {
                     handler
                         .struct_span_err(
                             el.span,
-                            "Expected a template literal, string or identifier inside the JSXExpressionContainer.\nRead more: https://nextjs.org/docs/messages/invalid-styled-jsx-children",
+                            "Expected a template literal, string or identifier inside the JSXExpressionContainer.\nRead more: https://nextjs.org/docs/messages/invalid-swc-magic-children",
                         )
                         .emit()
                 });
@@ -798,7 +798,7 @@ fn get_style_expr(el: &JSXElement) -> Result<StyleExpr, Error> {
         handler
             .struct_span_err(
                 el.span,
-                "Expected a single child of type JSXExpressionContainer under JSX Style tag.\nRead more: https://nextjs.org/docs/messages/invalid-styled-jsx-children",
+                "Expected a single child of type JSXExpressionContainer under JSX Style tag.\nRead more: https://nextjs.org/docs/messages/invalid-swc-magic-children",
             )
             .emit()
     });
@@ -955,7 +955,7 @@ fn is_styled_css_import(item: &ModuleItem) -> bool {
         ..
     })) = item
     {
-        if value == "styled-jsx/css" {
+        if value == "swc-magic/css" {
             return true;
         }
     }

@@ -1,4 +1,4 @@
-import _JSXStyle from "styled-jsx/style";
+import _JSXStyle from "swc-magic/style";
 export default function Home({ fontFamily }) {
     return <div className={_JSXStyle.dynamic([
         [

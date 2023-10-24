@@ -1,4 +1,4 @@
-import _JSXStyle from "styled-jsx/style";
+import _JSXStyle from "swc-magic/style";
 const Test = ()=><div className={"jsx-5a206f122d1cb32e"}>
 
     <span className={"jsx-5a206f122d1cb32e"}>test</span>

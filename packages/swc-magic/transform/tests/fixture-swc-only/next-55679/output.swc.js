@@ -1,4 +1,4 @@
-import _JSXStyle from "styled-jsx/style";
+import _JSXStyle from "swc-magic/style";
 import { AppProps } from "next/app";
 const someVar = "--var-1";
 export default function App({ Component, pageProps }) {

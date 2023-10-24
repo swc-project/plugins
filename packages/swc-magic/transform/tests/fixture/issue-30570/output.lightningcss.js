@@ -1,4 +1,4 @@
-import _JSXStyle from "styled-jsx/style";
+import _JSXStyle from "swc-magic/style";
 export default function IndexPage() {
     return <div className={"jsx-bbdada4ef17d18ef"}>
 

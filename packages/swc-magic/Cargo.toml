@@ -1,9 +1,9 @@
 [package]
 authors = ["강동윤 <kdy1997.dev@gmail.com>"]
-description = "SWC Plugin for styled-jsx"
+description = "SWC Plugin for swc-magic"
 edition = "2021"
 license = "Apache-2.0"
-name = "swc_plugin_styled_jsx"
+name = "swc_plugin_swc_magic"
 publish = false
 version = "0.14.3"
 
@@ -15,7 +15,7 @@ custom_transform = ["swc_common/concurrent"]
 
 [dependencies]
 easy-error = "1.0.0"
-styled_jsx = { path = "./transform" }
+swc_magic = { path = "./transform" }
 tracing = { version = "0.1.37", features = ["release_max_level_off"] }
 serde_json = "1"
 swc_common = "0.33.0"

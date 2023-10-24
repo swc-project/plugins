@@ -1,4 +1,4 @@
-import css, { resolve, global } from 'styled-jsx/css'
+import css, { resolve, global } from 'swc-magic/css'
 import colors, { size } from './constants'
 const color = 'red'
 

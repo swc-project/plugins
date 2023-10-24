@@ -1,10 +1,10 @@
 use std::path::PathBuf;
 
-use styled_jsx::visitor::styled_jsx;
 use swc_common::{chain, FileName, Mark, Span, DUMMY_SP};
 use swc_ecma_parser::{EsConfig, Syntax};
 use swc_ecma_transforms::resolver;
 use swc_ecma_transforms_testing::{test_fixture, FixtureTestConfig};
+use swc_magic::visitor::swc_magic;
 use testing::fixture;
 
 fn syntax() -> Syntax {
@@ -26,10 +26,10 @@ fn run(input: PathBuf, use_lightningcss: bool) {
         &|t| {
             chain!(
                 resolver(Mark::new(), Mark::new(), false),
-                styled_jsx(
+                swc_magic(
                     t.cm.clone(),
                     FileName::Real(PathBuf::from("/some-project/src/some-file.js")),
-                    styled_jsx::visitor::Config { use_lightningcss }
+                    swc_magic::visitor::Config { use_lightningcss }
                 )
             )
         },
@@ -52,10 +52,10 @@ fn run(input: PathBuf, use_lightningcss: bool) {
 
             chain!(
                 resolver(Mark::new(), Mark::new(), false),
-                styled_jsx(
+                swc_magic(
                     t.cm.clone(),
                     FileName::Real(PathBuf::from("/some-project/src/some-file.js")),
-                    styled_jsx::visitor::Config { use_lightningcss }
+                    swc_magic::visitor::Config { use_lightningcss }
                 )
             )
         },
@@ -66,13 +66,13 @@ fn run(input: PathBuf, use_lightningcss: bool) {
 }
 
 #[fixture("tests/fixture/**/input.js")]
-fn styled_jsx_fixture_lightningcs(input: PathBuf) {
+fn swc_magic_fixture_lightningcs(input: PathBuf) {
     run(input, true);
 }
 
 #[fixture("tests/fixture-swc-only/**/input.js")]
 #[fixture("tests/fixture/**/input.js")]
-fn styled_jsx_fixture_swc(input: PathBuf) {
+fn swc_magic_fixture_swc(input: PathBuf) {
     run(input, false);
 }
 
@@ -84,7 +84,7 @@ impl swc_ecma_visit::VisitMut for DropSpan {
 }
 
 #[fixture("tests/errors/**/input.js")]
-fn styled_jsx_errors(input: PathBuf) {
+fn swc_magic_errors(input: PathBuf) {
     let file_name = match input.to_str().unwrap().contains("ts-with-css-resolve") {
         true => FileName::Real(PathBuf::from("/some-project/src/some-file.ts")),
         false => FileName::Real(PathBuf::from("/some-project/src/some-file.js")),
@@ -95,10 +95,10 @@ fn styled_jsx_errors(input: PathBuf) {
         test_fixture(
             syntax(),
             &|t| {
-                styled_jsx(
+                swc_magic(
                     t.cm.clone(),
                     file_name.clone(),
-                    styled_jsx::visitor::Config {
+                    swc_magic::visitor::Config {
                         use_lightningcss: false,
                     },
                 )
@@ -118,10 +118,10 @@ fn styled_jsx_errors(input: PathBuf) {
         test_fixture(
             syntax(),
             &|t| {
-                styled_jsx(
+                swc_magic(
                     t.cm.clone(),
                     file_name.clone(),
-                    styled_jsx::visitor::Config {
+                    swc_magic::visitor::Config {
                         use_lightningcss: true,
                     },
                 )

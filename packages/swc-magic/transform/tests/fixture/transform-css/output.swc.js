@@ -1,4 +1,4 @@
-import _JSXStyle from "styled-jsx/style";
+import _JSXStyle from "swc-magic/style";
 export default (()=><div className={"jsx-4a27e5cf1c34b3df"}>
 
     <p className={"jsx-4a27e5cf1c34b3df"}>test</p>

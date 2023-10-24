@@ -1,4 +1,4 @@
-import _JSXStyle from "styled-jsx/style";
+import _JSXStyle from "swc-magic/style";
 const color = 'red';
 const otherColor = 'green';
 const A = ()=><div className={"jsx-3f087c835a50190d"}>
