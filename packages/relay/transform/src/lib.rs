@@ -162,7 +162,7 @@ impl<'a> Relay<'a> {
         let filename = match &self.config.language {
             RelayLanguageConfig::Flow => format!("{}.graphql.js", definition_name),
             RelayLanguageConfig::TypeScript => {
-                format!("{}.graphql.ts", definition_name)
+                format!("{}.graphql", definition_name)
             }
             RelayLanguageConfig::JavaScript => {
                 format!("{}.graphql.js", definition_name)
