@@ -6,7 +6,7 @@ use swc_core::{
     ecma::{ast::Program, visit::FoldWith},
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
 };
-use swc_relay::{relay, Config, RelayLanguageConfig};
+use swc_relay::{relay, Config, RelayLanguageConfig, OutputFileExtension};
 
 #[plugin_transform]
 fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMetadata) -> Program {
@@ -40,6 +40,9 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
     let language = plugin_config["language"]
         .as_str()
         .map_or(RelayLanguageConfig::TypeScript, |v| v.try_into().unwrap());
+    let output_file_extension = plugin_config["outputFileExtension"]
+        .as_str()
+        .map_or(OutputFileExtension::Undefined, |v| v.try_into().unwrap());
     let eager_es_modules = plugin_config["eagerEsModules"]
         .as_bool()
         .unwrap_or_default();
@@ -48,6 +51,7 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
         artifact_directory,
         language,
         eager_es_modules,
+        output_file_extension
     };
 
     let mut relay = relay(
