@@ -11,6 +11,7 @@ members = [
   "packages/remove-console",
   "packages/styled-components",
   "packages/styled-jsx",
+  "packages/swc-magic",
   "packages/transform-imports",
 
 ]
