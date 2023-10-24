@@ -63,3 +63,24 @@ const swcConfig = require("./.swcrc.js")
 ```
 
 > Note: We're using a `.swcrc.js` file extension up above and importing the config directly because Relay needs access to `__dirname`, which can't be derived from the default JSON parsed from `.swcrc`.
+
+#### Output import paths
+
+By default, `@swc/plugin-relay` will transpile import paths based on the `language` option.
+You can use `outputFileExtension` to change the file extension of the generated import paths.
+
+```js
+plugins: [
+    [
+        "@swc/plugin-relay",
+        {
+            rootDir: __dirname,
+            artifactDirectory: "src/__generated__",
+            language: "typescript",
+            eagerEsModules: true,
+            outputFileExtension: "js",
+        },
+    ],
+],
+```
+In this example typescript graphql files will output transpiled import path of `javascript` ending with `.js`.
