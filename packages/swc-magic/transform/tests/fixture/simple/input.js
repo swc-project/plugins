@@ -1,3 +1,3 @@
-import { __nextjs_pure } from 'next/dist/build/swc/helpers'
+import { markAsPure } from '@swc/magic'
 
-__nextjs_pure(console.log('test!'))
+markAsPure(console.log('test!'))
