@@ -13,7 +13,7 @@ mod import_analyzer;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Config {
-    import_path: Atom,
+    pub import_path: Atom,
 }
 
 impl Config {}

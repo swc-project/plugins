@@ -1,19 +1,29 @@
 use std::path::PathBuf;
 
-use swc_common::Mark;
+use swc_common::{chain, Mark};
+use swc_ecma_parser::Syntax;
+use swc_ecma_transforms_base::resolver;
+use swc_ecma_transforms_testing::test_fixture;
+use swc_ecma_visit::as_folder;
 
 #[testing::fixture("tests/fixture/**/input.js")]
 fn pure(input: PathBuf) {
     let output = input.parent().unwrap().join("output.js");
     test_fixture(
-        syntax(),
+        Syntax::default(),
         &|tr| {
             let unresolved_mark = Mark::new();
             let top_level_mark = Mark::new();
 
             chain!(
                 resolver(unresolved_mark, top_level_mark, false),
-                swc_magic(unresolved_mark, tr.comments.clone(tr.comments.cloen()))
+                as_folder(swc_magic::swc_magic(
+                    unresolved_mark,
+                    swc_magic::Config {
+                        import_path: "@swc/magic".into()
+                    },
+                    tr.comments.clone()
+                ))
             )
         },
         &input,
