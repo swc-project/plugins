@@ -2,11 +2,7 @@
 #![feature(box_patterns)]
 
 use swc_core::{
-    common::{sync::Lrc, FileName, SourceMap},
-    ecma::{
-        ast::Program,
-        visit::{FoldWith, VisitMutWith},
-    },
+    ecma::{ast::Program, visit::VisitMutWith},
     plugin::{
         plugin_transform,
         proxies::{PluginCommentsProxy, TransformPluginProgramMetadata},

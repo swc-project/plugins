@@ -14,10 +14,6 @@ pub(crate) struct ImportMap {
 }
 
 impl ImportMap {
-    pub fn is_module_imported(&mut self, module: &JsWord) -> bool {
-        self.imported_modules.contains(module)
-    }
-
     /// Returns true if `e` is an import of `orig_name` from `module`.
     pub fn is_import(&self, e: &Expr, module: &str, orig_name: &str) -> bool {
         match e {
