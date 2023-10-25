@@ -21,6 +21,14 @@ pub enum RelayLanguageConfig {
     Flow,
 }
 
+#[derive(Copy, Clone, Debug, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum OutputFileExtension {
+    TypeScript,
+    JavaScript,
+    Undefined
+}
+
 impl<'a> TryFrom<&'a str> for RelayLanguageConfig {
     type Error = String;
 
@@ -33,9 +41,28 @@ impl<'a> TryFrom<&'a str> for RelayLanguageConfig {
     }
 }
 
+
+impl<'a> TryFrom<&'a str> for OutputFileExtension {
+    type Error = String;
+
+    fn try_from(value: &'a str) -> Result<Self, Self::Error> {
+        match value {
+            "ts" => Ok(Self::TypeScript),
+            "js" => Ok(Self::JavaScript),
+            _ => Err(format!("Unexpected output file extension value '{}'", value)),
+        }
+    }
+}
+
 impl Default for RelayLanguageConfig {
     fn default() -> Self {
         Self::Flow
+    }
+}
+
+impl Default for OutputFileExtension {
+    fn default() -> Self {
+        Self::Undefined
     }
 }
 
@@ -81,6 +108,8 @@ pub struct Config {
     pub language: RelayLanguageConfig,
     #[serde(default)]
     pub eager_es_modules: bool,
+    #[serde(default)]
+    pub output_file_extension: OutputFileExtension,
 }
 
 fn pull_first_operation_name_from_tpl(tpl: &TaggedTpl) -> Option<String> {
@@ -159,14 +188,14 @@ impl<'a> Relay<'a> {
         real_file_name: &Path,
         definition_name: &str,
     ) -> Result<PathBuf, BuildRequirePathError> {
-        let filename = match &self.config.language {
-            RelayLanguageConfig::Flow => format!("{}.graphql.js", definition_name),
-            RelayLanguageConfig::TypeScript => {
-                format!("{}.graphql.ts", definition_name)
-            }
-            RelayLanguageConfig::JavaScript => {
-                format!("{}.graphql.js", definition_name)
-            }
+        let filename = match &self.config.output_file_extension {
+            OutputFileExtension::JavaScript => format!("{}.graphql.js", definition_name),
+            OutputFileExtension::TypeScript => format!("{}.graphql.ts", definition_name),
+            OutputFileExtension::Undefined => match &self.config.language {
+                RelayLanguageConfig::Flow => format!("{}.graphql.js", definition_name),
+                RelayLanguageConfig::TypeScript => format!("{}.graphql.ts", definition_name),
+                RelayLanguageConfig::JavaScript => format!("{}.graphql.js", definition_name),
+            },
         };
 
         if let Some(artifact_directory) = &self.config.artifact_directory {
