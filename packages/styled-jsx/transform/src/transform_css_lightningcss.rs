@@ -2,7 +2,6 @@ use std::{
     borrow::Cow,
     convert::Infallible,
     fmt::Debug,
-    mem::transmute,
     panic::{catch_unwind, AssertUnwindSafe},
     sync::{Arc, RwLock},
 };
@@ -13,7 +12,7 @@ use lightningcss::{
     properties::custom::{TokenList, TokenOrValue},
     selector::{Combinator, Component, PseudoClass, Selector},
     stylesheet::{MinifyOptions, ParserFlags, ParserOptions, PrinterOptions, StyleSheet},
-    traits::{ParseWithOptions, ToCss},
+    traits::{IntoOwned, ParseWithOptions, ToCss},
     values::ident::Ident,
     visit_types,
     visitor::{Visit, VisitTypes, Visitor},
@@ -27,7 +26,6 @@ use swc_ecma_ast::*;
 use tracing::{debug, error, trace};
 
 use crate::{
-    lifetime::owned_selector,
     style::LocalStyle,
     utils::{hash_string, string_literal_expr},
 };
@@ -567,10 +565,7 @@ fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Selector<'i> {
     let selector = Selector::parse_string_with_options(&buf, Default::default())
         .expect("failed to parse selector list");
 
-    unsafe {
-        // Safety: Selector is variant over 'i
-        transmute::<Selector, Selector>(owned_selector(&selector))
-    }
+    selector.into_owned()
 }
 
 struct SafeDebug<'a>(&'a dyn Debug);
