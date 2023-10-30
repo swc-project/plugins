@@ -93,8 +93,6 @@ impl Visit for Analyzer<'_> {
     }
 
     fn visit_import_decl(&mut self, i: &ImportDecl) {
-        let is_custom = !self.config.top_level_import_paths.is_empty();
-
         let is_styled = if self.config.top_level_import_paths.is_empty() {
             &*i.src.value == "styled-components" || i.src.value.starts_with("styled-components/")
         } else {
@@ -105,15 +103,14 @@ impl Visit for Analyzer<'_> {
             for s in &i.specifiers {
                 match s {
                     ImportSpecifier::Named(s) => {
-                        if is_custom
-                            && s.imported
-                                .as_ref()
-                                .map(|v| match v {
-                                    ModuleExportName::Ident(v) => &*v.sym,
-                                    ModuleExportName::Str(v) => &*v.value,
-                                })
-                                .unwrap_or(&*s.local.sym)
-                                == "styled"
+                        if s.imported
+                            .as_ref()
+                            .map(|v| match v {
+                                ModuleExportName::Ident(v) => &*v.sym,
+                                ModuleExportName::Str(v) => &*v.value,
+                            })
+                            .unwrap_or(&*s.local.sym)
+                            == "styled"
                         {
                             self.state.imported_local_name = Some(s.local.to_id());
                         }
