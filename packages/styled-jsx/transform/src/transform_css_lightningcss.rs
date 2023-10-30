@@ -2,7 +2,6 @@ use std::{
     borrow::Cow,
     convert::Infallible,
     fmt::Debug,
-    mem::transmute,
     panic::{catch_unwind, AssertUnwindSafe},
     sync::{Arc, RwLock},
 };
@@ -27,7 +26,6 @@ use swc_ecma_ast::*;
 use tracing::{debug, error, trace};
 
 use crate::{
-    lifetime::owned_selector,
     style::LocalStyle,
     utils::{hash_string, string_literal_expr},
 };
