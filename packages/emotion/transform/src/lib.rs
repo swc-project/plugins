@@ -89,6 +89,13 @@ static INVALID_SINGLE_LINE_COMMENT: Lazy<Regex> = Lazy::new(|| {
         .unwrap()
 });
 
+static MULTI_LINE_COMMENT: Lazy<Regex> = Lazy::new(|| {
+    RegexBuilder::new(r"(?s)/\*.*?\*/")
+        .multi_line(true)
+        .build()
+        .unwrap()
+});
+
 static SPACE_AROUND_COLON: Lazy<Regex> =
     Lazy::new(|| Regex::new(r"\s*(?P<s>[:;,\{,\}])\s*").unwrap());
 
@@ -838,6 +845,16 @@ fn match_css_export(item: &ExportItem, prop: &MemberProp) -> bool {
 
 #[inline]
 fn minify_css_string(input: &str, is_first_item: bool, is_last_item: bool) -> Cow<str> {
+    match MULTI_LINE_COMMENT.replace_all(input, "$s") {
+        Cow::Borrowed(borrowed) => remove_space_and_comments(borrowed, is_first_item, is_last_item),
+        Cow::Owned(owned) => remove_space_and_comments(&owned, is_first_item, is_last_item)
+            .into_owned()
+            .into(),
+    }
+}
+
+#[inline]
+fn remove_space_and_comments(input: &str, is_first_item: bool, is_last_item: bool) -> Cow<str> {
     match INVALID_SINGLE_LINE_COMMENT.replace_all(input, "$s") {
         Cow::Borrowed(borrowed) => remove_space_around_colon(borrowed, is_first_item, is_last_item),
         Cow::Owned(owned) => remove_space_around_colon(&owned, is_first_item, is_last_item)
@@ -893,6 +910,18 @@ mod test_emotion {
                 true
             ),
             "color:red;background-image:url(http://dummy-url)"
+        )
+    }
+
+    #[test]
+    fn should_remove_comments() {
+        assert_eq!(
+            minify_css_string(
+                "color: red;/*comment\ncomments*/background-image:url(http://dummy-url).foo{/*comments\n*/\n}",
+                true,
+                true
+            ),
+            "color:red;background-image:url(http://dummy-url).foo{}"
         )
     }
 }
