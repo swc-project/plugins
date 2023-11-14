@@ -19,7 +19,7 @@ use lightningcss::{
     visitor::{Visit, VisitTypes, Visitor},
 };
 use parcel_selectors::{parser::SelectorIter, SelectorImpl};
-use preset_env_base::Versions;
+use preset_env_base::{version::Version, Versions};
 use swc_common::{
     errors::{DiagnosticBuilder, Level, HANDLER},
     BytePos, Loc, SourceMap, Span, DUMMY_SP,
@@ -193,7 +193,21 @@ pub fn transform_css(
     }))
 }
 
-fn convert_browsers(browsers: &Versions) -> Browsers {}
+fn convert_browsers(browsers: &Versions) -> Browsers {
+    fn convert(v: Option<Version>) -> Option<u32> {}
+
+    Browsers {
+        android: convert(browsers.android),
+        chrome: (),
+        edge: (),
+        firefox: (),
+        ie: (),
+        ios_saf: (),
+        opera: (),
+        safari: (),
+        samsung: (),
+    }
+}
 
 fn strip_comments(s: &str) -> Cow<str> {
     if !s.contains("//") {
