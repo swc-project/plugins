@@ -2330,7 +2330,7 @@ dependencies = [
 
 [[package]]
 name = "swc_constify"
-version = "0.22.0"
+version = "0.23.0"
 dependencies = [
  "once_cell",
  "rustc-hash",
