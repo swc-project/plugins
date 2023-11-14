@@ -6,6 +6,7 @@ use std::{
 };
 
 use easy_error::{bail, Error};
+use preset_env_base::Versions;
 use serde::Deserialize;
 use swc_common::{collections::AHashSet, errors::HANDLER, FileName, SourceMap, Span, DUMMY_SP};
 use swc_ecma_ast::*;
@@ -30,6 +31,9 @@ use crate::{
 pub struct Config {
     #[serde(default)]
     pub use_lightningcss: bool,
+
+    #[serde(default)]
+    pub browsers: Versions,
 }
 
 pub fn styled_jsx(cm: Arc<SourceMap>, file_name: FileName, config: Config) -> impl Fold {
