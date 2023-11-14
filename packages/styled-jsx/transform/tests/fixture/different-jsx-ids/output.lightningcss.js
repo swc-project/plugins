@@ -1,18 +1,18 @@
 import _JSXStyle from "styled-jsx/style";
 const color = 'red';
 const otherColor = 'green';
-const A = ()=><div className={"jsx-3f087c835a50190d"}>
+const A = ()=><div className={"jsx-b013e9f16b874595"}>
 
-    <p className={"jsx-3f087c835a50190d"}>test</p>
+    <p className={"jsx-b013e9f16b874595"}>test</p>
 
-    <_JSXStyle id={"3f087c835a50190d"}>{`p.jsx-3f087c835a50190d{color:${color}}`}</_JSXStyle>
+    <_JSXStyle id={"b013e9f16b874595"}>{`p.jsx-b013e9f16b874595{color:${color}}`}</_JSXStyle>
 
   </div>;
-const B = ()=><div className={"jsx-d051a1c8140076ed"}>
+const B = ()=><div className={"jsx-60dc7908034d9fdd"}>
 
-    <p className={"jsx-d051a1c8140076ed"}>test</p>
+    <p className={"jsx-60dc7908034d9fdd"}>test</p>
 
-    <_JSXStyle id={"d051a1c8140076ed"}>{`p.jsx-d051a1c8140076ed{color:${otherColor}}`}</_JSXStyle>
+    <_JSXStyle id={"60dc7908034d9fdd"}>{`p.jsx-60dc7908034d9fdd{color:${otherColor}}`}</_JSXStyle>
 
   </div>;
 export default (()=><div>
