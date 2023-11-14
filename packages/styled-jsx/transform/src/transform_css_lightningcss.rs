@@ -194,18 +194,20 @@ pub fn transform_css(
 }
 
 fn convert_browsers(browsers: &Versions) -> Browsers {
-    fn convert(v: Option<Version>) -> Option<u32> {}
+    fn convert(v: Option<Version>) -> Option<u32> {
+        v.map(|v| v.major << 16 | v.minor << 8 | v.patch)
+    }
 
     Browsers {
         android: convert(browsers.android),
-        chrome: (),
-        edge: (),
-        firefox: (),
-        ie: (),
-        ios_saf: (),
-        opera: (),
-        safari: (),
-        samsung: (),
+        chrome: convert(browsers.chrome),
+        edge: convert(browsers.edge),
+        firefox: convert(browsers.firefox),
+        ie: convert(browsers.ie),
+        ios_saf: convert(browsers.ios),
+        opera: convert(browsers.opera),
+        safari: convert(browsers.safari),
+        samsung: convert(browsers.samsung),
     }
 }
 
