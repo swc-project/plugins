@@ -12,12 +12,14 @@ use lightningcss::{
     properties::custom::{TokenList, TokenOrValue},
     selector::{Combinator, Component, PseudoClass, Selector},
     stylesheet::{MinifyOptions, ParserFlags, ParserOptions, PrinterOptions, StyleSheet},
+    targets::{Browsers, Targets},
     traits::{IntoOwned, ParseWithOptions, ToCss},
     values::ident::Ident,
     visit_types,
     visitor::{Visit, VisitTypes, Visitor},
 };
 use parcel_selectors::{parser::SelectorIter, SelectorImpl};
+use preset_env_base::Versions;
 use swc_common::{
     errors::{DiagnosticBuilder, Level, HANDLER},
     BytePos, Loc, SourceMap, Span, DUMMY_SP,
@@ -67,13 +69,14 @@ fn report(
 
 #[cfg_attr(
     debug_assertions,
-    tracing::instrument(skip(cm, style_info, class_name))
+    tracing::instrument(skip(cm, style_info, class_name, browsers))
 )]
 pub fn transform_css(
     cm: Arc<SourceMap>,
     style_info: &LocalStyle,
     is_global: bool,
     class_name: &Option<String>,
+    browsers: &Versions,
 ) -> Result<Expr, Error> {
     let mut file_lines_cache = None;
 
@@ -150,8 +153,10 @@ pub fn transform_css(
     let res = ss
         .to_css(PrinterOptions {
             minify: true,
-            // TODO
-            // targets: (),
+            targets: Targets {
+                browsers: Some(convert_browsers(browsers)),
+                ..Default::default()
+            },
             ..Default::default()
         })
         .context("failed to print css")?;
@@ -187,6 +192,8 @@ pub fn transform_css(
         span: DUMMY_SP,
     }))
 }
+
+fn convert_browsers(browsers: &Versions) -> Browsers {}
 
 fn strip_comments(s: &str) -> Cow<str> {
     if !s.contains("//") {

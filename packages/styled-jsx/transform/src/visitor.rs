@@ -579,6 +579,7 @@ impl StyledJSXTransformer {
                         style_info,
                         is_global,
                         &self.static_class_name,
+                        &self.config.browsers,
                     )?
                 } else {
                     crate::transform_css_swc::transform_css(
@@ -643,6 +644,7 @@ impl StyledJSXTransformer {
                 style,
                 tag == "global",
                 &static_class_name,
+                &self.config.browsers,
             )?
         } else {
             crate::transform_css_swc::transform_css(
