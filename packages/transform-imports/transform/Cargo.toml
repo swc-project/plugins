@@ -5,7 +5,7 @@ edition = "2021"
 license = "Apache-2.0"
 name = "modularize_imports"
 repository = "https://github.com/swc-project/plugins.git"
-version = "0.55.0"
+version = "0.56.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -15,12 +15,12 @@ handlebars = "4.2.1"
 once_cell = "1.13.0"
 regex = "1.5"
 serde = "1"
-swc_cached = "0.3.17"
-swc_common = "0.33.0"
-swc_ecma_ast = "0.110.0"
-swc_ecma_visit = "0.96.0"
+swc_cached = "0.3.18"
+swc_common = "0.33.8"
+swc_ecma_ast = "0.110.9"
+swc_ecma_visit = "0.96.9"
 
 [dev-dependencies]
-swc_ecma_parser = "0.141.1"
-swc_ecma_transforms_testing = "0.137.4"
-testing = "0.35.0"
+swc_ecma_parser = "0.141.22"
+swc_ecma_transforms_testing = "0.137.33"
+testing = "0.35.10"

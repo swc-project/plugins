@@ -12,12 +12,14 @@ use lightningcss::{
     properties::custom::{TokenList, TokenOrValue},
     selector::{Combinator, Component, PseudoClass, Selector},
     stylesheet::{MinifyOptions, ParserFlags, ParserOptions, PrinterOptions, StyleSheet},
+    targets::{Browsers, Targets},
     traits::{IntoOwned, ParseWithOptions, ToCss},
     values::ident::Ident,
     visit_types,
     visitor::{Visit, VisitTypes, Visitor},
 };
 use parcel_selectors::{parser::SelectorIter, SelectorImpl};
+use preset_env_base::{version::Version, Versions};
 use swc_common::{
     errors::{DiagnosticBuilder, Level, HANDLER},
     BytePos, Loc, SourceMap, Span, DUMMY_SP,
@@ -67,13 +69,14 @@ fn report(
 
 #[cfg_attr(
     debug_assertions,
-    tracing::instrument(skip(cm, style_info, class_name))
+    tracing::instrument(skip(cm, style_info, class_name, browsers))
 )]
 pub fn transform_css(
     cm: Arc<SourceMap>,
     style_info: &LocalStyle,
     is_global: bool,
     class_name: &Option<String>,
+    browsers: &Versions,
 ) -> Result<Expr, Error> {
     let mut file_lines_cache = None;
 
@@ -150,8 +153,10 @@ pub fn transform_css(
     let res = ss
         .to_css(PrinterOptions {
             minify: true,
-            // TODO
-            // targets: (),
+            targets: Targets {
+                browsers: Some(convert_browsers(browsers)),
+                ..Default::default()
+            },
             ..Default::default()
         })
         .context("failed to print css")?;
@@ -186,6 +191,24 @@ pub fn transform_css(
         exprs: final_expressions,
         span: DUMMY_SP,
     }))
+}
+
+fn convert_browsers(browsers: &Versions) -> Browsers {
+    fn convert(v: Option<Version>) -> Option<u32> {
+        v.map(|v| v.major << 16 | v.minor << 8 | v.patch)
+    }
+
+    Browsers {
+        android: convert(browsers.android),
+        chrome: convert(browsers.chrome),
+        edge: convert(browsers.edge),
+        firefox: convert(browsers.firefox),
+        ie: convert(browsers.ie),
+        ios_saf: convert(browsers.ios),
+        opera: convert(browsers.opera),
+        safari: convert(browsers.safari),
+        samsung: convert(browsers.samsung),
+    }
 }
 
 fn strip_comments(s: &str) -> Cow<str> {

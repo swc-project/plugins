@@ -29,7 +29,10 @@ fn run(input: PathBuf, use_lightningcss: bool) {
                 styled_jsx(
                     t.cm.clone(),
                     FileName::Real(PathBuf::from("/some-project/src/some-file.js")),
-                    styled_jsx::visitor::Config { use_lightningcss }
+                    styled_jsx::visitor::Config {
+                        use_lightningcss,
+                        ..Default::default()
+                    }
                 )
             )
         },
@@ -55,7 +58,10 @@ fn run(input: PathBuf, use_lightningcss: bool) {
                 styled_jsx(
                     t.cm.clone(),
                     FileName::Real(PathBuf::from("/some-project/src/some-file.js")),
-                    styled_jsx::visitor::Config { use_lightningcss }
+                    styled_jsx::visitor::Config {
+                        use_lightningcss,
+                        ..Default::default()
+                    }
                 )
             )
         },
@@ -100,6 +106,7 @@ fn styled_jsx_errors(input: PathBuf) {
                     file_name.clone(),
                     styled_jsx::visitor::Config {
                         use_lightningcss: false,
+                        ..Default::default()
                     },
                 )
             },
@@ -123,6 +130,7 @@ fn styled_jsx_errors(input: PathBuf) {
                     file_name.clone(),
                     styled_jsx::visitor::Config {
                         use_lightningcss: true,
+                        ..Default::default()
                     },
                 )
             },

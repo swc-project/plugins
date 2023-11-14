@@ -6,6 +6,7 @@ use std::{
 };
 
 use easy_error::{bail, Error};
+use preset_env_base::Versions;
 use serde::Deserialize;
 use swc_common::{collections::AHashSet, errors::HANDLER, FileName, SourceMap, Span, DUMMY_SP};
 use swc_ecma_ast::*;
@@ -25,11 +26,14 @@ use crate::{
     },
 };
 
-#[derive(Debug, Clone, Copy, Deserialize)]
+#[derive(Debug, Clone, Copy, Default, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Config {
     #[serde(default)]
     pub use_lightningcss: bool,
+
+    #[serde(default)]
+    pub browsers: Versions,
 }
 
 pub fn styled_jsx(cm: Arc<SourceMap>, file_name: FileName, config: Config) -> impl Fold {
@@ -575,6 +579,7 @@ impl StyledJSXTransformer {
                         style_info,
                         is_global,
                         &self.static_class_name,
+                        &self.config.browsers,
                     )?
                 } else {
                     crate::transform_css_swc::transform_css(
@@ -639,6 +644,7 @@ impl StyledJSXTransformer {
                 style,
                 tag == "global",
                 &static_class_name,
+                &self.config.browsers,
             )?
         } else {
             crate::transform_css_swc::transform_css(
