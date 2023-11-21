@@ -163,6 +163,55 @@ function Home() {
 const myCss = (x)=>css`
   margin: ${x}px;
 `;
+const colorMap = {
+    orange: '#E3750E',
+    blue: '#38699F',
+    green: '#3F9348'
+};
+const colorMap2 = {
+    red: 'orange',
+    cyan: 'blue',
+    lime: 'green'
+};
+const LocalMemberInterpolation = (p)=>{
+    const color = "red";
+    return <_StyledP17 $_css18={colorMap[color]}>
+
+      H
+
+    </_StyledP17>;
+};
+const LocalMemberInterpolation2 = (p)=>{
+    const color = "red";
+    return <_StyledP18 $_css19={colorMap[colorMap2[color]]}>
+
+      H
+
+    </_StyledP18>;
+};
+const LocalMemberInterpolation3 = (p)=>{
+    const color = "red";
+    return <_StyledP19 $_css20={colorMap[id(color)]}>
+
+      H
+
+    </_StyledP19>;
+};
+const LocalMemberInterpolation4 = ()=>{
+    return <_StyledP20>
+
+      H
+
+    </_StyledP20>;
+};
+const LocalMemberCssHelperProp = (p)=>{
+    const color = "red";
+    return <_StyledP21 $_css21={colorMap[color]}>
+
+      H
+
+    </_StyledP21>;
+};
 var _StyledP = _styled("p")`flex: 1;`;
 var _StyledP2 = _styled("p")`
       flex: 1;
@@ -228,4 +277,19 @@ var _StyledDiv2 = _styled("div")`
         ${myCss(2)}
         /* indirect */
       ${(p)=>p.$_css17}
+      `;
+var _StyledP17 = _styled("p")`
+        color: ${(p)=>p.$_css18};
+      `;
+var _StyledP18 = _styled("p")`
+        color: ${(p)=>p.$_css19};
+      `;
+var _StyledP19 = _styled("p")`
+        color: ${(p)=>p.$_css20};
+      `;
+var _StyledP20 = _styled("p")`
+        color: ${colorMap["red"]};
+      `;
+var _StyledP21 = _styled("p")`
+        color: ${(p)=>p.$_css21};
       `;
