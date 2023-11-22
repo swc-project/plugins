@@ -277,3 +277,83 @@ function Home() {
 const myCss = (x) => css`
   margin: ${x}px;
 `;
+
+const colorMap = {
+  orange: '#E3750E',
+  blue: '#38699F',
+  green: '#3F9348',
+};
+
+const colorMap2 = {
+    red: 'orange',
+    cyan: 'blue',
+    lime: 'green',
+}
+
+const LocalMemberInterpolation = (p) => {
+  const color = "red";
+
+  return (
+    <p
+      css={`
+        color: ${colorMap[color]};
+      `}
+    >
+      H
+    </p>
+  );
+};
+
+const LocalMemberInterpolation2 = (p) => {
+  const color = "red";
+
+  return (
+    <p
+      css={`
+        color: ${colorMap[colorMap2[color]]};
+      `}
+    >
+      H
+    </p>
+  );
+};
+
+const LocalMemberInterpolation3 = (p) => {
+  const color = "red";
+
+  return (
+    <p
+      css={`
+        color: ${colorMap[id(color)]};
+      `}
+    >
+      H
+    </p>
+  );
+};
+
+const LocalMemberInterpolation4 = () => {
+  return (
+    <p
+      css={`
+        color: ${colorMap["red"]};
+      `}
+    >
+      H
+    </p>
+  );
+};
+
+const LocalMemberCssHelperProp = (p) => {
+  const color = "red";
+
+  return (
+    <p
+      css={css`
+        color: ${colorMap[color]};
+      `}
+    >
+      H
+    </p>
+  );
+};
