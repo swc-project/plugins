@@ -259,7 +259,7 @@ impl State {
         self.imported_local_name = Some(id);
     }
 
-    fn is_helper(&self, e: &Expr) -> bool {
+    pub(crate) fn is_helper(&self, e: &Expr) -> bool {
         self.is_create_global_style_helper(e)
             || self.is_css_helper(e)
             || self.is_inject_global_helper(e)

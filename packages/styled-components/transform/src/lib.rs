@@ -10,7 +10,8 @@ use swc_ecma_visit::{Fold, VisitMut};
 pub use crate::{
     utils::{analyze, analyzer, State},
     visitors::{
-        display_name_and_id::display_name_and_id, transpile_css_prop::transpile::transpile_css_prop,
+        display_name_and_id::display_name_and_id, minify::visitor::minify,
+        transpile_css_prop::transpile::transpile_css_prop,
     },
 };
 
@@ -71,7 +72,8 @@ impl Config {
 
 /// NOTE: **This is not complete**.
 ///
-/// Only [analyzer] and [display_name_and_id] is implemented.
+/// Only [transpile_css_prop], [minify] and [display_name_and_id] is
+/// implemented.
 pub fn styled_components(
     file_name: FileName,
     src_file_hash: u128,
@@ -85,6 +87,10 @@ pub fn styled_components(
         Optional {
             enabled: config.css_prop,
             visitor: transpile_css_prop(state.clone())
+        },
+        Optional {
+            enabled: config.minify,
+            visitor: minify(state.clone())
         },
         display_name_and_id(file_name, src_file_hash, config.clone(), state)
     )
