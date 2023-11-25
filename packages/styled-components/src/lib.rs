@@ -6,8 +6,9 @@ use swc_core::{
     common::FileName,
     ecma::{ast::Program, visit::VisitMutWith},
     plugin::{
-        metadata::TransformPluginMetadataContextKind, plugin_transform,
-        proxies::TransformPluginProgramMetadata,
+        metadata::TransformPluginMetadataContextKind,
+        plugin_transform,
+        proxies::{PluginCommentsProxy, TransformPluginProgramMetadata},
     },
 };
 
@@ -28,7 +29,8 @@ fn styled_components(mut program: Program, data: TransformPluginProgramMetadata)
     let pos = data.source_map.lookup_char_pos(program.span().lo);
     let hash = pos.file.src_hash;
 
-    let mut pass = styled_components::styled_components(file_name, hash, config);
+    let mut pass =
+        styled_components::styled_components(file_name, hash, config, PluginCommentsProxy);
 
     program.visit_mut_with(&mut pass);
 
