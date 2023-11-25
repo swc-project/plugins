@@ -4,7 +4,7 @@ description = "AST transforms visitor for swc-magic"
 edition = "2021"
 license = "Apache-2.0"
 name = "swc_magic"
-version = "0.8.0"
+version = "0.9.0"
 
 [dependencies]
 serde = { version = "1.0.189", features = ["derive"] }
