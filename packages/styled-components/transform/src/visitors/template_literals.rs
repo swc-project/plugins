@@ -40,16 +40,11 @@ impl VisitMut for TemplateLiterals {
                 .quasis
                 .into_iter()
                 .map(|q| {
-                    Expr::Tpl(Tpl {
+                    Expr::Lit(Lit::Str(Str {
                         span: q.span,
-                        exprs: vec![],
-                        quasis: vec![TplElement { tail: true, ..q }],
-                    })
-                })
-                .map(|mut e| {
-                    swc_ecma_compat_es2015::template_literal(Default::default())
-                        .visit_mut_expr(&mut e);
-                    e
+                        value: q.cooked.unwrap_or(q.raw),
+                        raw: None,
+                    }))
                 })
                 .map(ExprOrSpread::from)
                 .map(Some);
