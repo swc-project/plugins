@@ -2870,7 +2870,7 @@ dependencies = [
 
 [[package]]
 name = "swc_magic"
-version = "0.9.0"
+version = "0.10.0"
 dependencies = [
  "serde",
  "swc_atoms",
