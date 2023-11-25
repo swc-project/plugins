@@ -41,9 +41,13 @@ pub struct Config {
     #[serde(default)]
     pub top_level_import_paths: Vec<JsWord>,
 
+    /// NOTE: This option is enabled by default in
+    /// `babel-plugin-styled-components` but not in this plugin.
     #[serde(default)]
     pub transpile_template_literals: bool,
 
+    /// NOTE: This option is enabled by default in
+    /// `babel-plugin-styled-components` but not in this plugin.
     #[serde(default)]
     pub minify: bool,
 
