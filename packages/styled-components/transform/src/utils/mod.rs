@@ -1,7 +1,7 @@
-use std::{borrow::Cow, cell::RefCell};
+use std::{borrow::Cow, collections::HashMap};
 
 use swc_atoms::js_word;
-use swc_common::{collections::AHashMap, SyntaxContext};
+use swc_common::SyntaxContext;
 use swc_ecma_ast::*;
 
 pub use self::analyzer::{analyze, analyzer};
@@ -58,10 +58,12 @@ pub struct State {
 
     unresolved_ctxt: Option<SyntaxContext>,
 
+    /// Default import
     imported_local_name: Option<Id>,
+    /// Named imports
+    imported_local_named: HashMap<String, Id>,
     /// Namespace imports
     imported_local_ns: Option<Id>,
-    import_name_cache: RefCell<AHashMap<Id, Id>>,
 }
 
 impl State {
@@ -213,46 +215,29 @@ impl State {
     pub(crate) fn import_local_name(
         &self,
         name: &str,
-        cache_identifier: Option<&Ident>,
+        _cache_identifier: Option<&Ident>,
     ) -> Option<Id> {
         if name == "default" {
-            if let Some(cached) = self.imported_local_name.clone() {
-                return Some(cached);
-            }
-            if let Some(cached) = self.imported_local_ns.clone() {
-                return Some(cached);
-            }
-        }
-
-        if let Some(..) = self.imported_local_ns {
-            return Some((name.into(), Default::default()));
-        }
-
-        let cache_key = cache_identifier.map(|i| i.to_id()).unwrap_or_default();
-
-        let ctxt = self.unresolved_ctxt.unwrap_or_default();
-
-        let local_name = if self.styled_required.is_some() {
-            Some(if name == "default" {
-                "styled".into()
+            if self.imported_local_name.is_some() {
+                self.imported_local_name.clone()
+            } else if self.imported_local_ns.is_some() {
+                self.imported_local_ns.clone()
+            } else if self.styled_required.is_some() {
+                Some(("styled".into(), self.unresolved_ctxt.unwrap_or_default()))
             } else {
-                name.into()
-            })
+                None
+            }
         } else {
-            None
-        };
-
-        if let Some(cached) = self.import_name_cache.borrow().get(&cache_key) {
-            return Some(cached.clone());
+            if self.imported_local_ns.is_some() {
+                Some((name.into(), Default::default()))
+            } else if self.imported_local_named.contains_key(name) {
+                self.imported_local_named.get(name).cloned()
+            } else if self.styled_required.is_some() {
+                Some((name.into(), self.unresolved_ctxt.unwrap_or_default()))
+            } else {
+                None
+            }
         }
-
-        let name = local_name.map(|word| (word, ctxt));
-
-        if let Some(name) = name.clone() {
-            self.import_name_cache.borrow_mut().insert(cache_key, name);
-        }
-
-        name
     }
 
     pub(crate) fn set_import_name(&mut self, id: Id) {
