@@ -1,0 +1,5 @@
+{
+  "transpileTemplateLiterals": true,
+  "minify": true,
+  "pure": true
+}
