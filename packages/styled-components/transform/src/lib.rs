@@ -11,7 +11,7 @@ pub use crate::{
     utils::{analyze, analyzer, State},
     visitors::{
         display_name_and_id::display_name_and_id, minify::visitor::minify,
-        transpile_css_prop::transpile::transpile_css_prop,
+        template_literals::template_literals, transpile_css_prop::transpile::transpile_css_prop,
     },
 };
 
@@ -72,8 +72,7 @@ impl Config {
 
 /// NOTE: **This is not complete**.
 ///
-/// Only [transpile_css_prop], [minify] and [display_name_and_id] is
-/// implemented.
+/// [pure] is not implemented.
 pub fn styled_components(
     file_name: FileName,
     src_file_hash: u128,
@@ -92,6 +91,10 @@ pub fn styled_components(
             enabled: config.minify,
             visitor: minify(state.clone())
         },
-        display_name_and_id(file_name, src_file_hash, config.clone(), state)
+        display_name_and_id(file_name, src_file_hash, config.clone(), state.clone()),
+        Optional {
+            enabled: config.transpile_template_literals,
+            visitor: template_literals(state)
+        }
     )
 }
