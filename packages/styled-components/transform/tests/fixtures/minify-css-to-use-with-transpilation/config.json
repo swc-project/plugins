@@ -1,6 +1,4 @@
 {
   "ssr": false,
-  "displayName": false,
-  "transpileTemplateLiterals": true,
-  "minify": true
+  "displayName": false
 }

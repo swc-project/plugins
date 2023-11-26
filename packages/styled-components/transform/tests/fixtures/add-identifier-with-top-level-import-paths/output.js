@@ -1,9 +1,7 @@
 import styled from '@xstyled/styled-components';
 const Test = styled.div.withConfig({
     componentId: "sc-2fd35b87-0"
-})`
-  width: 100%;
-`;
+})`width:100%;`;
 const Test2 = true ? styled.div.withConfig({
     componentId: "sc-2fd35b87-1"
 })`` : styled.div.withConfig({

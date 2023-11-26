@@ -2,7 +2,7 @@ import s from "styled-components";
 const Test = s.div.withConfig({
     displayName: "Test",
     componentId: "sc-d5028521-0"
-})`width: 100%;`;
+})`width:100%;`;
 const Test2 = true ? s.div.withConfig({
     displayName: "Test2",
     componentId: "sc-d5028521-1"

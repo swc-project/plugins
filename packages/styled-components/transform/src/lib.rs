@@ -4,14 +4,15 @@ use std::{cell::RefCell, rc::Rc};
 
 use serde::Deserialize;
 use swc_atoms::JsWord;
-use swc_common::{chain, pass::Optional, FileName};
+use swc_common::{chain, comments::Comments, pass::Optional, FileName};
 use swc_ecma_visit::{Fold, VisitMut};
 
 pub use crate::{
     utils::{analyze, analyzer, State},
     visitors::{
         display_name_and_id::display_name_and_id, minify::visitor::minify,
-        template_literals::template_literals, transpile_css_prop::transpile::transpile_css_prop,
+        pure_annotation::pure_annotation, template_literals::template_literals,
+        transpile_css_prop::transpile::transpile_css_prop,
     },
 };
 
@@ -40,10 +41,10 @@ pub struct Config {
     #[serde(default)]
     pub top_level_import_paths: Vec<JsWord>,
 
-    #[serde(default)]
+    #[serde(default = "true_by_default")]
     pub transpile_template_literals: bool,
 
-    #[serde(default)]
+    #[serde(default = "true_by_default")]
     pub minify: bool,
 
     #[serde(default)]
@@ -70,14 +71,15 @@ impl Config {
     }
 }
 
-/// NOTE: **This is not complete**.
-///
-/// [pure] is not implemented.
-pub fn styled_components(
+pub fn styled_components<C>(
     file_name: FileName,
     src_file_hash: u128,
     config: Config,
-) -> impl Fold + VisitMut {
+    comments: C,
+) -> impl Fold + VisitMut
+where
+    C: Comments,
+{
     let state: Rc<RefCell<State>> = Default::default();
     let config = Rc::new(config);
 
@@ -94,7 +96,11 @@ pub fn styled_components(
         display_name_and_id(file_name, src_file_hash, config.clone(), state.clone()),
         Optional {
             enabled: config.transpile_template_literals,
-            visitor: template_literals(state)
-        }
+            visitor: template_literals(state.clone())
+        },
+        Optional {
+            enabled: config.pure,
+            visitor: pure_annotation(comments, state)
+        },
     )
 }

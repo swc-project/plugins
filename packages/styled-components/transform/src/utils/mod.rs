@@ -262,6 +262,14 @@ impl State {
             || self.is_with_theme_helper(e)
     }
 
+    pub(crate) fn is_pure_helper(&self, e: &Expr) -> bool {
+        self.is_create_global_style_helper(e)
+            || self.is_css_helper(e)
+            || self.is_use_theme(e)
+            || self.is_keyframes_helper(e)
+            || self.is_with_theme_helper(e)
+    }
+
     fn is_css_helper(&self, e: &Expr) -> bool {
         match e {
             Expr::Ident(e) => Some(e.to_id()) == self.import_local_name("css", None),

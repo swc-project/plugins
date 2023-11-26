@@ -1,4 +1,3 @@
 {
-  "transpileTemplateLiterals": false,
-  "minify": true
+  "transpileTemplateLiterals": false
 }
