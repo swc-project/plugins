@@ -266,63 +266,40 @@ impl VisitMut for DisplayNameAndId {
 
             Expr::Call(CallExpr {
                 callee: Callee::Expr(callee),
-                args,
                 ..
             }) => {
                 (
-                    // styled()
-                    self.state.borrow().is_styled(&*callee)
+                    // callee is styled.div
+                    self.state.borrow().is_styled(callee)
                         && get_property_as_ident(callee)
-                            .map(|v| v == "withConfig")
+                            .map(|v| v != "withConfig")
                             .unwrap_or(false)
                 ) || (
-                    // styled(x)({})
-                    self.state.borrow().is_styled(&*callee)
+                    // callee is styled(MyComponent)
+                    self.state.borrow().is_styled(callee)
                         && !get_callee(callee)
                             .map(|callee| callee.is_member())
                             .unwrap_or(false)
                 ) || (
-                    // styled(x).attrs()({})
+                    // callee is styled(MyComponent).attrs(...)
                     self.state.borrow().is_styled(callee)
                         && get_callee(callee)
-                            .map(|callee| {
-                                callee.is_member()
-                                    && get_property_as_ident(callee)
-                                        .map(|v| v == "withConfig")
-                                        .unwrap_or(false)
-                            })
+                            .and_then(get_property_as_ident)
+                            .map(|v| v != "withConfig")
                             .unwrap_or(false)
                 ) || (
-                    // styled(x).withConfig({})
-                    self.state.borrow().is_styled(&*callee)
+                    // callee is styled(MyComponent).withConfig({ ... }), and componentId or
+                    // displayName is not set
+                    self.state.borrow().is_styled(callee)
                         && get_callee(callee)
-                            .map(|callee| {
-                                callee.is_member()
-                                    && get_property_as_ident(callee)
-                                        .map(|v| v == "withConfig")
-                                        .unwrap_or(false)
-                                    && !args.is_empty()
-                                    && args[0].spread.is_none()
-                                    && match &*args[0].expr {
-                                        Expr::Object(first_arg) => {
-                                            !first_arg.props.iter().any(|prop| match prop {
-                                                PropOrSpread::Prop(prop) => {
-                                                    match get_prop_name(prop) {
-                                                        Some(PropName::Ident(prop_name)) => {
-                                                            matches!(
-                                                                &*prop_name.sym,
-                                                                "componentId" | "displayName"
-                                                            )
-                                                        }
-                                                        _ => false,
-                                                    }
-                                                }
-                                                _ => false,
-                                            })
-                                        }
-                                        _ => false,
-                                    }
-                            })
+                            .and_then(get_property_as_ident)
+                            .map(|v| v == "withConfig")
+                            .unwrap_or(false)
+                        && Expr::as_call(callee)
+                            .and_then(|with_config_call| with_config_call.args.get(0))
+                            .filter(|first_arg| first_arg.spread.is_none())
+                            .and_then(|first_arg| first_arg.expr.as_object())
+                            .map(|first_arg_obj| !already_has(first_arg_obj))
                             .unwrap_or(false)
                 )
             }
