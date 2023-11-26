@@ -2,9 +2,7 @@ import styled from 'styled-components';
 const Test = styled.div.withConfig({
     displayName: "Test",
     componentId: "sc-e0d5b7ad-0"
-})`
-  width: 100%;
-`;
+})`width:100%;`;
 const Test2 = true ? styled.div.withConfig({
     displayName: "Test2",
     componentId: "sc-e0d5b7ad-1"
@@ -37,16 +35,13 @@ const WrappedComponent3 = styled(Inner).withConfig({
 })({});
 const WrappedComponent4 = styled(Inner).attrs(()=>({
         something: 'else'
-    })
-)({});
+    }))({});
 const WrappedComponent5 = styled.div.attrs(()=>({
         something: 'else'
-    })
-)({});
+    }))({});
 const WrappedComponent6 = styled.div.attrs(()=>({
         something: 'else'
-    })
-).withConfig({
+    })).withConfig({
     displayName: "WrappedComponent6",
     componentId: "sc-e0d5b7ad-8"
 })``;
@@ -59,12 +54,10 @@ const WrappedComponent8 = styled.div.withConfig({
     shouldForwardProp: ()=>{}
 }).attrs(()=>({
         something: 'else'
-    })
-)({});
+    }))({});
 const WrappedComponent9 = styled.div.attrs(()=>({
         something: 'else'
-    })
-).withConfig({
+    })).withConfig({
     shouldForwardProp: ()=>{},
     displayName: "WrappedComponent9",
     componentId: "sc-e0d5b7ad-10"

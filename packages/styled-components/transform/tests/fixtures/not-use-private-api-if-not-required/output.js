@@ -1,2 +1,2 @@
 import styled from 'styled-components';
-const Test = styled.div`width: 100%;`;
+const Test = styled.div`width:100%;`;
