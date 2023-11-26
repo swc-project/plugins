@@ -35,23 +35,31 @@ const WrappedComponent3 = styled(Inner).withConfig({
 })({});
 const WrappedComponent4 = styled(Inner).attrs(()=>({
         something: 'else'
-    }))({});
+    })).withConfig({
+    displayName: "WrappedComponent4",
+    componentId: "sc-e0d5b7ad-8"
+})({});
 const WrappedComponent5 = styled.div.attrs(()=>({
         something: 'else'
-    }))({});
+    })).withConfig({
+    displayName: "WrappedComponent5",
+    componentId: "sc-e0d5b7ad-9"
+})({});
 const WrappedComponent6 = styled.div.attrs(()=>({
         something: 'else'
     })).withConfig({
     displayName: "WrappedComponent6",
-    componentId: "sc-e0d5b7ad-8"
+    componentId: "sc-e0d5b7ad-10"
 })``;
 const WrappedComponent7 = styled.div.withConfig({
     shouldForwardProp: ()=>{},
     displayName: "WrappedComponent7",
-    componentId: "sc-e0d5b7ad-9"
+    componentId: "sc-e0d5b7ad-11"
 })({});
 const WrappedComponent8 = styled.div.withConfig({
-    shouldForwardProp: ()=>{}
+    shouldForwardProp: ()=>{},
+    displayName: "WrappedComponent8",
+    componentId: "sc-e0d5b7ad-12"
 }).attrs(()=>({
         something: 'else'
     }))({});
@@ -60,5 +68,5 @@ const WrappedComponent9 = styled.div.attrs(()=>({
     })).withConfig({
     shouldForwardProp: ()=>{},
     displayName: "WrappedComponent9",
-    componentId: "sc-e0d5b7ad-10"
+    componentId: "sc-e0d5b7ad-13"
 })({});
