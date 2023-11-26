@@ -219,10 +219,19 @@ impl State {
     ) -> Option<Id> {
         if name == "default" {
             if self.imported_local_name.is_some() {
+                // import styled from 'styled-components'
                 self.imported_local_name.clone()
+            } else if let Some(id) = self.imported_local_named.get("default") {
+                // import { default as styled } from 'styled-components'
+                Some(id.clone())
+            } else if let Some(id) = self.imported_local_named.get("styled") {
+                // import { styled } from 'styled-components'
+                Some(id.clone())
             } else if self.imported_local_ns.is_some() {
+                // import * as styled from 'styled-components'
                 self.imported_local_ns.clone()
             } else if self.styled_required.is_some() {
+                // const styled = require('styled-components')
                 Some(("styled".into(), self.unresolved_ctxt.unwrap_or_default()))
             } else {
                 None
@@ -230,8 +239,8 @@ impl State {
         } else {
             if self.imported_local_ns.is_some() {
                 Some((name.into(), Default::default()))
-            } else if self.imported_local_named.contains_key(name) {
-                self.imported_local_named.get(name).cloned()
+            } else if let Some(id) = self.imported_local_named.get(name) {
+                Some(id.clone())
             } else if self.styled_required.is_some() {
                 Some((name.into(), self.unresolved_ctxt.unwrap_or_default()))
             } else {
