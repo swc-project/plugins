@@ -111,13 +111,9 @@ impl Visit for Analyzer<'_> {
                                 ModuleExportName::Str(v) => &*v.value,
                             })
                             .unwrap_or(&*s.local.sym);
-                        if imported == "styled" {
-                            self.state.imported_local_name = Some(s.local.to_id());
-                        } else {
-                            self.state
-                                .imported_local_named
-                                .insert(imported.to_string(), s.local.to_id());
-                        }
+                        self.state
+                            .imported_local_named
+                            .insert(imported.to_string(), s.local.to_id());
                     }
                     ImportSpecifier::Default(s) => {
                         self.state.imported_local_name = Some(s.local.to_id());
