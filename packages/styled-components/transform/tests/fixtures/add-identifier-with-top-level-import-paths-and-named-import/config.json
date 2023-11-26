@@ -1,7 +1,5 @@
 {
-  "displayName": true,
   "fileName": false,
-  "ssr": true,
   "topLevelImportPaths": ["@example/example"],
   "transpileTemplateLiterals": false
 }

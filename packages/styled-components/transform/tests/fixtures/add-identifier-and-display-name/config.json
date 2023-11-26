@@ -1,5 +1,4 @@
 {
   "fileName": false,
-  "transpileTemplateLiterals": false,
-  "ssr": true
+  "transpileTemplateLiterals": false
 }
