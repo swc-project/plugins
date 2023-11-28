@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-jest",
-  "version": "1.5.104",
+  "version": "1.5.105",
   "description": "SWC plugin for jest",
   "main": "swc_plugin_jest.wasm",
   "scripts": {
