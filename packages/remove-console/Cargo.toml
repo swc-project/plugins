@@ -5,7 +5,7 @@ edition = "2021"
 license = "Apache-2.0"
 name = "swc_plugin_remove_console"
 publish = false
-version = "0.13.3"
+version = "1.0.0"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
