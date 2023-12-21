@@ -22,5 +22,5 @@ swc_ecma_visit = "0.96.15"
 tracing = { version = "0.1.37" }
 
 [dev-dependencies]
-swc_ecma_transforms_testing = "0.137.33"
+swc_ecma_transforms_testing = "0.138.1"
 testing = "0.35.14"

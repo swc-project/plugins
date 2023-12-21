@@ -18,7 +18,7 @@ swc_ecma_ast = "0.110.15"
 swc_ecma_visit = "0.96.15"
 
 [dev-dependencies]
-swc_ecma_parser = "0.141.22"
-swc_ecma_transforms_base = "0.134.31"
-swc_ecma_transforms_testing = "0.137.33"
+swc_ecma_parser = "0.141.33"
+swc_ecma_transforms_base = "0.135.1"
+swc_ecma_transforms_testing = "0.138.1"
 testing = "0.35.14"

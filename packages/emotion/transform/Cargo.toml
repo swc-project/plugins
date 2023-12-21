@@ -29,7 +29,7 @@ tracing = { version = "0.1.37" }
 
 [dev-dependencies]
 serde_json = "1"
-swc_ecma_parser = "0.141.22"
-swc_ecma_transforms_react = "0.180.40"
-swc_ecma_transforms_testing = "0.137.33"
+swc_ecma_parser = "0.141.33"
+swc_ecma_transforms_react = "0.181.3"
+swc_ecma_transforms_testing = "0.138.1"
 testing = "0.35.14"
