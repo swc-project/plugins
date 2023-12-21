@@ -10,7 +10,7 @@ function bumpCargo {
 }
 
 CRATES="$(cargo metadata --format-version 1 \
-    | jq -r '.packages[] | select(.source == null) | .name')"
+    | jq -r '.packages[] | select(.source == null and .publish == null) | .name')"
 
 
 
