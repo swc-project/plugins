@@ -6,6 +6,7 @@ function bumpNpm {
 }
 
 cargo set-version --workspace --bump major
+git commit -a -m "Bump crates" || true
 
 for PKG in ./packages/*; do
     bumpNpm $PKG
