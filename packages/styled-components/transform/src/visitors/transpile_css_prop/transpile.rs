@@ -273,9 +273,9 @@ impl VisitMut for TranspileCssProp {
                                     acc.push(Box::new(Expr::Arrow(ArrowExpr {
                                         span: DUMMY_SP,
                                         params: vec![Pat::Ident(p.clone().into())],
-                                        body: Box::new(BlockStmtOrExpr::Expr(Box::new(
-                                            p.make_member(identifier),
-                                        ))),
+                                        body: Box::new(BlockStmtOrExpr::Expr(
+                                            p.make_member(identifier).into(),
+                                        )),
                                         is_async: false,
                                         is_generator: false,
                                         type_params: Default::default(),
@@ -470,7 +470,7 @@ impl PropertyReducer<'_> {
                         })),
                     }));
 
-                    prop.expr = Box::new(self.p.clone().make_member(identifier));
+                    prop.expr = self.p.clone().make_member(identifier).into();
                 }
 
                 acc.push(property);
@@ -500,7 +500,7 @@ impl PropertyReducer<'_> {
                         })),
                     }));
 
-                    set_key_of_prop(prop, Box::new(self.p.clone().make_member(identifier)));
+                    set_key_of_prop(prop, self.p.clone().make_member(identifier).into());
                 }
 
                 let mut value = take_prop_value(prop);
@@ -534,7 +534,7 @@ impl PropertyReducer<'_> {
 
                     acc.push(PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
                         key,
-                        value: Box::new(self.p.clone().make_member(identifier)),
+                        value: self.p.clone().make_member(identifier).into(),
                     }))));
                 } else {
                     set_value_of_prop(prop, value);
