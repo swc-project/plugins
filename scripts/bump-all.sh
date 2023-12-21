@@ -5,20 +5,7 @@ function bumpNpm {
     (cd $1 && yarn version --no-git-tag-version --patch)
 }
 
-function bumpCargo {
-    cargo mono bump $1 --breaking || true
-}
-
-CRATES="$(cargo metadata --format-version 1 \
-    | jq -r '.packages[] | select(.source == null and .publish == null) | .name')"
-
-
-
-for CRATE in $CRATES
-do
-   bumpCargo $CRATE
-   git commit -a -m "Bump cargo crate: ${CRATE}" || true
-done
+cargo set-version --workspace --bump major
 
 for PKG in ./packages/*; do
     bumpNpm $PKG
