@@ -136,8 +136,17 @@ fn emotion_label_option_fixture(output: PathBuf) {
     );
 }
 
+#[fixture("tests/fixture/labels/emotion-js/**/*.ts")]
+fn emotion_label_original(input: PathBuf) {
+    emotion_label(input, "[local]".to_string())
+}
+
 #[fixture("tests/fixture/labels/sanitisation/**/*.ts")]
 fn emotion_label_sanitisation(input: PathBuf) {
+    emotion_label(input, "[dirname]-[filename]-[local]".to_string())
+}
+
+fn emotion_label(input: PathBuf, label: String) {
     let output_folder_name = input
         .parent()
         .unwrap()
@@ -174,7 +183,7 @@ fn emotion_label_sanitisation(input: PathBuf) {
                         enabled: Some(true),
                         sourcemap: Some(true),
                         auto_label: Some(true),
-                        label_format: Some("[dirname]-[filename]-[local]".to_string()),
+                        label_format: Some(label.to_owned()),
                         ..Default::default()
                     },
                     &PathBuf::from(format!("{output_folder_name}/{input_file_name}")),
