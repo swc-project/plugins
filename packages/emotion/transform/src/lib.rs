@@ -13,7 +13,7 @@ use sourcemap::{RawToken, SourceMap as RawSourcemap};
 use swc_atoms::JsWord;
 use swc_common::{comments::Comments, util::take::Take, BytePos, SourceMapperDyn, DUMMY_SP};
 use swc_ecma_ast::{
-    ArrayLit, CallExpr, Callee, Expr, ExprOrSpread, Id, Ident, ImportDecl, ImportSpecifier,
+    ArrayLit, CallExpr, Callee, Expr, ExprOrSpread, FnDecl, Id, Ident, ImportDecl, ImportSpecifier,
     JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElement, JSXElementName, JSXExpr,
     JSXExprContainer, JSXObject, KeyValueProp, MemberProp, MethodProp, ModuleExportName, ObjectLit,
     Pat, Prop, PropName, PropOrSpread, SourceMapperExt, SpreadElement, Tpl, VarDeclarator,
@@ -460,11 +460,16 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
         kv.fold_children_with(self)
     }
 
-    fn fold_method_prop(&mut self, mp: MethodProp) -> swc_ecma_ast::MethodProp {
+    fn fold_method_prop(&mut self, mp: MethodProp) -> MethodProp {
         if let PropName::Ident(p) = &mp.key {
             self.current_context = Some(p.sym.as_ref().to_owned());
         }
         mp.fold_children_with(self)
+    }
+
+    fn fold_fn_decl(&mut self, fn_dec: FnDecl) -> FnDecl {
+        self.current_context = Some(fn_dec.ident.sym.as_ref().to_owned());
+        fn_dec.fold_children_with(self)
     }
 
     fn fold_call_expr(&mut self, mut expr: CallExpr) -> CallExpr {
