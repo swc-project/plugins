@@ -15,8 +15,8 @@ use swc_common::{comments::Comments, util::take::Take, BytePos, SourceMapperDyn,
 use swc_ecma_ast::{
     ArrayLit, CallExpr, Callee, Expr, ExprOrSpread, Id, Ident, ImportDecl, ImportSpecifier,
     JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElement, JSXElementName, JSXExpr,
-    JSXExprContainer, JSXObject, KeyValueProp, MemberProp, ModuleExportName, ObjectLit, Pat, Prop,
-    PropName, PropOrSpread, SourceMapperExt, SpreadElement, Tpl, VarDeclarator,
+    JSXExprContainer, JSXObject, KeyValueProp, MemberProp, MethodProp, ModuleExportName, ObjectLit,
+    Pat, Prop, PropName, PropOrSpread, SourceMapperExt, SpreadElement, Tpl, VarDeclarator,
 };
 use swc_ecma_utils::ExprFactory;
 use swc_ecma_visit::{Fold, FoldWith};
@@ -434,11 +434,17 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
     }
 
     fn fold_key_value_prop(&mut self, kv: KeyValueProp) -> KeyValueProp {
-        if let PropName::Ident(i) = &kv.key {
-            self.current_context = Some(i.sym.as_ref().to_owned());
-            dbg!(&i.sym);
+        if let PropName::Ident(k) = &kv.key {
+            self.current_context = Some(k.sym.as_ref().to_owned());
         }
         kv.fold_children_with(self)
+    }
+
+    fn fold_method_prop(&mut self, mp: MethodProp) -> swc_ecma_ast::MethodProp {
+        if let PropName::Ident(p) = &mp.key {
+            self.current_context = Some(p.sym.as_ref().to_owned());
+        }
+        mp.fold_children_with(self)
     }
 
     fn fold_call_expr(&mut self, mut expr: CallExpr) -> CallExpr {
