@@ -72,8 +72,8 @@ fn next_emotion_fixture(input: PathBuf) {
 //   "/labels/filename" -> "[filename]"
 //   "/labels/filename-local" -> "[filename]-[local]"
 //   "/labels/local" -> "[local]"
-#[fixture("tests/labels/**/output.js")]
-fn emotion_label_fixture(output: PathBuf) {
+#[fixture("tests/fixture/labels/options/**/output.js")]
+fn emotion_label_option_fixture(output: PathBuf) {
     let output_folder = output.parent().unwrap();
     let output_folder_name = output_folder.file_name().unwrap().to_str().unwrap();
     let input = output_folder.parent().unwrap().join("input.tsx");
@@ -136,7 +136,7 @@ fn emotion_label_fixture(output: PathBuf) {
     );
 }
 
-#[fixture("tests/label-sanitisation/**/*.ts")]
+#[fixture("tests/fixture/labels/sanitisation/**/*.ts")]
 fn emotion_label_sanitisation(input: PathBuf) {
     let output_folder_name = input
         .parent()
