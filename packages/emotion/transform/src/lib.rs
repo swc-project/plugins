@@ -76,6 +76,9 @@ static EMOTION_OFFICIAL_LIBRARIES: Lazy<Vec<EmotionModuleConfig>> = Lazy::new(||
     ]
 });
 
+static INVALID_LABEL_SPACES: Lazy<Regex> =
+    Lazy::new(|| RegexBuilder::new(r#"\s+"#).build().unwrap());
+
 static INVALID_CSS_CLASS_NAME_CHARACTERS: Lazy<Regex> = Lazy::new(|| {
     RegexBuilder::new(r##"[!"#$%&'()*+,./:;<=>?@\[\]^`|}~{]"##)
         .build()
@@ -222,8 +225,13 @@ impl<C: Comments> EmotionTransformer<C> {
         }
     }
 
-    fn sanitize_label_part<'t>(&self, label_part: &'t str) -> Cow<'t, str> {
-        INVALID_CSS_CLASS_NAME_CHARACTERS.replace_all(label_part, "-")
+    fn sanitize_label_part<'t>(&self, label_part: &'t str) -> String {
+        // Existing @emotion/babel-plugin behaviour is to replace all spaces
+        // with a single hyphen
+        let without_spaces = INVALID_LABEL_SPACES.replace_all(label_part, "-");
+        INVALID_CSS_CLASS_NAME_CHARACTERS
+            .replace_all(&without_spaces, "-")
+            .to_string()
     }
 
     fn create_label(&self, with_prefix: bool) -> String {
@@ -440,8 +448,14 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
     }
 
     fn fold_key_value_prop(&mut self, kv: KeyValueProp) -> KeyValueProp {
-        if let PropName::Ident(k) = &kv.key {
-            self.current_context = Some(k.sym.as_ref().to_owned());
+        match &kv.key {
+            PropName::Ident(k) => {
+                self.current_context = Some(k.sym.as_ref().to_owned());
+            }
+            PropName::Str(k) => {
+                self.current_context = Some(k.value.as_ref().to_owned());
+            }
+            _ => (),
         }
         kv.fold_children_with(self)
     }
