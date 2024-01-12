@@ -72,7 +72,7 @@ fn next_emotion_fixture(input: PathBuf) {
 //   "/labels/filename" -> "[filename]"
 //   "/labels/filename-local" -> "[filename]-[local]"
 //   "/labels/local" -> "[local]"
-#[fixture("tests/fixture/labels/options/**/output.js")]
+#[fixture("tests/labels/options/**/output.js")]
 fn emotion_label_option_fixture(output: PathBuf) {
     let output_folder = output.parent().unwrap();
     let output_folder_name = output_folder.file_name().unwrap().to_str().unwrap();
@@ -136,12 +136,12 @@ fn emotion_label_option_fixture(output: PathBuf) {
     );
 }
 
-#[fixture("tests/fixture/labels/emotion-js/**/*.ts")]
+#[fixture("tests/labels/emotion-js/**/*.ts")]
 fn emotion_label_original(input: PathBuf) {
     emotion_label(input, "[local]".to_string())
 }
 
-#[fixture("tests/fixture/labels/sanitisation/**/*.ts")]
+#[fixture("tests/labels/sanitisation/**/*.ts")]
 fn emotion_label_sanitisation(input: PathBuf) {
     emotion_label(input, "[dirname]-[filename]-[local]".to_string())
 }
