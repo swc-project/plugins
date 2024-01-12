@@ -500,6 +500,17 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
         cp.fold_children_with(self)
     }
 
+    fn fold_computed_prop_name(
+        &mut self,
+        n: swc_ecma_ast::ComputedPropName,
+    ) -> swc_ecma_ast::ComputedPropName {
+        // Existing @emotion/babel-plugin behaviour is that computed
+        // properties do not have a label. We reset the label here as
+        // an unset label is reduced to an empty string in `create_label`.
+        self.current_context = None;
+        n.fold_children_with(self)
+    }
+
     fn fold_call_expr(&mut self, mut expr: CallExpr) -> CallExpr {
         // If no package that we care about is imported, skip the following
         // transformation logic.
