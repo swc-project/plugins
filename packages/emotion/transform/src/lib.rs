@@ -252,6 +252,10 @@ impl<C: Comments> EmotionTransformer<C> {
             if let Some(dirname) = self.dirname.as_ref() {
                 label = label.replace("[dirname]", &self.sanitize_label_part(dirname));
             };
+        } else {
+            // Existing @emotion/babel-plugin behaviour is to
+            // not provide a label if there is no available identifier
+            return "".to_string();
         }
         label
     }
