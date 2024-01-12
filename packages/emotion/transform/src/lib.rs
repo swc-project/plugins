@@ -13,10 +13,11 @@ use sourcemap::{RawToken, SourceMap as RawSourcemap};
 use swc_atoms::JsWord;
 use swc_common::{comments::Comments, util::take::Take, BytePos, SourceMapperDyn, DUMMY_SP};
 use swc_ecma_ast::{
-    ArrayLit, CallExpr, Callee, Expr, ExprOrSpread, FnDecl, Id, Ident, ImportDecl, ImportSpecifier,
-    JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElement, JSXElementName, JSXExpr,
-    JSXExprContainer, JSXObject, KeyValueProp, MemberProp, MethodProp, ModuleExportName, ObjectLit,
-    Pat, Prop, PropName, PropOrSpread, SourceMapperExt, SpreadElement, Tpl, VarDeclarator,
+    ArrayLit, CallExpr, Callee, ClassDecl, ClassMethod, ClassProp, Expr, ExprOrSpread, FnDecl, Id,
+    Ident, ImportDecl, ImportSpecifier, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue,
+    JSXElement, JSXElementName, JSXExpr, JSXExprContainer, JSXObject, KeyValueProp, MemberProp,
+    MethodProp, ModuleExportName, ObjectLit, Pat, Prop, PropName, PropOrSpread, SourceMapperExt,
+    SpreadElement, Tpl, VarDeclarator,
 };
 use swc_ecma_utils::ExprFactory;
 use swc_ecma_visit::{Fold, FoldWith};
@@ -181,6 +182,7 @@ pub struct EmotionTransformer<C: Comments> {
     import_packages: FxHashMap<Id, PackageMeta>,
     emotion_target_class_name_count: usize,
     current_context: Option<String>,
+    current_class: Option<String>,
     // skip `css` transformation if it in JSX Element/Attribute
     in_jsx_element: bool,
 
@@ -220,6 +222,7 @@ impl<C: Comments> EmotionTransformer<C> {
             import_packages: FxHashMap::default(),
             emotion_target_class_name_count: 0,
             current_context: None,
+            current_class: None,
             in_jsx_element: false,
             registered_imports,
         }
@@ -474,6 +477,27 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
     fn fold_fn_decl(&mut self, fn_dec: FnDecl) -> FnDecl {
         self.current_context = Some(fn_dec.ident.sym.as_ref().to_owned());
         fn_dec.fold_children_with(self)
+    }
+
+    fn fold_class_decl(&mut self, cd: ClassDecl) -> ClassDecl {
+        self.current_class = Some(cd.ident.sym.as_ref().to_owned());
+        self.current_context = self.current_class.clone();
+        cd.fold_children_with(self)
+    }
+
+    fn fold_class_method(&mut self, cm: ClassMethod) -> ClassMethod {
+        // class methods use the class name for the context
+        if self.current_class.is_some() {
+            self.current_context = self.current_class.clone();
+        }
+        cm.fold_children_with(self)
+    }
+
+    fn fold_class_prop(&mut self, cp: ClassProp) -> ClassProp {
+        if let PropName::Ident(p) = &cp.key {
+            self.current_context = Some(p.sym.as_ref().to_owned());
+        }
+        cp.fold_children_with(self)
     }
 
     fn fold_call_expr(&mut self, mut expr: CallExpr) -> CallExpr {
