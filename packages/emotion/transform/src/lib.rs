@@ -433,6 +433,14 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
         dec.fold_children_with(self)
     }
 
+    fn fold_key_value_prop(&mut self, kv: KeyValueProp) -> KeyValueProp {
+        if let PropName::Ident(i) = &kv.key {
+            self.current_context = Some(i.sym.as_ref().to_owned());
+            dbg!(&i.sym);
+        }
+        kv.fold_children_with(self)
+    }
+
     fn fold_call_expr(&mut self, mut expr: CallExpr) -> CallExpr {
         // If no package that we care about is imported, skip the following
         // transformation logic.
