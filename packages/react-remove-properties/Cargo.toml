@@ -5,7 +5,7 @@ edition = "2021"
 license = "Apache-2.0"
 name = "swc_plugin_react_remove_properties"
 publish = false
-version = "0.15.0"
+version = "0.16.0"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
