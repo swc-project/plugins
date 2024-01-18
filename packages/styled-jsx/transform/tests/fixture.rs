@@ -32,7 +32,8 @@ fn run(input: PathBuf, use_lightningcss: bool) {
                     styled_jsx::visitor::Config {
                         use_lightningcss,
                         ..Default::default()
-                    }
+                    },
+                    Default::default()
                 )
             )
         },
@@ -61,7 +62,8 @@ fn run(input: PathBuf, use_lightningcss: bool) {
                     styled_jsx::visitor::Config {
                         use_lightningcss,
                         ..Default::default()
-                    }
+                    },
+                    Default::default()
                 )
             )
         },
@@ -108,6 +110,7 @@ fn styled_jsx_errors(input: PathBuf) {
                         use_lightningcss: false,
                         ..Default::default()
                     },
+                    Default::default(),
                 )
             },
             &input,
@@ -132,6 +135,7 @@ fn styled_jsx_errors(input: PathBuf) {
                         use_lightningcss: true,
                         ..Default::default()
                     },
+                    Default::default(),
                 )
             },
             &input,
