@@ -585,10 +585,12 @@ impl StyledJSXTransformer<'_> {
 
         match &style_info {
             JSXStyle::Local(style_info) => {
+                let style_info = self.invoke_css_transform(style_info);
+
                 let css = if self.config.use_lightningcss {
                     crate::transform_css_lightningcss::transform_css(
                         self.cm.clone(),
-                        style_info,
+                        &style_info,
                         is_global,
                         &self.static_class_name,
                         &self.config.browsers,
@@ -596,14 +598,14 @@ impl StyledJSXTransformer<'_> {
                 } else {
                     crate::transform_css_swc::transform_css(
                         self.cm.clone(),
-                        style_info,
+                        &style_info,
                         is_global,
                         &self.static_class_name,
                     )?
                 };
 
                 Ok(make_local_styled_jsx_el(
-                    style_info,
+                    &style_info,
                     css,
                     self.style_import_name.as_ref().unwrap(),
                     self.static_class_name.as_ref(),
@@ -650,10 +652,12 @@ impl StyledJSXTransformer<'_> {
         } else {
             bail!("This shouldn't happen, we already know that this is a template literal");
         };
+
+        let style = self.invoke_css_transform(style);
         let css = if self.config.use_lightningcss {
             crate::transform_css_lightningcss::transform_css(
                 self.cm.clone(),
-                style,
+                &style,
                 tag == "global",
                 &static_class_name,
                 &self.config.browsers,
@@ -661,7 +665,7 @@ impl StyledJSXTransformer<'_> {
         } else {
             crate::transform_css_swc::transform_css(
                 self.cm.clone(),
-                style,
+                &style,
                 tag == "global",
                 &static_class_name,
             )?
@@ -677,7 +681,7 @@ impl StyledJSXTransformer<'_> {
                             optional: false,
                         }),
                         value: Box::new(Expr::JSXElement(Box::new(make_local_styled_jsx_el(
-                            style,
+                            &style,
                             css,
                             self.style_import_name.as_ref().unwrap(),
                             self.static_class_name.as_ref(),
@@ -715,6 +719,29 @@ impl StyledJSXTransformer<'_> {
         self.static_class_name = None;
         self.class_name = None;
         self.styles = vec![];
+    }
+
+    fn invoke_css_transform(&self, style: &LocalStyle) -> LocalStyle {
+        let mut css = style.css.clone();
+        if let Some(process_css) = &self.native_config.process_css {
+            match process_css(&css) {
+                Ok(new_css) => css = new_css,
+                Err(err) => {
+                    HANDLER.with(|handler| {
+                        handler
+                            .struct_span_err(
+                                style.css_span,
+                                &format!("Error while processing css: {}.", err),
+                            )
+                            .emit()
+                    });
+                }
+            }
+        }
+        LocalStyle {
+            css,
+            ..style.clone()
+        }
     }
 }
 

@@ -7,6 +7,7 @@ pub struct ExternalStyle {
     pub is_global: bool,
 }
 
+#[derive(Clone)]
 pub struct LocalStyle {
     pub hash: String,
     pub css: String,
