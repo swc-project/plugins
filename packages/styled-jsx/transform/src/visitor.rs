@@ -36,7 +36,17 @@ pub struct Config {
     pub browsers: Versions,
 }
 
-pub fn styled_jsx(cm: Arc<SourceMap>, file_name: FileName, config: Config) -> impl Fold {
+#[derive(Default)]
+pub struct NativeConfig<'a> {
+    pub process_css: Option<Box<dyn 'a + for<'aa> Fn(&'aa str) -> Result<String, Error>>>,
+}
+
+pub fn styled_jsx<'a>(
+    cm: Arc<SourceMap>,
+    file_name: FileName,
+    config: Config,
+    native_config: NativeConfig<'a>,
+) -> impl 'a + Fold {
     let file_name = match file_name {
         FileName::Real(real_file_name) => real_file_name
             .to_str()
@@ -47,6 +57,7 @@ pub fn styled_jsx(cm: Arc<SourceMap>, file_name: FileName, config: Config) -> im
     StyledJSXTransformer {
         cm,
         config,
+        native_config,
         file_name,
         styles: Default::default(),
         static_class_name: Default::default(),
@@ -68,9 +79,10 @@ pub fn styled_jsx(cm: Arc<SourceMap>, file_name: FileName, config: Config) -> im
     }
 }
 
-struct StyledJSXTransformer {
+struct StyledJSXTransformer<'a> {
     cm: Arc<SourceMap>,
     config: Config,
+    native_config: NativeConfig<'a>,
 
     file_name: Option<String>,
     styles: Vec<JSXStyle>,
@@ -98,7 +110,7 @@ enum StyleExpr<'a> {
     Ident(&'a Ident),
 }
 
-impl Fold for StyledJSXTransformer {
+impl Fold for StyledJSXTransformer<'_> {
     fn fold_jsx_element(&mut self, el: JSXElement) -> JSXElement {
         if is_styled_jsx(&el) {
             if self.visiting_styled_jsx_descendants {
@@ -428,7 +440,7 @@ impl Fold for StyledJSXTransformer {
     }
 }
 
-impl StyledJSXTransformer {
+impl StyledJSXTransformer<'_> {
     fn check_for_jsx_styles(
         &mut self,
         el: Option<&JSXElement>,
@@ -573,10 +585,12 @@ impl StyledJSXTransformer {
 
         match &style_info {
             JSXStyle::Local(style_info) => {
+                let style_info = self.invoke_css_transform(style_info);
+
                 let css = if self.config.use_lightningcss {
                     crate::transform_css_lightningcss::transform_css(
                         self.cm.clone(),
-                        style_info,
+                        &style_info,
                         is_global,
                         &self.static_class_name,
                         &self.config.browsers,
@@ -584,14 +598,14 @@ impl StyledJSXTransformer {
                 } else {
                     crate::transform_css_swc::transform_css(
                         self.cm.clone(),
-                        style_info,
+                        &style_info,
                         is_global,
                         &self.static_class_name,
                     )?
                 };
 
                 Ok(make_local_styled_jsx_el(
-                    style_info,
+                    &style_info,
                     css,
                     self.style_import_name.as_ref().unwrap(),
                     self.static_class_name.as_ref(),
@@ -638,10 +652,12 @@ impl StyledJSXTransformer {
         } else {
             bail!("This shouldn't happen, we already know that this is a template literal");
         };
+
+        let style = self.invoke_css_transform(style);
         let css = if self.config.use_lightningcss {
             crate::transform_css_lightningcss::transform_css(
                 self.cm.clone(),
-                style,
+                &style,
                 tag == "global",
                 &static_class_name,
                 &self.config.browsers,
@@ -649,7 +665,7 @@ impl StyledJSXTransformer {
         } else {
             crate::transform_css_swc::transform_css(
                 self.cm.clone(),
-                style,
+                &style,
                 tag == "global",
                 &static_class_name,
             )?
@@ -665,7 +681,7 @@ impl StyledJSXTransformer {
                             optional: false,
                         }),
                         value: Box::new(Expr::JSXElement(Box::new(make_local_styled_jsx_el(
-                            style,
+                            &style,
                             css,
                             self.style_import_name.as_ref().unwrap(),
                             self.static_class_name.as_ref(),
@@ -703,6 +719,29 @@ impl StyledJSXTransformer {
         self.static_class_name = None;
         self.class_name = None;
         self.styles = vec![];
+    }
+
+    fn invoke_css_transform(&self, style: &LocalStyle) -> LocalStyle {
+        let mut css = style.css.clone();
+        if let Some(process_css) = &self.native_config.process_css {
+            match process_css(&css) {
+                Ok(new_css) => css = new_css,
+                Err(err) => {
+                    HANDLER.with(|handler| {
+                        handler
+                            .struct_span_err(
+                                style.css_span,
+                                &format!("Error while processing css: {}.", err),
+                            )
+                            .emit()
+                    });
+                }
+            }
+        }
+        LocalStyle {
+            css,
+            ..style.clone()
+        }
     }
 }
 
