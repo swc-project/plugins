@@ -36,7 +36,17 @@ pub struct Config {
     pub browsers: Versions,
 }
 
-pub fn styled_jsx(cm: Arc<SourceMap>, file_name: FileName, config: Config) -> impl Fold {
+#[derive(Default)]
+pub struct NativeConfig<'a> {
+    pub process_css: Option<Box<dyn 'a + for<'aa> Fn(&'aa str) -> Result<String, Error>>>,
+}
+
+pub fn styled_jsx<'a>(
+    cm: Arc<SourceMap>,
+    file_name: FileName,
+    config: Config,
+    native_config: NativeConfig<'a>,
+) -> impl 'a + Fold {
     let file_name = match file_name {
         FileName::Real(real_file_name) => real_file_name
             .to_str()
@@ -47,6 +57,7 @@ pub fn styled_jsx(cm: Arc<SourceMap>, file_name: FileName, config: Config) -> im
     StyledJSXTransformer {
         cm,
         config,
+        native_config,
         file_name,
         styles: Default::default(),
         static_class_name: Default::default(),
@@ -68,9 +79,10 @@ pub fn styled_jsx(cm: Arc<SourceMap>, file_name: FileName, config: Config) -> im
     }
 }
 
-struct StyledJSXTransformer {
+struct StyledJSXTransformer<'a> {
     cm: Arc<SourceMap>,
     config: Config,
+    native_config: NativeConfig<'a>,
 
     file_name: Option<String>,
     styles: Vec<JSXStyle>,
@@ -98,7 +110,7 @@ enum StyleExpr<'a> {
     Ident(&'a Ident),
 }
 
-impl Fold for StyledJSXTransformer {
+impl Fold for StyledJSXTransformer<'_> {
     fn fold_jsx_element(&mut self, el: JSXElement) -> JSXElement {
         if is_styled_jsx(&el) {
             if self.visiting_styled_jsx_descendants {
@@ -428,7 +440,7 @@ impl Fold for StyledJSXTransformer {
     }
 }
 
-impl StyledJSXTransformer {
+impl StyledJSXTransformer<'_> {
     fn check_for_jsx_styles(
         &mut self,
         el: Option<&JSXElement>,
