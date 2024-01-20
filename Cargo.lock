@@ -640,12 +640,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "easy-error"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "04cc9717c61d2908f50d16ebb5677c7e82ea2bdf7cb52f66b30fe079f3212e16"
-
-[[package]]
 name = "either"
 version = "1.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2173,7 +2167,7 @@ dependencies = [
 name = "styled_jsx"
 version = "0.70.0"
 dependencies = [
- "easy-error",
+ "anyhow",
  "lightningcss",
  "parcel_selectors",
  "preset_env_base",
@@ -3040,7 +3034,7 @@ dependencies = [
 name = "swc_plugin_styled_jsx"
 version = "0.17.0"
 dependencies = [
- "easy-error",
+ "anyhow",
  "serde_json",
  "styled_jsx",
  "swc_atoms",
