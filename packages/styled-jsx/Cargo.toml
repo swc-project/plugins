@@ -14,7 +14,7 @@ crate-type = ["cdylib", "rlib"]
 custom_transform = ["swc_common/concurrent"]
 
 [dependencies]
-easy-error = "1.0.0"
+anyhow = "1"
 styled_jsx = { path = "./transform" }
 tracing = { version = "0.1.37", features = ["release_max_level_off"] }
 serde_json = "1"
