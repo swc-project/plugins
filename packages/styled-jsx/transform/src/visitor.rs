@@ -5,7 +5,7 @@ use std::{
     sync::Arc,
 };
 
-use easy_error::{bail, Error};
+use anyhow::{bail, Error, Result};
 use preset_env_base::Versions;
 use serde::Deserialize;
 use swc_common::{collections::AHashSet, errors::HANDLER, FileName, SourceMap, Span, DUMMY_SP};
@@ -454,7 +454,7 @@ impl StyledJSXTransformer<'_> {
             let style_info = self.get_jsx_style(expr, is_global(el));
             styles.insert(0, style_info);
 
-            Ok(())
+            anyhow::Ok(())
         };
 
         if el.is_some() && is_styled_jsx(el.unwrap()) {

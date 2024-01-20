@@ -6,7 +6,7 @@ use std::{
     sync::{Arc, RwLock},
 };
 
-use easy_error::{bail, Error, ResultExt};
+use anyhow::{bail, Context, Error};
 use lightningcss::{
     error::ParserError,
     properties::custom::{TokenList, TokenOrValue},

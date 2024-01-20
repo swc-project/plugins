@@ -4,13 +4,13 @@ description = "AST transforms visitor for styled-jsx"
 edition = "2021"
 license = "Apache-2.0"
 name = "styled_jsx"
-version = "0.70.0"
+version = "0.71.0"
 
 [features]
 custom_transform = ["swc_common/concurrent"]
 
 [dependencies]
-easy-error = "1.0.0"
+anyhow = "1"
 tracing = "0.1.37"
 lightningcss = { version = "1.0.0-alpha.49", features = [
   "visitor",

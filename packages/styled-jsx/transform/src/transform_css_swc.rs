@@ -1,6 +1,6 @@
 use std::{panic, sync::Arc};
 
-use easy_error::{bail, Error};
+use anyhow::{bail, Error};
 use swc_common::{
     errors::HANDLER, source_map::Pos, util::take::Take, BytePos, SourceMap, Span, Spanned,
     SyntaxContext, DUMMY_SP,
