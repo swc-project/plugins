@@ -9,8 +9,6 @@ use swc_ecma_utils::{prepend_stmts, StmtLike};
 use swc_ecma_visit::{noop_visit_mut_type, VisitMut, VisitMutWith};
 use swc_plugin_macro::plugin_transform;
 
-// swc_plugin::define_js_plugin!(jest);
-
 static HOIST_METHODS: phf::Set<&str> = phf_set![
     "mock",
     "unmock",

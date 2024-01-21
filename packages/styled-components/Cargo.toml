@@ -4,7 +4,7 @@ edition = "2021"
 license = "Apache-2.0"
 name = "swc_plugin_styled_components"
 publish = false
-version = "0.38.0"
+version = "0.39.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
@@ -15,10 +15,10 @@ serde = { version = "1.0.136", features = ["derive"] }
 serde_json = "1.0.79"
 styled_components = { path = "./transform" }
 swc_atoms = "0.6.5"
-swc_common = { version = "0.33.12", features = ["concurrent"] }
-swc_core = { version = "0.87.3", features = ["ecma_plugin_transform"] }
-swc_ecma_ast = "0.110.15"
-swc_ecma_utils = "0.125.0"
-swc_ecma_visit = "0.96.15"
-swc_plugin_macro = "0.9.15"
+swc_common = { version = "0.33.14", features = ["concurrent"] }
+swc_core = { version = "0.88.0", features = ["ecma_plugin_transform"] }
+swc_ecma_ast = "0.111.0"
+swc_ecma_utils = "0.126.0"
+swc_ecma_visit = "0.97.0"
+swc_plugin_macro = "0.9.16"
 tracing = { version = "0.1.37", features = ["release_max_level_off"] }
