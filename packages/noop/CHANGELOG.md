@@ -1,5 +1,11 @@
 # @swc/plugin-noop
 
+## 1.5.112
+
+### Patch Changes
+
+- 4ef0b7f: Add changelog to the readme
+
 ## 1.5.111
 
 ### Patch Changes

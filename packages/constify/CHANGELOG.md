@@ -1,5 +1,11 @@
 # @swc/plugin-constify
 
+## 0.1.44
+
+### Patch Changes
+
+- 4ef0b7f: Add changelog to the readme
+
 ## 0.1.43
 
 ### Patch Changes
