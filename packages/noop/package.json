@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-noop",
-  "version": "1.5.109",
+  "version": "1.5.110",
   "description": "Noop SWC plugin, for debugging",
   "main": "swc_plugin_noop.wasm",
   "scripts": {
