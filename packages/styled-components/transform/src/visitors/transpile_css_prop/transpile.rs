@@ -372,6 +372,7 @@ impl VisitMut for TranspileCssProp {
                     }),
                     type_only: Default::default(),
                     with: Default::default(),
+                    phase: Default::default(),
                 })),
             );
         }

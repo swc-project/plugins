@@ -167,6 +167,7 @@ impl<'a> Rewriter<'a> {
                         span: old_decl.span,
                         type_only: false,
                         with: None,
+                        phase: Default::default(),
                     });
                 }
                 _ => {

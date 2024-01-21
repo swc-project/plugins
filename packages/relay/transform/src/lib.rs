@@ -26,7 +26,7 @@ pub enum RelayLanguageConfig {
 pub enum OutputFileExtension {
     TypeScript,
     JavaScript,
-    Undefined
+    Undefined,
 }
 
 impl<'a> TryFrom<&'a str> for RelayLanguageConfig {
@@ -41,7 +41,6 @@ impl<'a> TryFrom<&'a str> for RelayLanguageConfig {
     }
 }
 
-
 impl<'a> TryFrom<&'a str> for OutputFileExtension {
     type Error = String;
 
@@ -49,7 +48,10 @@ impl<'a> TryFrom<&'a str> for OutputFileExtension {
         match value {
             "ts" => Ok(Self::TypeScript),
             "js" => Ok(Self::JavaScript),
-            _ => Err(format!("Unexpected output file extension value '{}'", value)),
+            _ => Err(format!(
+                "Unexpected output file extension value '{}'",
+                value
+            )),
         }
     }
 }
@@ -87,6 +89,7 @@ impl RelayImport {
             src: Box::new(self.path.clone().into()),
             type_only: false,
             with: None,
+            phase: Default::default(),
         }))
     }
 }
