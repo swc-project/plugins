@@ -5,7 +5,7 @@ edition = "2021"
 license = "Apache-2.0"
 name = "swc_plugin_noop"
 publish = false
-version = "0.16.0"
+version = "0.17.0"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
