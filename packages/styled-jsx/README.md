@@ -1,4 +1,6 @@
-# @swc/plugin-remove-console
+# @swc/plugin-styled-jsx
+
+# @swc/plugin-styled-jsx
 
 ## 1.5.114
 

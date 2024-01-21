@@ -1,5 +1,11 @@
 # @swc/plugin-loadable-components
 
+## 0.3.114
+
+### Patch Changes
+
+- 4ef0b7f: Add changelog to the readme
+
 ## 0.3.113
 
 ### Patch Changes

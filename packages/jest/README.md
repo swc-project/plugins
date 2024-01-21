@@ -1,4 +1,6 @@
-# @swc/plugin-remove-console
+# @swc/plugin-jest
+
+# @swc/plugin-jest
 
 ## 1.5.114
 

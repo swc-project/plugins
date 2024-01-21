@@ -1,0 +1,3 @@
+# @swc/plugin-jest
+
+${CHANGELOG}
