@@ -5,8 +5,8 @@ pnpm changeset
 pnpm changeset version
 
 for pkg in $(ls -d packages/*); do
-    CHANGELOG=$(cat ./packages/$pkg/CHANGELOG.md) envsubst < ./packages/$pkg/README.md.tmpl > ./packages/$pkg/README.md
-    git add ./packages/$pkg/README.md
+    CHANGELOG=$(cat ./$pkg/CHANGELOG.md) envsubst < ./$pkg/README.md.tmpl > ./$pkg/README.md
+    git add ./$pkg/README.md
 done
 
 git commit -am "Merge CHANGELOG into README"
