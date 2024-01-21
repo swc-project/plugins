@@ -1,5 +1,8 @@
 {
   "name": "swc-plugins",
   "packageManager": "pnpm@8.6.3",
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "@changesets/cli": "^2.27.1"
+  }
 }
