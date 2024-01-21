@@ -5,3 +5,5 @@
 ```json
 ["loadable-components", {}]
 ```
+
+${CHANGELOG}

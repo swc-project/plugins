@@ -83,4 +83,7 @@ plugins: [
     ],
 ],
 ```
+
 In this example typescript graphql files will output transpiled import path of `javascript` ending with `.js`.
+
+${CHANGELOG}

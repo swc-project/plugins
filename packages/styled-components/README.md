@@ -25,3 +25,5 @@ Then update your `.swcrc` file like below:
   }
 }
 ```
+
+${CHANGELOG}

@@ -19,3 +19,5 @@ import { markAsPure } from "@swc/magic";
 
 markAsPure(() => console.log("This will be removed by the SWC minifier"));
 ```
+
+${CHANGELOG}

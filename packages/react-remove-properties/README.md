@@ -20,3 +20,5 @@ or
   }
 ]
 ```
+
+${CHANGELOG}

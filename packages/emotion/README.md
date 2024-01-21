@@ -31,3 +31,5 @@ The plugin uses the same config as described in [Next emotion documentation](htt
 ## Credit
 
 Source code for plugin itself (not transforms) are copied from https://github.com/IvanRodriCalleja/emotion-swc-plugin
+
+${CHANGELOG}
