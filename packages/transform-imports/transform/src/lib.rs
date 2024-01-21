@@ -269,7 +269,7 @@ pub fn modularize_imports(config: Config) -> impl Fold {
 }
 
 fn helper_lower_case(
-    h: &Helper<'_, '_>,
+    h: &Helper<'_>,
     _: &Handlebars<'_>,
     _: &Context,
     _: &mut RenderContext<'_, '_>,
@@ -282,7 +282,7 @@ fn helper_lower_case(
 }
 
 fn helper_upper_case(
-    h: &Helper<'_, '_>,
+    h: &Helper<'_>,
     _: &Handlebars<'_>,
     _: &Context,
     _: &mut RenderContext<'_, '_>,
@@ -295,7 +295,7 @@ fn helper_upper_case(
 }
 
 fn helper_camel_case(
-    h: &Helper<'_, '_>,
+    h: &Helper<'_>,
     _: &Handlebars<'_>,
     _: &Context,
     _: &mut RenderContext<'_, '_>,
@@ -309,7 +309,7 @@ fn helper_camel_case(
 }
 
 fn helper_kebab_case(
-    h: &Helper<'_, '_>,
+    h: &Helper<'_>,
     _: &Handlebars<'_>,
     _: &Context,
     _: &mut RenderContext<'_, '_>,
