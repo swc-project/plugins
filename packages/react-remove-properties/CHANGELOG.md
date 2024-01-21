@@ -1,5 +1,11 @@
 # @swc/plugin-react-remove-properties
 
+## 1.5.113
+
+### Patch Changes
+
+- 4e72680: swc_core@0.88.0
+
 ## 1.5.112
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @swc/plugin-loadable-components
 
+## 0.3.113
+
+### Patch Changes
+
+- 4e72680: swc_core@0.88.0
+
 ## 0.3.112
 
 ### Patch Changes
