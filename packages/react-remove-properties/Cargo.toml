@@ -14,10 +14,10 @@ crate-type = ["cdylib", "rlib"]
 react_remove_properties = { path = "./transform" }
 serde_json = "1.0.79"
 swc_cached = "0.3.18"
-swc_common = { version = "0.33.12", features = ["concurrent"] }
-swc_core = { version = "0.87.3", features = ["ecma_plugin_transform"] }
-swc_ecma_ast = "0.110.15"
-swc_ecma_utils = "0.125.0"
-swc_ecma_visit = "0.96.15"
-swc_plugin_macro = "0.9.15"
+swc_common = { version = "0.33.14", features = ["concurrent"] }
+swc_core = { version = "0.88.0", features = ["ecma_plugin_transform"] }
+swc_ecma_ast = "0.111.0"
+swc_ecma_utils = "0.126.0"
+swc_ecma_visit = "0.97.0"
+swc_plugin_macro = "0.9.16"
 tracing = { version = "0.1.37", features = ["release_max_level_off"] }

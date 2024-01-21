@@ -13,10 +13,10 @@ version = "0.5.0"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-swc_common = { version = "0.33.12", features = ["concurrent"] }
+swc_common = { version = "0.33.14", features = ["concurrent"] }
 swc_constify = { path = "./transform" }
 tracing = { version = "0.1.37", features = ["release_max_level_off"] }
-swc_ecma_visit = "0.96.15"
-swc_ecma_utils = "0.125.0"
-swc_ecma_ast = "0.110.15"
-swc_plugin_macro = "0.9.15"
+swc_ecma_visit = "0.97.0"
+swc_ecma_utils = "0.126.0"
+swc_ecma_ast = "0.111.0"
+swc_plugin_macro = "0.9.16"
