@@ -445,12 +445,14 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
         if let Pat::Ident(i) = &dec.name {
             self.current_context = Some(i.id.as_ref().to_owned());
         }
+
         // If we encounter a named function expression
-        if let Expr::Fn(f) = *dec.init.clone().unwrap() {
+        if let Some(Expr::Fn(f)) = dec.init.clone().map(|e| *e) {
             if let Some(i) = &f.ident {
                 self.current_context = Some(i.sym.as_ref().to_owned());
             }
         }
+
         dec.fold_children_with(self)
     }
 
