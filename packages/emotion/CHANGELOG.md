@@ -1,5 +1,11 @@
 # @swc/plugin-emotion
 
+## 2.5.115
+
+### Patch Changes
+
+- 906b5dd: Fix panic when trying to unwrap None on setting the context for a function name
+
 ## 2.5.114
 
 ### Patch Changes
