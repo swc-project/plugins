@@ -34,6 +34,12 @@ Source code for plugin itself (not transforms) are copied from https://github.co
 
 # @swc/plugin-emotion
 
+## 2.5.115
+
+### Patch Changes
+
+- 906b5dd: Fix panic when trying to unwrap None on setting the context for a function name
+
 ## 2.5.114
 
 ### Patch Changes

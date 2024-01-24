@@ -40,9 +40,21 @@ impl VisitMut for TemplateLiterals {
                 .quasis
                 .into_iter()
                 .map(|q| {
+                    let value = q
+                        .raw
+                        .replace("\\`", "`")
+                        .replace("\\$", "$")
+                        .replace("\\b", "\u{0008}")
+                        .replace("\\f", "\u{000C}")
+                        .replace("\\n", "\n")
+                        .replace("\\r", "\r")
+                        .replace("\\t", "\t")
+                        .replace("\\v", "\u{000B}")
+                        .replace("\\\\", "\\");
+
                     Expr::Lit(Lit::Str(Str {
                         span: q.span,
-                        value: q.cooked.unwrap_or(q.raw),
+                        value: value.into(),
                         raw: None,
                     }))
                 })
