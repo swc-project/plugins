@@ -28,6 +28,12 @@ Then update your `.swcrc` file like below:
 
 # @swc/plugin-styled-components
 
+## 1.5.115
+
+### Patch Changes
+
+- 34f9d21: Fix escaping issue
+
 ## 1.5.114
 
 ### Patch Changes

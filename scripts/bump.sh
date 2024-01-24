@@ -11,5 +11,6 @@ done
 
 git commit -am "Merge CHANGELOG into README"
 
-cargo set-version --workspace --bump minor
+cargo mono bump -i
+# cargo set-version --workspace --bump minor
 git commit -a -m "Bump crates" || true
