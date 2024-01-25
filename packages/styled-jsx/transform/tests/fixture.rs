@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 
 use anyhow::bail;
+use lightningcss::stylesheet::ParserOptions;
 use styled_jsx::visitor::{styled_jsx, NativeConfig};
 use swc_common::{chain, FileName, Mark, Span, DUMMY_SP};
 use swc_ecma_parser::{EsConfig, Syntax};
@@ -41,7 +42,10 @@ fn run(input: PathBuf, use_lightningcss: bool) {
                             process_css: Some(Box::new(move |css| {
                                 let ss = lightningcss::stylesheet::StyleSheet::parse(
                                     css,
-                                    Default::default(),
+                                    ParserOptions {
+                                        error_recovery: true,
+                                        ..Default::default()
+                                    },
                                 );
 
                                 let ss = match ss {
