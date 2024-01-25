@@ -47,7 +47,11 @@ fn run(input: PathBuf, use_lightningcss: bool) {
                                 let ss = match ss {
                                     Ok(v) => v,
                                     Err(err) => {
-                                        bail!("failed to parse css using lightningcss: {}", err)
+                                        bail!(
+                                            "failed to parse css using lightningcss: {}\nCode: {}",
+                                            err,
+                                            css
+                                        )
                                     }
                                 };
 
