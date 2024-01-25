@@ -171,7 +171,7 @@ pub fn transform_css(
         return Ok(string_literal_expr(&res.code));
     }
 
-    let mut parts: Vec<&str> = res.code.split("__styled-jsx-placeholder-").collect();
+    let mut parts: Vec<&str> = res.code.split("--styled-jsx-placeholder-").collect();
     let mut final_expressions = vec![];
     for i in parts.iter_mut().skip(1) {
         let (num_len, expression_index) = read_number(i, &style_info.is_expr_property);

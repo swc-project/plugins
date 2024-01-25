@@ -540,10 +540,10 @@ impl StyledJSXTransformer<'_> {
                             String::new()
                         } else if before.ends_with([';', '{']) {
                             is_expr_property.push(true);
-                            format!("__styled-jsx-placeholder-{}__: 0", i)
+                            format!("--styled-jsx-placeholder-{}__: 0", i)
                         } else {
                             is_expr_property.push(false);
-                            format!("__styled-jsx-placeholder-{}__", i)
+                            format!("--styled-jsx-placeholder-{}__", i)
                         };
                         s.push_str(&quasis[i].raw);
                         s.push_str(&placeholder);
