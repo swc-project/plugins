@@ -538,7 +538,7 @@ impl StyledJSXTransformer<'_> {
                         let placeholder = if i == quasis.len() - 1 {
                             is_expr_property.push(false);
                             String::new()
-                        } else if self.config.use_lightningcss && before.ends_with([';', '{']) {
+                        } else if before.ends_with([';', '{']) {
                             is_expr_property.push(true);
                             format!("__styled-jsx-placeholder-{}__: 0", i)
                         } else {

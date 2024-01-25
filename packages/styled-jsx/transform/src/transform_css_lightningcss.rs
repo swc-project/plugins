@@ -215,7 +215,7 @@ fn convert_browsers(browsers: &Versions) -> Browsers {
     }
 }
 
-fn strip_comments(s: &str) -> Cow<str> {
+pub(super) fn strip_comments(s: &str) -> Cow<str> {
     if !s.contains("//") {
         return Cow::Borrowed(s);
     }
@@ -237,7 +237,7 @@ fn strip_comments(s: &str) -> Cow<str> {
 }
 
 /// Returns `(length, expression_index)`
-fn read_number(s: &str, is_expr_property: &[bool]) -> (usize, usize) {
+pub(super) fn read_number(s: &str, is_expr_property: &[bool]) -> (usize, usize) {
     for (idx, c) in s.char_indices() {
         if c.is_ascii_digit() {
             continue;
