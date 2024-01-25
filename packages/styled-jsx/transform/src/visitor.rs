@@ -41,6 +41,25 @@ pub struct NativeConfig<'a> {
     pub process_css: Option<Box<dyn 'a + for<'aa> Fn(&'aa str) -> Result<String, Error>>>,
 }
 
+impl NativeConfig<'_> {
+    pub(crate) fn invoke_css_transform(&self, span: Span, css: String) -> String {
+        if let Some(process_css) = &self.process_css {
+            match process_css(&css) {
+                Ok(new_css) => return new_css,
+                Err(err) => {
+                    HANDLER.with(|handler| {
+                        handler
+                            .struct_span_err(span, &format!("Error while processing css: {}.", err))
+                            .emit()
+                    });
+                }
+            }
+        }
+
+        css
+    }
+}
+
 pub fn styled_jsx<'a>(
     cm: Arc<SourceMap>,
     file_name: FileName,
@@ -585,8 +604,6 @@ impl StyledJSXTransformer<'_> {
 
         match &style_info {
             JSXStyle::Local(style_info) => {
-                let style_info = self.invoke_css_transform(style_info);
-
                 let css = if self.config.use_lightningcss {
                     crate::transform_css_lightningcss::transform_css(
                         self.cm.clone(),
@@ -594,6 +611,7 @@ impl StyledJSXTransformer<'_> {
                         is_global,
                         &self.static_class_name,
                         &self.config.browsers,
+                        &self.native_config,
                     )?
                 } else {
                     crate::transform_css_swc::transform_css(
@@ -601,6 +619,7 @@ impl StyledJSXTransformer<'_> {
                         &style_info,
                         is_global,
                         &self.static_class_name,
+                        &self.native_config,
                     )?
                 };
 
@@ -653,7 +672,6 @@ impl StyledJSXTransformer<'_> {
             bail!("This shouldn't happen, we already know that this is a template literal");
         };
 
-        let style = self.invoke_css_transform(style);
         let css = if self.config.use_lightningcss {
             crate::transform_css_lightningcss::transform_css(
                 self.cm.clone(),
@@ -661,6 +679,7 @@ impl StyledJSXTransformer<'_> {
                 tag == "global",
                 &static_class_name,
                 &self.config.browsers,
+                &self.native_config,
             )?
         } else {
             crate::transform_css_swc::transform_css(
@@ -668,6 +687,7 @@ impl StyledJSXTransformer<'_> {
                 &style,
                 tag == "global",
                 &static_class_name,
+                &self.native_config,
             )?
         };
         if tag == "resolve" {
@@ -719,29 +739,6 @@ impl StyledJSXTransformer<'_> {
         self.static_class_name = None;
         self.class_name = None;
         self.styles = vec![];
-    }
-
-    fn invoke_css_transform(&self, style: &LocalStyle) -> LocalStyle {
-        let mut css = style.css.clone();
-        if let Some(process_css) = &self.native_config.process_css {
-            match process_css(&css) {
-                Ok(new_css) => css = new_css,
-                Err(err) => {
-                    HANDLER.with(|handler| {
-                        handler
-                            .struct_span_err(
-                                style.css_span,
-                                &format!("Error while processing css: {}.", err),
-                            )
-                            .emit()
-                    });
-                }
-            }
-        }
-        LocalStyle {
-            css,
-            ..style.clone()
-        }
     }
 }
 

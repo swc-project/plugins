@@ -31,6 +31,7 @@ use tracing::{debug, trace};
 use crate::{
     style::LocalStyle,
     utils::{hash_string, string_literal_expr},
+    visitor::NativeConfig,
 };
 
 pub fn transform_css(
@@ -38,6 +39,7 @@ pub fn transform_css(
     style_info: &LocalStyle,
     is_global: bool,
     class_name: &Option<String>,
+    native: &NativeConfig,
 ) -> Result<Expr, Error> {
     debug!("CSS: \n{}", style_info.css);
 
@@ -97,6 +99,8 @@ pub fn transform_css(
 
         gen.emit(&ss).unwrap();
     }
+
+    s = native.invoke_css_transform(style_info.css_span, s);
 
     if style_info.expressions.is_empty() {
         return Ok(string_literal_expr(&s));

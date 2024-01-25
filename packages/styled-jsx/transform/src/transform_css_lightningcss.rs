@@ -30,6 +30,7 @@ use tracing::{debug, error, trace};
 use crate::{
     style::LocalStyle,
     utils::{hash_string, string_literal_expr},
+    visitor::NativeConfig,
 };
 
 fn report(
@@ -69,7 +70,7 @@ fn report(
 
 #[cfg_attr(
     debug_assertions,
-    tracing::instrument(skip(cm, style_info, class_name, browsers))
+    tracing::instrument(skip(cm, style_info, class_name, browsers, native))
 )]
 pub fn transform_css(
     cm: Arc<SourceMap>,
@@ -77,6 +78,7 @@ pub fn transform_css(
     is_global: bool,
     class_name: &Option<String>,
     browsers: &Versions,
+    native: &NativeConfig,
 ) -> Result<Expr, Error> {
     let mut file_lines_cache = None;
 
@@ -150,7 +152,7 @@ pub fn transform_css(
     })
     .expect("failed to minify/auto-prefix css");
 
-    let res = ss
+    let mut res = ss
         .to_css(PrinterOptions {
             minify: true,
             targets: Targets {
@@ -160,6 +162,8 @@ pub fn transform_css(
             ..Default::default()
         })
         .context("failed to print css")?;
+
+    res.code = native.invoke_css_transform(style_info.css_span, res.code);
 
     debug!("Transformed CSS: \n{}", res.code);
 
