@@ -30,7 +30,9 @@ use tracing::{debug, trace};
 
 use crate::{
     style::LocalStyle,
+    transform_css_lightningcss::{read_number, strip_comments},
     utils::{hash_string, string_literal_expr},
+    visitor::NativeConfig,
 };
 
 pub fn transform_css(
@@ -38,8 +40,11 @@ pub fn transform_css(
     style_info: &LocalStyle,
     is_global: bool,
     class_name: &Option<String>,
+    native: &NativeConfig,
 ) -> Result<Expr, Error> {
     debug!("CSS: \n{}", style_info.css);
+
+    let css_str = strip_comments(&style_info.css);
 
     // TODO use `parse_string_input` in future
     let config = ParserConfig {
@@ -48,11 +53,7 @@ pub fn transform_css(
         ..Default::default()
     };
     let lexer = Lexer::new(
-        StringInput::new(
-            &style_info.css,
-            style_info.css_span.lo,
-            style_info.css_span.hi,
-        ),
+        StringInput::new(&css_str, style_info.css_span.lo, style_info.css_span.hi),
         None,
         config,
     );
@@ -98,14 +99,16 @@ pub fn transform_css(
         gen.emit(&ss).unwrap();
     }
 
+    s = native.invoke_css_transform(style_info.css_span, s);
+
     if style_info.expressions.is_empty() {
         return Ok(string_literal_expr(&s));
     }
 
-    let mut parts: Vec<&str> = s.split("__styled-jsx-placeholder-").collect();
+    let mut parts: Vec<&str> = s.split("--styled-jsx-placeholder-").collect();
     let mut final_expressions = vec![];
     for i in parts.iter_mut().skip(1) {
-        let (num_len, expression_index) = read_number(i);
+        let (num_len, expression_index) = read_number(i, &style_info.is_expr_property);
         final_expressions.push(style_info.expressions[expression_index].clone());
         let substr = &i[(num_len + 2)..];
         *i = substr;
@@ -126,22 +129,6 @@ pub fn transform_css(
         exprs: final_expressions,
         span: DUMMY_SP,
     }))
-}
-
-/// Returns `(length, value)`
-fn read_number(s: &str) -> (usize, usize) {
-    for (idx, c) in s.char_indices() {
-        if c.is_ascii_digit() {
-            continue;
-        }
-
-        // For 10, we reach here after `0`.
-        let value = s[0..idx].parse().expect("failed to parse");
-
-        return (idx, value);
-    }
-
-    unreachable!("read_number(`{}`) is invalid because it is empty", s)
 }
 
 struct Namespacer {

@@ -1,6 +1,8 @@
 use std::path::PathBuf;
 
-use styled_jsx::visitor::styled_jsx;
+use anyhow::bail;
+use lightningcss::stylesheet::ParserOptions;
+use styled_jsx::visitor::{styled_jsx, NativeConfig};
 use swc_common::{chain, FileName, Mark, Span, DUMMY_SP};
 use swc_ecma_parser::{EsConfig, Syntax};
 use swc_ecma_transforms::resolver;
@@ -33,37 +35,43 @@ fn run(input: PathBuf, use_lightningcss: bool) {
                         use_lightningcss,
                         ..Default::default()
                     },
-                    Default::default()
-                )
-            )
-        },
-        &input,
-        &output,
-        Default::default(),
-    );
+                    if use_lightningcss {
+                        Default::default()
+                    } else {
+                        NativeConfig {
+                            process_css: Some(Box::new(move |css| {
+                                let ss = lightningcss::stylesheet::StyleSheet::parse(
+                                    css,
+                                    ParserOptions {
+                                        error_recovery: true,
+                                        ..Default::default()
+                                    },
+                                );
 
-    test_fixture(
-        syntax(),
-        &|t| {
-            // `resolver` uses `Mark` which is stored in a thread-local storage (namely
-            // swc_common::GLOBALS), and this loop will make `Mark` to be different from the
-            // invocation above.
-            //
-            // 1000 is used because in future I (kdy1) may optimize logic of resolver.
-            for _ in 0..1000 {
-                let _mark = Mark::fresh(Mark::root());
-            }
+                                let ss = match ss {
+                                    Ok(v) => v,
+                                    Err(err) => {
+                                        bail!(
+                                            "failed to parse css using lightningcss: {}\nCode: {}",
+                                            err,
+                                            css
+                                        )
+                                    }
+                                };
 
-            chain!(
-                resolver(Mark::new(), Mark::new(), false),
-                styled_jsx(
-                    t.cm.clone(),
-                    FileName::Real(PathBuf::from("/some-project/src/some-file.js")),
-                    styled_jsx::visitor::Config {
-                        use_lightningcss,
-                        ..Default::default()
-                    },
-                    Default::default()
+                                let output =
+                                    ss.to_css(lightningcss::stylesheet::PrinterOptions {
+                                        minify: true,
+                                        source_map: None,
+                                        project_root: None,
+                                        targets: Default::default(),
+                                        analyze_dependencies: None,
+                                        pseudo_classes: None,
+                                    })?;
+                                Ok(output.code)
+                            })),
+                        }
+                    }
                 )
             )
         },
@@ -78,7 +86,6 @@ fn styled_jsx_fixture_lightningcs(input: PathBuf) {
     run(input, true);
 }
 
-#[fixture("tests/fixture-swc-only/**/input.js")]
 #[fixture("tests/fixture/**/input.js")]
 fn styled_jsx_fixture_swc(input: PathBuf) {
     run(input, false);

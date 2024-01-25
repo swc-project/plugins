@@ -30,6 +30,7 @@ use tracing::{debug, error, trace};
 use crate::{
     style::LocalStyle,
     utils::{hash_string, string_literal_expr},
+    visitor::NativeConfig,
 };
 
 fn report(
@@ -69,7 +70,7 @@ fn report(
 
 #[cfg_attr(
     debug_assertions,
-    tracing::instrument(skip(cm, style_info, class_name, browsers))
+    tracing::instrument(skip(cm, style_info, class_name, browsers, native))
 )]
 pub fn transform_css(
     cm: Arc<SourceMap>,
@@ -77,6 +78,7 @@ pub fn transform_css(
     is_global: bool,
     class_name: &Option<String>,
     browsers: &Versions,
+    native: &NativeConfig,
 ) -> Result<Expr, Error> {
     let mut file_lines_cache = None;
 
@@ -150,7 +152,7 @@ pub fn transform_css(
     })
     .expect("failed to minify/auto-prefix css");
 
-    let res = ss
+    let mut res = ss
         .to_css(PrinterOptions {
             minify: true,
             targets: Targets {
@@ -161,13 +163,15 @@ pub fn transform_css(
         })
         .context("failed to print css")?;
 
+    res.code = native.invoke_css_transform(style_info.css_span, res.code);
+
     debug!("Transformed CSS: \n{}", res.code);
 
     if style_info.expressions.is_empty() {
         return Ok(string_literal_expr(&res.code));
     }
 
-    let mut parts: Vec<&str> = res.code.split("__styled-jsx-placeholder-").collect();
+    let mut parts: Vec<&str> = res.code.split("--styled-jsx-placeholder-").collect();
     let mut final_expressions = vec![];
     for i in parts.iter_mut().skip(1) {
         let (num_len, expression_index) = read_number(i, &style_info.is_expr_property);
@@ -211,7 +215,7 @@ fn convert_browsers(browsers: &Versions) -> Browsers {
     }
 }
 
-fn strip_comments(s: &str) -> Cow<str> {
+pub(super) fn strip_comments(s: &str) -> Cow<str> {
     if !s.contains("//") {
         return Cow::Borrowed(s);
     }
@@ -233,7 +237,7 @@ fn strip_comments(s: &str) -> Cow<str> {
 }
 
 /// Returns `(length, expression_index)`
-fn read_number(s: &str, is_expr_property: &[bool]) -> (usize, usize) {
+pub(super) fn read_number(s: &str, is_expr_property: &[bool]) -> (usize, usize) {
     for (idx, c) in s.char_indices() {
         if c.is_ascii_digit() {
             continue;
