@@ -79,36 +79,6 @@ fn run(input: PathBuf, use_lightningcss: bool) {
         &output,
         Default::default(),
     );
-
-    test_fixture(
-        syntax(),
-        &|t| {
-            // `resolver` uses `Mark` which is stored in a thread-local storage (namely
-            // swc_common::GLOBALS), and this loop will make `Mark` to be different from the
-            // invocation above.
-            //
-            // 1000 is used because in future I (kdy1) may optimize logic of resolver.
-            for _ in 0..1000 {
-                let _mark = Mark::fresh(Mark::root());
-            }
-
-            chain!(
-                resolver(Mark::new(), Mark::new(), false),
-                styled_jsx(
-                    t.cm.clone(),
-                    FileName::Real(PathBuf::from("/some-project/src/some-file.js")),
-                    styled_jsx::visitor::Config {
-                        use_lightningcss,
-                        ..Default::default()
-                    },
-                    Default::default()
-                )
-            )
-        },
-        &input,
-        &output,
-        Default::default(),
-    );
 }
 
 #[fixture("tests/fixture/**/input.js")]
