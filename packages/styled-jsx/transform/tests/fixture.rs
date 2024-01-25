@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 
-use styled_jsx::visitor::styled_jsx;
+use anyhow::bail;
+use styled_jsx::visitor::{styled_jsx, NativeConfig};
 use swc_common::{chain, FileName, Mark, Span, DUMMY_SP};
 use swc_ecma_parser::{EsConfig, Syntax};
 use swc_ecma_transforms::resolver;
@@ -33,7 +34,36 @@ fn run(input: PathBuf, use_lightningcss: bool) {
                         use_lightningcss,
                         ..Default::default()
                     },
-                    Default::default()
+                    if use_lightningcss {
+                        Default::default()
+                    } else {
+                        NativeConfig {
+                            process_css: Some(Box::new(move |css| {
+                                let ss = lightningcss::stylesheet::StyleSheet::parse(
+                                    css,
+                                    Default::default(),
+                                );
+
+                                let ss = match ss {
+                                    Ok(v) => v,
+                                    Err(err) => {
+                                        bail!("failed to parse css: {}", err)
+                                    }
+                                };
+
+                                let output =
+                                    ss.to_css(lightningcss::stylesheet::PrinterOptions {
+                                        minify: true,
+                                        source_map: None,
+                                        project_root: None,
+                                        targets: Default::default(),
+                                        analyze_dependencies: None,
+                                        pseudo_classes: None,
+                                    })?;
+                                Ok(output.code)
+                            })),
+                        }
+                    }
                 )
             )
         },
