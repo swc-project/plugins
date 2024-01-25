@@ -116,7 +116,6 @@ fn styled_jsx_fixture_lightningcs(input: PathBuf) {
     run(input, true);
 }
 
-#[fixture("tests/fixture-swc-only/**/input.js")]
 #[fixture("tests/fixture/**/input.js")]
 fn styled_jsx_fixture_swc(input: PathBuf) {
     run(input, false);
