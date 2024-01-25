@@ -535,10 +535,17 @@ impl StyledJSXTransformer<'_> {
                         let before = &*quasis[i].raw;
                         let before = before.trim();
 
+                        let after = quasis.get(i + 1).map(|v| v.raw.trim());
+
                         let placeholder = if i == quasis.len() - 1 {
                             is_expr_property.push(false);
                             String::new()
-                        } else if before.ends_with([';', '{']) {
+                        } else if before.ends_with([';', '{'])
+                            && match after {
+                                Some(after) => !after.starts_with(':'),
+                                None => true,
+                            }
+                        {
                             is_expr_property.push(true);
                             format!("--styled-jsx-placeholder-{}__: 0", i)
                         } else {
