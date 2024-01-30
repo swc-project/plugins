@@ -14,6 +14,8 @@
 }
 ```
 
+### `markAsPure`
+
 ```js
 import { markAsPure } from "@swc/magic";
 
