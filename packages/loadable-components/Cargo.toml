@@ -5,7 +5,7 @@ edition = "2021"
 license = "Apache-2.0"
 name = "swc_plugin_loadable_components"
 publish = false
-version = "0.18.0"
+version = "0.18.1"
 
 [lib]
 crate-type = ["cdylib", "rlib"]

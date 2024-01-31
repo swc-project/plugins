@@ -82,8 +82,9 @@ pub fn transform_css(
 ) -> Result<Expr, Error> {
     let mut file_lines_cache = None;
 
-    debug!("CSS: \n{}", style_info.css);
     let css_str = strip_comments(&style_info.css);
+
+    debug!("CSS: \n{}", css_str);
 
     let warnings: Arc<RwLock<Vec<lightningcss::error::Error<ParserError>>>> = Arc::default();
 
@@ -225,15 +226,40 @@ pub(super) fn strip_comments(s: &str) -> Cow<str> {
     for line in s.lines() {
         let line = line.trim();
 
-        if let Some(index) = line.find("//") {
-            buf.push_str(&line[..index]);
-        } else {
-            buf.push_str(line);
-        }
+        buf.push_str(strip_comment_from_line(line));
+
         buf.push('\n');
     }
 
     Cow::Owned(buf)
+}
+
+fn strip_comment_from_line(s: &str) -> &str {
+    // Check for ' or "
+    // if there's one, it's a string literal and we should not strip it.
+    // After then, we should check for two `/`s
+
+    let s = s.trim();
+
+    let mut in_string = false;
+    let mut last = '\0';
+    for (i, c) in s.char_indices() {
+        if c == '\'' || c == '"' {
+            if in_string && last != '\\' {
+                in_string = false;
+            } else {
+                in_string = true;
+            }
+        }
+
+        if !in_string && last == '/' && c == '/' {
+            return &s[..i - 1];
+        }
+
+        last = c;
+    }
+
+    s
 }
 
 /// Returns `(length, expression_index)`

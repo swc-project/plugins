@@ -4,7 +4,7 @@ description = "AST transforms visitor for styled-jsx"
 edition = "2021"
 license = "Apache-2.0"
 name = "styled_jsx"
-version = "0.73.1"
+version = "0.73.3"
 
 [features]
 custom_transform = ["swc_common/concurrent"]
