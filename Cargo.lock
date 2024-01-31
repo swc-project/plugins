@@ -1154,7 +1154,7 @@ dependencies = [
 
 [[package]]
 name = "modularize_imports"
-version = "0.68.1"
+version = "0.68.2"
 dependencies = [
  "convert_case",
  "handlebars",
@@ -1692,7 +1692,7 @@ dependencies = [
 
 [[package]]
 name = "react_remove_properties"
-version = "0.24.1"
+version = "0.24.2"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -1767,7 +1767,7 @@ checksum = "c707298afce11da2efef2f600116fa93ffa7a032b5d7b628aa17711ec81383ca"
 
 [[package]]
 name = "remove_console"
-version = "0.25.1"
+version = "0.25.2"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -2153,7 +2153,7 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
 name = "styled_components"
-version = "0.96.2"
+version = "0.96.3"
 dependencies = [
  "Inflector",
  "once_cell",
@@ -2174,7 +2174,7 @@ dependencies = [
 
 [[package]]
 name = "styled_jsx"
-version = "0.73.3"
+version = "0.73.4"
 dependencies = [
  "anyhow",
  "lightningcss",
@@ -2756,7 +2756,7 @@ dependencies = [
 
 [[package]]
 name = "swc_emotion"
-version = "0.72.1"
+version = "0.72.2"
 dependencies = [
  "base64 0.13.1",
  "byteorder",
@@ -2830,7 +2830,7 @@ dependencies = [
 
 [[package]]
 name = "swc_magic"
-version = "0.19.1"
+version = "0.19.2"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -2855,7 +2855,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_emotion"
-version = "0.18.2"
+version = "0.18.3"
 dependencies = [
  "serde",
  "serde_json",
@@ -2872,7 +2872,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_jest"
-version = "0.31.1"
+version = "0.31.2"
 dependencies = [
  "phf 0.10.1",
  "serde",
@@ -2887,7 +2887,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_loadable_components"
-version = "0.18.1"
+version = "0.18.2"
 dependencies = [
  "once_cell",
  "regex",
@@ -2916,7 +2916,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_noop"
-version = "0.18.1"
+version = "0.18.2"
 dependencies = [
  "swc_common",
  "swc_core",
@@ -2943,7 +2943,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_react_remove_properties"
-version = "0.19.1"
+version = "0.19.2"
 dependencies = [
  "react_remove_properties",
  "serde_json",
@@ -2959,7 +2959,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_relay"
-version = "0.7.1"
+version = "0.7.2"
 dependencies = [
  "once_cell",
  "regex",
@@ -2977,7 +2977,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_remove_console"
-version = "0.19.1"
+version = "0.19.2"
 dependencies = [
  "remove_console",
  "serde_json",
@@ -2992,7 +2992,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_styled_components"
-version = "0.40.1"
+version = "0.40.2"
 dependencies = [
  "serde",
  "serde_json",
@@ -3009,7 +3009,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_styled_jsx"
-version = "0.20.1"
+version = "0.20.2"
 dependencies = [
  "anyhow",
  "serde_json",
@@ -3030,7 +3030,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_swc_magic"
-version = "0.7.1"
+version = "0.7.2"
 dependencies = [
  "serde_json",
  "swc_core",
@@ -3039,7 +3039,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_transform_imports"
-version = "0.19.1"
+version = "0.19.2"
 dependencies = [
  "modularize_imports",
  "serde_json",
@@ -3054,7 +3054,7 @@ dependencies = [
 
 [[package]]
 name = "swc_relay"
-version = "0.44.1"
+version = "0.44.2"
 dependencies = [
  "once_cell",
  "regex",
@@ -3614,7 +3614,7 @@ dependencies = [
 
 [[package]]
 name = "xtask"
-version = "0.8.1"
+version = "0.8.2"
 dependencies = [
  "anyhow",
  "cargo_metadata 0.18.0",

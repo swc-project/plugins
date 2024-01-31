@@ -5,7 +5,7 @@ edition = "2021"
 license = "Apache-2.0"
 name = "swc_plugin_styled_jsx"
 publish = false
-version = "0.20.1"
+version = "0.20.2"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
