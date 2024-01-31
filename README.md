@@ -8,7 +8,6 @@ Plugins for SWC, written in Rust
 - [`jest`](packages/jest)
 - [`loadable-components`](packages/loadable-components)
 - [`noop`](packages/noop) for testing Wasm plugin system itself
-- [`loadable-components`](packages/loadable-components)
 - [`react-remove-properties`](packages/react-remove-properties)
 - [`relay`](packages/relay)
 - [`remove-console`](packages/remove-console)
