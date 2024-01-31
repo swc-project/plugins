@@ -42,9 +42,9 @@ pub fn transform_css(
     class_name: &Option<String>,
     native: &NativeConfig,
 ) -> Result<Expr, Error> {
-    debug!("CSS: \n{}", style_info.css);
-
     let css_str = strip_comments(&style_info.css);
+
+    debug!("CSS: \n{}", css_str);
 
     // TODO use `parse_string_input` in future
     let config = ParserConfig {
