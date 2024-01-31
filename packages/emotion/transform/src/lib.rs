@@ -358,7 +358,19 @@ impl<C: Comments> EmotionTransformer<C> {
             if index % 2 == 0 {
                 if let Some(q) = tagged_tpl.quasis.get_mut(i) {
                     let q = q.take();
-                    let minified = minify_css_string(&q.raw, index == 0, index == args_len - 1);
+                    let css_input = q
+                        .raw
+                        .replace("\\`", "`")
+                        .replace("\\$", "$")
+                        .replace("\\b", "\u{0008}")
+                        .replace("\\f", "\u{000C}")
+                        .replace("\\n", "\n")
+                        .replace("\\r", "\r")
+                        .replace("\\t", "\t")
+                        .replace("\\v", "\u{000B}")
+                        .replace("\\\\", "\\");
+
+                    let minified = minify_css_string(&css_input, index == 0, index == args_len - 1);
                     // Compress one more spaces into one space
                     if minified.replace(' ', "").is_empty() {
                         if index != 0 && index != args_len - 1 {
