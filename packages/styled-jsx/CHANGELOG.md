@@ -1,5 +1,11 @@
 # @swc/plugin-styled-jsx
 
+## 1.5.115
+
+### Patch Changes
+
+- ed6beaa: Fix logic for stripping comments out
+
 ## 1.5.114
 
 ### Patch Changes
