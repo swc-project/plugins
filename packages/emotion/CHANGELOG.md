@@ -1,5 +1,11 @@
 # @swc/plugin-emotion
 
+## 2.5.116
+
+### Patch Changes
+
+- 47db290: Fix string escaping issue
+
 ## 2.5.115
 
 ### Patch Changes
