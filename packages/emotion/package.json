@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-emotion",
-  "version": "2.5.116",
+  "version": "2.5.117",
   "description": "SWC plugin for emotion css-in-js library",
   "main": "swc_plugin_emotion.wasm",
   "scripts": {
