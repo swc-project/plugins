@@ -2,6 +2,12 @@
 
 # @swc/plugin-jest
 
+## 1.5.115
+
+### Patch Changes
+
+- 8bd92c7: swc_core 0.90.x
+
 ## 1.5.114
 
 ### Patch Changes
