@@ -1,5 +1,11 @@
 # @swc/plugin-emotion
 
+## 2.5.117
+
+### Patch Changes
+
+- 8bd92c7: swc_core 0.90.x
+
 ## 2.5.116
 
 ### Patch Changes

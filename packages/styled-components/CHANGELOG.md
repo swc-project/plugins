@@ -1,5 +1,11 @@
 # @swc/plugin-styled-components
 
+## 1.5.116
+
+### Patch Changes
+
+- 8bd92c7: swc_core 0.90.x
+
 ## 1.5.115
 
 ### Patch Changes
