@@ -977,7 +977,7 @@ fn join_spreads(spreads: Vec<Expr>) -> Expr {
 fn add_hash_statement((id, hash): (Id, String)) -> Stmt {
     Stmt::Expr(ExprStmt {
         expr: Box::new(Expr::Assign(AssignExpr {
-            left: PatOrExpr::Expr(Box::new(Expr::Member(MemberExpr {
+            left: MemberExpr {
                 obj: Box::new(Expr::Ident(Ident {
                     sym: id.0,
                     span: DUMMY_SP.with_ctxt(id.1),
@@ -989,7 +989,8 @@ fn add_hash_statement((id, hash): (Id, String)) -> Stmt {
                     optional: false,
                 }),
                 span: DUMMY_SP,
-            }))),
+            }
+            .into(),
             right: Box::new(string_literal_expr(&hash)),
             op: op!("="),
             span: DUMMY_SP,
