@@ -87,7 +87,7 @@ static INVALID_CSS_CLASS_NAME_CHARACTERS: Lazy<Regex> = Lazy::new(|| {
 });
 
 static INVALID_SINGLE_LINE_COMMENT: Lazy<Regex> = Lazy::new(|| {
-    RegexBuilder::new(r"(?P<s>^|[^:]|\s)//.*$")
+    RegexBuilder::new(r#"(?P<s>^|[^:^'^"]|\s)//.*$"#)
         .multi_line(true)
         .build()
         .unwrap()
@@ -1014,6 +1014,30 @@ mod test_emotion {
                 true
             ),
             "color:red;background-image:url(http://dummy-url).foo{}"
+        )
+    }
+
+    #[test]
+    fn issue_258_should_preserve_url_starting_with_two_slashes_1() {
+        assert_eq!(
+            minify_css_string(
+                "background-image: url('//domain.com/image.png');",
+                true,
+                true
+            ),
+            "background-image:url('//domain.com/image.png');"
+        )
+    }
+
+    #[test]
+    fn issue_258_should_preserve_url_starting_with_two_slashes_2() {
+        assert_eq!(
+            minify_css_string(
+                "background-image: url(\"//domain.com/image.png\");",
+                true,
+                true
+            ),
+            "background-image:url(\"//domain.com/image.png\");"
         )
     }
 }
