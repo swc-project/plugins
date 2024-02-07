@@ -72,6 +72,7 @@ impl Default for OutputFileExtension {
 struct RelayImport {
     path: JsWord,
     item: JsWord,
+    unresolved_mark: Option<Mark>,
 }
 
 impl RelayImport {
@@ -81,7 +82,10 @@ impl RelayImport {
             specifiers: vec![ImportSpecifier::Default(ImportDefaultSpecifier {
                 span: Default::default(),
                 local: Ident {
-                    span: Default::default(),
+                    span: self
+                        .unresolved_mark
+                        .map(|m| DUMMY_SP.apply_mark(m))
+                        .unwrap_or(Default::default()),
                     sym: self.item.clone(),
                     optional: false,
                 },
@@ -257,6 +261,7 @@ impl<'a> Relay<'a> {
                         self.imports.push(RelayImport {
                             path: final_path.into(),
                             item: ident_name.clone(),
+                            unresolved_mark: self.unresolved_mark,
                         });
                         let operation_ident = Ident {
                             span: self

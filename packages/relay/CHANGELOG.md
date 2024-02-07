@@ -1,5 +1,11 @@
 # @swc/plugin-relay
 
+## 1.5.116
+
+### Patch Changes
+
+- dc0dc6b: Use correct identifier for imports
+
 ## 1.5.115
 
 ### Patch Changes
