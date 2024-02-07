@@ -28,6 +28,12 @@ Then update your `.swcrc` file like below:
 
 # @swc/plugin-styled-components
 
+## 1.5.117
+
+### Patch Changes
+
+- 37d3aaf: Depend on the swc download counter package
+
 ## 1.5.116
 
 ### Patch Changes
