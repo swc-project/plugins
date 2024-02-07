@@ -87,7 +87,7 @@ static INVALID_CSS_CLASS_NAME_CHARACTERS: Lazy<Regex> = Lazy::new(|| {
 });
 
 static INVALID_SINGLE_LINE_COMMENT: Lazy<Regex> = Lazy::new(|| {
-    RegexBuilder::new(r"(?P<s>^|[^:]|\s)//.*$")
+    RegexBuilder::new(r#"(?P<s>^|[^:^'^"]|\s)//.*$"#)
         .multi_line(true)
         .build()
         .unwrap()
@@ -444,87 +444,6 @@ impl<C: Comments> EmotionTransformer<C> {
 }
 
 impl<C: Comments> Fold for EmotionTransformer<C> {
-    // Collect import modules that indicator if this file need to be transformed
-    fn fold_import_decl(&mut self, expr: ImportDecl) -> ImportDecl {
-        if expr.type_only {
-            return expr;
-        }
-        self.generate_import_info(&expr);
-        expr
-    }
-
-    fn fold_var_declarator(&mut self, dec: VarDeclarator) -> VarDeclarator {
-        if let Pat::Ident(i) = &dec.name {
-            self.current_context = Some(i.id.as_ref().to_owned());
-        }
-
-        // If we encounter a named function expression
-        if let Some(Expr::Fn(f)) = dec.init.clone().map(|e| *e) {
-            if let Some(i) = &f.ident {
-                self.current_context = Some(i.sym.as_ref().to_owned());
-            }
-        }
-
-        dec.fold_children_with(self)
-    }
-
-    fn fold_key_value_prop(&mut self, kv: KeyValueProp) -> KeyValueProp {
-        match &kv.key {
-            PropName::Ident(k) => {
-                self.current_context = Some(k.sym.as_ref().to_owned());
-            }
-            PropName::Str(k) => {
-                self.current_context = Some(k.value.as_ref().to_owned());
-            }
-            _ => (),
-        }
-        kv.fold_children_with(self)
-    }
-
-    fn fold_method_prop(&mut self, mp: MethodProp) -> MethodProp {
-        if let PropName::Ident(p) = &mp.key {
-            self.current_context = Some(p.sym.as_ref().to_owned());
-        }
-        mp.fold_children_with(self)
-    }
-
-    fn fold_fn_decl(&mut self, fn_dec: FnDecl) -> FnDecl {
-        self.current_context = Some(fn_dec.ident.sym.as_ref().to_owned());
-        fn_dec.fold_children_with(self)
-    }
-
-    fn fold_class_decl(&mut self, cd: ClassDecl) -> ClassDecl {
-        self.current_class = Some(cd.ident.sym.as_ref().to_owned());
-        self.current_context = self.current_class.clone();
-        cd.fold_children_with(self)
-    }
-
-    fn fold_class_method(&mut self, cm: ClassMethod) -> ClassMethod {
-        // class methods use the class name for the context
-        if self.current_class.is_some() {
-            self.current_context = self.current_class.clone();
-        }
-        cm.fold_children_with(self)
-    }
-
-    fn fold_class_prop(&mut self, cp: ClassProp) -> ClassProp {
-        if let PropName::Ident(p) = &cp.key {
-            self.current_context = Some(p.sym.as_ref().to_owned());
-        }
-        cp.fold_children_with(self)
-    }
-
-    fn fold_computed_prop_name(
-        &mut self,
-        n: swc_ecma_ast::ComputedPropName,
-    ) -> swc_ecma_ast::ComputedPropName {
-        // Existing @emotion/babel-plugin behaviour is that computed
-        // properties do not have a label. We reset the label here as
-        // an unset label is reduced to an empty string in `create_label`.
-        self.current_context = None;
-        n.fold_children_with(self)
-    }
-
     fn fold_call_expr(&mut self, mut expr: CallExpr) -> CallExpr {
         // If no package that we care about is imported, skip the following
         // transformation logic.
@@ -691,6 +610,38 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
             }
         }
         expr
+    }
+
+    fn fold_class_decl(&mut self, cd: ClassDecl) -> ClassDecl {
+        self.current_class = Some(cd.ident.sym.as_ref().to_owned());
+        self.current_context = self.current_class.clone();
+        cd.fold_children_with(self)
+    }
+
+    fn fold_class_method(&mut self, cm: ClassMethod) -> ClassMethod {
+        // class methods use the class name for the context
+        if self.current_class.is_some() {
+            self.current_context = self.current_class.clone();
+        }
+        cm.fold_children_with(self)
+    }
+
+    fn fold_class_prop(&mut self, cp: ClassProp) -> ClassProp {
+        if let PropName::Ident(p) = &cp.key {
+            self.current_context = Some(p.sym.as_ref().to_owned());
+        }
+        cp.fold_children_with(self)
+    }
+
+    fn fold_computed_prop_name(
+        &mut self,
+        n: swc_ecma_ast::ComputedPropName,
+    ) -> swc_ecma_ast::ComputedPropName {
+        // Existing @emotion/babel-plugin behaviour is that computed
+        // properties do not have a label. We reset the label here as
+        // an unset label is reduced to an empty string in `create_label`.
+        self.current_context = None;
+        n.fold_children_with(self)
     }
 
     fn fold_expr(&mut self, mut expr: Expr) -> Expr {
@@ -891,6 +842,20 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
         expr.fold_children_with(self)
     }
 
+    fn fold_fn_decl(&mut self, fn_dec: FnDecl) -> FnDecl {
+        self.current_context = Some(fn_dec.ident.sym.as_ref().to_owned());
+        fn_dec.fold_children_with(self)
+    }
+
+    // Collect import modules that indicator if this file need to be transformed
+    fn fold_import_decl(&mut self, expr: ImportDecl) -> ImportDecl {
+        if expr.type_only {
+            return expr;
+        }
+        self.generate_import_info(&expr);
+        expr
+    }
+
     fn fold_jsx_element(&mut self, mut expr: JSXElement) -> JSXElement {
         match &mut expr.opening.name {
             JSXElementName::Ident(i) => {
@@ -921,6 +886,41 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
         let dest_expr = expr.fold_children_with(self);
         self.in_jsx_element = false;
         dest_expr
+    }
+
+    fn fold_key_value_prop(&mut self, kv: KeyValueProp) -> KeyValueProp {
+        match &kv.key {
+            PropName::Ident(k) => {
+                self.current_context = Some(k.sym.as_ref().to_owned());
+            }
+            PropName::Str(k) => {
+                self.current_context = Some(k.value.as_ref().to_owned());
+            }
+            _ => (),
+        }
+        kv.fold_children_with(self)
+    }
+
+    fn fold_method_prop(&mut self, mp: MethodProp) -> MethodProp {
+        if let PropName::Ident(p) = &mp.key {
+            self.current_context = Some(p.sym.as_ref().to_owned());
+        }
+        mp.fold_children_with(self)
+    }
+
+    fn fold_var_declarator(&mut self, dec: VarDeclarator) -> VarDeclarator {
+        if let Pat::Ident(i) = &dec.name {
+            self.current_context = Some(i.id.as_ref().to_owned());
+        }
+
+        // If we encounter a named function expression
+        if let Some(Expr::Fn(f)) = dec.init.clone().map(|e| *e) {
+            if let Some(i) = &f.ident {
+                self.current_context = Some(i.sym.as_ref().to_owned());
+            }
+        }
+
+        dec.fold_children_with(self)
     }
 }
 
@@ -975,10 +975,9 @@ fn remove_space_around_colon(input: &str, is_first_item: bool, is_last_item: boo
     )
 }
 
-#[allow(unused_imports)]
+#[cfg(test)]
 mod test_emotion {
     use super::minify_css_string;
-    use crate::INVALID_SINGLE_LINE_COMMENT;
 
     #[test]
     fn should_not_trim_end_space_in_first_item() {
@@ -1014,6 +1013,30 @@ mod test_emotion {
                 true
             ),
             "color:red;background-image:url(http://dummy-url).foo{}"
+        )
+    }
+
+    #[test]
+    fn issue_258_should_preserve_url_starting_with_two_slashes_1() {
+        assert_eq!(
+            minify_css_string(
+                "background-image: url('//domain.com/image.png');",
+                true,
+                true
+            ),
+            "background-image:url('//domain.com/image.png');"
+        )
+    }
+
+    #[test]
+    fn issue_258_should_preserve_url_starting_with_two_slashes_2() {
+        assert_eq!(
+            minify_css_string(
+                "background-image: url(\"//domain.com/image.png\");",
+                true,
+                true
+            ),
+            "background-image:url(\"//domain.com/image.png\");"
         )
     }
 }
