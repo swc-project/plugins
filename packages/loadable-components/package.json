@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-loadable-components",
-  "version": "0.3.115",
+  "version": "0.3.116",
   "description": "SWC plugin for `@loadable/components`",
   "main": "swc_plugin_loadable_components.wasm",
   "scripts": {
@@ -17,5 +17,8 @@
   "author": "강동윤 <kdy1997.dev@gmail.com>",
   "keywords": [],
   "license": "Apache-2.0",
-  "preferUnplugged": true
+  "preferUnplugged": true,
+  "dependencies": {
+    "@swc/counter": "^0.1.3"
+  }
 }

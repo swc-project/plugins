@@ -1,5 +1,11 @@
 # @swc/plugin-emotion
 
+## 2.5.119
+
+### Patch Changes
+
+- 37d3aaf: Depend on the swc download counter package
+
 ## 2.5.118
 
 ### Patch Changes

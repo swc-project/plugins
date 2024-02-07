@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-noop",
-  "version": "1.5.113",
+  "version": "1.5.114",
   "description": "Noop SWC plugin, for debugging",
   "main": "swc_plugin_noop.wasm",
   "scripts": {
@@ -17,5 +17,8 @@
   "author": "강동윤 <kdy1997.dev@gmail.com>",
   "keywords": [],
   "license": "Apache-2.0",
-  "preferUnplugged": true
+  "preferUnplugged": true,
+  "dependencies": {
+    "@swc/counter": "^0.1.3"
+  }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-emotion",
-  "version": "2.5.118",
+  "version": "2.5.119",
   "description": "SWC plugin for emotion css-in-js library",
   "main": "swc_plugin_emotion.wasm",
   "scripts": {
@@ -17,5 +17,8 @@
   "author": "강동윤 <kdy1997.dev@gmail.com>",
   "keywords": [],
   "license": "Apache-2.0",
-  "preferUnplugged": true
+  "preferUnplugged": true,
+  "dependencies": {
+    "@swc/counter": "^0.1.3"
+  }
 }

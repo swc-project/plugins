@@ -1,5 +1,11 @@
 # @swc/plugin-relay
 
+## 1.5.117
+
+### Patch Changes
+
+- 37d3aaf: Depend on the swc download counter package
+
 ## 1.5.116
 
 ### Patch Changes

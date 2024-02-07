@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-relay",
-  "version": "1.5.116",
+  "version": "1.5.117",
   "description": "SWC plugin for relay",
   "main": "swc_plugin_relay.wasm",
   "types": "./types.d.ts",
@@ -18,5 +18,8 @@
   "author": "강동윤 <kdy1997.dev@gmail.com>",
   "keywords": [],
   "license": "Apache-2.0",
-  "preferUnplugged": true
+  "preferUnplugged": true,
+  "dependencies": {
+    "@swc/counter": "^0.1.3"
+  }
 }

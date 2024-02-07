@@ -2,6 +2,12 @@
 
 # @swc/plugin-noop
 
+## 1.5.114
+
+### Patch Changes
+
+- 37d3aaf: Depend on the swc download counter package
+
 ## 1.5.113
 
 ### Patch Changes

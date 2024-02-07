@@ -1,5 +1,11 @@
 # @swc/plugin-loadable-components
 
+## 0.3.116
+
+### Patch Changes
+
+- 37d3aaf: Depend on the swc download counter package
+
 ## 0.3.115
 
 ### Patch Changes
