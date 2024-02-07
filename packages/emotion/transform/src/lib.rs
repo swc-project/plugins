@@ -975,10 +975,9 @@ fn remove_space_around_colon(input: &str, is_first_item: bool, is_last_item: boo
     )
 }
 
-#[allow(unused_imports)]
+#[cfg(test)]
 mod test_emotion {
     use super::minify_css_string;
-    use crate::INVALID_SINGLE_LINE_COMMENT;
 
     #[test]
     fn should_not_trim_end_space_in_first_item() {
