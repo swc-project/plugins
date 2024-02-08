@@ -23,6 +23,12 @@ or
 
 # @swc/plugin-react-remove-properties
 
+## 1.5.117
+
+### Patch Changes
+
+- 6096d6d: Fix plugin version schema issue
+
 ## 1.5.116
 
 ### Patch Changes
