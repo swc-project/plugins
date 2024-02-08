@@ -1,5 +1,11 @@
 # @swc/plugin-loadable-components
 
+## 0.3.117
+
+### Patch Changes
+
+- 6096d6d: Fix plugin version schema issue
+
 ## 0.3.116
 
 ### Patch Changes
