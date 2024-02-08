@@ -1,5 +1,11 @@
 # @swc/plugin-noop
 
+## 1.5.115
+
+### Patch Changes
+
+- 6096d6d: Fix plugin version schema issue
+
 ## 1.5.114
 
 ### Patch Changes
