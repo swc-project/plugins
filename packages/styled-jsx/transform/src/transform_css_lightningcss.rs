@@ -3,7 +3,7 @@ use std::{
     convert::Infallible,
     fmt::Debug,
     panic::{catch_unwind, AssertUnwindSafe},
-    sync::{Arc, RwLock},
+    sync::Arc,
 };
 
 use anyhow::{bail, Context, Error};
@@ -86,8 +86,6 @@ pub fn transform_css(
 
     debug!("CSS: \n{}", css_str);
 
-    let warnings: Arc<RwLock<Vec<lightningcss::error::Error<ParserError>>>> = Arc::default();
-
     let result: Result<StyleSheet, _> = StyleSheet::parse(
         &css_str,
         ParserOptions {
@@ -95,7 +93,7 @@ pub fn transform_css(
             // parsing-only mode.
             css_modules: None,
             error_recovery: true,
-            warnings: Some(warnings.clone()),
+            warnings: None,
             flags: ParserFlags::all(),
             ..Default::default()
         },
@@ -124,18 +122,6 @@ pub fn transform_css(
             bail!("Failed to parse css");
         }
     };
-
-    if let Ok(warnings) = warnings.read() {
-        for warning in warnings.iter() {
-            report(
-                &cm,
-                style_info.css_span,
-                &mut file_lines_cache,
-                warning,
-                Level::Warning,
-            );
-        }
-    }
 
     ss.visit(&mut CssNamespace {
         class_name: match class_name {
