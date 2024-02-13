@@ -2,6 +2,12 @@
 
 # @swc/plugin-styled-jsx
 
+## 1.5.119
+
+### Patch Changes
+
+- c196add: Ignored recoverable css parsing issues
+
 ## 1.5.118
 
 ### Patch Changes
