@@ -228,8 +228,8 @@ impl Fold for FoldImports {
                         None => new_items.push(ModuleItem::ModuleDecl(ModuleDecl::Import(decl))),
                     }
                 }
-                x => {
-                    new_items.push(x);
+                _ => {
+                    new_items.push(item);
                 }
             }
         }
