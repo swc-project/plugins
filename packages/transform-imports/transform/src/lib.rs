@@ -6,6 +6,7 @@ use once_cell::sync::Lazy;
 use regex::{Captures, Regex};
 use serde::{Deserialize, Serialize};
 use swc_cached::regex::CachedRegex;
+use swc_common::DUMMY_SP;
 use swc_ecma_ast::{ImportDecl, ImportSpecifier, ModuleExportName, *};
 use swc_ecma_visit::{noop_fold_type, Fold};
 
@@ -57,35 +58,33 @@ struct Rewriter<'a> {
     group: Vec<&'a str>,
 }
 
+#[derive(Serialize)]
+#[serde(untagged)]
+enum CtxData<'a> {
+    Plain(&'a str),
+    Array(&'a [&'a str]),
+}
+
 impl<'a> Rewriter<'a> {
-    fn rewrite(&self, old_decl: &ImportDecl) -> Vec<ImportDecl> {
+    fn rewrite_export(&self, old_decl: &NamedExport) -> Vec<NamedExport> {
         if old_decl.type_only || old_decl.with.is_some() {
             return vec![old_decl.clone()];
         }
 
-        let mut out: Vec<ImportDecl> = Vec::with_capacity(old_decl.specifiers.len());
+        let mut out = Vec::with_capacity(old_decl.specifiers.len());
 
         for spec in &old_decl.specifiers {
             match spec {
-                ImportSpecifier::Named(named_spec) => {
-                    #[derive(Serialize)]
-                    #[serde(untagged)]
-                    enum Data<'a> {
-                        Plain(&'a str),
-                        Array(&'a [&'a str]),
-                    }
-                    let name_str = named_spec
-                        .imported
-                        .as_ref()
-                        .map(|x| match x {
-                            ModuleExportName::Ident(x) => x.as_ref(),
-                            ModuleExportName::Str(x) => x.value.as_ref(),
-                        })
-                        .unwrap_or_else(|| named_spec.local.as_ref());
+                ExportSpecifier::Named(named_spec) => {
+                    let name_str = named_spec.exported.as_ref().unwrap_or(&named_spec.orig);
+                    let name_str = match name_str {
+                        ModuleExportName::Ident(x) => x.as_ref(),
+                        ModuleExportName::Str(x) => x.value.as_ref(),
+                    };
 
-                    let mut ctx: HashMap<&str, Data> = HashMap::new();
-                    ctx.insert("matches", Data::Array(&self.group[..]));
-                    ctx.insert("member", Data::Plain(name_str));
+                    let mut ctx: HashMap<&str, CtxData> = HashMap::new();
+                    ctx.insert("matches", CtxData::Array(&self.group[..]));
+                    ctx.insert("member", CtxData::Plain(name_str));
 
                     let new_path = match &self.config.transform {
                         Transform::String(s) => {
@@ -105,11 +104,11 @@ impl<'a> Rewriter<'a> {
 
                                 // Create a clone of the context, as we need to insert the
                                 // `memberMatches` key for each key we try.
-                                let mut ctx_with_member_matches: HashMap<&str, Data> =
+                                let mut ctx_with_member_matches: HashMap<&str, CtxData> =
                                     HashMap::new();
                                 ctx_with_member_matches
-                                    .insert("matches", Data::Array(&self.group[..]));
-                                ctx_with_member_matches.insert("member", Data::Plain(name_str));
+                                    .insert("matches", CtxData::Array(&self.group[..]));
+                                ctx_with_member_matches.insert("member", CtxData::Plain(name_str));
 
                                 let regex = CachedRegex::new(&key)
                                     .expect("transform-imports: invalid regex");
@@ -122,7 +121,135 @@ impl<'a> Rewriter<'a> {
                                         .collect::<Vec<&str>>()
                                         .clone();
                                     ctx_with_member_matches
-                                        .insert("memberMatches", Data::Array(&group[..]));
+                                        .insert("memberMatches", CtxData::Array(&group[..]));
+
+                                    result = Some(
+                                        self.renderer
+                                            .render_template(val, &ctx_with_member_matches)
+                                            .unwrap_or_else(|e| {
+                                                panic!(
+                                                    "error rendering template for '{}': {}",
+                                                    self.key, e
+                                                );
+                                            }),
+                                    );
+
+                                    true
+                                } else {
+                                    false
+                                }
+                            });
+
+                            if let Some(result) = result {
+                                result
+                            } else {
+                                panic!(
+                                    "missing transform for import '{:?}' of package '{}'",
+                                    named_spec.orig, self.key
+                                );
+                            }
+                        }
+                    };
+
+                    let new_path = DUP_SLASH_REGEX.replace_all(&new_path, |_: &Captures| "/");
+                    let specifier = if self.config.skip_default_conversion {
+                        ExportSpecifier::Named(named_spec.clone())
+                    } else {
+                        ExportSpecifier::Named(ExportNamedSpecifier {
+                            span: named_spec.span,
+                            orig: ModuleExportName::Ident(Ident::new("default".into(), DUMMY_SP)),
+                            exported: Some(
+                                named_spec
+                                    .exported
+                                    .clone()
+                                    .unwrap_or_else(|| named_spec.orig.clone()),
+                            ),
+                            is_type_only: false,
+                        })
+                    };
+                    out.push(NamedExport {
+                        specifiers: vec![specifier],
+                        src: Some(Box::new(Str::from(new_path.as_ref()))),
+                        span: old_decl.span,
+                        type_only: false,
+                        with: None,
+                    });
+                }
+                _ => {
+                    if self.config.prevent_full_import {
+                        panic!(
+                            "import {:?} causes the entire module to be imported",
+                            old_decl
+                        );
+                    } else {
+                        // Give up
+                        return vec![old_decl.clone()];
+                    }
+                }
+            }
+        }
+        out
+    }
+
+    fn rewrite_import(&self, old_decl: &ImportDecl) -> Vec<ImportDecl> {
+        if old_decl.type_only || old_decl.with.is_some() {
+            return vec![old_decl.clone()];
+        }
+
+        let mut out: Vec<ImportDecl> = Vec::with_capacity(old_decl.specifiers.len());
+
+        for spec in &old_decl.specifiers {
+            match spec {
+                ImportSpecifier::Named(named_spec) => {
+                    let name_str = named_spec
+                        .imported
+                        .as_ref()
+                        .map(|x| match x {
+                            ModuleExportName::Ident(x) => x.as_ref(),
+                            ModuleExportName::Str(x) => x.value.as_ref(),
+                        })
+                        .unwrap_or_else(|| named_spec.local.as_ref());
+
+                    let mut ctx: HashMap<&str, CtxData> = HashMap::new();
+                    ctx.insert("matches", CtxData::Array(&self.group[..]));
+                    ctx.insert("member", CtxData::Plain(name_str));
+
+                    let new_path = match &self.config.transform {
+                        Transform::String(s) => {
+                            self.renderer.render_template(s, &ctx).unwrap_or_else(|e| {
+                                panic!("error rendering template for '{}': {}", self.key, e);
+                            })
+                        }
+                        Transform::Vec(v) => {
+                            let mut result: Option<String> = None;
+
+                            // We iterate over the items to find the first match
+                            v.iter().any(|(k, val)| {
+                                let mut key = k.to_string();
+                                if !key.starts_with('^') && !key.ends_with('$') {
+                                    key = format!("^{}$", key);
+                                }
+
+                                // Create a clone of the context, as we need to insert the
+                                // `memberMatches` key for each key we try.
+                                let mut ctx_with_member_matches: HashMap<&str, CtxData> =
+                                    HashMap::new();
+                                ctx_with_member_matches
+                                    .insert("matches", CtxData::Array(&self.group[..]));
+                                ctx_with_member_matches.insert("member", CtxData::Plain(name_str));
+
+                                let regex = CachedRegex::new(&key)
+                                    .expect("transform-imports: invalid regex");
+                                let group = regex.captures(name_str);
+
+                                if let Some(group) = group {
+                                    let group = group
+                                        .iter()
+                                        .map(|x| x.map(|x| x.as_str()).unwrap_or_default())
+                                        .collect::<Vec<&str>>()
+                                        .clone();
+                                    ctx_with_member_matches
+                                        .insert("memberMatches", CtxData::Array(&group[..]));
 
                                     result = Some(
                                         self.renderer
@@ -218,18 +345,33 @@ impl Fold for FoldImports {
                 ModuleItem::ModuleDecl(ModuleDecl::Import(decl)) => {
                     match self.should_rewrite(&decl.src.value) {
                         Some(rewriter) => {
-                            let rewritten = rewriter.rewrite(&decl);
+                            let rewritten = rewriter.rewrite_import(&decl);
                             new_items.extend(
                                 rewritten
                                     .into_iter()
-                                    .map(|x| ModuleItem::ModuleDecl(ModuleDecl::Import(x))),
+                                    .map(ModuleDecl::Import)
+                                    .map(ModuleItem::ModuleDecl),
                             );
                         }
                         None => new_items.push(ModuleItem::ModuleDecl(ModuleDecl::Import(decl))),
                     }
                 }
-                x => {
-                    new_items.push(x);
+                ModuleItem::ModuleDecl(ModuleDecl::ExportNamed(
+                    decl @ NamedExport { src: Some(..), .. },
+                )) => match self.should_rewrite(&decl.src.as_deref().unwrap().value) {
+                    Some(rewriter) => {
+                        let rewritten = rewriter.rewrite_export(&decl);
+                        new_items.extend(
+                            rewritten
+                                .into_iter()
+                                .map(ModuleDecl::ExportNamed)
+                                .map(ModuleItem::ModuleDecl),
+                        );
+                    }
+                    None => new_items.push(ModuleItem::ModuleDecl(ModuleDecl::ExportNamed(decl))),
+                },
+                _ => {
+                    new_items.push(item);
                 }
             }
         }
