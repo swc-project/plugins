@@ -81,7 +81,7 @@ impl<'a> Rewriter<'a> {
             return vec![old_decl.clone()];
         }
 
-        let mut out: Vec<ImportDecl> = Vec::with_capacity(old_decl.specifiers.len());
+        let mut out = Vec::with_capacity(old_decl.specifiers.len());
 
         for spec in &old_decl.specifiers {
             match spec {
@@ -172,20 +172,19 @@ impl<'a> Rewriter<'a> {
 
                     let new_path = DUP_SLASH_REGEX.replace_all(&new_path, |_: &Captures| "/");
                     let specifier = if self.config.skip_default_conversion {
-                        ImportSpecifier::Named(named_spec.clone())
+                        ExportSpecifier::Named(named_spec.clone())
                     } else {
-                        ImportSpecifier::Default(ImportDefaultSpecifier {
+                        ExportSpecifier::Default(ImportDefaultSpecifier {
                             local: named_spec.local.clone(),
                             span: named_spec.span,
                         })
                     };
-                    out.push(ImportDecl {
+                    out.push(NamedExport {
                         specifiers: vec![specifier],
                         src: Box::new(Str::from(new_path.as_ref())),
                         span: old_decl.span,
                         type_only: false,
                         with: None,
-                        phase: Default::default(),
                     });
                 }
                 _ => {
