@@ -76,7 +76,135 @@ impl Decl for ImportDecl {
 impl Spec for ImportSpecifier {}
 
 impl<'a> Rewriter<'a> {
-    fn rewrite(&self, old_decl: &ImportDecl) -> Vec<ImportDecl> {
+    fn rewrite_export(&self, old_decl: &NamedExport) -> Vec<ModuleDecl> {
+        if old_decl.type_only || old_decl.with.is_some() {
+            return vec![old_decl.clone()];
+        }
+
+        let mut out: Vec<ImportDecl> = Vec::with_capacity(old_decl.specifiers.len());
+
+        for spec in &old_decl.specifiers {
+            match spec {
+                ImportSpecifier::Named(named_spec) => {
+                    #[derive(Serialize)]
+                    #[serde(untagged)]
+                    enum Data<'a> {
+                        Plain(&'a str),
+                        Array(&'a [&'a str]),
+                    }
+                    let name_str = named_spec
+                        .imported
+                        .as_ref()
+                        .map(|x| match x {
+                            ModuleExportName::Ident(x) => x.as_ref(),
+                            ModuleExportName::Str(x) => x.value.as_ref(),
+                        })
+                        .unwrap_or_else(|| named_spec.local.as_ref());
+
+                    let mut ctx: HashMap<&str, Data> = HashMap::new();
+                    ctx.insert("matches", Data::Array(&self.group[..]));
+                    ctx.insert("member", Data::Plain(name_str));
+
+                    let new_path = match &self.config.transform {
+                        Transform::String(s) => {
+                            self.renderer.render_template(s, &ctx).unwrap_or_else(|e| {
+                                panic!("error rendering template for '{}': {}", self.key, e);
+                            })
+                        }
+                        Transform::Vec(v) => {
+                            let mut result: Option<String> = None;
+
+                            // We iterate over the items to find the first match
+                            v.iter().any(|(k, val)| {
+                                let mut key = k.to_string();
+                                if !key.starts_with('^') && !key.ends_with('$') {
+                                    key = format!("^{}$", key);
+                                }
+
+                                // Create a clone of the context, as we need to insert the
+                                // `memberMatches` key for each key we try.
+                                let mut ctx_with_member_matches: HashMap<&str, Data> =
+                                    HashMap::new();
+                                ctx_with_member_matches
+                                    .insert("matches", Data::Array(&self.group[..]));
+                                ctx_with_member_matches.insert("member", Data::Plain(name_str));
+
+                                let regex = CachedRegex::new(&key)
+                                    .expect("transform-imports: invalid regex");
+                                let group = regex.captures(name_str);
+
+                                if let Some(group) = group {
+                                    let group = group
+                                        .iter()
+                                        .map(|x| x.map(|x| x.as_str()).unwrap_or_default())
+                                        .collect::<Vec<&str>>()
+                                        .clone();
+                                    ctx_with_member_matches
+                                        .insert("memberMatches", Data::Array(&group[..]));
+
+                                    result = Some(
+                                        self.renderer
+                                            .render_template(val, &ctx_with_member_matches)
+                                            .unwrap_or_else(|e| {
+                                                panic!(
+                                                    "error rendering template for '{}': {}",
+                                                    self.key, e
+                                                );
+                                            }),
+                                    );
+
+                                    true
+                                } else {
+                                    false
+                                }
+                            });
+
+                            if let Some(result) = result {
+                                result
+                            } else {
+                                panic!(
+                                    "missing transform for import '{}' of package '{}'",
+                                    named_spec.local, self.key
+                                );
+                            }
+                        }
+                    };
+
+                    let new_path = DUP_SLASH_REGEX.replace_all(&new_path, |_: &Captures| "/");
+                    let specifier = if self.config.skip_default_conversion {
+                        ImportSpecifier::Named(named_spec.clone())
+                    } else {
+                        ImportSpecifier::Default(ImportDefaultSpecifier {
+                            local: named_spec.local.clone(),
+                            span: named_spec.span,
+                        })
+                    };
+                    out.push(ImportDecl {
+                        specifiers: vec![specifier],
+                        src: Box::new(Str::from(new_path.as_ref())),
+                        span: old_decl.span,
+                        type_only: false,
+                        with: None,
+                        phase: Default::default(),
+                    });
+                }
+                _ => {
+                    if self.config.prevent_full_import {
+                        panic!(
+                            "import {:?} causes the entire module to be imported",
+                            old_decl
+                        );
+                    } else {
+                        // Give up
+                        return vec![old_decl.clone()];
+                    }
+                }
+            }
+        }
+        out
+    }
+
+    fn rewrite_import(&self, old_decl: &ImportDecl) -> Vec<ImportDecl> {
         if old_decl.type_only || old_decl.with.is_some() {
             return vec![old_decl.clone()];
         }
@@ -236,7 +364,7 @@ impl Fold for FoldImports {
                 ModuleItem::ModuleDecl(ModuleDecl::Import(decl)) => {
                     match self.should_rewrite(&decl.src.value) {
                         Some(rewriter) => {
-                            let rewritten = rewriter.rewrite(&decl);
+                            let rewritten = rewriter.rewrite_import(&decl);
                             new_items.extend(
                                 rewritten
                                     .into_iter()
