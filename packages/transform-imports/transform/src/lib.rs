@@ -75,14 +75,11 @@ impl<'a> Rewriter<'a> {
         for spec in &old_decl.specifiers {
             match spec {
                 ExportSpecifier::Named(named_spec) => {
-                    let name_str = named_spec
-                        .imported
-                        .as_ref()
-                        .map(|x| match x {
-                            ModuleExportName::Ident(x) => x.as_ref(),
-                            ModuleExportName::Str(x) => x.value.as_ref(),
-                        })
-                        .unwrap_or_else(|| named_spec.local.as_ref());
+                    let name_str = named_spec.exported.as_ref().unwrap_or(&named_spec.orig);
+                    let name_str = match name_str {
+                        ModuleExportName::Ident(x) => x.as_ref(),
+                        ModuleExportName::Str(x) => x.value.as_ref(),
+                    };
 
                     let mut ctx: HashMap<&str, CtxData> = HashMap::new();
                     ctx.insert("matches", CtxData::Array(&self.group[..]));
@@ -146,8 +143,8 @@ impl<'a> Rewriter<'a> {
                                 result
                             } else {
                                 panic!(
-                                    "missing transform for import '{}' of package '{}'",
-                                    named_spec.local, self.key
+                                    "missing transform for import '{:?}' of package '{}'",
+                                    named_spec.orig, self.key
                                 );
                             }
                         }
@@ -158,8 +155,10 @@ impl<'a> Rewriter<'a> {
                         ExportSpecifier::Named(named_spec.clone())
                     } else {
                         ExportSpecifier::Default(ExportDefaultSpecifier {
-                            local: named_spec.local.clone(),
-                            span: named_spec.span,
+                            exported: match named_spec.orig.clone() {
+                                ModuleExportName::Ident(v) => v,
+                                ModuleExportName::Str(_) => panic!("unexpected string export"),
+                            },
                         })
                     };
                     out.push(NamedExport {
