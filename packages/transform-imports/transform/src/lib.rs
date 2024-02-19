@@ -374,6 +374,15 @@ impl Fold for FoldImports {
                         None => new_items.push(ModuleItem::ModuleDecl(ModuleDecl::Import(decl))),
                     }
                 }
+                ModuleItem::ModuleDecl(ModuleDecl::ExportNamed(
+                    decl @ NamedExport { src: Some(..), .. },
+                )) => match self.should_rewrite(&decl.src.as_deref().unwrap().value) {
+                    Some(rewriter) => {
+                        let rewritten = rewriter.rewrite_export(&decl);
+                        new_items.extend(rewritten.into_iter().map(ModuleItem::ModuleDecl));
+                    }
+                    None => new_items.push(ModuleItem::ModuleDecl(ModuleDecl::ExportNamed(decl))),
+                },
                 _ => {
                     new_items.push(item);
                 }
