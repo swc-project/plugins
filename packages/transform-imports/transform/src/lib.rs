@@ -57,23 +57,12 @@ struct Rewriter<'a> {
     group: Vec<&'a str>,
 }
 
-trait Decl {
-    type Specifier: Spec;
+#[derive(Serialize)]
+#[serde(untagged)]
+enum CtxData<'a> {
+    Plain(&'a str),
+    Array(&'a [&'a str]),
 }
-
-trait Spec {}
-
-impl Decl for NamedExport {
-    type Specifier = ExportSpecifier;
-}
-
-impl Spec for ExportSpecifier {}
-
-impl Decl for ImportDecl {
-    type Specifier = ImportSpecifier;
-}
-
-impl Spec for ImportSpecifier {}
 
 impl<'a> Rewriter<'a> {
     fn rewrite_export(&self, old_decl: &NamedExport) -> Vec<NamedExport> {
@@ -86,12 +75,6 @@ impl<'a> Rewriter<'a> {
         for spec in &old_decl.specifiers {
             match spec {
                 ExportSpecifier::Named(named_spec) => {
-                    #[derive(Serialize)]
-                    #[serde(untagged)]
-                    enum Data<'a> {
-                        Plain(&'a str),
-                        Array(&'a [&'a str]),
-                    }
                     let name_str = named_spec
                         .imported
                         .as_ref()
@@ -101,9 +84,9 @@ impl<'a> Rewriter<'a> {
                         })
                         .unwrap_or_else(|| named_spec.local.as_ref());
 
-                    let mut ctx: HashMap<&str, Data> = HashMap::new();
-                    ctx.insert("matches", Data::Array(&self.group[..]));
-                    ctx.insert("member", Data::Plain(name_str));
+                    let mut ctx: HashMap<&str, CtxData> = HashMap::new();
+                    ctx.insert("matches", CtxData::Array(&self.group[..]));
+                    ctx.insert("member", CtxData::Plain(name_str));
 
                     let new_path = match &self.config.transform {
                         Transform::String(s) => {
@@ -123,11 +106,11 @@ impl<'a> Rewriter<'a> {
 
                                 // Create a clone of the context, as we need to insert the
                                 // `memberMatches` key for each key we try.
-                                let mut ctx_with_member_matches: HashMap<&str, Data> =
+                                let mut ctx_with_member_matches: HashMap<&str, CtxData> =
                                     HashMap::new();
                                 ctx_with_member_matches
-                                    .insert("matches", Data::Array(&self.group[..]));
-                                ctx_with_member_matches.insert("member", Data::Plain(name_str));
+                                    .insert("matches", CtxData::Array(&self.group[..]));
+                                ctx_with_member_matches.insert("member", CtxData::Plain(name_str));
 
                                 let regex = CachedRegex::new(&key)
                                     .expect("transform-imports: invalid regex");
@@ -140,7 +123,7 @@ impl<'a> Rewriter<'a> {
                                         .collect::<Vec<&str>>()
                                         .clone();
                                     ctx_with_member_matches
-                                        .insert("memberMatches", Data::Array(&group[..]));
+                                        .insert("memberMatches", CtxData::Array(&group[..]));
 
                                     result = Some(
                                         self.renderer
@@ -213,12 +196,6 @@ impl<'a> Rewriter<'a> {
         for spec in &old_decl.specifiers {
             match spec {
                 ImportSpecifier::Named(named_spec) => {
-                    #[derive(Serialize)]
-                    #[serde(untagged)]
-                    enum Data<'a> {
-                        Plain(&'a str),
-                        Array(&'a [&'a str]),
-                    }
                     let name_str = named_spec
                         .imported
                         .as_ref()
@@ -228,9 +205,9 @@ impl<'a> Rewriter<'a> {
                         })
                         .unwrap_or_else(|| named_spec.local.as_ref());
 
-                    let mut ctx: HashMap<&str, Data> = HashMap::new();
-                    ctx.insert("matches", Data::Array(&self.group[..]));
-                    ctx.insert("member", Data::Plain(name_str));
+                    let mut ctx: HashMap<&str, CtxData> = HashMap::new();
+                    ctx.insert("matches", CtxData::Array(&self.group[..]));
+                    ctx.insert("member", CtxData::Plain(name_str));
 
                     let new_path = match &self.config.transform {
                         Transform::String(s) => {
@@ -250,11 +227,11 @@ impl<'a> Rewriter<'a> {
 
                                 // Create a clone of the context, as we need to insert the
                                 // `memberMatches` key for each key we try.
-                                let mut ctx_with_member_matches: HashMap<&str, Data> =
+                                let mut ctx_with_member_matches: HashMap<&str, CtxData> =
                                     HashMap::new();
                                 ctx_with_member_matches
-                                    .insert("matches", Data::Array(&self.group[..]));
-                                ctx_with_member_matches.insert("member", Data::Plain(name_str));
+                                    .insert("matches", CtxData::Array(&self.group[..]));
+                                ctx_with_member_matches.insert("member", CtxData::Plain(name_str));
 
                                 let regex = CachedRegex::new(&key)
                                     .expect("transform-imports: invalid regex");
@@ -267,7 +244,7 @@ impl<'a> Rewriter<'a> {
                                         .collect::<Vec<&str>>()
                                         .clone();
                                     ctx_with_member_matches
-                                        .insert("memberMatches", Data::Array(&group[..]));
+                                        .insert("memberMatches", CtxData::Array(&group[..]));
 
                                     result = Some(
                                         self.renderer
