@@ -18,6 +18,12 @@
 
 # @swc/plugin-transform-imports
 
+## 1.5.118
+
+### Patch Changes
+
+- a316ceb: Support transforming exports
+
 ## 1.5.117
 
 ### Patch Changes
