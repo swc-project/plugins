@@ -174,14 +174,14 @@ impl<'a> Rewriter<'a> {
                     let specifier = if self.config.skip_default_conversion {
                         ExportSpecifier::Named(named_spec.clone())
                     } else {
-                        ExportSpecifier::Default(ImportDefaultSpecifier {
+                        ExportSpecifier::Default(ExportDefaultSpecifier {
                             local: named_spec.local.clone(),
                             span: named_spec.span,
                         })
                     };
                     out.push(NamedExport {
                         specifiers: vec![specifier],
-                        src: Box::new(Str::from(new_path.as_ref())),
+                        src: Some(Box::new(Str::from(new_path.as_ref()))),
                         span: old_decl.span,
                         type_only: false,
                         with: None,
