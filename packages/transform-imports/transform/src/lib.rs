@@ -57,6 +57,24 @@ struct Rewriter<'a> {
     group: Vec<&'a str>,
 }
 
+trait Decl {
+    type Specifier: Spec;
+}
+
+trait Spec {}
+
+impl Decl for NamedExport {
+    type Specifier = ExportSpecifier;
+}
+
+impl Spec for ExportSpecifier {}
+
+impl Decl for ImportDecl {
+    type Specifier = ImportSpecifier;
+}
+
+impl Spec for ImportSpecifier {}
+
 impl<'a> Rewriter<'a> {
     fn rewrite(&self, old_decl: &ImportDecl) -> Vec<ImportDecl> {
         if old_decl.type_only || old_decl.with.is_some() {
