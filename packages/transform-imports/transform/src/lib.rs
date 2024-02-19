@@ -76,7 +76,7 @@ impl Decl for ImportDecl {
 impl Spec for ImportSpecifier {}
 
 impl<'a> Rewriter<'a> {
-    fn rewrite_export(&self, old_decl: &NamedExport) -> Vec<ModuleDecl> {
+    fn rewrite_export(&self, old_decl: &NamedExport) -> Vec<NamedExport> {
         if old_decl.type_only || old_decl.with.is_some() {
             return vec![old_decl.clone()];
         }
@@ -85,7 +85,7 @@ impl<'a> Rewriter<'a> {
 
         for spec in &old_decl.specifiers {
             match spec {
-                ImportSpecifier::Named(named_spec) => {
+                ExportSpecifier::Named(named_spec) => {
                     #[derive(Serialize)]
                     #[serde(untagged)]
                     enum Data<'a> {
@@ -368,7 +368,8 @@ impl Fold for FoldImports {
                             new_items.extend(
                                 rewritten
                                     .into_iter()
-                                    .map(|x| ModuleItem::ModuleDecl(ModuleDecl::Import(x))),
+                                    .map(ModuleDecl::Import)
+                                    .map(ModuleItem::ModuleDecl),
                             );
                         }
                         None => new_items.push(ModuleItem::ModuleDecl(ModuleDecl::Import(decl))),
@@ -379,7 +380,12 @@ impl Fold for FoldImports {
                 )) => match self.should_rewrite(&decl.src.as_deref().unwrap().value) {
                     Some(rewriter) => {
                         let rewritten = rewriter.rewrite_export(&decl);
-                        new_items.extend(rewritten.into_iter().map(ModuleItem::ModuleDecl));
+                        new_items.extend(
+                            rewritten
+                                .into_iter()
+                                .map(ModuleDecl::ExportNamed)
+                                .map(ModuleItem::ModuleDecl),
+                        );
                     }
                     None => new_items.push(ModuleItem::ModuleDecl(ModuleDecl::ExportNamed(decl))),
                 },
