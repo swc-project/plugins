@@ -6,6 +6,7 @@ use once_cell::sync::Lazy;
 use regex::{Captures, Regex};
 use serde::{Deserialize, Serialize};
 use swc_cached::regex::CachedRegex;
+use swc_common::DUMMY_SP;
 use swc_ecma_ast::{ImportDecl, ImportSpecifier, ModuleExportName, *};
 use swc_ecma_visit::{noop_fold_type, Fold};
 
@@ -154,11 +155,16 @@ impl<'a> Rewriter<'a> {
                     let specifier = if self.config.skip_default_conversion {
                         ExportSpecifier::Named(named_spec.clone())
                     } else {
-                        ExportSpecifier::Default(ExportDefaultSpecifier {
-                            exported: match named_spec.orig.clone() {
-                                ModuleExportName::Ident(v) => v,
-                                ModuleExportName::Str(_) => panic!("unexpected string export"),
-                            },
+                        ExportSpecifier::Named(ExportNamedSpecifier {
+                            span: named_spec.span,
+                            orig: ModuleExportName::Ident(Ident::new("default".into(), DUMMY_SP)),
+                            exported: Some(
+                                named_spec
+                                    .exported
+                                    .clone()
+                                    .unwrap_or_else(|| named_spec.orig.clone()),
+                            ),
+                            is_type_only: false,
                         })
                     };
                     out.push(NamedExport {
