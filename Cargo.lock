@@ -1156,7 +1156,7 @@ dependencies = [
 
 [[package]]
 name = "modularize_imports"
-version = "0.68.6"
+version = "0.68.7"
 dependencies = [
  "convert_case",
  "handlebars",
