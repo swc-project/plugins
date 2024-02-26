@@ -1156,13 +1156,14 @@ dependencies = [
 
 [[package]]
 name = "modularize_imports"
-version = "0.68.6"
+version = "0.68.7"
 dependencies = [
  "convert_case",
  "handlebars",
  "once_cell",
  "regex",
  "serde",
+ "swc_atoms",
  "swc_cached",
  "swc_common",
  "swc_ecma_ast",

@@ -18,6 +18,12 @@
 
 # @swc/plugin-transform-imports
 
+## 1.5.119
+
+### Patch Changes
+
+- 1509e60: Support export all
+
 ## 1.5.118
 
 ### Patch Changes
