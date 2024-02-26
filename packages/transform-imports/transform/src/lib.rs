@@ -66,6 +66,74 @@ enum CtxData<'a> {
 }
 
 impl<'a> Rewriter<'a> {
+    fn new_path(&self, name_str: Option<&str>) -> String {
+        let mut ctx: HashMap<&str, CtxData> = HashMap::new();
+        ctx.insert("matches", CtxData::Array(&self.group[..]));
+        if let Some(name_str) = name_str {
+            ctx.insert("member", CtxData::Plain(name_str));
+        }
+
+        let new_path = match &self.config.transform {
+            Transform::String(s) => self.renderer.render_template(s, &ctx).unwrap_or_else(|e| {
+                panic!("error rendering template for '{}': {}", self.key, e);
+            }),
+            Transform::Vec(v) => {
+                let mut result: Option<String> = None;
+
+                // We iterate over the items to find the first match
+                v.iter().any(|(k, val)| {
+                    let mut key = k.to_string();
+                    if !key.starts_with('^') && !key.ends_with('$') {
+                        key = format!("^{}$", key);
+                    }
+
+                    // Create a clone of the context, as we need to insert the
+                    // `memberMatches` key for each key we try.
+                    let mut ctx_with_member_matches: HashMap<&str, CtxData> = HashMap::new();
+                    ctx_with_member_matches.insert("matches", CtxData::Array(&self.group[..]));
+                    ctx_with_member_matches.insert("member", CtxData::Plain(name_str));
+
+                    let regex = CachedRegex::new(&key).expect("transform-imports: invalid regex");
+                    let group = regex.captures(name_str);
+
+                    if let Some(group) = group {
+                        let group = group
+                            .iter()
+                            .map(|x| x.map(|x| x.as_str()).unwrap_or_default())
+                            .collect::<Vec<&str>>()
+                            .clone();
+                        ctx_with_member_matches.insert("memberMatches", CtxData::Array(&group[..]));
+
+                        result = Some(
+                            self.renderer
+                                .render_template(val, &ctx_with_member_matches)
+                                .unwrap_or_else(|e| {
+                                    panic!("error rendering template for '{}': {}", self.key, e);
+                                }),
+                        );
+
+                        true
+                    } else {
+                        false
+                    }
+                });
+
+                if let Some(result) = result {
+                    result
+                } else {
+                    panic!(
+                        "missing transform for import '{:?}' of package '{}'",
+                        name_str, self.key
+                    );
+                }
+            }
+        };
+
+        let new_path = DUP_SLASH_REGEX.replace_all(&new_path, |_: &Captures| "/");
+
+        new_path.into()
+    }
+
     fn rewrite_export(&self, old_decl: &NamedExport) -> Vec<NamedExport> {
         if old_decl.type_only || old_decl.with.is_some() {
             return vec![old_decl.clone()];
@@ -82,76 +150,7 @@ impl<'a> Rewriter<'a> {
                         ModuleExportName::Str(x) => x.value.as_ref(),
                     };
 
-                    let mut ctx: HashMap<&str, CtxData> = HashMap::new();
-                    ctx.insert("matches", CtxData::Array(&self.group[..]));
-                    ctx.insert("member", CtxData::Plain(name_str));
-
-                    let new_path = match &self.config.transform {
-                        Transform::String(s) => {
-                            self.renderer.render_template(s, &ctx).unwrap_or_else(|e| {
-                                panic!("error rendering template for '{}': {}", self.key, e);
-                            })
-                        }
-                        Transform::Vec(v) => {
-                            let mut result: Option<String> = None;
-
-                            // We iterate over the items to find the first match
-                            v.iter().any(|(k, val)| {
-                                let mut key = k.to_string();
-                                if !key.starts_with('^') && !key.ends_with('$') {
-                                    key = format!("^{}$", key);
-                                }
-
-                                // Create a clone of the context, as we need to insert the
-                                // `memberMatches` key for each key we try.
-                                let mut ctx_with_member_matches: HashMap<&str, CtxData> =
-                                    HashMap::new();
-                                ctx_with_member_matches
-                                    .insert("matches", CtxData::Array(&self.group[..]));
-                                ctx_with_member_matches.insert("member", CtxData::Plain(name_str));
-
-                                let regex = CachedRegex::new(&key)
-                                    .expect("transform-imports: invalid regex");
-                                let group = regex.captures(name_str);
-
-                                if let Some(group) = group {
-                                    let group = group
-                                        .iter()
-                                        .map(|x| x.map(|x| x.as_str()).unwrap_or_default())
-                                        .collect::<Vec<&str>>()
-                                        .clone();
-                                    ctx_with_member_matches
-                                        .insert("memberMatches", CtxData::Array(&group[..]));
-
-                                    result = Some(
-                                        self.renderer
-                                            .render_template(val, &ctx_with_member_matches)
-                                            .unwrap_or_else(|e| {
-                                                panic!(
-                                                    "error rendering template for '{}': {}",
-                                                    self.key, e
-                                                );
-                                            }),
-                                    );
-
-                                    true
-                                } else {
-                                    false
-                                }
-                            });
-
-                            if let Some(result) = result {
-                                result
-                            } else {
-                                panic!(
-                                    "missing transform for import '{:?}' of package '{}'",
-                                    named_spec.orig, self.key
-                                );
-                            }
-                        }
-                    };
-
-                    let new_path = DUP_SLASH_REGEX.replace_all(&new_path, |_: &Captures| "/");
+                    let new_path = self.new_path(name_str);
                     let specifier = if self.config.skip_default_conversion {
                         ExportSpecifier::Named(named_spec.clone())
                     } else {
@@ -370,6 +369,23 @@ impl Fold for FoldImports {
                     }
                     None => new_items.push(ModuleItem::ModuleDecl(ModuleDecl::ExportNamed(decl))),
                 },
+
+                ModuleItem::ModuleDecl(ModuleDecl::ExportAll(ExportAll { ref src, .. })) => {
+                    match self.should_rewrite(&src.value) {
+                        Some(rewriter) => {
+                            let rewritten = rewriter.rewrite_export(&decl);
+                            new_items.extend(
+                                rewritten
+                                    .into_iter()
+                                    .map(ModuleDecl::ExportNamed)
+                                    .map(ModuleItem::ModuleDecl),
+                            );
+                        }
+                        None => {
+                            new_items.push(item);
+                        }
+                    }
+                }
                 _ => {
                     new_items.push(item);
                 }
