@@ -1163,6 +1163,7 @@ dependencies = [
  "once_cell",
  "regex",
  "serde",
+ "swc_atoms",
  "swc_cached",
  "swc_common",
  "swc_ecma_ast",
