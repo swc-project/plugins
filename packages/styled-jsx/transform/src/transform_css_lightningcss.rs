@@ -510,7 +510,11 @@ impl CssNamespace {
         }
 
         // Pseudo element
-        if result.is_empty() && node.len() == 1 && pseudo_index.is_some() {
+        if result.is_empty()
+            && node.len() == 1
+            && pseudo_index.is_some()
+            && matches!(&node[0], Component::PseudoElement(..))
+        {
             return Ok(node);
         }
 
