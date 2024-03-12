@@ -1,3 +1,6 @@
+import css from 'styled-jsx/css';
+
+
 const { className: cardClassName, styles } = css.resolve`
 .geist-card {
     padding: ${padding ? 'var(--geist-gap)' : '0'};
