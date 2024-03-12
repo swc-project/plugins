@@ -1,5 +1,11 @@
 # @swc/plugin-styled-jsx
 
+## 1.5.120
+
+### Patch Changes
+
+- 0c9c859: Fix specificity of pseudo classes
+
 ## 1.5.119
 
 ### Patch Changes
