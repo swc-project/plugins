@@ -8,6 +8,12 @@
 
 # @swc/plugin-loadable-components
 
+## 0.3.118
+
+### Patch Changes
+
+- e9e78ef: Update swc crates
+
 ## 0.3.117
 
 ### Patch Changes
