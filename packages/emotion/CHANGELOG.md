@@ -1,5 +1,11 @@
 # @swc/plugin-emotion
 
+## 2.5.121
+
+### Patch Changes
+
+- e9e78ef: Update swc crates
+
 ## 2.5.120
 
 ### Patch Changes
