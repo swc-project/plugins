@@ -2,6 +2,12 @@
 
 # @swc/plugin-styled-jsx
 
+## 1.5.121
+
+### Patch Changes
+
+- e9e78ef: Update swc crates
+
 ## 1.5.120
 
 ### Patch Changes

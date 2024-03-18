@@ -1,5 +1,11 @@
 # @swc/plugin-transform-imports
 
+## 1.5.120
+
+### Patch Changes
+
+- e9e78ef: Update swc crates
+
 ## 1.5.119
 
 ### Patch Changes

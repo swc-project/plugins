@@ -1,5 +1,11 @@
 # @swc/plugin-styled-components
 
+## 1.5.119
+
+### Patch Changes
+
+- e9e78ef: Update swc crates
+
 ## 1.5.118
 
 ### Patch Changes

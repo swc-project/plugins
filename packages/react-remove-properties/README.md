@@ -23,6 +23,12 @@ or
 
 # @swc/plugin-react-remove-properties
 
+## 1.5.118
+
+### Patch Changes
+
+- e9e78ef: Update swc crates
+
 ## 1.5.117
 
 ### Patch Changes

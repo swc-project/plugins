@@ -2,6 +2,12 @@
 
 # @swc/plugin-noop
 
+## 1.5.116
+
+### Patch Changes
+
+- e9e78ef: Update swc crates
+
 ## 1.5.115
 
 ### Patch Changes
