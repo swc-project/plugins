@@ -60,12 +60,12 @@ impl NativeConfig<'_> {
     }
 }
 
-pub fn styled_jsx<'a>(
+pub fn styled_jsx(
     cm: Arc<SourceMap>,
     file_name: FileName,
     config: Config,
-    native_config: NativeConfig<'a>,
-) -> impl 'a + Fold {
+    native_config: NativeConfig<'_>,
+) -> impl '_ + Fold {
     let file_name = match file_name {
         FileName::Real(real_file_name) => real_file_name
             .to_str()
@@ -614,7 +614,7 @@ impl StyledJSXTransformer<'_> {
                 let css = if self.config.use_lightningcss {
                     crate::transform_css_lightningcss::transform_css(
                         self.cm.clone(),
-                        &style_info,
+                        style_info,
                         is_global,
                         &self.static_class_name,
                         &self.config.browsers,
@@ -623,7 +623,7 @@ impl StyledJSXTransformer<'_> {
                 } else {
                     crate::transform_css_swc::transform_css(
                         self.cm.clone(),
-                        &style_info,
+                        style_info,
                         is_global,
                         &self.static_class_name,
                         &self.native_config,
@@ -631,7 +631,7 @@ impl StyledJSXTransformer<'_> {
                 };
 
                 Ok(make_local_styled_jsx_el(
-                    &style_info,
+                    style_info,
                     css,
                     self.style_import_name.as_ref().unwrap(),
                     self.static_class_name.as_ref(),
@@ -708,7 +708,7 @@ impl StyledJSXTransformer<'_> {
                             optional: false,
                         }),
                         value: Box::new(Expr::JSXElement(Box::new(make_local_styled_jsx_el(
-                            &style,
+                            style,
                             css,
                             self.style_import_name.as_ref().unwrap(),
                             self.static_class_name.as_ref(),
