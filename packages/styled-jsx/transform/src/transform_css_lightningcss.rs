@@ -231,11 +231,7 @@ fn strip_comment_from_line(s: &str) -> &str {
     let mut last = '\0';
     for (i, c) in s.char_indices() {
         if c == '\'' || c == '"' {
-            if in_string && last != '\\' {
-                in_string = false;
-            } else {
-                in_string = true;
-            }
+            in_string = !(in_string && last != '\\');
         }
 
         if !in_string && last == '/' && c == '/' {

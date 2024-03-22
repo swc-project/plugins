@@ -682,7 +682,7 @@ impl StyledJSXTransformer<'_> {
         let css = if self.config.use_lightningcss {
             crate::transform_css_lightningcss::transform_css(
                 self.cm.clone(),
-                &style,
+                style,
                 tag == "global",
                 &static_class_name,
                 &self.config.browsers,
@@ -691,7 +691,7 @@ impl StyledJSXTransformer<'_> {
         } else {
             crate::transform_css_swc::transform_css(
                 self.cm.clone(),
-                &style,
+                style,
                 tag == "global",
                 &static_class_name,
                 &self.native_config,
