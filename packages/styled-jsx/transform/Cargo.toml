@@ -33,6 +33,7 @@ swc_css_prefixer = "0.153.34"
 swc_css_minifier = "0.116.31"
 swc_css_visit = "0.139.20"
 preset_env_base = "0.4.7"
+swc_css_compat = "0.27.32"
 
 [dev-dependencies]
 testing = "0.35.20"
