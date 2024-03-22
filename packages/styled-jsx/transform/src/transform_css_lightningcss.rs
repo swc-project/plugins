@@ -12,7 +12,7 @@ use lightningcss::{
     properties::custom::{TokenList, TokenOrValue},
     selector::{Combinator, Component, PseudoClass, Selector},
     stylesheet::{MinifyOptions, ParserFlags, ParserOptions, PrinterOptions, StyleSheet},
-    targets::{Browsers, Targets},
+    targets::{Browsers, Features, Targets},
     traits::{IntoOwned, ParseWithOptions, ToCss},
     values::ident::Ident,
     visit_types,
@@ -133,8 +133,17 @@ pub fn transform_css(
     })
     .expect("failed to transform css");
 
+    let targets = Targets {
+        browsers: Some(convert_browsers(browsers)),
+        ..Default::default()
+    };
+
     // Apply auto prefixer
     ss.minify(MinifyOptions {
+        targets: Targets {
+            exclude: Features::CustomMediaQueries,
+            ..targets
+        },
         ..Default::default()
     })
     .expect("failed to minify/auto-prefix css");
@@ -142,10 +151,7 @@ pub fn transform_css(
     let mut res = ss
         .to_css(PrinterOptions {
             minify: true,
-            targets: Targets {
-                browsers: Some(convert_browsers(browsers)),
-                ..Default::default()
-            },
+            targets,
             ..Default::default()
         })
         .context("failed to print css")?;
@@ -231,11 +237,7 @@ fn strip_comment_from_line(s: &str) -> &str {
     let mut last = '\0';
     for (i, c) in s.char_indices() {
         if c == '\'' || c == '"' {
-            if in_string && last != '\\' {
-                in_string = false;
-            } else {
-                in_string = true;
-            }
+            in_string = !(in_string && last != '\\');
         }
 
         if !in_string && last == '/' && c == '/' {

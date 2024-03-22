@@ -2,6 +2,12 @@
 
 # @swc/plugin-styled-jsx
 
+## 1.5.122
+
+### Patch Changes
+
+- 2277ec2: Apply css compatibility transforms
+
 ## 1.5.121
 
 ### Patch Changes
