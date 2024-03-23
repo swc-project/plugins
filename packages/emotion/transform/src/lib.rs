@@ -13,10 +13,11 @@ use sourcemap::{RawToken, SourceMap as RawSourcemap};
 use swc_atoms::JsWord;
 use swc_common::{comments::Comments, util::take::Take, BytePos, SourceMapperDyn, DUMMY_SP};
 use swc_ecma_ast::{
-    ArrayLit, CallExpr, Callee, Expr, ExprOrSpread, Id, Ident, ImportDecl, ImportSpecifier,
-    JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElement, JSXElementName, JSXExpr,
-    JSXExprContainer, JSXObject, KeyValueProp, MemberProp, ModuleExportName, ObjectLit, Pat, Prop,
-    PropName, PropOrSpread, SourceMapperExt, SpreadElement, Tpl, VarDeclarator,
+    ArrayLit, CallExpr, Callee, ClassDecl, ClassMethod, ClassProp, Expr, ExprOrSpread, FnDecl, Id,
+    Ident, ImportDecl, ImportSpecifier, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue,
+    JSXElement, JSXElementName, JSXExpr, JSXExprContainer, JSXObject, KeyValueProp, MemberProp,
+    MethodProp, ModuleExportName, ObjectLit, Pat, Prop, PropName, PropOrSpread, SourceMapperExt,
+    SpreadElement, Tpl, VarDeclarator,
 };
 use swc_ecma_utils::ExprFactory;
 use swc_ecma_visit::{Fold, FoldWith};
@@ -76,6 +77,8 @@ static EMOTION_OFFICIAL_LIBRARIES: Lazy<Vec<EmotionModuleConfig>> = Lazy::new(||
     ]
 });
 
+static INVALID_LABEL_SPACES: Lazy<Regex> = Lazy::new(|| RegexBuilder::new(r"\s+").build().unwrap());
+
 static INVALID_CSS_CLASS_NAME_CHARACTERS: Lazy<Regex> = Lazy::new(|| {
     RegexBuilder::new(r##"[!"#$%&'()*+,./:;<=>?@\[\]^`|}~{]"##)
         .build()
@@ -83,7 +86,7 @@ static INVALID_CSS_CLASS_NAME_CHARACTERS: Lazy<Regex> = Lazy::new(|| {
 });
 
 static INVALID_SINGLE_LINE_COMMENT: Lazy<Regex> = Lazy::new(|| {
-    RegexBuilder::new(r"(?P<s>^|[^:]|\s)//.*$")
+    RegexBuilder::new(r#"(?P<s>^|[^:^'^"]|\s)//.*$"#)
         .multi_line(true)
         .build()
         .unwrap()
@@ -178,6 +181,7 @@ pub struct EmotionTransformer<C: Comments> {
     import_packages: FxHashMap<Id, PackageMeta>,
     emotion_target_class_name_count: usize,
     current_context: Option<String>,
+    current_class: Option<String>,
     // skip `css` transformation if it in JSX Element/Attribute
     in_jsx_element: bool,
 
@@ -217,13 +221,19 @@ impl<C: Comments> EmotionTransformer<C> {
             import_packages: FxHashMap::default(),
             emotion_target_class_name_count: 0,
             current_context: None,
+            current_class: None,
             in_jsx_element: false,
             registered_imports,
         }
     }
 
-    fn sanitize_label_part<'t>(&self, label_part: &'t str) -> Cow<'t, str> {
-        INVALID_CSS_CLASS_NAME_CHARACTERS.replace_all(label_part, "-")
+    fn sanitize_label_part<'t>(&self, label_part: &'t str) -> String {
+        // Existing @emotion/babel-plugin behaviour is to replace all spaces
+        // with a single hyphen
+        let without_spaces = INVALID_LABEL_SPACES.replace_all(label_part, "-");
+        INVALID_CSS_CLASS_NAME_CHARACTERS
+            .replace_all(&without_spaces, "-")
+            .to_string()
     }
 
     fn create_label(&self, with_prefix: bool) -> String {
@@ -244,6 +254,10 @@ impl<C: Comments> EmotionTransformer<C> {
             if let Some(dirname) = self.dirname.as_ref() {
                 label = label.replace("[dirname]", &self.sanitize_label_part(dirname));
             };
+        } else {
+            // Existing @emotion/babel-plugin behaviour is to
+            // not provide a label if there is no available identifier
+            return "".to_string();
         }
         label
     }
@@ -343,7 +357,19 @@ impl<C: Comments> EmotionTransformer<C> {
             if index % 2 == 0 {
                 if let Some(q) = tagged_tpl.quasis.get_mut(i) {
                     let q = q.take();
-                    let minified = minify_css_string(&q.raw, index == 0, index == args_len - 1);
+                    let css_input = q
+                        .raw
+                        .replace("\\`", "`")
+                        .replace("\\$", "$")
+                        .replace("\\b", "\u{0008}")
+                        .replace("\\f", "\u{000C}")
+                        .replace("\\n", "\n")
+                        .replace("\\r", "\r")
+                        .replace("\\t", "\t")
+                        .replace("\\v", "\u{000B}")
+                        .replace("\\\\", "\\");
+
+                    let minified = minify_css_string(&css_input, index == 0, index == args_len - 1);
                     // Compress one more spaces into one space
                     if minified.replace(' ', "").is_empty() {
                         if index != 0 && index != args_len - 1 {
@@ -417,22 +443,6 @@ impl<C: Comments> EmotionTransformer<C> {
 }
 
 impl<C: Comments> Fold for EmotionTransformer<C> {
-    // Collect import modules that indicator if this file need to be transformed
-    fn fold_import_decl(&mut self, expr: ImportDecl) -> ImportDecl {
-        if expr.type_only {
-            return expr;
-        }
-        self.generate_import_info(&expr);
-        expr
-    }
-
-    fn fold_var_declarator(&mut self, dec: VarDeclarator) -> VarDeclarator {
-        if let Pat::Ident(i) = &dec.name {
-            self.current_context = Some(i.id.as_ref().to_owned());
-        }
-        dec.fold_children_with(self)
-    }
-
     fn fold_call_expr(&mut self, mut expr: CallExpr) -> CallExpr {
         // If no package that we care about is imported, skip the following
         // transformation logic.
@@ -599,6 +609,38 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
             }
         }
         expr
+    }
+
+    fn fold_class_decl(&mut self, cd: ClassDecl) -> ClassDecl {
+        self.current_class = Some(cd.ident.sym.as_ref().to_owned());
+        self.current_context = self.current_class.clone();
+        cd.fold_children_with(self)
+    }
+
+    fn fold_class_method(&mut self, cm: ClassMethod) -> ClassMethod {
+        // class methods use the class name for the context
+        if self.current_class.is_some() {
+            self.current_context = self.current_class.clone();
+        }
+        cm.fold_children_with(self)
+    }
+
+    fn fold_class_prop(&mut self, cp: ClassProp) -> ClassProp {
+        if let PropName::Ident(p) = &cp.key {
+            self.current_context = Some(p.sym.as_ref().to_owned());
+        }
+        cp.fold_children_with(self)
+    }
+
+    fn fold_computed_prop_name(
+        &mut self,
+        n: swc_ecma_ast::ComputedPropName,
+    ) -> swc_ecma_ast::ComputedPropName {
+        // Existing @emotion/babel-plugin behaviour is that computed
+        // properties do not have a label. We reset the label here as
+        // an unset label is reduced to an empty string in `create_label`.
+        self.current_context = None;
+        n.fold_children_with(self)
     }
 
     fn fold_expr(&mut self, mut expr: Expr) -> Expr {
@@ -799,6 +841,20 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
         expr.fold_children_with(self)
     }
 
+    fn fold_fn_decl(&mut self, fn_dec: FnDecl) -> FnDecl {
+        self.current_context = Some(fn_dec.ident.sym.as_ref().to_owned());
+        fn_dec.fold_children_with(self)
+    }
+
+    // Collect import modules that indicator if this file need to be transformed
+    fn fold_import_decl(&mut self, expr: ImportDecl) -> ImportDecl {
+        if expr.type_only {
+            return expr;
+        }
+        self.generate_import_info(&expr);
+        expr
+    }
+
     fn fold_jsx_element(&mut self, mut expr: JSXElement) -> JSXElement {
         match &mut expr.opening.name {
             JSXElementName::Ident(i) => {
@@ -829,6 +885,41 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
         let dest_expr = expr.fold_children_with(self);
         self.in_jsx_element = false;
         dest_expr
+    }
+
+    fn fold_key_value_prop(&mut self, kv: KeyValueProp) -> KeyValueProp {
+        match &kv.key {
+            PropName::Ident(k) => {
+                self.current_context = Some(k.sym.as_ref().to_owned());
+            }
+            PropName::Str(k) => {
+                self.current_context = Some(k.value.as_ref().to_owned());
+            }
+            _ => (),
+        }
+        kv.fold_children_with(self)
+    }
+
+    fn fold_method_prop(&mut self, mp: MethodProp) -> MethodProp {
+        if let PropName::Ident(p) = &mp.key {
+            self.current_context = Some(p.sym.as_ref().to_owned());
+        }
+        mp.fold_children_with(self)
+    }
+
+    fn fold_var_declarator(&mut self, dec: VarDeclarator) -> VarDeclarator {
+        if let Pat::Ident(i) = &dec.name {
+            self.current_context = Some(i.id.as_ref().to_owned());
+        }
+
+        // If we encounter a named function expression
+        if let Some(Expr::Fn(f)) = dec.init.clone().map(|e| *e) {
+            if let Some(i) = &f.ident {
+                self.current_context = Some(i.sym.as_ref().to_owned());
+            }
+        }
+
+        dec.fold_children_with(self)
     }
 }
 
@@ -883,10 +974,9 @@ fn remove_space_around_colon(input: &str, is_first_item: bool, is_last_item: boo
     )
 }
 
-#[allow(unused_imports)]
+#[cfg(test)]
 mod test_emotion {
     use super::minify_css_string;
-    use crate::INVALID_SINGLE_LINE_COMMENT;
 
     #[test]
     fn should_not_trim_end_space_in_first_item() {
@@ -922,6 +1012,30 @@ mod test_emotion {
                 true
             ),
             "color:red;background-image:url(http://dummy-url).foo{}"
+        )
+    }
+
+    #[test]
+    fn issue_258_should_preserve_url_starting_with_two_slashes_1() {
+        assert_eq!(
+            minify_css_string(
+                "background-image: url('//domain.com/image.png');",
+                true,
+                true
+            ),
+            "background-image:url('//domain.com/image.png');"
+        )
+    }
+
+    #[test]
+    fn issue_258_should_preserve_url_starting_with_two_slashes_2() {
+        assert_eq!(
+            minify_css_string(
+                "background-image: url(\"//domain.com/image.png\");",
+                true,
+                true
+            ),
+            "background-image:url(\"//domain.com/image.png\");"
         )
     }
 }

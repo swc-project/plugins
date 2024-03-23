@@ -22,7 +22,11 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v2
         with:
-          node-version: 16
+          node-version: 20
+
+      - run: |
+          corepack enable
+          pnpm i
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
@@ -46,15 +50,11 @@ jobs:
         run: |
           ls -al target/wasm32-wasi/release
 
-      - name: Configure npm
-        run: |
-          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Publish npm packages
-        run: |
-          npm publish --workspaces --access public
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: pnpm publish -r
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

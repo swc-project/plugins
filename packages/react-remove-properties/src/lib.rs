@@ -12,7 +12,7 @@ fn swc_plugin(program: Program, data: TransformPluginProgramMetadata) -> Program
             .expect("failed to get plugin config for react-remove-properties"),
     )
     .expect("invalid packages")
-    .unwrap_or_else(|| react_remove_properties::Config::All(true));
+    .unwrap_or(react_remove_properties::Config::All(true));
 
     program.fold_with(&mut react_remove_properties::react_remove_properties(
         config,

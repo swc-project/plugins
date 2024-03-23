@@ -26,7 +26,7 @@ pub enum RelayLanguageConfig {
 pub enum OutputFileExtension {
     TypeScript,
     JavaScript,
-    Undefined
+    Undefined,
 }
 
 impl<'a> TryFrom<&'a str> for RelayLanguageConfig {
@@ -41,7 +41,6 @@ impl<'a> TryFrom<&'a str> for RelayLanguageConfig {
     }
 }
 
-
 impl<'a> TryFrom<&'a str> for OutputFileExtension {
     type Error = String;
 
@@ -49,7 +48,10 @@ impl<'a> TryFrom<&'a str> for OutputFileExtension {
         match value {
             "ts" => Ok(Self::TypeScript),
             "js" => Ok(Self::JavaScript),
-            _ => Err(format!("Unexpected output file extension value '{}'", value)),
+            _ => Err(format!(
+                "Unexpected output file extension value '{}'",
+                value
+            )),
         }
     }
 }
@@ -70,6 +72,7 @@ impl Default for OutputFileExtension {
 struct RelayImport {
     path: JsWord,
     item: JsWord,
+    unresolved_mark: Option<Mark>,
 }
 
 impl RelayImport {
@@ -79,7 +82,10 @@ impl RelayImport {
             specifiers: vec![ImportSpecifier::Default(ImportDefaultSpecifier {
                 span: Default::default(),
                 local: Ident {
-                    span: Default::default(),
+                    span: self
+                        .unresolved_mark
+                        .map(|m| DUMMY_SP.apply_mark(m))
+                        .unwrap_or(Default::default()),
                     sym: self.item.clone(),
                     optional: false,
                 },
@@ -87,6 +93,7 @@ impl RelayImport {
             src: Box::new(self.path.clone().into()),
             type_only: false,
             with: None,
+            phase: Default::default(),
         }))
     }
 }
@@ -254,6 +261,7 @@ impl<'a> Relay<'a> {
                         self.imports.push(RelayImport {
                             path: final_path.into(),
                             item: ident_name.clone(),
+                            unresolved_mark: self.unresolved_mark,
                         });
                         let operation_ident = Ident {
                             span: self

@@ -1,7 +1,6 @@
 [workspace]
 members = [
   "xtask",
-  "packages/constify",
   "packages/emotion",
   "packages/jest",
   "packages/loadable-components",

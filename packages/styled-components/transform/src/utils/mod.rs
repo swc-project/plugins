@@ -236,16 +236,14 @@ impl State {
             } else {
                 None
             }
+        } else if self.imported_local_ns.is_some() {
+            Some((name.into(), Default::default()))
+        } else if let Some(id) = self.imported_local_named.get(name) {
+            Some(id.clone())
+        } else if self.styled_required.is_some() {
+            Some((name.into(), self.unresolved_ctxt.unwrap_or_default()))
         } else {
-            if self.imported_local_ns.is_some() {
-                Some((name.into(), Default::default()))
-            } else if let Some(id) = self.imported_local_named.get(name) {
-                Some(id.clone())
-            } else if self.styled_required.is_some() {
-                Some((name.into(), self.unresolved_ctxt.unwrap_or_default()))
-            } else {
-                None
-            }
+            None
         }
     }
 

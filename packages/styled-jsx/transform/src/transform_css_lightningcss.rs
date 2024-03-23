@@ -3,16 +3,16 @@ use std::{
     convert::Infallible,
     fmt::Debug,
     panic::{catch_unwind, AssertUnwindSafe},
-    sync::{Arc, RwLock},
+    sync::Arc,
 };
 
-use easy_error::{bail, Error, ResultExt};
+use anyhow::{bail, Context, Error};
 use lightningcss::{
     error::ParserError,
     properties::custom::{TokenList, TokenOrValue},
     selector::{Combinator, Component, PseudoClass, Selector},
     stylesheet::{MinifyOptions, ParserFlags, ParserOptions, PrinterOptions, StyleSheet},
-    targets::{Browsers, Targets},
+    targets::{Browsers, Features, Targets},
     traits::{IntoOwned, ParseWithOptions, ToCss},
     values::ident::Ident,
     visit_types,
@@ -30,6 +30,7 @@ use tracing::{debug, error, trace};
 use crate::{
     style::LocalStyle,
     utils::{hash_string, string_literal_expr},
+    visitor::NativeConfig,
 };
 
 fn report(
@@ -69,7 +70,7 @@ fn report(
 
 #[cfg_attr(
     debug_assertions,
-    tracing::instrument(skip(cm, style_info, class_name, browsers))
+    tracing::instrument(skip(cm, style_info, class_name, browsers, native))
 )]
 pub fn transform_css(
     cm: Arc<SourceMap>,
@@ -77,13 +78,13 @@ pub fn transform_css(
     is_global: bool,
     class_name: &Option<String>,
     browsers: &Versions,
+    native: &NativeConfig,
 ) -> Result<Expr, Error> {
     let mut file_lines_cache = None;
 
-    debug!("CSS: \n{}", style_info.css);
     let css_str = strip_comments(&style_info.css);
 
-    let warnings: Arc<RwLock<Vec<lightningcss::error::Error<ParserError>>>> = Arc::default();
+    debug!("CSS: \n{}", css_str);
 
     let result: Result<StyleSheet, _> = StyleSheet::parse(
         &css_str,
@@ -92,7 +93,7 @@ pub fn transform_css(
             // parsing-only mode.
             css_modules: None,
             error_recovery: true,
-            warnings: Some(warnings.clone()),
+            warnings: None,
             flags: ParserFlags::all(),
             ..Default::default()
         },
@@ -122,18 +123,6 @@ pub fn transform_css(
         }
     };
 
-    if let Ok(warnings) = warnings.read() {
-        for warning in warnings.iter() {
-            report(
-                &cm,
-                style_info.css_span,
-                &mut file_lines_cache,
-                warning,
-                Level::Warning,
-            );
-        }
-    }
-
     ss.visit(&mut CssNamespace {
         class_name: match class_name {
             Some(s) => s.clone(),
@@ -144,22 +133,30 @@ pub fn transform_css(
     })
     .expect("failed to transform css");
 
+    let targets = Targets {
+        browsers: Some(convert_browsers(browsers)),
+        ..Default::default()
+    };
+
     // Apply auto prefixer
     ss.minify(MinifyOptions {
+        targets: Targets {
+            exclude: Features::CustomMediaQueries,
+            ..targets
+        },
         ..Default::default()
     })
     .expect("failed to minify/auto-prefix css");
 
-    let res = ss
+    let mut res = ss
         .to_css(PrinterOptions {
             minify: true,
-            targets: Targets {
-                browsers: Some(convert_browsers(browsers)),
-                ..Default::default()
-            },
+            targets,
             ..Default::default()
         })
         .context("failed to print css")?;
+
+    res.code = native.invoke_css_transform(style_info.css_span, res.code);
 
     debug!("Transformed CSS: \n{}", res.code);
 
@@ -167,7 +164,7 @@ pub fn transform_css(
         return Ok(string_literal_expr(&res.code));
     }
 
-    let mut parts: Vec<&str> = res.code.split("__styled-jsx-placeholder-").collect();
+    let mut parts: Vec<&str> = res.code.split("--styled-jsx-placeholder-").collect();
     let mut final_expressions = vec![];
     for i in parts.iter_mut().skip(1) {
         let (num_len, expression_index) = read_number(i, &style_info.is_expr_property);
@@ -211,7 +208,7 @@ fn convert_browsers(browsers: &Versions) -> Browsers {
     }
 }
 
-fn strip_comments(s: &str) -> Cow<str> {
+pub(super) fn strip_comments(s: &str) -> Cow<str> {
     if !s.contains("//") {
         return Cow::Borrowed(s);
     }
@@ -221,19 +218,40 @@ fn strip_comments(s: &str) -> Cow<str> {
     for line in s.lines() {
         let line = line.trim();
 
-        if let Some(index) = line.find("//") {
-            buf.push_str(&line[..index]);
-        } else {
-            buf.push_str(line);
-        }
+        buf.push_str(strip_comment_from_line(line));
+
         buf.push('\n');
     }
 
     Cow::Owned(buf)
 }
 
+fn strip_comment_from_line(s: &str) -> &str {
+    // Check for ' or "
+    // if there's one, it's a string literal and we should not strip it.
+    // After then, we should check for two `/`s
+
+    let s = s.trim();
+
+    let mut in_string = false;
+    let mut last = '\0';
+    for (i, c) in s.char_indices() {
+        if c == '\'' || c == '"' {
+            in_string = !(in_string && last != '\\');
+        }
+
+        if !in_string && last == '/' && c == '/' {
+            return &s[..i - 1];
+        }
+
+        last = c;
+    }
+
+    s
+}
+
 /// Returns `(length, expression_index)`
-fn read_number(s: &str, is_expr_property: &[bool]) -> (usize, usize) {
+pub(super) fn read_number(s: &str, is_expr_property: &[bool]) -> (usize, usize) {
     for (idx, c) in s.char_indices() {
         if c.is_ascii_digit() {
             continue;
@@ -494,7 +512,11 @@ impl CssNamespace {
         }
 
         // Pseudo element
-        if result.is_empty() && node.len() == 1 && pseudo_index.is_some() {
+        if result.is_empty()
+            && node.len() == 1
+            && pseudo_index.is_some()
+            && matches!(&node[0], Component::PseudoElement(..))
+        {
             return Ok(node);
         }
 

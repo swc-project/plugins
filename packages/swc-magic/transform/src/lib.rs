@@ -88,18 +88,13 @@ where
     }
 
     fn visit_mut_module(&mut self, m: &mut Module) {
-        self.imports = ImportMap::analyze(&m);
+        self.imports = ImportMap::analyze(m);
 
         m.visit_mut_children_with(self);
 
         // Remove Stmt::Empty
-        m.body.retain(|item| {
-            if let ModuleItem::Stmt(Stmt::Empty(..)) = item {
-                false
-            } else {
-                true
-            }
-        });
+        m.body
+            .retain(|item| !matches!(item, ModuleItem::Stmt(Stmt::Empty(..))));
     }
 
     fn visit_mut_module_item(&mut self, m: &mut ModuleItem) {

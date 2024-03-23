@@ -313,6 +313,7 @@ pub fn styled_jsx_import_decl(style_import_name: &str) -> ModuleItem {
             value: "styled-jsx/style".into(),
             raw: None,
         }),
+        phase: Default::default(),
     }))
 }
 

@@ -5,7 +5,7 @@ use std::{
     sync::Arc,
 };
 
-use easy_error::{bail, Error};
+use anyhow::{bail, Error, Result};
 use preset_env_base::Versions;
 use serde::Deserialize;
 use swc_common::{collections::AHashSet, errors::HANDLER, FileName, SourceMap, Span, DUMMY_SP};
@@ -36,7 +36,36 @@ pub struct Config {
     pub browsers: Versions,
 }
 
-pub fn styled_jsx(cm: Arc<SourceMap>, file_name: FileName, config: Config) -> impl Fold {
+#[derive(Default)]
+pub struct NativeConfig<'a> {
+    pub process_css: Option<Box<dyn 'a + for<'aa> Fn(&'aa str) -> Result<String, Error>>>,
+}
+
+impl NativeConfig<'_> {
+    pub(crate) fn invoke_css_transform(&self, span: Span, css: String) -> String {
+        if let Some(process_css) = &self.process_css {
+            match process_css(&css) {
+                Ok(new_css) => return new_css,
+                Err(err) => {
+                    HANDLER.with(|handler| {
+                        handler
+                            .struct_span_err(span, &format!("Error while processing css: {}.", err))
+                            .emit()
+                    });
+                }
+            }
+        }
+
+        css
+    }
+}
+
+pub fn styled_jsx(
+    cm: Arc<SourceMap>,
+    file_name: FileName,
+    config: Config,
+    native_config: NativeConfig<'_>,
+) -> impl '_ + Fold {
     let file_name = match file_name {
         FileName::Real(real_file_name) => real_file_name
             .to_str()
@@ -47,6 +76,7 @@ pub fn styled_jsx(cm: Arc<SourceMap>, file_name: FileName, config: Config) -> im
     StyledJSXTransformer {
         cm,
         config,
+        native_config,
         file_name,
         styles: Default::default(),
         static_class_name: Default::default(),
@@ -68,9 +98,10 @@ pub fn styled_jsx(cm: Arc<SourceMap>, file_name: FileName, config: Config) -> im
     }
 }
 
-struct StyledJSXTransformer {
+struct StyledJSXTransformer<'a> {
     cm: Arc<SourceMap>,
     config: Config,
+    native_config: NativeConfig<'a>,
 
     file_name: Option<String>,
     styles: Vec<JSXStyle>,
@@ -98,7 +129,7 @@ enum StyleExpr<'a> {
     Ident(&'a Ident),
 }
 
-impl Fold for StyledJSXTransformer {
+impl Fold for StyledJSXTransformer<'_> {
     fn fold_jsx_element(&mut self, el: JSXElement) -> JSXElement {
         if is_styled_jsx(&el) {
             if self.visiting_styled_jsx_descendants {
@@ -428,7 +459,7 @@ impl Fold for StyledJSXTransformer {
     }
 }
 
-impl StyledJSXTransformer {
+impl StyledJSXTransformer<'_> {
     fn check_for_jsx_styles(
         &mut self,
         el: Option<&JSXElement>,
@@ -442,7 +473,7 @@ impl StyledJSXTransformer {
             let style_info = self.get_jsx_style(expr, is_global(el));
             styles.insert(0, style_info);
 
-            Ok(())
+            anyhow::Ok(())
         };
 
         if el.is_some() && is_styled_jsx(el.unwrap()) {
@@ -504,15 +535,22 @@ impl StyledJSXTransformer {
                         let before = &*quasis[i].raw;
                         let before = before.trim();
 
+                        let after = quasis.get(i + 1).map(|v| v.raw.trim());
+
                         let placeholder = if i == quasis.len() - 1 {
                             is_expr_property.push(false);
                             String::new()
-                        } else if self.config.use_lightningcss && before.ends_with([';', '{']) {
+                        } else if before.ends_with([';', '{'])
+                            && match after {
+                                Some(after) => !after.starts_with(':'),
+                                None => true,
+                            }
+                        {
                             is_expr_property.push(true);
-                            format!("__styled-jsx-placeholder-{}__: 0", i)
+                            format!("--styled-jsx-placeholder-{}__: 0", i)
                         } else {
                             is_expr_property.push(false);
-                            format!("__styled-jsx-placeholder-{}__", i)
+                            format!("--styled-jsx-placeholder-{}__", i)
                         };
                         s.push_str(&quasis[i].raw);
                         s.push_str(&placeholder);
@@ -580,6 +618,7 @@ impl StyledJSXTransformer {
                         is_global,
                         &self.static_class_name,
                         &self.config.browsers,
+                        &self.native_config,
                     )?
                 } else {
                     crate::transform_css_swc::transform_css(
@@ -587,6 +626,7 @@ impl StyledJSXTransformer {
                         style_info,
                         is_global,
                         &self.static_class_name,
+                        &self.native_config,
                     )?
                 };
 
@@ -638,6 +678,7 @@ impl StyledJSXTransformer {
         } else {
             bail!("This shouldn't happen, we already know that this is a template literal");
         };
+
         let css = if self.config.use_lightningcss {
             crate::transform_css_lightningcss::transform_css(
                 self.cm.clone(),
@@ -645,6 +686,7 @@ impl StyledJSXTransformer {
                 tag == "global",
                 &static_class_name,
                 &self.config.browsers,
+                &self.native_config,
             )?
         } else {
             crate::transform_css_swc::transform_css(
@@ -652,6 +694,7 @@ impl StyledJSXTransformer {
                 style,
                 tag == "global",
                 &static_class_name,
+                &self.native_config,
             )?
         };
         if tag == "resolve" {
@@ -934,7 +977,7 @@ fn join_spreads(spreads: Vec<Expr>) -> Expr {
 fn add_hash_statement((id, hash): (Id, String)) -> Stmt {
     Stmt::Expr(ExprStmt {
         expr: Box::new(Expr::Assign(AssignExpr {
-            left: PatOrExpr::Expr(Box::new(Expr::Member(MemberExpr {
+            left: MemberExpr {
                 obj: Box::new(Expr::Ident(Ident {
                     sym: id.0,
                     span: DUMMY_SP.with_ctxt(id.1),
@@ -946,7 +989,8 @@ fn add_hash_statement((id, hash): (Id, String)) -> Stmt {
                     optional: false,
                 }),
                 span: DUMMY_SP,
-            }))),
+            }
+            .into(),
             right: Box::new(string_literal_expr(&hash)),
             op: op!("="),
             span: DUMMY_SP,
