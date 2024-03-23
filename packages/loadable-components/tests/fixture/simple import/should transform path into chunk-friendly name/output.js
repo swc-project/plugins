@@ -1,9 +1,10 @@
+import loadable from '@loadable/component';
 loadable({
     resolved: {},
-    chunkName () {
+    chunkName() {
         return "foo-bar";
     },
-    isReady (props) {
+    isReady(props) {
         const key = this.resolve(props);
         if (this.resolved[key] !== true) {
             return false;
@@ -13,23 +14,23 @@ loadable({
         }
         return false;
     },
-    importAsync: ()=>import(/*webpackChunkName: "foo-bar"*/ '../foo/bar'),
-    requireAsync (props) {
+    importAsync: () => import(/*webpackChunkName: "foo-bar"*/ '../foo/bar'),
+    requireAsync(props) {
         const key = this.resolve(props);
         this.resolved[key] = false;
-        return this.importAsync(props).then((resolved)=>{
+        return this.importAsync(props).then((resolved) => {
             this.resolved[key] = true;
             return resolved;
         });
     },
-    requireSync (props) {
+    requireSync(props) {
         const id = this.resolve(props);
         if (typeof __webpack_require__ !== 'undefined') {
             return __webpack_require__(id);
         }
         return eval('module.require')(id);
     },
-    resolve () {
+    resolve() {
         if (require.resolveWeak) {
             return require.resolveWeak('../foo/bar');
         }
