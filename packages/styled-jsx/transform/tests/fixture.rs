@@ -2,6 +2,7 @@ use std::path::PathBuf;
 
 use anyhow::bail;
 use lightningcss::stylesheet::ParserOptions;
+use preset_env_base::Versions;
 use styled_jsx::visitor::{styled_jsx, NativeConfig};
 use swc_common::{chain, FileName, Mark, Span, DUMMY_SP};
 use swc_ecma_parser::{EsConfig, Syntax};
@@ -26,6 +27,15 @@ fn run(input: PathBuf, use_lightningcss: bool) {
     test_fixture(
         syntax(),
         &|t| {
+            let browsers = Versions {
+                chrome: Some("64".parse().unwrap()),
+                edge: Some("79".parse().unwrap()),
+                firefox: Some("67".parse().unwrap()),
+                opera: Some("51".parse().unwrap()),
+                safari: Some("12".parse().unwrap()),
+
+                ..Default::default()
+            };
             chain!(
                 resolver(Mark::new(), Mark::new(), false),
                 styled_jsx(
@@ -33,7 +43,7 @@ fn run(input: PathBuf, use_lightningcss: bool) {
                     FileName::Real(PathBuf::from("/some-project/src/some-file.js")),
                     styled_jsx::visitor::Config {
                         use_lightningcss,
-                        ..Default::default()
+                        browsers,
                     },
                     if use_lightningcss {
                         Default::default()
