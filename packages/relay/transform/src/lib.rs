@@ -117,6 +117,8 @@ pub struct Config {
     pub eager_es_modules: bool,
     #[serde(default)]
     pub output_file_extension: OutputFileExtension,
+    #[serde(default)]
+    pub add_current_directory_to_path: bool,
 }
 
 fn pull_first_operation_name_from_tpl(tpl: &TaggedTpl) -> Option<String> {
@@ -219,6 +221,11 @@ impl<'a> Relay<'a> {
             Ok(real_file_name
                 .parent()
                 .unwrap()
+                .join(if self.config.add_current_directory_to_path {
+                    "./"
+                } else {
+                    ""
+                })
                 .join("__generated__")
                 .join(filename))
         }

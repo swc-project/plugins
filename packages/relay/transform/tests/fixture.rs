@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use swc_common::FileName;
 use swc_ecma_transforms_testing::test_fixture;
-use swc_relay::{relay, Config, RelayLanguageConfig, OutputFileExtension};
+use swc_relay::{relay, Config, OutputFileExtension, RelayLanguageConfig};
 
 #[testing::fixture("tests/fixture/simple/**/input.js")]
 fn fixture(input: PathBuf) {
@@ -17,6 +17,7 @@ fn fixture(input: PathBuf) {
                     language: RelayLanguageConfig::TypeScript,
                     eager_es_modules: false,
                     output_file_extension: OutputFileExtension::Undefined,
+                    add_current_directory_to_path: false,
                 },
                 FileName::Real("file.js".parse().unwrap()),
                 Default::default(),
@@ -43,6 +44,7 @@ fn fixture_es_modules(input: PathBuf) {
                     language: RelayLanguageConfig::TypeScript,
                     eager_es_modules: true,
                     output_file_extension: OutputFileExtension::Undefined,
+                    add_current_directory_to_path: false,
                 },
                 FileName::Real("file.js".parse().unwrap()),
                 Default::default(),
@@ -69,6 +71,7 @@ fn fixture_output_file_extension_javascript(input: PathBuf) {
                     language: RelayLanguageConfig::TypeScript,
                     eager_es_modules: true,
                     output_file_extension: OutputFileExtension::JavaScript,
+                    add_current_directory_to_path: false,
                 },
                 FileName::Real("file.js".parse().unwrap()),
                 Default::default(),
@@ -95,6 +98,34 @@ fn fixture_output_file_extension_typescript(input: PathBuf) {
                     language: RelayLanguageConfig::JavaScript,
                     eager_es_modules: true,
                     output_file_extension: OutputFileExtension::TypeScript,
+                    add_current_directory_to_path: false,
+                },
+                FileName::Real("file.js".parse().unwrap()),
+                Default::default(),
+                None,
+                None,
+            )
+        },
+        &input,
+        &output,
+        Default::default(),
+    );
+}
+
+#[testing::fixture("tests/fixture/add_current_directory_to_path/**/input.js")]
+fn fixture_add_current_directory_to_path(input: PathBuf) {
+    let output = input.parent().unwrap().join("output.js");
+
+    test_fixture(
+        Default::default(),
+        &|_| {
+            relay(
+                &Config {
+                    artifact_directory: None,
+                    language: RelayLanguageConfig::TypeScript,
+                    eager_es_modules: false,
+                    output_file_extension: OutputFileExtension::Undefined,
+                    add_current_directory_to_path: true,
                 },
                 FileName::Real("file.js".parse().unwrap()),
                 Default::default(),
