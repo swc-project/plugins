@@ -1,5 +1,17 @@
 # @swc/plugin-noop
 
+## 1.5.118
+
+### Patch Changes
+
+- c88b22b: Align package metadata
+
+## 1.5.117
+
+### Patch Changes
+
+- a3cc4fb: Organize pacakge metadata
+
 ## 1.5.116
 
 ### Patch Changes
