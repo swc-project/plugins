@@ -1,5 +1,11 @@
 # @swc/plugin-remove-console
 
+## 1.5.119
+
+### Patch Changes
+
+- a3cc4fb: Organize pacakge metadata
+
 ## 1.5.118
 
 ### Patch Changes

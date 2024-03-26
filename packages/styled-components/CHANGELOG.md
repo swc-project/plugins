@@ -1,5 +1,11 @@
 # @swc/plugin-styled-components
 
+## 1.5.120
+
+### Patch Changes
+
+- a3cc4fb: Organize pacakge metadata
+
 ## 1.5.119
 
 ### Patch Changes

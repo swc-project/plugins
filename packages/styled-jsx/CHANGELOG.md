@@ -1,5 +1,11 @@
 # @swc/plugin-styled-jsx
 
+## 1.5.123
+
+### Patch Changes
+
+- a3cc4fb: Organize pacakge metadata
+
 ## 1.5.122
 
 ### Patch Changes
