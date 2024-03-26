@@ -4,7 +4,7 @@ import { Component } from "react";
 import { jsx, css } from "@emotion/react";
 
 class SomeComponent extends Component {
-  private member = css`
+  member = css`
     color: hotpink;
   `;
 
@@ -20,7 +20,7 @@ class SomeComponent extends Component {
 }
 
 class SomeOtherComponent extends Component {
-  private member = css`
+  member = css`
     color: hotpink;
   `;
 

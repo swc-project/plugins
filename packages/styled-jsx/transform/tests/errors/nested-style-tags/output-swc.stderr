@@ -1,27 +1,27 @@
 
   x Detected nested styled-jsx tag.
   | Read more: https://nextjs.org/docs/messages/nested-styled-jsx-tags
-    ,-[input.js:12:1]
- 12 |         Welcome!
- 13 |         <style jsx>{``}</style>
+    ,-[input.js:14:1]
+ 14 |         Welcome!
+ 15 |         <style jsx>{``}</style>
     :         ^^^^^^^^^^^^^^^^^^^^^^^
- 14 |       </h1>
+ 16 |       </h1>
     `----
 
   x Detected nested styled-jsx tag.
   | Read more: https://nextjs.org/docs/messages/nested-styled-jsx-tags
-    ,-[input.js:20:1]
- 20 |         Hello world!
- 21 |         <style jsx global>{``}</style>
+    ,-[input.js:22:1]
+ 22 |         Hello world!
+ 23 |         <style jsx global>{``}</style>
     :         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 22 |       </h1>
+ 24 |       </h1>
     `----
 
   x Detected nested styled-jsx tag.
   | Read more: https://nextjs.org/docs/messages/nested-styled-jsx-tags
-    ,-[input.js:25:1]
- 25 |       <>
- 26 |         <style jsx>{styles}</style>
+    ,-[input.js:27:1]
+ 27 |       <>
+ 28 |         <style jsx>{styles}</style>
     :         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 27 |       </>
+ 29 |       </>
     `----

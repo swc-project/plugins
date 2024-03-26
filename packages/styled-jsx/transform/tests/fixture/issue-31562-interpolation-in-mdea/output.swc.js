@@ -5,7 +5,7 @@ export default class {
       <div
         className={_JSXStyle.dynamic([
           [
-            "327f1683fd154c9e",
+            "3d432357f0438d27",
             [
               Typography.base.size.default,
               Typography.base.lineHeight,
@@ -20,7 +20,7 @@ export default class {
         <p
           className={_JSXStyle.dynamic([
             [
-              "327f1683fd154c9e",
+              "3d432357f0438d27",
               [
                 Typography.base.size.default,
                 Typography.base.lineHeight,
@@ -36,7 +36,7 @@ export default class {
         </p>
 
         <_JSXStyle
-          id={"327f1683fd154c9e"}
+          id={"3d432357f0438d27"}
           dynamic={[
             Typography.base.size.default,
             Typography.base.lineHeight,

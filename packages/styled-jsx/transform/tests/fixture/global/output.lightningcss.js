@@ -1,7 +1,7 @@
 import _JSXStyle from "styled-jsx/style";
 const Test = () => (
-  <div className={"jsx-d47d6adadf14e957"}>
-    <_JSXStyle id={"d47d6adadf14e957"}>
+  <div className={"jsx-f84dd0db2f59ea88"}>
+    <_JSXStyle id={"f84dd0db2f59ea88"}>
       {
         "body{color:red}:hover{color:red;animation:1s ease-out foo;display:flex}div a{display:none}[data-test]>div{color:red}"
       }

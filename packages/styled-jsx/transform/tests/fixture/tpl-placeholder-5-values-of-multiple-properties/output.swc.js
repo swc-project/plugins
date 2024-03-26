@@ -4,19 +4,19 @@ export default class {
     return (
       <div
         className={_JSXStyle.dynamic([
-          ["247a54f8be580912", [a ? "100%" : "200px", b ? "0" : "8px 20px"]],
+          ["fe9d3cd78cdd6285", [a ? "100%" : "200px", b ? "0" : "8px 20px"]],
         ])}
       >
         <p
           className={_JSXStyle.dynamic([
-            ["247a54f8be580912", [a ? "100%" : "200px", b ? "0" : "8px 20px"]],
+            ["fe9d3cd78cdd6285", [a ? "100%" : "200px", b ? "0" : "8px 20px"]],
           ])}
         >
           test
         </p>
 
         <_JSXStyle
-          id={"247a54f8be580912"}
+          id={"fe9d3cd78cdd6285"}
           dynamic={[a ? "100%" : "200px", b ? "0" : "8px 20px"]}
         >{`.item.__jsx-style-dynamic-selector{max-width:${a ? "100%" : "200px"};padding:${b ? "0" : "8px 20px"}}`}</_JSXStyle>
       </div>

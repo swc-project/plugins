@@ -5,11 +5,11 @@ const { SomeOtherComponent } = require("../SomeOtherComponentPath");
  * control
  */ const Thing = styled.div.withConfig({
   displayName: "code__Thing",
-  componentId: "sc-867225be-0",
+  componentId: "sc-35b1796-0",
 })(["color:red;"]);
 const Thing2 = styled(Thing).withConfig({
   displayName: "code__Thing2",
-  componentId: "sc-867225be-1",
+  componentId: "sc-35b1796-1",
 })(["background:blue;"]);
 /*
  * Basic fixtures
@@ -71,11 +71,11 @@ const SpreadObjectPropMixedInputs = (p) => {
   (p) => <_StyledThing />;
 const Thing3 = styled.div.withConfig({
   displayName: "code__Thing3",
-  componentId: "sc-867225be-2",
+  componentId: "sc-35b1796-2",
 })(["color:blue;"]);
 var _StyledThing6 = styled(Thing3).withConfig({
   displayName: "code___StyledThing6",
-  componentId: "sc-867225be-3",
+  componentId: "sc-35b1796-3",
 })((p) => ({
   [p.$_css19]: {
     color: "red",
@@ -83,7 +83,7 @@ var _StyledThing6 = styled(Thing3).withConfig({
 }));
 var _StyledThing5 = styled(Thing3).withConfig({
   displayName: "code___StyledThing5",
-  componentId: "sc-867225be-4",
+  componentId: "sc-35b1796-4",
 })((p) => ({
   [p.$_css18]: {
     color: "red",
@@ -91,7 +91,7 @@ var _StyledThing5 = styled(Thing3).withConfig({
 }));
 var _StyledThing4 = styled(Thing3).withConfig({
   displayName: "code___StyledThing4",
-  componentId: "sc-867225be-5",
+  componentId: "sc-35b1796-5",
 })((p) => ({
   [p.$_css17]: {
     color: "red",
@@ -99,13 +99,13 @@ var _StyledThing4 = styled(Thing3).withConfig({
 }));
 var _StyledThing3 = styled(Thing3).withConfig({
   displayName: "code___StyledThing3",
-  componentId: "sc-867225be-6",
+  componentId: "sc-35b1796-6",
 })((p) => ({
   color: p.$_css16,
 }));
 var _StyledThing = styled(Thing3).withConfig({
   displayName: "code___StyledThing",
-  componentId: "sc-867225be-7",
+  componentId: "sc-35b1796-7",
 })(["color:red;"]);
 const EarlyUsageComponent2 = (p) => <_StyledThing2 />;
 function Thing4(props1) {
@@ -155,85 +155,85 @@ const ObjectPropWithSpread = () => {
 };
 var _StyledSomeComponent = styled(SomeComponent).withConfig({
   displayName: "code___StyledSomeComponent",
-  componentId: "sc-867225be-8",
+  componentId: "sc-35b1796-8",
 })(["color:red;"]);
 var _StyledSomeOtherComponent = styled(SomeOtherComponent).withConfig({
   displayName: "code___StyledSomeOtherComponent",
-  componentId: "sc-867225be-9",
+  componentId: "sc-35b1796-9",
 })(["color:red;"]);
 var _StyledThing2 = styled(Thing4).withConfig({
   displayName: "code___StyledThing2",
-  componentId: "sc-867225be-10",
+  componentId: "sc-35b1796-10",
 })(["color:red;"]);
 var _StyledP = styled("p").withConfig({
   displayName: "code___StyledP",
-  componentId: "sc-867225be-11",
+  componentId: "sc-35b1796-11",
 })(["flex:1;"]);
 var _StyledP2 = styled("p").withConfig({
   displayName: "code___StyledP2",
-  componentId: "sc-867225be-12",
+  componentId: "sc-35b1796-12",
 })(["flex:1;"]);
 var _StyledP3 = styled("p").withConfig({
   displayName: "code___StyledP3",
-  componentId: "sc-867225be-13",
+  componentId: "sc-35b1796-13",
 })({
   color: "blue",
 });
 var _StyledP4 = styled("p").withConfig({
   displayName: "code___StyledP4",
-  componentId: "sc-867225be-14",
+  componentId: "sc-35b1796-14",
 })(["flex:1;"]);
 var _StyledP5 = styled("p").withConfig({
   displayName: "code___StyledP5",
-  componentId: "sc-867225be-15",
+  componentId: "sc-35b1796-15",
 })(["color:blue;"]);
 var _StyledParagraph = styled(Paragraph).withConfig({
   displayName: "code___StyledParagraph",
-  componentId: "sc-867225be-16",
+  componentId: "sc-35b1796-16",
 })(["flex:1"]);
 var _StyledP6 = styled("p").withConfig({
   displayName: "code___StyledP6",
-  componentId: "sc-867225be-17",
+  componentId: "sc-35b1796-17",
 })(["", ""], (p) => p.$_css);
 var _StyledP7 = styled("p").withConfig({
   displayName: "code___StyledP7",
-  componentId: "sc-867225be-18",
+  componentId: "sc-35b1796-18",
 })(["background:", ";"], (p) => p.$_css2);
 var _StyledP8 = styled("p").withConfig({
   displayName: "code___StyledP8",
-  componentId: "sc-867225be-19",
+  componentId: "sc-35b1796-19",
 })(["color:", ";"], (props1) => props1.theme.a);
 var _StyledP9 = styled("p").withConfig({
   displayName: "code___StyledP9",
-  componentId: "sc-867225be-20",
+  componentId: "sc-35b1796-20",
 })(["border-radius:", "px;"], radius);
 var _StyledP10 = styled("p").withConfig({
   displayName: "code___StyledP10",
-  componentId: "sc-867225be-21",
+  componentId: "sc-35b1796-21",
 })(["color:", ";"], (p) => p.$_css3);
 var _StyledP11 = styled("p").withConfig({
   displayName: "code___StyledP11",
-  componentId: "sc-867225be-22",
+  componentId: "sc-35b1796-22",
 })(["color:", ";"], (props1) => props1.theme.color);
 var _StyledButtonGhost = styled(Button.Ghost).withConfig({
   displayName: "code___StyledButtonGhost",
-  componentId: "sc-867225be-23",
+  componentId: "sc-35b1796-23",
 })(["flex:1"]);
 var _StyledButtonGhostNew = styled(Button.Ghost.New).withConfig({
   displayName: "code___StyledButtonGhostNew",
-  componentId: "sc-867225be-24",
+  componentId: "sc-35b1796-24",
 })(["flex:1"]);
 var _StyledButtonGhost2 = styled(button.ghost).withConfig({
   displayName: "code___StyledButtonGhost2",
-  componentId: "sc-867225be-25",
+  componentId: "sc-35b1796-25",
 })(["flex:1"]);
 var _StyledButtonGhost3 = styled("button-ghost").withConfig({
   displayName: "code___StyledButtonGhost3",
-  componentId: "sc-867225be-26",
+  componentId: "sc-35b1796-26",
 })(["flex:1"]);
 var _StyledP12 = styled("p").withConfig({
   displayName: "code___StyledP12",
-  componentId: "sc-867225be-27",
+  componentId: "sc-35b1796-27",
 })((p) => ({
   background: p.$_css4,
   color: p.$_css5,
@@ -247,7 +247,7 @@ var _StyledP12 = styled("p").withConfig({
 }));
 var _StyledP13 = styled("p").withConfig({
   displayName: "code___StyledP13",
-  componentId: "sc-867225be-28",
+  componentId: "sc-35b1796-28",
 })((p) => ({
   ...{
     "::before": {
@@ -276,13 +276,13 @@ var _StyledP13 = styled("p").withConfig({
 }));
 var _StyledP14 = styled("p").withConfig({
   displayName: "code___StyledP14",
-  componentId: "sc-867225be-29",
+  componentId: "sc-35b1796-29",
 })((p) => ({
   color: p.$_css15,
 }));
 var _StyledDiv = styled("div").withConfig({
   displayName: "code___StyledDiv",
-  componentId: "sc-867225be-30",
+  componentId: "sc-35b1796-30",
 })((p) => ({
   ...p.$_css20,
   ...p.$_css21,

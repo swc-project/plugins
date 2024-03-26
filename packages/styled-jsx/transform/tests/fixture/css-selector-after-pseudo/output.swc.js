@@ -3,7 +3,7 @@ function NavigationItem({ active, className }) {
   return (
     <span
       className={
-        "jsx-2342aae4628612c6" +
+        "jsx-e73bf96b356a8634" +
         " " +
         (cn(
           {
@@ -14,9 +14,9 @@ function NavigationItem({ active, className }) {
         ) || "")
       }
     >
-      <_JSXStyle id={"2342aae4628612c6"}>
+      <_JSXStyle id={"e73bf96b356a8634"}>
         {
-          '.navigation-item.jsx-2342aae4628612c6 a:after{content:attr(data-text);content:attr(data-text)/""}'
+          '.navigation-item.jsx-e73bf96b356a8634 a:after{content:attr(data-text);content:attr(data-text)/""}'
         }
       </_JSXStyle>
     </span>

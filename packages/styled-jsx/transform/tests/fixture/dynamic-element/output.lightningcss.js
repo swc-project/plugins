@@ -37,11 +37,11 @@ export const Test2 = () => {
 };
 export const Test3 = ({ Component = "div" }) => {
   return (
-    <Component className={"jsx-f825b24bbab5b83b"}>
-      <p className={"jsx-f825b24bbab5b83b"}>dynamic element</p>
+    <Component className={"jsx-fca64cc3f069b519"}>
+      <p className={"jsx-fca64cc3f069b519"}>dynamic element</p>
 
-      <_JSXStyle id={"f825b24bbab5b83b"}>
-        {".root.jsx-f825b24bbab5b83b{background:red}"}
+      <_JSXStyle id={"fca64cc3f069b519"}>
+        {".root.jsx-fca64cc3f069b519{background:red}"}
       </_JSXStyle>
     </Component>
   );
