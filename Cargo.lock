@@ -1156,7 +1156,7 @@ dependencies = [
 
 [[package]]
 name = "modularize_imports"
-version = "0.68.7"
+version = "0.68.8"
 dependencies = [
  "convert_case",
  "handlebars",
@@ -1695,7 +1695,7 @@ dependencies = [
 
 [[package]]
 name = "react_remove_properties"
-version = "0.24.5"
+version = "0.24.6"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -1770,7 +1770,7 @@ checksum = "c707298afce11da2efef2f600116fa93ffa7a032b5d7b628aa17711ec81383ca"
 
 [[package]]
 name = "remove_console"
-version = "0.25.5"
+version = "0.25.6"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -2156,7 +2156,7 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
 name = "styled_components"
-version = "0.96.6"
+version = "0.96.7"
 dependencies = [
  "Inflector",
  "once_cell",
@@ -2177,7 +2177,7 @@ dependencies = [
 
 [[package]]
 name = "styled_jsx"
-version = "0.73.10"
+version = "0.73.11"
 dependencies = [
  "anyhow",
  "lightningcss",
@@ -2779,7 +2779,7 @@ dependencies = [
 
 [[package]]
 name = "swc_emotion"
-version = "0.72.6"
+version = "0.72.7"
 dependencies = [
  "base64 0.13.1",
  "byteorder",
@@ -2853,7 +2853,7 @@ dependencies = [
 
 [[package]]
 name = "swc_magic"
-version = "0.19.5"
+version = "0.19.6"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -3077,7 +3077,7 @@ dependencies = [
 
 [[package]]
 name = "swc_relay"
-version = "0.44.5"
+version = "0.44.6"
 dependencies = [
  "once_cell",
  "regex",
