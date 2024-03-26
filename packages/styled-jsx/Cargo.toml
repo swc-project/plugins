@@ -3,15 +3,15 @@
 description = "SWC Plugin for styled-jsx"
 
 
-authors.workspace      = true
-edition.workspace      = true
-homepage.workspace     = true
-license.workspace      = true
-name                   = "swc_plugin_styled_jsx"
-publish                = false
-repository.workspace   = true
-rust-version.workspace = true
-version                = "0.20.4"
+authors = { workspace = true }
+edition = { workspace = true }
+homepage = { workspace = true }
+license = { workspace = true }
+name = "swc_plugin_styled_jsx"
+publish = false
+repository = { workspace = true }
+rust-version = { workspace = true }
+version = "0.20.4"
 
 
 [lib]
@@ -21,20 +21,20 @@ crate-type = ["cdylib", "rlib"]
 custom_transform = ["swc_common/concurrent"]
 
 [dependencies]
-anyhow            = "1"
-serde_json        = "1"
-styled_jsx        = { path = "./transform" }
-swc_atoms         = "0.6.5"
-swc_common        = "0.33.19"
-swc_core          = { version = "0.90.22", features = ["ecma_plugin_transform"] }
-swc_ecma_ast      = "0.112.5"
+anyhow = "1"
+serde_json = "1"
+styled_jsx = { path = "./transform" }
+swc_atoms = "0.6.5"
+swc_common = "0.33.19"
+swc_core = { version = "0.90.22", features = ["ecma_plugin_transform"] }
+swc_ecma_ast = "0.112.5"
 swc_ecma_minifier = "0.192.17"
-swc_ecma_parser   = "0.143.9"
-swc_ecma_utils    = "0.127.12"
-swc_ecma_visit    = "0.98.6"
-swc_plugin_macro  = "0.9.16"
-tracing           = { version = "0.1.37", features = ["release_max_level_off"] }
+swc_ecma_parser = "0.143.9"
+swc_ecma_utils = "0.127.12"
+swc_ecma_visit = "0.98.6"
+swc_plugin_macro = "0.9.16"
+tracing = { version = "0.1.37", features = ["release_max_level_off"] }
 
 [dev-dependencies]
 swc_ecma_transforms_testing = "0.140.15"
-testing                     = "0.35.20"
+testing = "0.35.20"
