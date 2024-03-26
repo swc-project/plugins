@@ -25,7 +25,7 @@ edition = "2021"
 homepage = "https://github.com/swc-project/plugins"
 license = "Apache-2.0"
 repository = "https://github.com/swc-project/plugins.git"
-rust-version = "1.71"
+rust-version = "1.70"
 
 
 [profile.release]
