@@ -8,6 +8,12 @@
 
 # @swc/plugin-loadable-components
 
+## 0.3.119
+
+### Patch Changes
+
+- a3cc4fb: Organize pacakge metadata
+
 ## 0.3.118
 
 ### Patch Changes

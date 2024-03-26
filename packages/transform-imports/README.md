@@ -18,6 +18,12 @@
 
 # @swc/plugin-transform-imports
 
+## 1.5.121
+
+### Patch Changes
+
+- a3cc4fb: Organize pacakge metadata
+
 ## 1.5.120
 
 ### Patch Changes
