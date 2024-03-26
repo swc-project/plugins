@@ -1,8 +1,5 @@
 [package]
-authors = ["강동윤 <kdy1997.dev@gmail.com>", "OJ Kwon <kwon.ohjoong@gmail.com>"]
 description = "SWC plugin for relay.dev"
-
-
 name = "swc_plugin_relay"
 publish = false
 version = "0.7.4"
