@@ -1,5 +1,11 @@
 # @swc/plugin-styled-jsx
 
+## 1.5.124
+
+### Patch Changes
+
+- c88b22b: Align package metadata
+
 ## 1.5.123
 
 ### Patch Changes

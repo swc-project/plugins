@@ -1,5 +1,11 @@
 # @swc/plugin-react-remove-properties
 
+## 1.5.120
+
+### Patch Changes
+
+- c88b22b: Align package metadata
+
 ## 1.5.119
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @swc/plugin-emotion
 
+## 2.5.123
+
+### Patch Changes
+
+- c88b22b: Align package metadata
+
 ## 2.5.122
 
 ### Patch Changes
