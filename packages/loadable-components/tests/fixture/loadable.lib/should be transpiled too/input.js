@@ -1,1 +1,0 @@
-loadable.lib(() => import('moment'))

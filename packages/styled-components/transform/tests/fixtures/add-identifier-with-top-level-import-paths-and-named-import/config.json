@@ -1,5 +1,0 @@
-{
-  "fileName": false,
-  "topLevelImportPaths": ["@example/example"],
-  "transpileTemplateLiterals": false
-}

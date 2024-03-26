@@ -1,8 +1,0 @@
-/target
-*.node
-.DS_Store
-*.html
-
-node_modules
-*.wasm
-.yarn/
