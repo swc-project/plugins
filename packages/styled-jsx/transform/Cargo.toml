@@ -1,8 +1,8 @@
 [package]
-authors = ["강동윤 <kdy1997.dev@gmail.com>"]
+
 description = "AST transforms visitor for styled-jsx"
-edition = "2021"
-license = "Apache-2.0"
+
+
 name = "styled_jsx"
 version = "0.73.10"
 authors.workspace = true

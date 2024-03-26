@@ -1,9 +1,9 @@
 [package]
-authors = ["강동윤 <kdy1997.dev@gmail.com>"]
+
 description = "AST Transforms for styled-components"
-edition = "2021"
+
 include = ["Cargo.toml", "src/**/*.rs"]
-license = "Apache-2.0"
+
 name = "styled_components"
 repository = "https://github.com/swc-project/plugins.git"
 version = "0.96.6"

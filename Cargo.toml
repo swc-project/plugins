@@ -23,7 +23,7 @@ resolver = "2"
 authors = ["강동윤/Donny <kdy.1997.dev@gmail.com>"]
 edition = "2021"
 homepage = "https://github.com/swc-project/plugins"
-license = "MIT"
+license = "Apache-2.0"
 repository = "https://github.com/swc-project/plugins.git"
 rust-version = "1.73"
 
