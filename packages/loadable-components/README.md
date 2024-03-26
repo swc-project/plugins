@@ -8,6 +8,12 @@
 
 # @swc/plugin-loadable-components
 
+## 0.3.120
+
+### Patch Changes
+
+- c88b22b: Align package metadata
+
 ## 0.3.119
 
 ### Patch Changes

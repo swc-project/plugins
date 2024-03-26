@@ -28,6 +28,12 @@ Then update your `.swcrc` file like below:
 
 # @swc/plugin-styled-components
 
+## 1.5.121
+
+### Patch Changes
+
+- c88b22b: Align package metadata
+
 ## 1.5.120
 
 ### Patch Changes

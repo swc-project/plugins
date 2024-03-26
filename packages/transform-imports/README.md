@@ -18,6 +18,12 @@
 
 # @swc/plugin-transform-imports
 
+## 1.5.122
+
+### Patch Changes
+
+- c88b22b: Align package metadata
+
 ## 1.5.121
 
 ### Patch Changes

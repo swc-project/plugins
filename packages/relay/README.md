@@ -88,6 +88,12 @@ In this example typescript graphql files will output transpiled import path of `
 
 # @swc/plugin-relay
 
+## 1.5.121
+
+### Patch Changes
+
+- c88b22b: Align package metadata
+
 ## 1.5.120
 
 ### Patch Changes
