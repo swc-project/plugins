@@ -616,6 +616,8 @@ impl<C> VisitMut for Loadable<C>
 where
     C: Comments,
 {
+    fn visit_mut_import_decl(&mut self, import_decl: &mut ImportDecl) {}
+
     fn visit_mut_call_expr(&mut self, call: &mut CallExpr) {
         call.visit_mut_children_with(self);
 
@@ -724,4 +726,23 @@ fn clone_params(e: &Expr) -> Vec<Param> {
             .collect(),
         _ => Default::default(),
     }
+}
+
+struct Signature {
+    name: String,
+    from: String,
+}
+
+impl Default for Signature {
+    fn default() -> Self {
+        Signature {
+            name: "default".into(),
+            from: "@loadable/components".into(),
+        }
+    }
+}
+
+#[derive(Default)]
+struct PluginConfig {
+    signatures: Option<Vec<Signature>>,
 }
