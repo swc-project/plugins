@@ -3,14 +3,14 @@
 description = "AST transforms visitor for styled-jsx"
 
 
-authors = { workspace = true }
-edition = { workspace = true }
-homepage = { workspace = true }
-license = { workspace = true }
-name = "styled_jsx"
-repository = { workspace = true }
+authors      = { workspace = true }
+edition      = { workspace = true }
+homepage     = { workspace = true }
+license      = { workspace = true }
+name         = "styled_jsx"
+repository   = { workspace = true }
 rust-version = { workspace = true }
-version = "0.73.10"
+version      = "0.73.10"
 
 
 [features]
@@ -26,23 +26,23 @@ parcel_selectors = "0.26.3"
 serde = { version = "1", features = ["derive"] }
 tracing = "0.1.37"
 
-preset_env_base = "0.4.7"
-swc_common = "0.33.19"
-swc_css_ast = "0.140.20"
-swc_css_codegen = "0.151.30"
-swc_css_compat = "0.27.32"
-swc_css_minifier = "0.116.31"
-swc_css_parser = "0.150.29"
-swc_css_prefixer = "0.153.34"
-swc_css_visit = "0.139.20"
-swc_ecma_ast = "0.112.5"
+preset_env_base   = "0.4.7"
+swc_common        = "0.33.19"
+swc_css_ast       = "0.140.20"
+swc_css_codegen   = "0.151.30"
+swc_css_compat    = "0.27.32"
+swc_css_minifier  = "0.116.31"
+swc_css_parser    = "0.150.29"
+swc_css_prefixer  = "0.153.34"
+swc_css_visit     = "0.139.20"
+swc_ecma_ast      = "0.112.5"
 swc_ecma_minifier = "0.192.17"
-swc_ecma_parser = "0.143.9"
-swc_ecma_utils = "0.127.12"
-swc_ecma_visit = "0.98.6"
-swc_plugin_macro = "0.9.16"
+swc_ecma_parser   = "0.143.9"
+swc_ecma_utils    = "0.127.12"
+swc_ecma_visit    = "0.98.6"
+swc_plugin_macro  = "0.9.16"
 
 [dev-dependencies]
-swc_ecma_transforms = "0.229.16"
+swc_ecma_transforms         = "0.229.16"
 swc_ecma_transforms_testing = "0.140.15"
-testing = "0.35.20"
+testing                     = "0.35.20"

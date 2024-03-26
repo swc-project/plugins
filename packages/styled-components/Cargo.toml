@@ -2,15 +2,15 @@
 description = "styled-components plugin for https://swc.rs"
 
 
-authors = { workspace = true }
-edition = { workspace = true }
-homepage = { workspace = true }
-license = { workspace = true }
-name = "swc_plugin_styled_components"
-publish = false
-repository = { workspace = true }
+authors      = { workspace = true }
+edition      = { workspace = true }
+homepage     = { workspace = true }
+license      = { workspace = true }
+name         = "swc_plugin_styled_components"
+publish      = false
+repository   = { workspace = true }
 rust-version = { workspace = true }
-version = "0.40.4"
+version      = "0.40.4"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -18,14 +18,14 @@ version = "0.40.4"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-serde = { version = "1.0.136", features = ["derive"] }
-serde_json = "1.0.79"
+serde             = { version = "1.0.136", features = ["derive"] }
+serde_json        = "1.0.79"
 styled_components = { path = "./transform" }
-swc_atoms = "0.6.5"
-swc_common = { version = "0.33.19", features = ["concurrent"] }
-swc_core = { version = "0.90.22", features = ["ecma_plugin_transform"] }
-swc_ecma_ast = "0.112.5"
-swc_ecma_utils = "0.127.12"
-swc_ecma_visit = "0.98.6"
-swc_plugin_macro = "0.9.16"
-tracing = { version = "0.1.37", features = ["release_max_level_off"] }
+swc_atoms         = "0.6.5"
+swc_common        = { version = "0.33.19", features = ["concurrent"] }
+swc_core          = { version = "0.90.22", features = ["ecma_plugin_transform"] }
+swc_ecma_ast      = "0.112.5"
+swc_ecma_utils    = "0.127.12"
+swc_ecma_visit    = "0.98.6"
+swc_plugin_macro  = "0.9.16"
+tracing           = { version = "0.1.37", features = ["release_max_level_off"] }
