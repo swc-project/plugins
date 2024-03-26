@@ -5,6 +5,13 @@ edition = "2021"
 license = "Apache-2.0"
 name = "swc_magic"
 version = "0.19.5"
+authors.workspace = true
+edition.workspace = true
+homepage.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
 
 [dependencies]
 serde = { version = "1.0.189", features = ["derive"] }

@@ -6,6 +6,12 @@ license = "Apache-2.0"
 name = "modularize_imports"
 repository = "https://github.com/swc-project/plugins.git"
 version = "0.68.7"
+authors.workspace = true
+edition.workspace = true
+homepage.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

@@ -6,6 +6,13 @@ license = "Apache-2.0"
 name = "swc_plugin_react_remove_properties"
 publish = false
 version = "0.19.4"
+authors.workspace = true
+edition.workspace = true
+homepage.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
 
 [lib]
 crate-type = ["cdylib", "rlib"]
