@@ -1,5 +1,5 @@
 [package]
-name = "xtask"
+name    = "xtask"
 version = "0.8.4"
 
 publish = false
@@ -7,6 +7,6 @@ publish = false
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.75"
+anyhow         = "1.0.75"
 cargo_metadata = "0.18.0"
-clap = { version = "4.4.6", features = ["derive"] }
+clap           = { version = "4.4.6", features = ["derive"] }
