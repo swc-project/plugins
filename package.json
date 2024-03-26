@@ -20,7 +20,7 @@
       "carto fmt --"
     ],
     "*": [
-      "prettier --write --ignore-unkown"
+      "prettier --write --ignore-unknown"
     ]
   }
 }
