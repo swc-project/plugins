@@ -137,6 +137,7 @@ fn emotion_label_option_fixture(output: PathBuf) {
 }
 
 #[fixture("tests/labels/emotion-js/**/*.ts")]
+#[fixture("tests/labels/emotion-js/**/*.tsx")]
 fn emotion_label_original(input: PathBuf) {
     emotion_label(input, "[local]".to_string())
 }
