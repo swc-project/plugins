@@ -5,7 +5,7 @@ description = "AST Transforms for styled-components"
 include = ["Cargo.toml", "src/**/*.rs"]
 
 name = "styled_components"
-repository = "https://github.com/swc-project/plugins.git"
+
 version = "0.96.6"
 authors.workspace = true
 edition.workspace = true

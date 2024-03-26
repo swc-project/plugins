@@ -4,7 +4,7 @@ description = "AST Transforms for import modularizer"
 
 
 name = "react_remove_properties"
-repository = "https://github.com/swc-project/plugins.git"
+
 version = "0.24.5"
 authors.workspace = true
 edition.workspace = true

@@ -4,7 +4,7 @@ description = "AST Transforms for import modularizer"
 
 
 name = "modularize_imports"
-repository = "https://github.com/swc-project/plugins.git"
+
 version = "0.68.7"
 authors.workspace = true
 edition.workspace = true

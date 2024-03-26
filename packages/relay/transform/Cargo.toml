@@ -4,7 +4,7 @@ description = "AST Transforms for realy"
 
 
 name = "swc_relay"
-repository = "https://github.com/swc-project/plugins.git"
+
 version = "0.44.5"
 authors.workspace = true
 edition.workspace = true
