@@ -19,6 +19,18 @@
     "*.rs": [
       "cargo fmt --"
     ],
+    "!(**/tests/**/*)*.js": [
+      "prettier --write"
+    ],
+    "!(**/tests/**/*)*.ts": [
+      "prettier --write"
+    ],
+    "!(**/tests/**/*)*.jsx": [
+      "prettier --write"
+    ],
+    "!(**/tests/**/*)*.tsx": [
+      "prettier --write"
+    ],
     "*": [
       "prettier --write --ignore-unknown"
     ]
