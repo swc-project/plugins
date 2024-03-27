@@ -1,234 +1,295 @@
 /*
  * Basic fixtures
  */ import _styled from "styled-components";
-const StaticString = (p) => <_StyledP>A</_StyledP>;
-const StaticTemplate = (p) => <_StyledP2>A</_StyledP2>;
-const ObjectProp = (p) => <_StyledP3>A</_StyledP3>;
-const NoChildren = (p) => <_StyledP4 />;
-const CssHelperProp = (p) => <_StyledP5>A</_StyledP5>;
+const StaticString = (p)=><_StyledP>A</_StyledP>;
+const StaticTemplate = (p)=><_StyledP2>
+
+    A
+
+  </_StyledP2>;
+const ObjectProp = (p)=><_StyledP3>A</_StyledP3>;
+const NoChildren = (p)=><_StyledP4/>;
+const CssHelperProp = (p)=><_StyledP5>
+
+    A
+
+  </_StyledP5>;
 /*
  * Dynamic prop
- */ const CustomComp = (p) => <_StyledParagraph>H</_StyledParagraph>;
-const DynamicProp = (p) => <_StyledP6 $_css={props.cssText}>H</_StyledP6>;
-const LocalInterpolation = (p) => <_StyledP7 $_css2={props.bg}>H</_StyledP7>;
-const FuncInterpolation = (p) => <_StyledP8>H</_StyledP8>;
+ */ const CustomComp = (p)=><_StyledParagraph>H</_StyledParagraph>;
+const DynamicProp = (p)=><_StyledP6 $_css={props.cssText}>H</_StyledP6>;
+const LocalInterpolation = (p)=><_StyledP7 $_css2={props.bg}>
+
+    H
+
+  </_StyledP7>;
+const FuncInterpolation = (p)=><_StyledP8>
+
+    H
+
+  </_StyledP8>;
 const radius = 10;
-const GlobalInterpolation = (p) => <_StyledP9>H</_StyledP9>;
-const LocalCssHelperProp = (p) => <_StyledP10 $_css3={p.color}>A</_StyledP10>;
-const DynamicCssHelperProp = (p) => <_StyledP11>A</_StyledP11>;
-const CustomCompWithDot = (p) => <_StyledButtonGhost>H</_StyledButtonGhost>;
-const NestedCompWithDot = (p) => (
-  <_StyledButtonGhostNew>H</_StyledButtonGhostNew>
-);
-const CustomCompWithDotLowerCase = (p) => (
-  <_StyledButtonGhost2>H</_StyledButtonGhost2>
-);
-const CustomElement = (p) => <_StyledButtonGhost3>H</_StyledButtonGhost3>;
-/* styled component defined after function it's used in */ const EarlyUsageComponent =
-  (p) => <_StyledThing />;
+const GlobalInterpolation = (p)=><_StyledP9>
+
+    H
+
+  </_StyledP9>;
+const LocalCssHelperProp = (p)=><_StyledP10 $_css3={p.color}>
+
+    A
+
+  </_StyledP10>;
+const DynamicCssHelperProp = (p)=><_StyledP11>
+
+    A
+
+  </_StyledP11>;
+const CustomCompWithDot = (p)=><_StyledButtonGhost>H</_StyledButtonGhost>;
+const NestedCompWithDot = (p)=><_StyledButtonGhostNew>H</_StyledButtonGhostNew>;
+const CustomCompWithDotLowerCase = (p)=><_StyledButtonGhost2>H</_StyledButtonGhost2>;
+const CustomElement = (p)=><_StyledButtonGhost3>H</_StyledButtonGhost3>;
+/* styled component defined after function it's used in */ const EarlyUsageComponent = (p)=><_StyledThing/>;
 const Thing3 = styled.div`
   color: blue;
 `;
-var _StyledThing5 = _styled(Thing3)((p) => ({
-  [p.$_css8]: {
-    color: "red",
-  },
-}));
-var _StyledThing4 = _styled(Thing3)((p) => ({
-  [p.$_css7]: {
-    color: "red",
-  },
-}));
-var _StyledThing3 = _styled(Thing3)((p) => ({
-  [p.$_css6]: {
-    color: "red",
-  },
-}));
-var _StyledThing2 = _styled(Thing3)((p) => ({
-  color: p.$_css5,
-}));
+var _StyledThing5 = _styled(Thing3)((p)=>({
+        [p.$_css8]: {
+            color: "red"
+        }
+    }));
+var _StyledThing4 = _styled(Thing3)((p)=>({
+        [p.$_css7]: {
+            color: "red"
+        }
+    }));
+var _StyledThing3 = _styled(Thing3)((p)=>({
+        [p.$_css6]: {
+            color: "red"
+        }
+    }));
+var _StyledThing2 = _styled(Thing3)((p)=>({
+        color: p.$_css5
+    }));
 var _StyledThing = _styled(Thing3)`color: red;`;
-const ObjectInterpolation = (p) => {
-  const theme = useTheme();
-  return <_StyledP12 $_css4={theme.colors.red}>H</_StyledP12>;
+const ObjectInterpolation = (p)=>{
+    const theme = useTheme();
+    return <_StyledP12 $_css4={theme.colors.red}>
+
+      H
+
+    </_StyledP12>;
 };
-const ObjectInterpolationCustomComponent = (p) => {
-  const theme = useTheme();
-  return <_StyledThing2 $_css5={theme.colors.red}>H</_StyledThing2>;
+const ObjectInterpolationCustomComponent = (p)=>{
+    const theme = useTheme();
+    return <_StyledThing2 $_css5={theme.colors.red}>
+
+      H
+
+    </_StyledThing2>;
 };
-const ObjectInterpolationInKey = (p) => {
-  const theme = useTheme();
-  return <_StyledThing3 $_css6={theme.breakpoints.md}>H</_StyledThing3>;
+const ObjectInterpolationInKey = (p)=>{
+    const theme = useTheme();
+    return <_StyledThing3 $_css6={theme.breakpoints.md}>
+
+      H
+
+    </_StyledThing3>;
 };
-const ObjectFnInterpolationInKey = (p) => {
-  const theme = useTheme();
-  return <_StyledThing4 $_css7={theme.breakpoints.md()}>H</_StyledThing4>;
+const ObjectFnInterpolationInKey = (p)=>{
+    const theme = useTheme();
+    return <_StyledThing4 $_css7={theme.breakpoints.md()}>
+
+      H
+
+    </_StyledThing4>;
 };
-const ObjectFnSimpleInterpolationInKey = (p) => {
-  const foo = "@media screen and (max-width: 600px)";
-  return <_StyledThing5 $_css8={foo}>H</_StyledThing5>;
+const ObjectFnSimpleInterpolationInKey = (p)=>{
+    const foo = "@media screen and (max-width: 600px)";
+    return <_StyledThing5 $_css8={foo}>
+
+      H
+
+    </_StyledThing5>;
 };
-const ObjectPropMixedInputs = (p) => {
-  const color = "red";
-  return (
-    <_StyledP13
-      $_css9={p.background}
-      $_css10={color}
-      $_css11={globalVar}
-      $_css12={getAfterValue()}
-    >
+const ObjectPropMixedInputs = (p)=>{
+    const color = "red";
+    return <_StyledP13 $_css9={p.background} $_css10={color} $_css11={globalVar} $_css12={getAfterValue()}>
+
       A
-    </_StyledP13>
-  );
+
+    </_StyledP13>;
 };
-const ObjectPropWithSpread = () => {
-  const css1 = {
-    color: "red",
-  };
-  const playing = true;
-  return (
-    <_StyledDiv
-      $_css13={css1}
-      $_css14={
-        playing
-          ? {
-              opacity: 0,
-              bottom: "-100px",
-            }
-          : {}
-      }
-    />
-  );
+const ObjectPropWithSpread = ()=>{
+    const css1 = {
+        color: "red"
+    };
+    const playing = true;
+    return <_StyledDiv $_css13={css1} $_css14={playing ? {
+        opacity: 0,
+        bottom: "-100px"
+    } : {}}/>;
 };
-const id = (x) => x;
-const LocalCallInterpolation = (p) => {
-  const color = "red";
-  return <_StyledP14 $_css15={id(color)}>H</_StyledP14>;
+const id = (x)=>x;
+const LocalCallInterpolation = (p)=>{
+    const color = "red";
+    return <_StyledP14 $_css15={id(color)}>
+
+      H
+
+    </_StyledP14>;
 };
-const LocalCallInterpolation2 = () => {
-  return <_StyledP15>H</_StyledP15>;
+const LocalCallInterpolation2 = ()=>{
+    return <_StyledP15>
+
+      H
+
+    </_StyledP15>;
 };
-const LocalCallCssHelperProp = (p) => {
-  const color = "red";
-  return <_StyledP16 $_css16={id(color)}>H</_StyledP16>;
+const LocalCallCssHelperProp = (p)=>{
+    const color = "red";
+    return <_StyledP16 $_css16={id(color)}>
+
+      H
+
+    </_StyledP16>;
 };
 // https://github.com/vercel/next.js/issues/38914
 function Home() {
-  const { x } = {
-    x: 4,
-  };
-  return <_StyledDiv2 $_css17={myCss(x)} />;
+    const { x } = {
+        x: 4
+    };
+    return <_StyledDiv2 $_css17={myCss(x)}/>;
 }
-const myCss = (x) => css`
+const myCss = (x)=>css`
   margin: ${x}px;
 `;
 const colorMap = {
-  orange: "#E3750E",
-  blue: "#38699F",
-  green: "#3F9348",
+    orange: "#E3750E",
+    blue: "#38699F",
+    green: "#3F9348"
 };
 const colorMap2 = {
-  red: "orange",
-  cyan: "blue",
-  lime: "green",
+    red: "orange",
+    cyan: "blue",
+    lime: "green"
 };
-const LocalMemberInterpolation = (p) => {
-  const color = "red";
-  return <_StyledP17 $_css18={colorMap[color]}>H</_StyledP17>;
+const LocalMemberInterpolation = (p)=>{
+    const color = "red";
+    return <_StyledP17 $_css18={colorMap[color]}>
+
+      H
+
+    </_StyledP17>;
 };
-const LocalMemberInterpolation2 = (p) => {
-  const color = "red";
-  return <_StyledP18 $_css19={colorMap[colorMap2[color]]}>H</_StyledP18>;
+const LocalMemberInterpolation2 = (p)=>{
+    const color = "red";
+    return <_StyledP18 $_css19={colorMap[colorMap2[color]]}>
+
+      H
+
+    </_StyledP18>;
 };
-const LocalMemberInterpolation3 = (p) => {
-  const color = "red";
-  return <_StyledP19 $_css20={colorMap[id(color)]}>H</_StyledP19>;
+const LocalMemberInterpolation3 = (p)=>{
+    const color = "red";
+    return <_StyledP19 $_css20={colorMap[id(color)]}>
+
+      H
+
+    </_StyledP19>;
 };
-const LocalMemberInterpolation4 = () => {
-  return <_StyledP20>H</_StyledP20>;
+const LocalMemberInterpolation4 = ()=>{
+    return <_StyledP20>
+
+      H
+
+    </_StyledP20>;
 };
-const LocalMemberCssHelperProp = (p) => {
-  const color = "red";
-  return <_StyledP21 $_css21={colorMap[color]}>H</_StyledP21>;
+const LocalMemberCssHelperProp = (p)=>{
+    const color = "red";
+    return <_StyledP21 $_css21={colorMap[color]}>
+
+      H
+
+    </_StyledP21>;
 };
 var _StyledP = _styled("p")`flex: 1;`;
 var _StyledP2 = _styled("p")`
       flex: 1;
     `;
 var _StyledP3 = _styled("p")({
-  color: "blue",
+    color: "blue"
 });
 var _StyledP4 = _styled("p")`flex: 1;`;
 var _StyledP5 = _styled("p")`
       color: blue;
     `;
 var _StyledParagraph = _styled(Paragraph)`flex: 1`;
-var _StyledP6 = _styled("p")`${(p) => p.$_css}`;
+var _StyledP6 = _styled("p")`${(p)=>p.$_css}`;
 var _StyledP7 = _styled("p")`
-      background: ${(p) => p.$_css2};
+      background: ${(p)=>p.$_css2};
     `;
 var _StyledP8 = _styled("p")`
-      color: ${(props1) => props1.theme.a};
+      color: ${(props1)=>props1.theme.a};
     `;
 var _StyledP9 = _styled("p")`
       border-radius: ${radius}px;
     `;
 var _StyledP10 = _styled("p")`
-      color: ${(p) => p.$_css3};
+      color: ${(p)=>p.$_css3};
     `;
 var _StyledP11 = _styled("p")`
-      color: ${(props1) => props1.theme.color};
+      color: ${(props1)=>props1.theme.color};
     `;
 var _StyledButtonGhost = _styled(Button.Ghost)`flex: 1`;
 var _StyledButtonGhostNew = _styled(Button.Ghost.New)`flex: 1`;
 var _StyledButtonGhost2 = _styled(button.ghost)`flex: 1`;
 var _StyledButtonGhost3 = _styled("button-ghost")`flex: 1`;
-var _StyledP12 = _styled("p")((p) => ({
-  color: p.$_css4,
-}));
-var _StyledP13 = _styled("p")((p) => ({
-  background: p.$_css9,
-  color: p.$_css10,
-  textAlign: "left",
-  "::before": {
-    content: p.$_css11,
-  },
-  "::after": {
-    content: p.$_css12,
-  },
-}));
-var _StyledDiv = _styled("div")((p) => ({
-  ...p.$_css13,
-  ...p.$_css14,
-}));
+var _StyledP12 = _styled("p")((p)=>({
+        color: p.$_css4
+    }));
+var _StyledP13 = _styled("p")((p)=>({
+        background: p.$_css9,
+        color: p.$_css10,
+        textAlign: "left",
+        "::before": {
+            content: p.$_css11
+        },
+        "::after": {
+            content: p.$_css12
+        }
+    }));
+var _StyledDiv = _styled("div")((p)=>({
+        ...p.$_css13,
+        ...p.$_css14
+    }));
 var _StyledP14 = _styled("p")`
-        color: ${(p) => p.$_css15};
+        color: ${(p)=>p.$_css15};
       `;
 var _StyledP15 = _styled("p")`
         /* direct call */
         color: ${id("red")};
       `;
 var _StyledP16 = _styled("p")`
-        color: ${(p) => p.$_css16};
+        color: ${(p)=>p.$_css16};
       `;
 var _StyledDiv2 = _styled("div")`
         /* direct */
         ${myCss(2)}
         /* indirect */
-      ${(p) => p.$_css17}
+      ${(p)=>p.$_css17}
       `;
 var _StyledP17 = _styled("p")`
-        color: ${(p) => p.$_css18};
+        color: ${(p)=>p.$_css18};
       `;
 var _StyledP18 = _styled("p")`
-        color: ${(p) => p.$_css19};
+        color: ${(p)=>p.$_css19};
       `;
 var _StyledP19 = _styled("p")`
-        color: ${(p) => p.$_css20};
+        color: ${(p)=>p.$_css20};
       `;
 var _StyledP20 = _styled("p")`
         color: ${colorMap["red"]};
       `;
 var _StyledP21 = _styled("p")`
-        color: ${(p) => p.$_css21};
+        color: ${(p)=>p.$_css21};
       `;

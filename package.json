@@ -30,9 +30,6 @@
     ],
     "!(**/tests/**/*)*.tsx": [
       "prettier --write"
-    ],
-    "*": [
-      "prettier --write --ignore-unknown"
     ]
   }
 }

@@ -1,30 +1,34 @@
-export function shouldRemove() {}
+;
+export function shouldRemove() {
+    ;
+    ;
+}
 export function locallyDefinedConsole() {
-  let console = {
-    log: () => {},
-  };
-  console.log();
+    let console = {
+        log: ()=>{}
+    };
+    console.log();
 }
 export function capturedConsole() {
-  let console = {
-    log: () => {},
-  };
-  function innerFunc() {
-    console.log();
-  }
+    let console = {
+        log: ()=>{}
+    };
+    function innerFunc() {
+        console.log();
+    }
 }
 export function overrideInParam(console) {
-  console.log("");
+    console.log("");
 }
 export function overrideInParamObjectPatPropAssign({ console }) {
-  console.log("");
+    console.log("");
 }
 export function overrideInParamObjectPatPropKeyValue({ c: console }) {
-  console.log("");
+    console.log("");
 }
 export function overrideInParamObjectPatPropKeyValueNested({ c: { console } }) {
-  console.log("");
+    console.log("");
 }
 export function overrideInParamArray([console]) {
-  console.log("");
+    console.log("");
 }

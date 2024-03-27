@@ -1,86 +1,72 @@
 import styled from "styled-components";
 const Test = styled.div.withConfig({
-  displayName: "Test",
-  componentId: "sc-61e56601-0",
-})`
-  width: 100%;
-`;
-const Test2 = true
-  ? styled.div.withConfig({
-      displayName: "Test2",
-      componentId: "sc-61e56601-1",
-    })``
-  : styled.div.withConfig({
-      displayName: "Test2",
-      componentId: "sc-61e56601-2",
-    })``;
+    displayName: "Test",
+    componentId: "sc-61e56601-0"
+})`width:100%;`;
+const Test2 = true ? styled.div.withConfig({
+    displayName: "Test2",
+    componentId: "sc-61e56601-1"
+})`` : styled.div.withConfig({
+    displayName: "Test2",
+    componentId: "sc-61e56601-2"
+})``;
 const styles = {
-  One: styled.div.withConfig({
-    displayName: "One",
-    componentId: "sc-61e56601-3",
-  })``,
+    One: styled.div.withConfig({
+        displayName: "One",
+        componentId: "sc-61e56601-3"
+    })``
 };
 let Component;
 Component = styled.div.withConfig({
-  displayName: "Component",
-  componentId: "sc-61e56601-4",
+    displayName: "Component",
+    componentId: "sc-61e56601-4"
 })``;
 const WrappedComponent = styled(Inner).withConfig({
-  displayName: "WrappedComponent",
-  componentId: "sc-61e56601-5",
+    displayName: "WrappedComponent",
+    componentId: "sc-61e56601-5"
 })``;
 const WrappedComponent2 = styled.div.withConfig({
-  displayName: "WrappedComponent2",
-  componentId: "sc-61e56601-6",
+    displayName: "WrappedComponent2",
+    componentId: "sc-61e56601-6"
 })({});
 const WrappedComponent3 = styled(Inner).withConfig({
-  displayName: "WrappedComponent3",
-  componentId: "sc-61e56601-7",
+    displayName: "WrappedComponent3",
+    componentId: "sc-61e56601-7"
 })({});
-const WrappedComponent4 = styled(Inner)
-  .attrs(() => ({
-    something: "else",
-  }))
-  .withConfig({
+const WrappedComponent4 = styled(Inner).attrs(()=>({
+        something: "else"
+    })).withConfig({
     displayName: "WrappedComponent4",
-    componentId: "sc-61e56601-8",
-  })({});
-const WrappedComponent5 = styled.div
-  .attrs(() => ({
-    something: "else",
-  }))
-  .withConfig({
-    displayName: "WrappedComponent5",
-    componentId: "sc-61e56601-9",
-  })({});
-const WrappedComponent6 = styled.div
-  .attrs(() => ({
-    something: "else",
-  }))
-  .withConfig({
-    displayName: "WrappedComponent6",
-    componentId: "sc-61e56601-10",
-  })``;
-const WrappedComponent7 = styled.div.withConfig({
-  shouldForwardProp: () => {},
-  displayName: "WrappedComponent7",
-  componentId: "sc-61e56601-11",
+    componentId: "sc-61e56601-8"
 })({});
-const WrappedComponent8 = styled.div
-  .withConfig({
-    shouldForwardProp: () => {},
+const WrappedComponent5 = styled.div.attrs(()=>({
+        something: "else"
+    })).withConfig({
+    displayName: "WrappedComponent5",
+    componentId: "sc-61e56601-9"
+})({});
+const WrappedComponent6 = styled.div.attrs(()=>({
+        something: "else"
+    })).withConfig({
+    displayName: "WrappedComponent6",
+    componentId: "sc-61e56601-10"
+})``;
+const WrappedComponent7 = styled.div.withConfig({
+    shouldForwardProp: ()=>{},
+    displayName: "WrappedComponent7",
+    componentId: "sc-61e56601-11"
+})({});
+const WrappedComponent8 = styled.div.withConfig({
+    shouldForwardProp: ()=>{},
     displayName: "WrappedComponent8",
-    componentId: "sc-61e56601-12",
-  })
-  .attrs(() => ({
-    something: "else",
-  }))({});
-const WrappedComponent9 = styled.div
-  .attrs(() => ({
-    something: "else",
-  }))
-  .withConfig({
-    shouldForwardProp: () => {},
+    componentId: "sc-61e56601-12"
+}).attrs(()=>({
+        something: "else"
+    }))({});
+const WrappedComponent9 = styled.div.attrs(()=>({
+        something: "else"
+    })).withConfig({
+    shouldForwardProp: ()=>{},
     displayName: "WrappedComponent9",
-    componentId: "sc-61e56601-13",
-  })({});
+    componentId: "sc-61e56601-13"
+})({});
