@@ -11,7 +11,11 @@ const Component = ()=><>
 
       </Comp>
 
-      <p className={"jsx-b3e1b6a7c9b96113"}><_JSXStyle id={"b3e1b6a7c9b96113"}>{""}</_JSXStyle></p>
+      <p className={"jsx-b3e1b6a7c9b96113"}>
+
+        <_JSXStyle id={"b3e1b6a7c9b96113"}>{""}</_JSXStyle>
+
+      </p>
 
     </header>
 

@@ -13,6 +13,6 @@ export default class {
           }
         `}</style>
       </div>
-    )
+    );
   }
 }

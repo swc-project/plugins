@@ -7,4 +7,4 @@ const Test = () => (
       }
     `}</style>
   </div>
-)
+);

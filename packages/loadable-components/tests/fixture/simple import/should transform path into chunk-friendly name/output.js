@@ -13,7 +13,7 @@ loadable({
         }
         return false;
     },
-    importAsync: ()=>import(/*webpackChunkName: "foo-bar"*/ '../foo/bar'),
+    importAsync: ()=>import(/*webpackChunkName: "foo-bar"*/ "../foo/bar"),
     requireAsync (props) {
         const key = this.resolve(props);
         this.resolved[key] = false;
@@ -31,8 +31,8 @@ loadable({
     },
     resolve () {
         if (require.resolveWeak) {
-            return require.resolveWeak('../foo/bar');
+            return require.resolveWeak("../foo/bar");
         }
-        return eval('require.resolve')('../foo/bar');
+        return eval('require.resolve')("../foo/bar");
     }
 });

@@ -1,1 +1,1 @@
-loadable(() => import(`./foo*`))
+loadable(() => import(`./foo*`));

@@ -1,8 +1,8 @@
 import _JSXStyle from "styled-jsx/style";
-export default (()=><div className={"jsx-1a19bb4817c105dd"}>
+export default (()=><div className={"jsx-292192d0348369b"}>
 
-    <p className={"jsx-1a19bb4817c105dd"}>test</p>
+    <p className={"jsx-292192d0348369b"}>test</p>
 
-    <_JSXStyle id={"1a19bb4817c105dd"}>{"p.jsx-1a19bb4817c105dd{color:red}.jsx-1a19bb4817c105dd{color:#00f}[href=woot].jsx-1a19bb4817c105dd{color:red}"}</_JSXStyle>
+    <_JSXStyle id={"292192d0348369b"}>{"p.jsx-292192d0348369b{color:red}.jsx-292192d0348369b{color:#00f}[href=woot].jsx-292192d0348369b{color:red}"}</_JSXStyle>
 
   </div>);

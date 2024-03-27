@@ -1,6 +1,6 @@
 import _JSXStyle from "styled-jsx/style";
-import styles from './styles';
-const styles2 = require('./styles2');
+import styles from "./styles";
+const styles2 = require("./styles2");
 // external only
 export const Test1 = ()=><div className={`jsx-${styles2.__hash} jsx-${styles.__hash}`}>
 
@@ -195,7 +195,7 @@ export const Test9 = ({ color })=>{
 
     </div>;
 };
-const foo = 'red';
+const foo = "red";
 // dynamic with constant variable
 export const Test10 = ()=><div className={"jsx-cad01dfd39875649"}>
 

@@ -1,10 +1,6 @@
 import _JSXStyle from "styled-jsx/style";
 export default (()=><div>
 
-    <style jsx>
-
-      {[]}
-
-    </style>
+    <style jsx>{[]}</style>
 
   </div>);

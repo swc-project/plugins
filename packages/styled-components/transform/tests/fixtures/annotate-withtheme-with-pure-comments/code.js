@@ -1,3 +1,3 @@
-import { withTheme } from 'styled-components'
+import { withTheme } from "styled-components";
 
-const ThemedComponent = withTheme(() => null)
+const ThemedComponent = withTheme(() => null);

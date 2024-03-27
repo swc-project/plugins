@@ -18,17 +18,17 @@ export function capturedConsole() {
     }
 }
 export function overrideInParam(console) {
-    console.log('');
+    console.log("");
 }
-export function overrideInParamObjectPatPropAssign({ console  }) {
-    console.log('');
+export function overrideInParamObjectPatPropAssign({ console }) {
+    console.log("");
 }
-export function overrideInParamObjectPatPropKeyValue({ c: console  }) {
-    console.log('');
+export function overrideInParamObjectPatPropKeyValue({ c: console }) {
+    console.log("");
 }
-export function overrideInParamObjectPatPropKeyValueNested({ c: { console  }  }) {
-    console.log('');
+export function overrideInParamObjectPatPropKeyValueNested({ c: { console } }) {
+    console.log("");
 }
 export function overrideInParamArray([console]) {
-    console.log('');
+    console.log("");
 }

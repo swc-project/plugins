@@ -8,10 +8,10 @@ export default function Home({ fontFamily }) {
           }
           code:before,
           code:after {
-            content: '\`';
+            content: "\`";
           }
         `}
       </style>
     </div>
-  )
+  );
 }

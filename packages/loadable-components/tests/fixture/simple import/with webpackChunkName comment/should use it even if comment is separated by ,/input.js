@@ -1,1 +1,4 @@
-loadable(() => import(/* webpackPrefetch: true, webpackChunkName: "ChunkA" */ './ModA'))
+loadable(
+  () =>
+    import(/* webpackPrefetch: true, webpackChunkName: "ChunkA" */ "./ModA"),
+);

@@ -1,4 +1,4 @@
 # https://taplo.tamasfe.dev/configuration/formatter-options.html
 [formatting]
 align_entries = true
-reorder_keys = true
+reorder_keys  = true

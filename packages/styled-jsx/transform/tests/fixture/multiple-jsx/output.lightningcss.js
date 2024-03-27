@@ -1,10 +1,14 @@
 import _JSXStyle from "styled-jsx/style";
 const attrs = {
-    id: 'test'
+    id: "test"
 };
 const Test1 = ()=><div className={"jsx-a9535d7d5f32c3c4"}>
 
-    <span {...attrs} data-test="test" className={"jsx-a9535d7d5f32c3c4" + " " + (attrs && attrs.className != null && attrs.className || "")}>test</span>
+    <span {...attrs} data-test="test" className={"jsx-a9535d7d5f32c3c4" + " " + (attrs && attrs.className != null && attrs.className || "")}>
+
+      test
+
+    </span>
 
     <Component/>
 

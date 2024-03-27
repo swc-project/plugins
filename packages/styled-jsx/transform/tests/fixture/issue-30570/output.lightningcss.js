@@ -1,12 +1,12 @@
 import _JSXStyle from "styled-jsx/style";
 export default function IndexPage() {
-    return <div className={"jsx-bbdada4ef17d18ef"}>
+    return <div className={"jsx-6226396a225d1c8b"}>
 
-        <h1 className={"jsx-bbdada4ef17d18ef"}>Hello World.</h1>
+      <h1 className={"jsx-6226396a225d1c8b"}>Hello World.</h1>
 
 
 
-        <_JSXStyle id={"bbdada4ef17d18ef"}>{"@supports (display:flex){h1{color:#ff69b4}}"}</_JSXStyle>
+      <_JSXStyle id={"6226396a225d1c8b"}>{"@supports (display:flex){h1{color:#ff69b4}}"}</_JSXStyle>
 
-      </div>;
+    </div>;
 }

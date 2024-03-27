@@ -5,7 +5,9 @@ const Component = () => (
         <style jsx>{styles}</style>
         <style jsx global>{``}</style>
       </Comp>
-      <p><style jsx>{``}</style></p>
+      <p>
+        <style jsx>{``}</style>
+      </p>
     </header>
     <div>
       <h1>
@@ -28,4 +30,4 @@ const Component = () => (
       <style jsx>{``}</style>
     </div>
   </>
-)
+);

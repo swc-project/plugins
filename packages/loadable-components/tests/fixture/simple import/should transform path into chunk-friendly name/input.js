@@ -1,1 +1,1 @@
-loadable(() => import('../foo/bar'))
+loadable(() => import("../foo/bar"));

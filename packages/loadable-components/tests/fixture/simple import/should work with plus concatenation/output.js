@@ -13,7 +13,7 @@ loadable({
         }
         return false;
     },
-    importAsync: ()=>import(/*webpackChunkName: ""*/ './Mod' + 'A'),
+    importAsync: ()=>import(/*webpackChunkName: ""*/ "./Mod" + "A"),
     requireAsync (props) {
         const key = this.resolve(props);
         this.resolved[key] = false;
@@ -31,8 +31,8 @@ loadable({
     },
     resolve () {
         if (require.resolveWeak) {
-            return require.resolveWeak('./Mod' + 'A');
+            return require.resolveWeak("./Mod" + "A");
         }
-        return eval('require.resolve')('./Mod' + 'A');
+        return eval('require.resolve')("./Mod" + "A");
     }
 });

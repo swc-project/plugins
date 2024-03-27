@@ -1,7 +1,7 @@
-const domElements = ['div']
+const domElements = ["div"];
 
-const styled = () => {}
+const styled = () => {};
 
-domElements.forEach(domElement => {
-  styled[domElement] = styled(domElement)
-})
+domElements.forEach((domElement) => {
+  styled[domElement] = styled(domElement);
+});

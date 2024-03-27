@@ -1,3 +1,3 @@
-import { nonDefaultStyled } from 'package-one'
+import { nonDefaultStyled } from "package-one";
 
-let SomeComp = nonDefaultStyled.div({ color: 'hotpink' })
+let SomeComp = nonDefaultStyled.div({ color: "hotpink" });

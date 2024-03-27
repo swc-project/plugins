@@ -8,4 +8,4 @@ const Test = () => (
       }
     `}</style>
   </div>
-)
+);

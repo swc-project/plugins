@@ -1,3 +1,3 @@
-import { markAsPure } from 'not-swc-magic'
+import { markAsPure } from "not-swc-magic";
 
-markAsPure(console.log('test!'))
+markAsPure(console.log("test!"));
