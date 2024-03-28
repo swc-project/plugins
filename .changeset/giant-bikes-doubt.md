@@ -2,4 +2,4 @@
 "@swc/plugin-relay": minor
 ---
 
-Add option to add current directory to paths
+Always add current directory to relative output paths
