@@ -1,21 +1,28 @@
 [package]
-authors = ["강동윤 <kdy1997.dev@gmail.com>"]
+
 description = "AST transforms visitor for swc-magic"
-edition = "2021"
-license = "Apache-2.0"
-name = "swc_magic"
-version = "0.19.5"
+
+
+authors      = { workspace = true }
+edition      = { workspace = true }
+homepage     = { workspace = true }
+license      = { workspace = true }
+name         = "swc_magic"
+repository   = { workspace = true }
+rust-version = { workspace = true }
+version      = "0.19.7"
+
 
 [dependencies]
-serde = { version = "1.0.189", features = ["derive"] }
-swc_atoms = "0.6.5"
-swc_common = "0.33.19"
-swc_ecma_ast = "0.112.5"
-swc_ecma_utils = "0.127.12"
-swc_ecma_visit = "0.98.6"
+serde          = { version = "1.0.189", features = ["derive"] }
+swc_atoms      = "0.6.5"
+swc_common     = "0.33.21"
+swc_ecma_ast   = "0.112.6"
+swc_ecma_utils = "0.127.15"
+swc_ecma_visit = "0.98.7"
 
 [dev-dependencies]
-swc_ecma_parser = "0.143.9"
-swc_ecma_transforms_base = "0.137.15"
-swc_ecma_transforms_testing = "0.140.15"
-testing = "0.35.20"
+swc_ecma_parser             = "0.143.11"
+swc_ecma_transforms_base    = "0.137.16"
+swc_ecma_transforms_testing = "0.140.17"
+testing                     = "0.35.21"

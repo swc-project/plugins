@@ -1,9 +1,9 @@
-import styled from '@emotion/styled'
+import styled from "@emotion/styled";
 
 const SelectedComponent = styled.p`
   color: red;
 
   &:after {
-    content: ' | ';
+    content: " | ";
   }
-`
+`;

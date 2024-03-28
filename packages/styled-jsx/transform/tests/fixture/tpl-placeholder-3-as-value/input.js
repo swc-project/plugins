@@ -1,17 +1,16 @@
 export default class {
-    render() {
-      return (
-        <div>
-          <p>test</p>
-          <style jsx>{`
-            @media only screen {
-                a {
-                    color: ${a};
-                }
+  render() {
+    return (
+      <div>
+        <p>test</p>
+        <style jsx>{`
+          @media only screen {
+            a {
+              color: ${a};
             }
-          `}</style>
-        </div>
-      )
-    }
+          }
+        `}</style>
+      </div>
+    );
   }
-  
+}

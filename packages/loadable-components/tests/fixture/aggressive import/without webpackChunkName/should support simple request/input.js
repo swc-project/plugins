@@ -1,1 +1,1 @@
-loadable(props => import(`./${props.foo}`))
+loadable((props) => import(`./${props.foo}`));

@@ -1,3 +1,3 @@
-import { markAsPure } from '@swc/magic'
+import { markAsPure } from "@swc/magic";
 
-markAsPure(console.log('test!'))
+markAsPure(console.log("test!"));

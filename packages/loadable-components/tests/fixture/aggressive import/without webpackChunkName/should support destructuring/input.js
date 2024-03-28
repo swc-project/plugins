@@ -1,1 +1,1 @@
-loadable(({ foo }) => import(`./dir/${foo}/test`))
+loadable(({ foo }) => import(`./dir/${foo}/test`));

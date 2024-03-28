@@ -5,10 +5,10 @@ export default class {
         <p>test</p>
         <style jsx>{`
           p {
-            content: '\`'
+            content: "\`";
           }
         `}</style>
       </div>
-    )
+    );
   }
 }

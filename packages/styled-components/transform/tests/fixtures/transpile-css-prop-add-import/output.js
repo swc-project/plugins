@@ -1,8 +1,8 @@
 // @flow
 import _styled from "styled-components";
-import React from 'react';
-import Card from '../../shared/components/Card';
-import config from '../../../config';
+import React from "react";
+import Card from "../../shared/components/Card";
+import config from "../../../config";
 export default (()=><_StyledDiv>
 
     <Card>
@@ -11,7 +11,7 @@ export default (()=><_StyledDiv>
 
       <p>
 
-        <a href={config.API_URI + '/auth/google'}>
+        <a href={config.API_URI + "/auth/google"}>
 
           Sign up or login with Google
 

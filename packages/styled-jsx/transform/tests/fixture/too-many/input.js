@@ -1,14 +1,6 @@
-
-
-export const Red = ({
-  Component = 'button',
-}) => {
-  
+export const Red = ({ Component = "button" }) => {
   return (
-    <Component
-     
-    >
-
+    <Component>
       {/* Dynamic Styles */}
       <style jsx>{`
         .button {
@@ -32,4 +24,3 @@ export const Red = ({
     </Component>
   );
 };
-

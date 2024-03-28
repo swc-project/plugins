@@ -1,3 +1,3 @@
-import { something } from 'package-three'
+import { something } from "package-three";
 
-something({ color: 'green' })
+something({ color: "green" });

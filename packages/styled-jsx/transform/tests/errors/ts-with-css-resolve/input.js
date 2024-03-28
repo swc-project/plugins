@@ -1,4 +1,4 @@
-import css from 'styled-jsx/css'
+import css from "styled-jsx/css";
 
 export default css.resolve`
   .container {
@@ -7,4 +7,4 @@ export default css.resolve`
     font-weight: 700;
     height: 100px;
   }
-`
+`;

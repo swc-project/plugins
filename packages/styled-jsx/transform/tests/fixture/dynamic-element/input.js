@@ -1,5 +1,5 @@
 export default ({ level = 1 }) => {
-  const Element = `h${level}`
+  const Element = `h${level}`;
 
   return (
     <Element className="root">
@@ -10,11 +10,11 @@ export default ({ level = 1 }) => {
         }
       `}</style>
     </Element>
-  )
-}
+  );
+};
 
 export const TestLowerCase = ({ level = 1 }) => {
-  const element = `h${level}`
+  const element = `h${level}`;
 
   return (
     <element className="root">
@@ -25,10 +25,10 @@ export const TestLowerCase = ({ level = 1 }) => {
         }
       `}</style>
     </element>
-  )
-}
+  );
+};
 
-const Element2 = 'div'
+const Element2 = "div";
 export const Test2 = () => {
   return (
     <Element2 className="root">
@@ -39,18 +39,18 @@ export const Test2 = () => {
         }
       `}</style>
     </Element2>
-  )
-}
+  );
+};
 
-export const Test3 = ({Component = 'div'}) => {
+export const Test3 = ({ Component = "div" }) => {
   return (
     <Component>
       <p>dynamic element</p>
-        <style jsx>{`
-          .root {
-            background: red;
-          }
-        `}</style>
+      <style jsx>{`
+        .root {
+          background: red;
+        }
+      `}</style>
     </Component>
   );
-}
+};

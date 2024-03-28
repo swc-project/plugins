@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import React from "react";
 
 export default () => (
   <div
@@ -7,4 +7,4 @@ export default () => (
       width: 35em;
     `}
   />
-)
+);

@@ -173,7 +173,7 @@ impl<'a> Fold for Relay<'a> {
         self.imports
             .iter()
             .map(|import| import.as_module_item())
-            .chain(items.into_iter())
+            .chain(items)
             .collect()
     }
 }

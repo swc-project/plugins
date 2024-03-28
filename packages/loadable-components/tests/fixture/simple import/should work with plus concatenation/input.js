@@ -1,1 +1,1 @@
-loadable(() => import('./Mod' + 'A'))
+loadable(() => import("./Mod" + "A"));

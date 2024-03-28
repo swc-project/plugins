@@ -1,5 +1,23 @@
 # @swc/plugin-loadable-components
 
+## 0.3.121
+
+### Patch Changes
+
+- f4df366: Update swc_core
+
+## 0.3.120
+
+### Patch Changes
+
+- c88b22b: Align package metadata
+
+## 0.3.119
+
+### Patch Changes
+
+- a3cc4fb: Organize pacakge metadata
+
 ## 0.3.118
 
 ### Patch Changes

@@ -1,8 +1,8 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 const Test = styled.div.withConfig({
     displayName: "Test"
 })`width:100%;`;
-const Test2 = styled('div').withConfig({
+const Test2 = styled("div").withConfig({
     displayName: "Test2"
 })``;
 const Test3 = true ? styled.div.withConfig({

@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 export default () => (
   <>
@@ -28,14 +28,14 @@ export default () => (
       }
     `}</style>
   </>
-)
+);
 
 function Component1() {
   return (
     <>
       <div>test</div>
     </>
-  )
+  );
 }
 
 function Component2() {
@@ -47,5 +47,5 @@ function Component2() {
         }
       `}</style>
     </div>
-  )
+  );
 }

@@ -2,6 +2,24 @@
 
 # @swc/plugin-styled-jsx
 
+## 1.5.125
+
+### Patch Changes
+
+- f4df366: Update swc_core
+
+## 1.5.124
+
+### Patch Changes
+
+- c88b22b: Align package metadata
+
+## 1.5.123
+
+### Patch Changes
+
+- a3cc4fb: Organize pacakge metadata
+
 ## 1.5.122
 
 ### Patch Changes

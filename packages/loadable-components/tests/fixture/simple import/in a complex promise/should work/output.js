@@ -13,7 +13,7 @@ loadable({
         }
         return false;
     },
-    importAsync: ()=>timeout(import(/*webpackChunkName: "ModA"*/ './ModA'), 2000),
+    importAsync: ()=>timeout(import(/*webpackChunkName: "ModA"*/ "./ModA"), 2000),
     requireAsync (props) {
         const key = this.resolve(props);
         this.resolved[key] = false;
@@ -31,8 +31,8 @@ loadable({
     },
     resolve () {
         if (require.resolveWeak) {
-            return require.resolveWeak('./ModA');
+            return require.resolveWeak("./ModA");
         }
-        return eval('require.resolve')('./ModA');
+        return eval('require.resolve')("./ModA");
     }
 });

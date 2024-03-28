@@ -1,6 +1,6 @@
 import _JSXStyle from "styled-jsx/style";
-import styles, { foo as styles3 } from './styles';
-const styles2 = require('./styles2');
+import styles, { foo as styles3 } from "./styles";
+const styles2 = require("./styles2");
 export default (()=><div>
 
     <p>test</p>

@@ -1,6 +1,6 @@
-import styles from './styles'
-const styles2 = require('./styles2')
-import { foo as styles3 } from './styles'
+import styles from "./styles";
+const styles2 = require("./styles2");
+import { foo as styles3 } from "./styles";
 
 export default () => (
   <div>
@@ -21,7 +21,7 @@ export default () => (
     `}</style>
     <style jsx>{styles}</style>
   </div>
-)
+);
 
 export const Test = () => (
   <div>
@@ -38,4 +38,4 @@ export const Test = () => (
       }
     `}</style>
   </div>
-)
+);

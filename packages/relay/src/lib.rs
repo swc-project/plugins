@@ -55,7 +55,6 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
         language,
         eager_es_modules,
         output_file_extension,
-        add_current_directory_to_path,
     };
 
     let mut relay = relay(

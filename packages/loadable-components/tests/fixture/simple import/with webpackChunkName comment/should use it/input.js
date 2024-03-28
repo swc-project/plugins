@@ -1,1 +1,1 @@
-loadable(() => import(/* webpackChunkName: "ChunkA" */ './ModA'))
+loadable(() => import(/* webpackChunkName: "ChunkA" */ "./ModA"));

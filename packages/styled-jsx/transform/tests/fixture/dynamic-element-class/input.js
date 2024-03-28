@@ -1,6 +1,6 @@
 export default class {
   render() {
-    const Element = 'div'
+    const Element = "div";
 
     return (
       <Element className="root">
@@ -11,11 +11,11 @@ export default class {
           }
         `}</style>
       </Element>
-    )
+    );
   }
 }
 
-const Element2 = 'div'
+const Element2 = "div";
 export const Test2 = class {
   render() {
     return (
@@ -27,6 +27,6 @@ export const Test2 = class {
           }
         `}</style>
       </Element2>
-    )
+    );
   }
-}
+};

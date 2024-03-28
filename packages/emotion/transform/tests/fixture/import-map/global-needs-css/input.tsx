@@ -1,8 +1,8 @@
-import * as React from 'react'
-import { SomeGlobalFromCore } from 'package-two'
+import * as React from "react";
+import { SomeGlobalFromCore } from "package-two";
 
-const getBgColor = () => ({ backgroundColor: '#fff' })
+const getBgColor = () => ({ backgroundColor: "#fff" });
 
 export default () => (
-  <SomeGlobalFromCore styles={{ color: 'hotpink', ...getBgColor() }} />
-)
+  <SomeGlobalFromCore styles={{ color: "hotpink", ...getBgColor() }} />
+);

@@ -3,10 +3,9 @@ export default () => (
     <p>test</p>
     <style jsx>{`
       .a-selector:hover,
-      .a-selector:focus
-      {
+      .a-selector:focus {
         outline: none;
-      }   
+      }
     `}</style>
   </div>
-)
+);

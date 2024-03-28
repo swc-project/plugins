@@ -1,10 +1,10 @@
-const darken = c => c
-const color = 'red'
-const otherColor = 'green'
-const mediumScreen = '680px'
-const animationDuration = '200ms'
-const animationName = 'my-cool-animation'
-const obj = { display: 'block' }
+const darken = (c) => c;
+const color = "red";
+const otherColor = "green";
+const mediumScreen = "680px";
+const animationDuration = "200ms";
+const animationName = "my-cool-animation";
+const obj = { display: "block" };
 
 export default ({ display }) => (
   <div>
@@ -15,7 +15,7 @@ export default ({ display }) => (
         display: ${obj.display};
       }
     `}</style>
-    <style jsx>{'p { color: red }'}</style>
+    <style jsx>{"p { color: red }"}</style>
     <style jsx global>{`
       body {
         background: ${color};
@@ -73,10 +73,9 @@ export default ({ display }) => (
         background: ${color};
       }
     `}</style>
-
     <style jsx>{`
       span {
-        display: ${display ? 'block' : 'none'};
+        display: ${display ? "block" : "none"};
       }
     `}</style>
     // TODO: causes bad syntax
@@ -87,4 +86,4 @@ export default ({ display }) => (
       }
     `}</style> */}
   </div>
-)
+);

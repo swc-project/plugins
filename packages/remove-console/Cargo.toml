@@ -1,22 +1,29 @@
 [package]
-authors = ["강동윤 <kdy1997.dev@gmail.com>"]
+
 description = "SWC plugin for https://www.npmjs.com/package/babel-plugin-remove-console"
-edition = "2021"
-license = "Apache-2.0"
-name = "swc_plugin_remove_console"
-publish = false
-version = "0.19.4"
+
+
+authors      = { workspace = true }
+edition      = { workspace = true }
+homepage     = { workspace = true }
+license      = { workspace = true }
+name         = "swc_plugin_remove_console"
+publish      = false
+repository   = { workspace = true }
+rust-version = { workspace = true }
+version      = "0.19.4"
+
 
 [lib]
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-remove_console = { path = "./transform" }
-serde_json = "1.0.79"
-swc_common = { version = "0.33.19", features = ["concurrent"] }
-swc_core = { version = "0.90.22", features = ["ecma_plugin_transform"] }
-swc_ecma_ast = "0.112.5"
-swc_ecma_utils = "0.127.12"
-swc_ecma_visit = "0.98.6"
+remove_console   = { path = "./transform" }
+serde_json       = "1.0.79"
+swc_common       = { version = "0.33.21", features = ["concurrent"] }
+swc_core         = { version = "0.90.26", features = ["ecma_plugin_transform"] }
+swc_ecma_ast     = "0.112.6"
+swc_ecma_utils   = "0.127.15"
+swc_ecma_visit   = "0.98.7"
 swc_plugin_macro = "0.9.16"
-tracing = { version = "0.1.37", features = ["release_max_level_off"] }
+tracing          = { version = "0.1.37", features = ["release_max_level_off"] }

@@ -3,9 +3,15 @@ export default (()=><div>
 
     <style jsx>
 
-      {`.p {}`}
+      {`
+        .p {
+        }
+      `}
 
-      {`.p {}`}
+      {`
+        .p {
+        }
+      `}
 
     </style>
 

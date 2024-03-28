@@ -11,6 +11,6 @@ const { css: styles } = extractCritical(
       css={css`
         color: hotpink;
       `}
-    />
-  )
+    />,
+  ),
 );

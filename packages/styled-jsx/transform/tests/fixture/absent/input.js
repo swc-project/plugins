@@ -1,6 +1,6 @@
 const a = () => (
   <div>
     <p>hi</p>
-    <style>{'woot'}</style>
+    <style>{"woot"}</style>
   </div>
-)
+);

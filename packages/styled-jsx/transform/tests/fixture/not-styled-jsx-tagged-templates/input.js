@@ -1,15 +1,19 @@
-import css from 'hell'
+import css from "hell";
 
-const color = 'red'
+const color = "red";
 
 const bar = css`
   div {
     font-size: 3em;
   }
-`
-export const uh = bar
+`;
+export const uh = bar;
 
-export const foo = css`div { color: ${color}}`
+export const foo = css`
+  div {
+    color: ${color};
+  }
+`;
 
 export default css`
   div {
@@ -18,13 +22,15 @@ export default css`
   p {
     color: ${color};
   }
-`
+`;
 
 const Title = styled.h1`
   color: red;
   font-size: 50px;
-`
+`;
 
-const AnotherTitle = Title.extend`color: blue;`
+const AnotherTitle = Title.extend`
+  color: blue;
+`;
 
-export const Component = () => <AnotherTitle>My page</AnotherTitle>
+export const Component = () => <AnotherTitle>My page</AnotherTitle>;

@@ -1,2 +1,2 @@
-import { withTheme } from 'styled-components';
-const ThemedComponent = /*#__PURE__*/ withTheme(()=>null);
+import { withTheme } from "styled-components";
+const ThemedComponent = /*#__PURE__*/ withTheme(() => null);

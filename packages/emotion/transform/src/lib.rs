@@ -265,7 +265,7 @@ impl<C: Comments> EmotionTransformer<C> {
     fn create_sourcemap(&mut self, pos: BytePos) -> Option<String> {
         if self.options.sourcemap.unwrap_or(false) {
             let loc = self.cm.get_code_map().lookup_char_pos(pos);
-            let filename = self.filepath.to_str().map(|s| s.to_owned());
+            let filename = self.filepath.to_str().map(Arc::<str>::from);
             let cm = RawSourcemap::new(
                 filename.clone(),
                 vec![RawToken {
@@ -275,10 +275,11 @@ impl<C: Comments> EmotionTransformer<C> {
                     src_col: loc.col_display as u32,
                     src_id: 0,
                     name_id: 0,
+                    is_range: false,
                 }],
                 Vec::new(),
-                vec![filename.unwrap_or_default()],
-                Some(vec![Some(loc.file.src.to_string())]),
+                vec![filename.unwrap_or_else(|| Arc::from(""))],
+                Some(vec![Some(loc.file.src.to_string().into())]),
             );
             let mut writer = Vec::new();
             if cm.to_writer(&mut writer).is_ok() {

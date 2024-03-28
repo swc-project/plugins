@@ -1,6 +1,6 @@
 import _JSXStyle from "styled-jsx/style";
-import colors, { size } from './constants';
-const color = 'red';
+import colors, { size } from "./constants";
+const color = "red";
 const bar = new String("div.jsx-aaed0341accea8f{font-size:3em}");
 bar.__hash = "aaed0341accea8f";
 const baz = new String("div{font-size:3em}");
@@ -8,11 +8,11 @@ baz.__hash = "aaed0341accea8f";
 const a = new String(`div{font-size:${size}em}`);
 a.__hash = "14b197463166f722";
 export const uh = bar;
-export const foo = new String(`div.jsx-f4f8570cd812466{color:${color}}`);
-foo.__hash = "f4f8570cd812466";
+export const foo = new String(`div.jsx-64e973a141b8a864{color:${color}}`);
+foo.__hash = "64e973a141b8a864";
 ({
-    styles: <_JSXStyle id={"92e08135776a0568"}>{`div.jsx-92e08135776a0568{color:${colors.green.light}}a.jsx-92e08135776a0568{color:red}`}</_JSXStyle>,
-    className: "jsx-92e08135776a0568"
+    styles: <_JSXStyle id={"a505c94d8e5d92b8"}>{`div.jsx-a505c94d8e5d92b8{color:${colors.green.light}}a.jsx-a505c94d8e5d92b8{color:red}`}</_JSXStyle>,
+    className: "jsx-a505c94d8e5d92b8"
 });
 const b = {
     styles: <_JSXStyle id={"92e08135776a0568"}>{`div.jsx-92e08135776a0568{color:${colors.green.light}}a.jsx-92e08135776a0568{color:red}`}</_JSXStyle>,

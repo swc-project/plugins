@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eu
 
-pnpm changeset
+pnpm changeset || true
 pnpm changeset version
 
 for pkg in $(ls -d packages/*); do

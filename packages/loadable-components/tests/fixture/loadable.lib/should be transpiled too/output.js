@@ -13,7 +13,7 @@ loadable.lib({
         }
         return false;
     },
-    importAsync: ()=>import(/*webpackChunkName: "moment"*/ 'moment'),
+    importAsync: ()=>import(/*webpackChunkName: "moment"*/ "moment"),
     requireAsync (props) {
         const key = this.resolve(props);
         this.resolved[key] = false;
@@ -31,8 +31,8 @@ loadable.lib({
     },
     resolve () {
         if (require.resolveWeak) {
-            return require.resolveWeak('moment');
+            return require.resolveWeak("moment");
         }
-        return eval('require.resolve')('moment');
+        return eval('require.resolve')("moment");
     }
 });

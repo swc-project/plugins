@@ -1,1 +1,1 @@
-const load = /* #__LOADABLE__ */ () => import('moment')
+const load = /* #__LOADABLE__ */ () => import("moment");

@@ -1,8 +1,8 @@
-import styles, { foo as styles3 } from './styles'
+import styles, { foo as styles3 } from "./styles";
 
-const styles2 = require('./styles2')
+const styles2 = require("./styles2");
 
-export default () =>
+export default () => (
   <div>
     <p>test</p>
     <div>woot</div>
@@ -17,3 +17,4 @@ export default () =>
       {styles}
     </style>
   </div>
+);

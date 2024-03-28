@@ -1,7 +1,5 @@
 export default () => (
   <div>
-    <style jsx>
-      {[]}
-    </style>
+    <style jsx>{[]}</style>
   </div>
-)
+);
