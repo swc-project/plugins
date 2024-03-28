@@ -46,9 +46,6 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
     let eager_es_modules = plugin_config["eagerEsModules"]
         .as_bool()
         .unwrap_or_default();
-    let add_current_directory_to_path = plugin_config["addCurrentDirectoryToPath"]
-        .as_bool()
-        .unwrap_or_default();
 
     let config = Config {
         artifact_directory,
