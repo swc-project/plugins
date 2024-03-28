@@ -8,6 +8,12 @@
 
 # @swc/plugin-loadable-components
 
+## 0.3.121
+
+### Patch Changes
+
+- f4df366: Update swc_core
+
 ## 0.3.120
 
 ### Patch Changes
