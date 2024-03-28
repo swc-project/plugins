@@ -1,5 +1,11 @@
 # @swc/plugin-styled-jsx
 
+## 1.5.125
+
+### Patch Changes
+
+- f4df366: Update swc_core
+
 ## 1.5.124
 
 ### Patch Changes

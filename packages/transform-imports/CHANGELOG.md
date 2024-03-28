@@ -1,5 +1,11 @@
 # @swc/plugin-transform-imports
 
+## 1.5.123
+
+### Patch Changes
+
+- f4df366: Update swc_core
+
 ## 1.5.122
 
 ### Patch Changes
