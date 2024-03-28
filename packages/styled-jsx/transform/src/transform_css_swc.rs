@@ -14,6 +14,7 @@ use swc_css_codegen::{
     writer::basic::{BasicCssWriter, BasicCssWriterConfig},
     CodeGenerator, CodegenConfig, Emit,
 };
+use swc_css_compat::{compiler::Compiler, feature::Features};
 use swc_css_parser::{
     lexer::Lexer,
     parse_input,
@@ -90,6 +91,10 @@ pub fn transform_css(
         is_global,
         is_dynamic: style_info.is_dynamic,
     });
+
+    ss.visit_mut_with(&mut Compiler::new(swc_css_compat::compiler::Config {
+        process: Features::NESTING,
+    }));
 
     let mut s = String::new();
     {

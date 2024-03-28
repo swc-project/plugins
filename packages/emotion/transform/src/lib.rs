@@ -77,8 +77,7 @@ static EMOTION_OFFICIAL_LIBRARIES: Lazy<Vec<EmotionModuleConfig>> = Lazy::new(||
     ]
 });
 
-static INVALID_LABEL_SPACES: Lazy<Regex> =
-    Lazy::new(|| RegexBuilder::new(r#"\s+"#).build().unwrap());
+static INVALID_LABEL_SPACES: Lazy<Regex> = Lazy::new(|| RegexBuilder::new(r"\s+").build().unwrap());
 
 static INVALID_CSS_CLASS_NAME_CHARACTERS: Lazy<Regex> = Lazy::new(|| {
     RegexBuilder::new(r##"[!"#$%&'()*+,./:;<=>?@\[\]^`|}~{]"##)
