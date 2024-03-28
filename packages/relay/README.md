@@ -86,24 +86,6 @@ plugins: [
 
 In this example typescript graphql files will output transpiled import path of `javascript` ending with `.js`.
 
-#### Outputting paths with './'
-
-Default behaviour is to output import paths without a current directory qualifier. Use `add_current_directory_to_path` to always add it.
-
-```js
-plugins: [
-    [
-        "@swc/plugin-relay",
-        {
-            rootDir: __dirname,
-            language: "typescript",
-            eagerEsModules: true,
-            addCurrentDirectoryToPath: true,
-        },
-    ],
-],
-```
-
 # @swc/plugin-relay
 
 ## 1.5.119
