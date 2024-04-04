@@ -219,7 +219,7 @@ impl<'a> Relay<'a> {
             Ok(real_file_name
                 .parent()
                 .unwrap()
-                .join("__generated__")
+                .join("./__generated__")
                 .join(filename))
         }
     }

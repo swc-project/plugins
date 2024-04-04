@@ -1,1 +1,1 @@
-require("__generated__/Foo.graphql.ts");
+require("./__generated__/Foo.graphql.ts");
