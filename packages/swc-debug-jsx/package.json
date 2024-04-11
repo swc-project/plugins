@@ -1,0 +1,24 @@
+{
+  "name": "@swc/plugin-debug-jsx",
+  "version": "1.5.121",
+  "description": "SWC plugin for debugging jsx",
+  "main": "swc_plugin_swc_magic.wasm",
+  "scripts": {
+    "prepack": "cp ../../target/wasm32-wasi/release/swc_plugin_swc_magic.wasm ."
+  },
+  "homepage": "https://swc.rs",
+  "repository": {
+    "type": "git",
+    "url": "+https://github.com/swc-project/plugins.git"
+  },
+  "bugs": {
+    "url": "https://github.com/swc-project/plugins/issues"
+  },
+  "author": "강동윤 <kdy1997.dev@gmail.com>",
+  "keywords": [],
+  "license": "Apache-2.0",
+  "preferUnplugged": true,
+  "dependencies": {
+    "@swc/counter": "^0.1.3"
+  }
+}
