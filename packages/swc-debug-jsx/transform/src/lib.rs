@@ -1,6 +1,4 @@
-use std::sync::Arc;
-
-use swc_common::{SourceMap, SourceMapper, DUMMY_SP};
+use swc_common::{SourceMapper, DUMMY_SP};
 use swc_ecma_ast::*;
 use swc_ecma_utils::quote_ident;
 use swc_ecma_visit::{noop_visit_mut_type, VisitMut, VisitMutWith};
