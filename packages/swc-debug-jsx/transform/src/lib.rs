@@ -1,110 +1,61 @@
-#![feature(box_patterns)]
+use std::sync::Arc;
 
-use import_analyzer::ImportMap;
-use serde::Deserialize;
-use swc_atoms::Atom;
-use swc_common::{
-    comments::Comments, errors::HANDLER, util::take::Take, Mark, Span, Spanned, DUMMY_SP,
-};
-use swc_ecma_ast::{CallExpr, Callee, EmptyStmt, Expr, Module, ModuleDecl, ModuleItem, Stmt};
-use swc_ecma_visit::{VisitMut, VisitMutWith};
+use swc_common::{SourceMap, SourceMapper, DUMMY_SP};
+use swc_ecma_ast::*;
+use swc_ecma_utils::quote_ident;
+use swc_ecma_visit::{noop_visit_mut_type, VisitMut, VisitMutWith};
 
-mod import_analyzer;
-
-#[derive(Debug, Clone, Deserialize)]
-pub struct Config {
-    #[serde(default = "default_import_path")]
-    pub import_path: Atom,
+pub fn swc_debug_jsx(cm: Box<dyn SourceMapper>) -> impl VisitMut {
+    JsxSrc { cm }
 }
 
-fn default_import_path() -> Atom {
-    Atom::from("@swc/magic")
+struct JsxSrc {
+    cm: Box<dyn SourceMapper>,
 }
 
-impl Config {}
+impl VisitMut for JsxSrc {
+    noop_visit_mut_type!();
 
-pub fn swc_magic<C>(_unreolved_mark: Mark, config: Config, comments: C) -> impl VisitMut
-where
-    C: Comments,
-{
-    Magic {
-        config,
-        comments,
-        imports: Default::default(),
-    }
-}
+    fn visit_mut_jsx_opening_element(&mut self, e: &mut JSXOpeningElement) {
+        if e.span == DUMMY_SP {
+            return;
+        }
 
-const MARK_AS_PURE_FN_NAME: &str = "markAsPure";
-
-/// Handles functions from `@swc/magic`.
-struct Magic<C>
-where
-    C: Comments,
-{
-    config: Config,
-    comments: C,
-    imports: ImportMap,
-}
-
-impl<C> VisitMut for Magic<C>
-where
-    C: Comments,
-{
-    fn visit_mut_expr(&mut self, e: &mut Expr) {
         e.visit_mut_children_with(self);
 
-        if let Expr::Call(CallExpr {
-            span,
-            callee: Callee::Expr(callee),
-            args,
-            ..
-        }) = e
-        {
-            if !self
-                .imports
-                .is_import(callee, &self.config.import_path, MARK_AS_PURE_FN_NAME)
-            {
-                return;
-            }
+        let loc = self.cm.lookup_char_pos(e.span.lo);
+        let file_name = loc.file.name.to_string();
 
-            if args.len() != 1 {
-                HANDLER.with(|handler| {
-                    handler
-                        .struct_span_err(*span, "markAsPure() does not support multiple arguments")
-                        .emit();
-                });
-                return;
-            }
-
-            *e = *args[0].expr.take();
-
-            let mut lo = e.span().lo;
-            if lo.is_dummy() {
-                lo = Span::dummy_with_cmt().lo;
-            }
-
-            self.comments.add_pure_comment(lo);
-        }
-    }
-
-    fn visit_mut_module(&mut self, m: &mut Module) {
-        self.imports = ImportMap::analyze(m);
-
-        m.visit_mut_children_with(self);
-
-        // Remove Stmt::Empty
-        m.body
-            .retain(|item| !matches!(item, ModuleItem::Stmt(Stmt::Empty(..))));
-    }
-
-    fn visit_mut_module_item(&mut self, m: &mut ModuleItem) {
-        if let ModuleItem::ModuleDecl(ModuleDecl::Import(import)) = m {
-            if import.src.value == self.config.import_path {
-                *m = ModuleItem::Stmt(Stmt::Empty(EmptyStmt { span: DUMMY_SP }));
-                return;
-            }
-        }
-
-        m.visit_mut_children_with(self);
+        e.attrs.push(JSXAttrOrSpread::JSXAttr(JSXAttr {
+            span: DUMMY_SP,
+            name: JSXAttrName::Ident(quote_ident!("__source")),
+            value: Some(JSXAttrValue::JSXExprContainer(JSXExprContainer {
+                span: DUMMY_SP,
+                expr: JSXExpr::Expr(Box::new(
+                    ObjectLit {
+                        span: DUMMY_SP,
+                        props: vec![
+                            PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
+                                key: PropName::Ident(quote_ident!("fileName")),
+                                value: Box::new(Expr::Lit(Lit::Str(Str {
+                                    span: DUMMY_SP,
+                                    raw: None,
+                                    value: file_name.into(),
+                                }))),
+                            }))),
+                            PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
+                                key: PropName::Ident(quote_ident!("lineNumber")),
+                                value: loc.line.into(),
+                            }))),
+                            PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
+                                key: PropName::Ident(quote_ident!("columnNumber")),
+                                value: (loc.col.0 + 1).into(),
+                            }))),
+                        ],
+                    }
+                    .into(),
+                )),
+            })),
+        }));
     }
 }
