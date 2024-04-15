@@ -261,7 +261,7 @@ pub(super) fn read_number(s: &str, is_expr_property: &[bool]) -> (usize, usize) 
         let expression_index = s[0..idx].parse().expect("failed to parse");
 
         if is_expr_property[expression_index] {
-            return (idx + 3, expression_index);
+            return (idx + 2, expression_index);
         }
 
         return (idx, expression_index);
