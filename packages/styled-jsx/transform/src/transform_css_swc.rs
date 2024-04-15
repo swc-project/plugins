@@ -115,7 +115,7 @@ pub fn transform_css(
     for i in parts.iter_mut().skip(1) {
         let (num_len, expression_index) = read_number(i, &style_info.is_expr_property);
         final_expressions.push(style_info.expressions[expression_index].clone());
-        let substr = &i[(num_len + 2)..];
+        let substr = &i[num_len + 2..];
         *i = substr;
     }
 

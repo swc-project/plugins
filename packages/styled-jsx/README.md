@@ -2,6 +2,12 @@
 
 # @swc/plugin-styled-jsx
 
+## 1.5.126
+
+### Patch Changes
+
+- 2087070: Fix interpolation
+
 ## 1.5.125
 
 ### Patch Changes
