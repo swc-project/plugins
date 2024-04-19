@@ -5,7 +5,7 @@
   "main": "swc_plugin_relay.wasm",
   "types": "./types.d.ts",
   "scripts": {
-    "prepack": "cp ../../target/wasm32-wasi/release/swc_plugin_relay.wasm ."
+    "prepack": "cargo build --release -p swc_plugin_relay --target wasm32-wasi && cp ../../target/wasm32-wasi/release/swc_plugin_relay.wasm ."
   },
   "homepage": "https://swc.rs",
   "repository": {

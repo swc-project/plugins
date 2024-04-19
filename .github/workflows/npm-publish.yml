@@ -9,6 +9,7 @@ on:
 env:
   RUST_LOG: debug
   CARGO_INCREMENTAL: 0
+  MACOSX_DEPLOYMENT_TARGET: "10.13"
 
 jobs:
   build:
@@ -37,13 +38,6 @@ jobs:
         shell: bash
         run: |
           rustup target add wasm32-wasi
-
-      - name: Build plugins
-        shell: bash
-        run: |
-          ./scripts/build-all.sh
-        env:
-          MACOSX_DEPLOYMENT_TARGET: "10.13"
 
       - name: List files
         shell: bash
