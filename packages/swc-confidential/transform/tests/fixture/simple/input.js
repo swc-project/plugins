@@ -1,3 +1,1 @@
-import { markAsPure } from "@swc/magic";
-
-markAsPure(console.log("test!"));
+console.log(/*#__CONFIDENTIAL__*/ "newDashboard")
