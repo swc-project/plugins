@@ -72,6 +72,8 @@ where
 {
     fn visit_mut_str(&mut self, n: &mut swc_ecma_ast::Str) {
         if self.comments.has_flag(n.span_lo(), "CONFIDENTIAL") {
+            self.comments.take_leading(n.span_lo());
+
             let encrypted = self
                 .config
                 .algorithm
