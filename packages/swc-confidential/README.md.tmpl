@@ -8,18 +8,26 @@
 {
   "jsc": {
     "experimental": {
-      "plugins": ["@swc/plugin-swc-confidential"]
+      "plugins": ["@swc/plugin-swc-confidential", {
+        algorithm: "",
+        encryptionKey: process.env.FLAGS_SECRET,
+        prefix: "secure:"
+      }]
     }
   }
 }
 ```
 
-### `markAsPure`
+### Input
 
 ```js
-import { markAsPure } from "@swc/magic";
-
-markAsPure(() => console.log("This will be removed by the SWC minifier"));
+console.log(/*#__CONFIDENTIAL__*/ "newDashboard")
 ```
 
-${CHANGELOG}
+### Output
+
+
+
+```js
+console.log("secure:de454774988d624b8f317bbe9dadfe1f");
+```
