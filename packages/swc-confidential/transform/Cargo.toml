@@ -14,15 +14,15 @@ version      = "0.19.7"
 
 
 [dependencies]
-aes-gcm-siv      = "0.11.1"
-chacha20poly1305 = "0.10.1"
-hex              = "0.4.3"
-serde            = { version = "1.0.189", features = ["derive"] }
-swc_atoms        = "0.6.5"
-swc_common       = "0.33.21"
-swc_ecma_ast     = "0.112.6"
-swc_ecma_utils   = "0.127.15"
-swc_ecma_visit   = "0.98.7"
+aes-gcm-siv    = "0.11.1"
+cipher         = "0.4.4"
+hex            = "0.4.3"
+serde          = { version = "1.0.189", features = ["derive"] }
+swc_atoms      = "0.6.5"
+swc_common     = "0.33.21"
+swc_ecma_ast   = "0.112.6"
+swc_ecma_utils = "0.127.15"
+swc_ecma_visit = "0.98.7"
 
 [dev-dependencies]
 swc_ecma_parser             = "0.143.11"
