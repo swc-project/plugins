@@ -9,7 +9,7 @@ use swc_ecma_visit::as_folder;
 #[testing::fixture("tests/fixture/**/input.js")]
 fn pure(input: PathBuf) {
     let output = input.parent().unwrap().join("output.js");
-    let test_fixture = test_fixture(
+    test_fixture(
         Syntax::default(),
         &|tr| {
             let unresolved_mark = Mark::new();
