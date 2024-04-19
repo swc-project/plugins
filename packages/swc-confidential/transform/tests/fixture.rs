@@ -9,7 +9,7 @@ use swc_ecma_visit::as_folder;
 #[testing::fixture("tests/fixture/**/input.js")]
 fn pure(input: PathBuf) {
     let output = input.parent().unwrap().join("output.js");
-    test_fixture(
+    let test_fixture = test_fixture(
         Syntax::default(),
         &|tr| {
             let unresolved_mark = Mark::new();
@@ -18,9 +18,10 @@ fn pure(input: PathBuf) {
             chain!(
                 resolver(unresolved_mark, top_level_mark, false),
                 as_folder(swc_confidential::swc_confidential(
-                    unresolved_mark,
                     swc_confidential::Config {
-                        import_path: "@swc/magic".into()
+                        algorithm: swc_confidential::Algorithm::AES256,
+                        encryption_key: "secret".to_string(),
+                        prefix: "secure:".into(),
                     },
                     tr.comments.clone()
                 ))

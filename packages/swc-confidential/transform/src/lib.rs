@@ -1,110 +1,85 @@
 #![feature(box_patterns)]
 
-use import_analyzer::ImportMap;
+use magic_crypt::{new_magic_crypt, MagicCryptTrait};
 use serde::Deserialize;
-use swc_atoms::Atom;
-use swc_common::{
-    comments::Comments, errors::HANDLER, util::take::Take, Mark, Span, Spanned, DUMMY_SP,
-};
-use swc_ecma_ast::{CallExpr, Callee, EmptyStmt, Expr, Module, ModuleDecl, ModuleItem, Stmt};
-use swc_ecma_visit::{VisitMut, VisitMutWith};
-
-mod import_analyzer;
+use swc_common::{comments::Comments, Spanned};
+use swc_ecma_visit::VisitMut;
 
 #[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Config {
-    #[serde(default = "default_import_path")]
-    pub import_path: Atom,
+    pub algorithm: Algorithm,
+    pub encryption_key: String,
+    #[serde(default)]
+    pub prefix: String,
 }
 
-fn default_import_path() -> Atom {
-    Atom::from("@swc/magic")
+#[derive(Debug, Clone, Deserialize)]
+pub enum Algorithm {
+    #[serde(rename = "AES-128")]
+    AES128,
+    #[serde(rename = "AES-192")]
+    AES192,
+    #[serde(rename = "AES-256")]
+    AES256,
 }
 
-impl Config {}
+fn encode_hex(bytes: Vec<u8>) -> String {
+    hex::encode(bytes)
+}
 
-pub fn swc_confidential<C>(_unreolved_mark: Mark, config: Config, comments: C) -> impl VisitMut
-where
-    C: Comments,
-{
-    Magic {
-        config,
-        comments,
-        imports: Default::default(),
+impl Algorithm {
+    fn encrypt(&self, key: &str, value: &str) -> Result<String, String> {
+        match self {
+            Algorithm::AES128 => {
+                let mc = new_magic_crypt!(key, 256);
+
+                Ok(encode_hex(mc.encrypt_str_to_bytes(value)))
+            }
+            Algorithm::AES192 => {
+                let mc = new_magic_crypt!(key, 192);
+
+                Ok(encode_hex(mc.encrypt_str_to_bytes(value)))
+            }
+            Algorithm::AES256 => {
+                let mc = new_magic_crypt!(key, 256);
+
+                Ok(encode_hex(mc.encrypt_str_to_bytes(value)))
+            }
+        }
     }
 }
 
-const MARK_AS_PURE_FN_NAME: &str = "markAsPure";
+pub fn swc_confidential<C>(config: Config, comments: C) -> impl VisitMut
+where
+    C: Comments,
+{
+    SwcConfidential { config, comments }
+}
 
 /// Handles functions from `@swc/magic`.
-struct Magic<C>
+struct SwcConfidential<C>
 where
     C: Comments,
 {
     config: Config,
     comments: C,
-    imports: ImportMap,
 }
 
-impl<C> VisitMut for Magic<C>
+impl<C> VisitMut for SwcConfidential<C>
 where
     C: Comments,
 {
-    fn visit_mut_expr(&mut self, e: &mut Expr) {
-        e.visit_mut_children_with(self);
+    fn visit_mut_str(&mut self, n: &mut swc_ecma_ast::Str) {
+        if self.comments.has_flag(n.span_lo(), "CONFIDENTIAL") {
+            let encrypted = self
+                .config
+                .algorithm
+                .encrypt(&self.config.encryption_key, &n.value)
+                .expect("failed to encrypt");
 
-        if let Expr::Call(CallExpr {
-            span,
-            callee: Callee::Expr(callee),
-            args,
-            ..
-        }) = e
-        {
-            if !self
-                .imports
-                .is_import(callee, &self.config.import_path, MARK_AS_PURE_FN_NAME)
-            {
-                return;
-            }
-
-            if args.len() != 1 {
-                HANDLER.with(|handler| {
-                    handler
-                        .struct_span_err(*span, "markAsPure() does not support multiple arguments")
-                        .emit();
-                });
-                return;
-            }
-
-            *e = *args[0].expr.take();
-
-            let mut lo = e.span().lo;
-            if lo.is_dummy() {
-                lo = Span::dummy_with_cmt().lo;
-            }
-
-            self.comments.add_pure_comment(lo);
+            n.raw = None;
+            n.value = format!("{}{}", self.config.prefix, encrypted).into();
         }
-    }
-
-    fn visit_mut_module(&mut self, m: &mut Module) {
-        self.imports = ImportMap::analyze(m);
-
-        m.visit_mut_children_with(self);
-
-        // Remove Stmt::Empty
-        m.body
-            .retain(|item| !matches!(item, ModuleItem::Stmt(Stmt::Empty(..))));
-    }
-
-    fn visit_mut_module_item(&mut self, m: &mut ModuleItem) {
-        if let ModuleItem::ModuleDecl(ModuleDecl::Import(import)) = m {
-            if import.src.value == self.config.import_path {
-                *m = ModuleItem::Stmt(Stmt::Empty(EmptyStmt { span: DUMMY_SP }));
-                return;
-            }
-        }
-
-        m.visit_mut_children_with(self);
     }
 }

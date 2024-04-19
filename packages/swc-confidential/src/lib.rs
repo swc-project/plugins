@@ -18,10 +18,7 @@ fn swc_confidential_plugin(mut program: Program, data: TransformPluginProgramMet
     )
     .expect("invalid config for swc-confidential");
 
-    let unresolved_mark = data.unresolved_mark;
-
     program.visit_mut_with(&mut swc_confidential::swc_confidential(
-        unresolved_mark,
         config,
         PluginCommentsProxy,
     ));
