@@ -2296,6 +2296,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "swc_confidential"
+version = "0.19.7"
+dependencies = [
+ "serde",
+ "swc_atoms",
+ "swc_common",
+ "swc_ecma_ast",
+ "swc_ecma_parser",
+ "swc_ecma_transforms_base",
+ "swc_ecma_transforms_testing",
+ "swc_ecma_utils",
+ "swc_ecma_visit",
+ "testing",
+]
+
+[[package]]
 name = "swc_config"
 version = "0.1.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3052,6 +3068,15 @@ dependencies = [
  "swc_plugin_macro",
  "testing",
  "tracing",
+]
+
+[[package]]
+name = "swc_plugin_swc_confidential"
+version = "0.7.4"
+dependencies = [
+ "serde_json",
+ "swc_confidential",
+ "swc_core",
 ]
 
 [[package]]
