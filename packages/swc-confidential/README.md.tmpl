@@ -9,7 +9,12 @@
   "jsc": {
     "experimental": {
       "plugins": ["@swc/plugin-swc-confidential", {
-        algorithm: "",
+        // Possible values:
+        //
+        // AES-128
+        // AES-192
+        // AES-256
+        algorithm: "AES-256",
         encryptionKey: process.env.FLAGS_SECRET,
         prefix: "secure:"
       }]
