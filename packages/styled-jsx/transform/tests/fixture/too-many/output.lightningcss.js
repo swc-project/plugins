@@ -2,7 +2,7 @@ import _JSXStyle from "styled-jsx/style";
 export const Red = ({ Component = "button" })=>{
     return <Component className={_JSXStyle.dynamic([
         [
-            "a5a8b59d2ebf22fd",
+            "559ffc47113f538e",
             [
                 e1,
                 e2,
@@ -25,7 +25,7 @@ export const Red = ({ Component = "button" })=>{
 
       {}
 
-      <_JSXStyle id={"a5a8b59d2ebf22fd"} dynamic={[
+      <_JSXStyle id={"559ffc47113f538e"} dynamic={[
         e1,
         e2,
         e3,
