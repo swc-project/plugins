@@ -3,7 +3,7 @@ const MOBILE_MAX = 767;
 export default function Home() {
     return <div className={_JSXStyle.dynamic([
         [
-            "8ec558d4d19955bb",
+            "e9062ed9ed84de84",
             [
                 MOBILE_MAX
             ]
@@ -12,14 +12,14 @@ export default function Home() {
 
       <h1 className={_JSXStyle.dynamic([
         [
-            "8ec558d4d19955bb",
+            "e9062ed9ed84de84",
             [
                 MOBILE_MAX
             ]
         ]
     ]) + " " + "header"}>Hello</h1>
 
-      <_JSXStyle id={"8ec558d4d19955bb"} dynamic={[
+      <_JSXStyle id={"e9062ed9ed84de84"} dynamic={[
         MOBILE_MAX
     ]}>{`.header.__jsx-style-dynamic-selector{font-size:48px}`}</_JSXStyle>
 
