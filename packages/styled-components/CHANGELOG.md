@@ -1,5 +1,11 @@
 # @swc/plugin-styled-components
 
+## 2.0.1
+
+### Patch Changes
+
+- 71a0922: Fix escape
+
 ## 2.0.0
 
 ### Major Changes
