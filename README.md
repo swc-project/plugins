@@ -13,5 +13,6 @@ Plugins for SWC, written in Rust
 - [`remove-console`](packages/remove-console)
 - [`styled-components`](packages/styled-components)
 - [`styled-jsx`](packages/styled-jsx)
+- [`swc-confidential`](packages/swc-confidential) for hiding sensitive strings in your code.
 - [`swc-magic`](packages/swc-magic) for building high-performance frameworks.
 - [`transform-imports`](packages/transform-imports)
