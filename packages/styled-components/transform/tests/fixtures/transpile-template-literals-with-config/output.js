@@ -1,19 +1,40 @@
 import styled, { css, createGlobalStyle } from "styled-components";
 const Named = styled.div.withConfig({
-  displayName: "code__Named",
-})(["\n  width: 100%;\n"]);
+    displayName: "code__Named"
+})([
+    `
+  width: 100%;
+`
+]);
 const NamedWithInterpolation = styled.div.withConfig({
-  displayName: "code__NamedWithInterpolation",
-})(["\n  color: ", ";\n"], (color) => props.color);
+    displayName: "code__NamedWithInterpolation"
+})([
+    `
+  color: `,
+    `;
+`
+], (color)=>props.color);
 const Wrapped = styled(Inner).withConfig({
-  displayName: "code__Wrapped",
-})(["\n  color: red;\n"]);
+    displayName: "code__Wrapped"
+})([
+    `
+  color: red;
+`
+]);
 const Foo = styled.div.withConfig({
-  displayName: "code__Foo",
+    displayName: "code__Foo"
 })({
-  color: "green",
+    color: "green"
 });
-const style = css(["\n  background: green;\n"]);
+const style = css([
+    `
+  background: green;
+`
+]);
 const GlobalStyle = createGlobalStyle([
-  "\n  html {\n    background: silver;\n  }\n",
+    `
+  html {
+    background: silver;
+  }
+`
 ]);

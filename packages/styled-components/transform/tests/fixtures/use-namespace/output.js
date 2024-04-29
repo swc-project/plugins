@@ -8,18 +8,26 @@ const GlobalStyle = styled.createGlobalStyle`
   }
 `;
 const Test = styled.default.div.withConfig({
-  displayName: "code__Test",
-  componentId: "test-namespace__sc-a8e1e802-0",
-})(["color:red;"]);
+    displayName: "code__Test",
+    componentId: "test-namespace__sc-a8e1e802-0"
+})([
+    `color:red;`
+]);
 const before = styled.default.div.withConfig({
-  displayName: "code__before",
-  componentId: "test-namespace__sc-a8e1e802-1",
-})(["color:blue;"]);
+    displayName: "code__before",
+    componentId: "test-namespace__sc-a8e1e802-1"
+})([
+    `color:blue;`
+]);
 styled.default.div.withConfig({
-  displayName: "code",
-  componentId: "test-namespace__sc-a8e1e802-2",
-})([""]);
+    displayName: "code",
+    componentId: "test-namespace__sc-a8e1e802-2"
+})([
+    ``
+]);
 export default styled.default.button.withConfig({
-  displayName: "code",
-  componentId: "test-namespace__sc-a8e1e802-3",
-})([""]);
+    displayName: "code",
+    componentId: "test-namespace__sc-a8e1e802-3"
+})([
+    ``
+]);

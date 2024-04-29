@@ -7,13 +7,13 @@ const { SomeOtherComponent } = require("../SomeOtherComponentPath");
     displayName: "code__Thing",
     componentId: "sc-35b1796-0"
 })([
-    "color:red;"
+    `color:red;`
 ]);
 const Thing2 = styled(Thing).withConfig({
     displayName: "code__Thing2",
     componentId: "sc-35b1796-1"
 })([
-    "background:blue;"
+    `background:blue;`
 ]);
 /*
  * Basic fixtures
@@ -87,7 +87,7 @@ const Thing3 = styled.div.withConfig({
     displayName: "code__Thing3",
     componentId: "sc-35b1796-2"
 })([
-    "color:blue;"
+    `color:blue;`
 ]);
 var _StyledThing6 = styled(Thing3).withConfig({
     displayName: "code___StyledThing6",
@@ -123,7 +123,7 @@ var _StyledThing = styled(Thing3).withConfig({
     displayName: "code___StyledThing",
     componentId: "sc-35b1796-7"
 })([
-    "color:red;"
+    `color:red;`
 ]);
 const EarlyUsageComponent2 = (p)=><_StyledThing2/>;
 function Thing4(props1) {
@@ -185,31 +185,31 @@ var _StyledSomeComponent = styled(SomeComponent).withConfig({
     displayName: "code___StyledSomeComponent",
     componentId: "sc-35b1796-8"
 })([
-    "color:red;"
+    `color:red;`
 ]);
 var _StyledSomeOtherComponent = styled(SomeOtherComponent).withConfig({
     displayName: "code___StyledSomeOtherComponent",
     componentId: "sc-35b1796-9"
 })([
-    "color:red;"
+    `color:red;`
 ]);
 var _StyledThing2 = styled(Thing4).withConfig({
     displayName: "code___StyledThing2",
     componentId: "sc-35b1796-10"
 })([
-    "color:red;"
+    `color:red;`
 ]);
 var _StyledP = styled("p").withConfig({
     displayName: "code___StyledP",
     componentId: "sc-35b1796-11"
 })([
-    "flex:1;"
+    `flex:1;`
 ]);
 var _StyledP2 = styled("p").withConfig({
     displayName: "code___StyledP2",
     componentId: "sc-35b1796-12"
 })([
-    "flex:1;"
+    `flex:1;`
 ]);
 var _StyledP3 = styled("p").withConfig({
     displayName: "code___StyledP3",
@@ -221,85 +221,85 @@ var _StyledP4 = styled("p").withConfig({
     displayName: "code___StyledP4",
     componentId: "sc-35b1796-14"
 })([
-    "flex:1;"
+    `flex:1;`
 ]);
 var _StyledP5 = styled("p").withConfig({
     displayName: "code___StyledP5",
     componentId: "sc-35b1796-15"
 })([
-    "color:blue;"
+    `color:blue;`
 ]);
 var _StyledParagraph = styled(Paragraph).withConfig({
     displayName: "code___StyledParagraph",
     componentId: "sc-35b1796-16"
 })([
-    "flex:1"
+    `flex:1`
 ]);
 var _StyledP6 = styled("p").withConfig({
     displayName: "code___StyledP6",
     componentId: "sc-35b1796-17"
 })([
-    "",
-    ""
+    ``,
+    ``
 ], (p)=>p.$_css);
 var _StyledP7 = styled("p").withConfig({
     displayName: "code___StyledP7",
     componentId: "sc-35b1796-18"
 })([
-    "background:",
-    ";"
+    `background:`,
+    `;`
 ], (p)=>p.$_css2);
 var _StyledP8 = styled("p").withConfig({
     displayName: "code___StyledP8",
     componentId: "sc-35b1796-19"
 })([
-    "color:",
-    ";"
+    `color:`,
+    `;`
 ], (props1)=>props1.theme.a);
 var _StyledP9 = styled("p").withConfig({
     displayName: "code___StyledP9",
     componentId: "sc-35b1796-20"
 })([
-    "border-radius:",
-    "px;"
+    `border-radius:`,
+    `px;`
 ], radius);
 var _StyledP10 = styled("p").withConfig({
     displayName: "code___StyledP10",
     componentId: "sc-35b1796-21"
 })([
-    "color:",
-    ";"
+    `color:`,
+    `;`
 ], (p)=>p.$_css3);
 var _StyledP11 = styled("p").withConfig({
     displayName: "code___StyledP11",
     componentId: "sc-35b1796-22"
 })([
-    "color:",
-    ";"
+    `color:`,
+    `;`
 ], (props1)=>props1.theme.color);
 var _StyledButtonGhost = styled(Button.Ghost).withConfig({
     displayName: "code___StyledButtonGhost",
     componentId: "sc-35b1796-23"
 })([
-    "flex:1"
+    `flex:1`
 ]);
 var _StyledButtonGhostNew = styled(Button.Ghost.New).withConfig({
     displayName: "code___StyledButtonGhostNew",
     componentId: "sc-35b1796-24"
 })([
-    "flex:1"
+    `flex:1`
 ]);
 var _StyledButtonGhost2 = styled(button.ghost).withConfig({
     displayName: "code___StyledButtonGhost2",
     componentId: "sc-35b1796-25"
 })([
-    "flex:1"
+    `flex:1`
 ]);
 var _StyledButtonGhost3 = styled("button-ghost").withConfig({
     displayName: "code___StyledButtonGhost3",
     componentId: "sc-35b1796-26"
 })([
-    "flex:1"
+    `flex:1`
 ]);
 var _StyledP12 = styled("p").withConfig({
     displayName: "code___StyledP12",
