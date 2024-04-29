@@ -1,5 +1,11 @@
 # @swc/plugin-styled-components
 
+## 2.0.2
+
+### Patch Changes
+
+- 7f8ff1b: Use template literals
+
 ## 2.0.1
 
 ### Patch Changes

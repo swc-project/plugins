@@ -4,7 +4,7 @@ const ReproElement = styled.p.withConfig({
     displayName: "code__ReproElement",
     componentId: "sc-d5fbeba3-0"
 })([
-    '&::before{content:"\\a9";}'
+    `&::before{content:"\\a9";}`
 ]);
 export function ReproComponent(props) {
     return <ReproElement>
