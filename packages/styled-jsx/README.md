@@ -2,6 +2,12 @@
 
 # @swc/plugin-styled-jsx
 
+## 2.0.2
+
+### Patch Changes
+
+- 10ad50c: Error instead of panic on nested tags
+
 ## 2.0.1
 
 ### Patch Changes
