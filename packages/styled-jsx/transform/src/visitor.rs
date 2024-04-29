@@ -5,7 +5,7 @@ use std::{
     sync::Arc,
 };
 
-use anyhow::{bail, Error, Result};
+use anyhow::{bail, format_err, Error, Result};
 use preset_env_base::Versions;
 use serde::Deserialize;
 use swc_common::{collections::AHashSet, errors::HANDLER, FileName, SourceMap, Span, DUMMY_SP};
@@ -133,14 +133,7 @@ impl Fold for StyledJSXTransformer<'_> {
     fn fold_jsx_element(&mut self, el: JSXElement) -> JSXElement {
         if is_styled_jsx(&el) {
             if self.visiting_styled_jsx_descendants {
-                HANDLER.with(|handler| {
-                    handler
-                        .struct_span_err(
-                            el.span,
-                            "Detected nested styled-jsx tag.\nRead more: https://nextjs.org/docs/messages/nested-styled-jsx-tags",
-                        )
-                        .emit()
-                });
+                emit_nested_error(el.span);
                 return el;
             }
 
@@ -595,7 +588,12 @@ impl StyledJSXTransformer<'_> {
     }
 
     fn replace_jsx_style(&mut self, el: &JSXElement) -> Result<JSXElement, Error> {
-        let style_info = self.styles.pop().unwrap();
+        let style_info = self.styles.pop().ok_or_else(|| {
+            emit_nested_error(el.span);
+
+            //
+            format_err!("Invalid state")
+        })?;
 
         let is_global = el.opening.attrs.iter().any(|attr| {
             if let JSXAttrOrSpread::JSXAttr(JSXAttr {
@@ -748,6 +746,17 @@ impl StyledJSXTransformer<'_> {
         self.class_name = None;
         self.styles = vec![];
     }
+}
+
+fn emit_nested_error(span: Span) {
+    HANDLER.with(|handler| {
+        handler
+            .struct_span_err(
+                span,
+                "Detected nested styled-jsx tag.\nRead more: https://nextjs.org/docs/messages/nested-styled-jsx-tags",
+            )
+            .emit()
+    });
 }
 
 fn is_styled_jsx(el: &JSXElement) -> bool {
