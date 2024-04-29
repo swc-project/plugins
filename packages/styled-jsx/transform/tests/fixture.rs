@@ -87,7 +87,10 @@ fn run(input: PathBuf, use_lightningcss: bool) {
         },
         &input,
         &output,
-        Default::default(),
+        FixtureTestConfig {
+            allow_error: true,
+            ..Default::default()
+        },
     );
 }
 
