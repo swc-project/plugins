@@ -35,8 +35,6 @@ export default function SimplePage() {
 
 const ComponentWithChildAsProp = ({
     trigger,
-}: {
-    trigger: React.ReactNode;
 }) => {
     return <div>{trigger}</div>;
 };
