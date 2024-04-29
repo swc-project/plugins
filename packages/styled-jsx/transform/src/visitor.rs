@@ -194,6 +194,7 @@ impl Fold for StyledJSXTransformer<'_> {
 
     fn fold_jsx_opening_element(&mut self, mut el: JSXOpeningElement) -> JSXOpeningElement {
         if !self.has_styled_jsx {
+            el = el.fold_children_with(self);
             return el;
         }
 
