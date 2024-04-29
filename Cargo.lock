@@ -2316,7 +2316,7 @@ dependencies = [
 
 [[package]]
 name = "styled_jsx"
-version = "0.73.15"
+version = "0.73.16"
 dependencies = [
  "anyhow",
  "lightningcss",
