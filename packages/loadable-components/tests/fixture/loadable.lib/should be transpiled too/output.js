@@ -1,3 +1,4 @@
+import loadable from "@loadable/component";
 loadable.lib({
     resolved: {},
     chunkName () {

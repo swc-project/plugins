@@ -1,13 +1,16 @@
 #![allow(clippy::boxed_local)]
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 
+use std::collections::HashSet;
+
 use once_cell::sync::Lazy;
+use serde::Deserialize;
 use swc_common::{
     comments::{Comment, CommentKind, Comments},
     util::take::Take,
     BytePos, Spanned, DUMMY_SP,
 };
-use swc_core::quote;
+use swc_core::{atoms::Atom, quote};
 use swc_ecma_ast::*;
 use swc_ecma_utils::{quote_ident, ExprFactory};
 use swc_ecma_visit::{Visit, VisitMut, VisitMutWith, VisitWith};
@@ -31,21 +34,39 @@ static WEBPACK_MATCH_PADDED_HYPHENS_REPLACE_REGEX: Lazy<regex::Regex> =
 static MATCH_LEFT_HYPHENS_REPLACE_REGEX: Lazy<regex::Regex> =
     Lazy::new(|| regex::Regex::new(r"^-").unwrap());
 
+fn get_config(plugin_config: &str) -> PluginConfig {
+    serde_json::from_str::<PluginConfig>(plugin_config)
+        .expect("invalid config for swc-loadable-components")
+}
+
 #[plugin_transform]
 fn loadable_components_plugin(
     mut program: Program,
-    _data: TransformPluginProgramMetadata,
+    data: TransformPluginProgramMetadata,
 ) -> Program {
-    program.visit_mut_with(&mut loadable_transform(PluginCommentsProxy));
+    let config = get_config(
+        &data
+            .get_transform_plugin_config()
+            .expect("failed to get plugin config for swc-loadable-components"),
+    );
+
+    program.visit_mut_with(&mut loadable_transform(
+        PluginCommentsProxy,
+        config.signatures,
+    ));
 
     program
 }
 
-pub fn loadable_transform<C>(comments: C) -> impl VisitMut
+pub fn loadable_transform<C>(comments: C, signatures: Vec<Signature>) -> impl VisitMut
 where
     C: Comments,
 {
-    Loadable { comments }
+    Loadable {
+        comments,
+        signatures,
+        specifiers: HashSet::new(),
+    }
 }
 
 struct Loadable<C>
@@ -53,21 +74,23 @@ where
     C: Comments,
 {
     comments: C,
+    signatures: Vec<Signature>,
+    specifiers: HashSet<Atom>,
 }
 
 impl<C> Loadable<C>
 where
     C: Comments,
 {
-    fn is_valid_identifier(e: &Expr) -> bool {
+    fn is_valid_identifier(&self, e: &Expr) -> bool {
         match e {
-            Expr::Ident(i) => &*i.sym == "loadable",
+            Expr::Ident(i) => self.specifiers.contains(&i.sym),
             Expr::Member(MemberExpr {
                 obj,
                 prop: MemberProp::Ident(prop),
                 ..
             }) => match &**obj {
-                Expr::Ident(i) => &*i.sym == "loadable" && &*prop.sym == "lib",
+                Expr::Ident(i) => self.specifiers.contains(&i.sym) && &*prop.sym == "lib",
                 _ => false,
             },
             _ => false,
@@ -616,11 +639,40 @@ impl<C> VisitMut for Loadable<C>
 where
     C: Comments,
 {
+    fn visit_mut_import_decl(&mut self, import_decl: &mut ImportDecl) {
+        for signature in self.signatures.iter() {
+            if signature.from == *import_decl.src.value {
+                for specifier in import_decl.specifiers.iter() {
+                    match specifier {
+                        ImportSpecifier::Default(default_spec) => {
+                            if signature.is_default_specifier() {
+                                self.specifiers.insert(default_spec.local.sym.clone());
+                            }
+                        }
+                        ImportSpecifier::Named(named_specifier) => {
+                            if let Some(ModuleExportName::Ident(imported)) =
+                                &named_specifier.imported
+                            {
+                                if imported.sym == signature.name {
+                                    self.specifiers.insert(named_specifier.local.sym.clone());
+                                    return;
+                                }
+                            }
+                            if named_specifier.local.sym == signature.name {
+                                self.specifiers.insert(named_specifier.local.sym.clone());
+                            }
+                        }
+                        _ => (),
+                    }
+                }
+            }
+        }
+    }
+
     fn visit_mut_call_expr(&mut self, call: &mut CallExpr) {
         call.visit_mut_children_with(self);
-
         match &call.callee {
-            Callee::Expr(callee) if Self::is_valid_identifier(callee) => {}
+            Callee::Expr(callee) if self.is_valid_identifier(callee) => {}
             _ => return,
         }
 
@@ -723,5 +775,83 @@ fn clone_params(e: &Expr) -> Vec<Param> {
             })
             .collect(),
         _ => Default::default(),
+    }
+}
+
+#[derive(Debug, Clone, Deserialize, PartialEq)]
+pub struct Signature {
+    pub name: Atom,
+    pub from: Atom,
+}
+
+impl Default for Signature {
+    fn default() -> Self {
+        Signature {
+            name: "default".into(),
+            from: "@loadable/component".into(),
+        }
+    }
+}
+
+impl Signature {
+    fn is_default_specifier(&self) -> bool {
+        self.name == *"default"
+    }
+
+    pub fn default_lazy() -> Self {
+        Signature {
+            name: "lazy".into(),
+            from: "@loadable/component".into(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Deserialize, PartialEq)]
+struct PluginConfig {
+    #[serde(default = "default_signatures")]
+    signatures: Vec<Signature>,
+}
+
+fn default_signatures() -> Vec<Signature> {
+    vec![Signature::default(), Signature::default_lazy()]
+}
+
+impl Default for PluginConfig {
+    fn default() -> Self {
+        Self {
+            signatures: default_signatures(),
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn should_return_default_config_signatures() {
+        let config = get_config("{}");
+        assert_eq!(config.signatures, default_signatures())
+    }
+
+    #[test]
+    fn should_return_custom_signatures() {
+        let config = get_config(
+            r#"{
+            "signatures": [
+                {
+                    "from": "myLoadableWrapper",
+                    "name": "lazy" 
+                }
+            ]
+        }"#,
+        );
+        assert_eq!(
+            config.signatures,
+            vec![Signature {
+                from: "myLoadableWrapper".into(),
+                name: "lazy".into()
+            }]
+        )
     }
 }
