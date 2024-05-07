@@ -8,6 +8,12 @@
 
 # @swc/plugin-loadable-components
 
+## 1.0.1
+
+### Patch Changes
+
+- 876bbce: Update swc_core to 0.92.x
+
 ## 1.0.0
 
 ### Major Changes

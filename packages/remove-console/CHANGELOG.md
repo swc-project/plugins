@@ -1,5 +1,11 @@
 # @swc/plugin-remove-console
 
+## 2.0.1
+
+### Patch Changes
+
+- 876bbce: Update swc_core to 0.92.x
+
 ## 2.0.0
 
 ### Major Changes
