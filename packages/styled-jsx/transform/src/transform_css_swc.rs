@@ -295,7 +295,7 @@ impl Namespacer {
                         let mut result = vec![];
 
                         if let Some(combinator) = combinator {
-                            match v.get(0) {
+                            match v.first() {
                                 // `Descendant` combinator can't be the first because we removed it
                                 // above
                                 Some(ComplexSelectorChildren::Combinator(..))

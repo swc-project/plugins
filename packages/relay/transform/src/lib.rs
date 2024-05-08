@@ -85,7 +85,7 @@ impl RelayImport {
                     span: self
                         .unresolved_mark
                         .map(|m| DUMMY_SP.apply_mark(m))
-                        .unwrap_or(Default::default()),
+                        .unwrap_or_default(),
                     sym: self.item.clone(),
                     optional: false,
                 },
@@ -267,7 +267,7 @@ impl<'a> Relay<'a> {
                             span: self
                                 .unresolved_mark
                                 .map(|m| DUMMY_SP.apply_mark(m))
-                                .unwrap_or(Default::default()),
+                                .unwrap_or_default(),
                             sym: ident_name,
                             optional: false,
                         };
