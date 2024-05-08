@@ -73,23 +73,23 @@ fn compress_symbols(code: impl AsRef<str>) -> String {
     split_keep(&SYMBOL_REGEX, code.as_ref())
         .into_iter()
         .enumerate()
-        .fold("".to_string(), |str, (index, fragment)| {
+        .fold("".to_string(), |s, (index, fragment)| {
             // Even-indices are non-symbol fragments
             if index % 2 == 0 {
-                return str + fragment;
+                return s + fragment;
             }
 
             // Only manipulate symbols outside of strings
-            if count_occurrences(&str, '\'') % 2 != 0 || count_occurrences(&str, '"') % 2 != 0 {
-                return str + fragment;
+            if count_occurrences(&s, '\'') % 2 != 0 || count_occurrences(&s, '"') % 2 != 0 {
+                return s + fragment;
             }
 
             // Preserve whitespace preceding colon, to avoid joining selectors.
             if !fragment.starts_with(':') && fragment.trim_start().starts_with(':') {
-                return str + " " + fragment.trim();
+                return s + " " + fragment.trim();
             }
 
-            str + fragment.trim()
+            s + fragment.trim()
         })
 }
 
