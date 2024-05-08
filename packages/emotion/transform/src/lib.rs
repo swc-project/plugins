@@ -4,6 +4,7 @@ use std::{
     sync::Arc,
 };
 
+use base64::Engine;
 use fxhash::FxHashMap;
 use import_map::ImportMap;
 use once_cell::sync::Lazy;
@@ -285,7 +286,7 @@ impl<C: Comments> EmotionTransformer<C> {
             if cm.to_writer(&mut writer).is_ok() {
                 return Some(format!(
                     "/*# sourceMappingURL=data:application/json;charset=utf-8;base64,{} */",
-                    base64::encode(writer)
+                    base64::engine::general_purpose::STANDARD.encode(writer)
                 ));
             }
         }
