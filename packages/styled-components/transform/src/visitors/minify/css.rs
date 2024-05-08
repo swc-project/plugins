@@ -61,11 +61,11 @@ fn reduce_substr(
 /// Joins at comment starts when it's inside a string or parentheses
 /// effectively removing line comments
 fn strip_line_comment(line: impl AsRef<str>) -> String {
-    reduce_substr(line.as_ref().split("//"), "//", |str| {
-        !str.ends_with(':') // NOTE: This is another guard against urls, if they're not inside strings or parantheses.
-            && count_occurrences(str, '\'') % 2 == 0
-            && count_occurrences(str, '"') % 2 == 0
-            && count_occurrences(str, '(') == count_occurrences(str, ')')
+    reduce_substr(line.as_ref().split("//"), "//", |s| {
+        !s.ends_with(':') // NOTE: This is another guard against urls, if they're not inside strings or parantheses.
+            && count_occurrences(s, '\'') % 2 == 0
+            && count_occurrences(s, '"') % 2 == 0
+            && count_occurrences(s, '(') == count_occurrences(s, ')')
     })
 }
 
