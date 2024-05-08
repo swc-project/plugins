@@ -1,5 +1,11 @@
 # @swc/plugin-emotion
 
+## 3.0.2
+
+### Patch Changes
+
+- 247cca6: Update rustc to 'nightly-2024-04-16'
+
 ## 3.0.1
 
 ### Patch Changes

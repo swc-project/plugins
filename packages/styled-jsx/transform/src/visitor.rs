@@ -557,7 +557,7 @@ impl StyledJSXTransformer<'_> {
                     } else {
                         false
                     };
-                    expressions = exprs.clone();
+                    expressions.clone_from(exprs);
                 }
             }
             StyleExpr::Ident(ident) => {
@@ -836,7 +836,7 @@ fn get_style_expr(el: &JSXElement) -> Result<StyleExpr, Error> {
     }) = non_whitespace_children[0]
     {
         return Ok(match &**expr {
-            Expr::Lit(Lit::Str(str)) => StyleExpr::Str(str),
+            Expr::Lit(Lit::Str(s)) => StyleExpr::Str(s),
             Expr::Tpl(tpl) => StyleExpr::Tpl(tpl, expr),
             Expr::Ident(ident) => StyleExpr::Ident(ident),
             _ => {

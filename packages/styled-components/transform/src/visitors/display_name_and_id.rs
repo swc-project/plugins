@@ -296,7 +296,7 @@ impl VisitMut for DisplayNameAndId {
                             .map(|v| v == "withConfig")
                             .unwrap_or(false)
                         && Expr::as_call(callee)
-                            .and_then(|with_config_call| with_config_call.args.get(0))
+                            .and_then(|with_config_call| with_config_call.args.first())
                             .filter(|first_arg| first_arg.spread.is_none())
                             .and_then(|first_arg| first_arg.expr.as_object())
                             .map(|first_arg_obj| !already_has(first_arg_obj))

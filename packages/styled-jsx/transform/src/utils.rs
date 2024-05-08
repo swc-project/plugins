@@ -318,25 +318,20 @@ pub fn styled_jsx_import_decl(style_import_name: &str) -> ModuleItem {
 }
 
 // TODO: maybe use DJBHasher (need to implement)
-pub fn hash_string(str: &str) -> String {
+pub fn hash_string(s: &str) -> String {
     let mut hasher = DefaultHasher::new();
-    hasher.write(str.as_bytes());
+    hasher.write(s.as_bytes());
     let hash_result = hasher.finish();
     format!("{:x}", hash_result)
 }
 
-pub fn string_literal_expr(str: &str) -> Expr {
-    let str = str.replace("\\`", "`");
-    Expr::Lit(Lit::Str(Str {
-        value: str.into(),
-        span: DUMMY_SP,
-        raw: None,
-    }))
+pub fn string_literal_expr(s: &str) -> Expr {
+    s.replace("\\`", "`").into()
 }
 
-pub fn ident(str: &str) -> Ident {
+pub fn ident(s: &str) -> Ident {
     Ident {
-        sym: str.into(),
+        sym: s.into(),
         span: DUMMY_SP,
         optional: false,
     }

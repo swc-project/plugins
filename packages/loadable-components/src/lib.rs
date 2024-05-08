@@ -110,7 +110,7 @@ where
             }
         };
 
-        match call.args.get(0) {
+        match call.args.first() {
             Some(arg) if self.is_supported(&arg.expr) => {}
             _ => return,
         }

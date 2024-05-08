@@ -41,9 +41,9 @@ dependencies = [
 
 [[package]]
 name = "ahash"
-version = "0.7.6"
+version = "0.7.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fcb51a0695d8f838b1ee009b3fbf66bda078cd64590202a864a8f3e8c4315c47"
+checksum = "891477e0c6a8957309ee5c45a6368af3ae14bb510732d2684ffa19af310920f9"
 dependencies = [
  "getrandom",
  "once_cell",
@@ -870,7 +870,7 @@ version = "0.12.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8a9ee70c43aaf417c914396645a0fa852624801b24ebb7ae78fe8272889ac888"
 dependencies = [
- "ahash 0.7.6",
+ "ahash 0.7.8",
 ]
 
 [[package]]
@@ -1131,7 +1131,7 @@ version = "1.0.0-alpha.49"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "06476660ee1e593a2672e4a342a1289708fd9936dcdf3e74433ad078145e9e3d"
 dependencies = [
- "ahash 0.7.6",
+ "ahash 0.7.8",
  "bitflags 2.5.0",
  "const-str",
  "cssparser",
@@ -1290,7 +1290,7 @@ dependencies = [
 
 [[package]]
 name = "modularize_imports"
-version = "0.68.11"
+version = "0.68.12"
 dependencies = [
  "convert_case",
  "handlebars",
@@ -1811,7 +1811,7 @@ dependencies = [
 
 [[package]]
 name = "react_remove_properties"
-version = "0.24.9"
+version = "0.24.10"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -1886,7 +1886,7 @@ checksum = "c707298afce11da2efef2f600116fa93ffa7a032b5d7b628aa17711ec81383ca"
 
 [[package]]
 name = "remove_console"
-version = "0.25.9"
+version = "0.25.10"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -2295,7 +2295,7 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
 name = "styled_components"
-version = "0.96.12"
+version = "0.96.13"
 dependencies = [
  "Inflector",
  "once_cell",
@@ -2316,7 +2316,7 @@ dependencies = [
 
 [[package]]
 name = "styled_jsx"
-version = "0.73.17"
+version = "0.73.18"
 dependencies = [
  "anyhow",
  "lightningcss",
@@ -2433,7 +2433,7 @@ dependencies = [
 
 [[package]]
 name = "swc_confidential"
-version = "0.19.9"
+version = "0.19.10"
 dependencies = [
  "cipher 0.4.4",
  "hex",
@@ -2937,7 +2937,7 @@ dependencies = [
 
 [[package]]
 name = "swc_emotion"
-version = "0.72.10"
+version = "0.72.11"
 dependencies = [
  "base64 0.13.1",
  "byteorder",
@@ -3011,7 +3011,7 @@ dependencies = [
 
 [[package]]
 name = "swc_magic"
-version = "0.19.9"
+version = "0.19.10"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -3244,7 +3244,7 @@ dependencies = [
 
 [[package]]
 name = "swc_relay"
-version = "0.44.10"
+version = "0.44.11"
 dependencies = [
  "once_cell",
  "regex",

@@ -614,14 +614,14 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
 
     fn fold_class_decl(&mut self, cd: ClassDecl) -> ClassDecl {
         self.current_class = Some(cd.ident.sym.as_ref().to_owned());
-        self.current_context = self.current_class.clone();
+        self.current_context.clone_from(&self.current_class);
         cd.fold_children_with(self)
     }
 
     fn fold_class_method(&mut self, cm: ClassMethod) -> ClassMethod {
         // class methods use the class name for the context
         if self.current_class.is_some() {
-            self.current_context = self.current_class.clone();
+            self.current_context.clone_from(&self.current_class);
         }
         cm.fold_children_with(self)
     }

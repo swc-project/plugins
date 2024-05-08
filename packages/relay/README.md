@@ -88,6 +88,12 @@ In this example typescript graphql files will output transpiled import path of `
 
 # @swc/plugin-relay
 
+## 2.0.2
+
+### Patch Changes
+
+- 247cca6: Update rustc to 'nightly-2024-04-16'
+
 ## 2.0.1
 
 ### Patch Changes
