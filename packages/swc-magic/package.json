@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-swc-magic",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "SWC plugin for swc-magic",
   "main": "swc_plugin_swc_magic.wasm",
   "scripts": {

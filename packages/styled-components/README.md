@@ -28,6 +28,12 @@ Then update your `.swcrc` file like below:
 
 # @swc/plugin-styled-components
 
+## 2.0.5
+
+### Patch Changes
+
+- 1cc9eda: Update dependencies
+
 ## 2.0.4
 
 ### Patch Changes

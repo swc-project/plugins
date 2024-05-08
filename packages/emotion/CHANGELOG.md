@@ -1,5 +1,11 @@
 # @swc/plugin-emotion
 
+## 3.0.3
+
+### Patch Changes
+
+- 1cc9eda: Update dependencies
+
 ## 3.0.2
 
 ### Patch Changes

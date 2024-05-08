@@ -1,5 +1,11 @@
 # @swc/plugin-loadable-components
 
+## 1.0.3
+
+### Patch Changes
+
+- 1cc9eda: Update dependencies
+
 ## 1.0.2
 
 ### Patch Changes

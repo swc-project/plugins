@@ -10,7 +10,7 @@ license      = { workspace = true }
 name         = "styled_jsx"
 repository   = { workspace = true }
 rust-version = { workspace = true }
-version      = "0.73.18"
+version      = "0.73.19"
 
 
 [features]
@@ -18,15 +18,15 @@ custom_transform = ["swc_common/concurrent"]
 
 [dependencies]
 anyhow = "1"
-lightningcss = { version = "1.0.0-alpha.49", features = [
+lightningcss = { version = "1.0.0-alpha.55", features = [
   "visitor",
   "into_owned",
 ] }
-parcel_selectors = "0.26.3"
+parcel_selectors = "0.26.4"
 serde = { version = "1", features = ["derive"] }
-tracing = "0.1.37"
+tracing = "0.1.40"
 
-preset_env_base   = "0.4.7"
+preset_env_base   = "0.4.13"
 swc_common        = "0.33.26"
 swc_css_ast       = "0.140.23"
 swc_css_codegen   = "0.151.35"
@@ -35,8 +35,8 @@ swc_css_minifier  = "0.116.34"
 swc_css_parser    = "0.150.33"
 swc_css_prefixer  = "0.153.37"
 swc_css_visit     = "0.139.22"
-swc_ecma_ast      = "0.113.1"
-swc_ecma_minifier = "0.194.0"
+swc_ecma_ast      = "0.113.2"
+swc_ecma_minifier = "0.194.2"
 swc_ecma_parser   = "0.144.1"
 swc_ecma_utils    = "0.128.1"
 swc_ecma_visit    = "0.99.1"

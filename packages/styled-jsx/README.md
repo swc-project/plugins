@@ -2,6 +2,12 @@
 
 # @swc/plugin-styled-jsx
 
+## 2.0.5
+
+### Patch Changes
+
+- 1cc9eda: Update dependencies
+
 ## 2.0.4
 
 ### Patch Changes
