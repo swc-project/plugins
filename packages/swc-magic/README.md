@@ -24,6 +24,12 @@ markAsPure(() => console.log("This will be removed by the SWC minifier"));
 
 # @swc/plugin-swc-magic
 
+## 2.0.2
+
+### Patch Changes
+
+- 247cca6: Update rustc to 'nightly-2024-04-16'
+
 ## 2.0.1
 
 ### Patch Changes

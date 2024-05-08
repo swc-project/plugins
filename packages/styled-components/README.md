@@ -28,6 +28,12 @@ Then update your `.swcrc` file like below:
 
 # @swc/plugin-styled-components
 
+## 2.0.4
+
+### Patch Changes
+
+- 247cca6: Update rustc to 'nightly-2024-04-16'
+
 ## 2.0.3
 
 ### Patch Changes
