@@ -1,5 +1,11 @@
 # @swc/plugin-jest
 
+## 2.0.3
+
+### Patch Changes
+
+- 1cc9eda: Update dependencies
+
 ## 2.0.2
 
 ### Patch Changes
