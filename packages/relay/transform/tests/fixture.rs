@@ -56,7 +56,7 @@ fn fixture_es_modules(input: PathBuf) {
     );
 }
 
-#[testing::fixture("tests/fixture/outputFileExtension/javascript/**/input.js")]
+#[testing::fixture("tests/fixture/output-file-extension/javascript/**/input.js")]
 fn fixture_output_file_extension_javascript(input: PathBuf) {
     let output = input.parent().unwrap().join("output.js");
 
@@ -82,7 +82,7 @@ fn fixture_output_file_extension_javascript(input: PathBuf) {
     );
 }
 
-#[testing::fixture("tests/fixture/outputFileExtension/typescript/**/input.js")]
+#[testing::fixture("tests/fixture/output-file-extension/typescript/**/input.js")]
 fn fixture_output_file_extension_typescript(input: PathBuf) {
     let output = input.parent().unwrap().join("output.js");
 
