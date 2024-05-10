@@ -30,7 +30,7 @@ fn fixture(input: PathBuf) {
     );
 }
 
-#[testing::fixture("tests/fixture/eage-es-modules/**/input.js")]
+#[testing::fixture("tests/fixture/eager-es-modules/**/input.js")]
 fn fixture_es_modules(input: PathBuf) {
     let output = input.parent().unwrap().join("output.js");
 
