@@ -88,6 +88,12 @@ In this example typescript graphql files will output transpiled import path of `
 
 # @swc/plugin-relay
 
+## 2.0.4
+
+### Patch Changes
+
+- 1379d24: Make config parsing typed.
+
 ## 2.0.3
 
 ### Patch Changes
