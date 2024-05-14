@@ -193,7 +193,7 @@ where
                     if s.len() == 2 {
                         return Some((
                             s[0].to_string(),
-                            serde_json::Value::String(s[1].trim_matches('"').to_string()),
+                            serde_json::Value::String(s[1].trim_matches(['"', '\'']).to_string()),
                         ));
                     }
 
