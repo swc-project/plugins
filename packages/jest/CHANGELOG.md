@@ -1,5 +1,11 @@
 # @swc/plugin-jest
 
+## 2.0.4
+
+### Patch Changes
+
+- 0f38844: Publish all chanages
+
 ## 2.0.3
 
 ### Patch Changes

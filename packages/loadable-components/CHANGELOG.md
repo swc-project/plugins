@@ -1,5 +1,11 @@
 # @swc/plugin-loadable-components
 
+## 1.0.4
+
+### Patch Changes
+
+- 0f38844: Publish all chanages
+
 ## 1.0.3
 
 ### Patch Changes
