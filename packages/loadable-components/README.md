@@ -8,6 +8,12 @@
 
 # @swc/plugin-loadable-components
 
+## 1.0.5
+
+### Patch Changes
+
+- a7491af: Support single quote
+
 ## 1.0.4
 
 ### Patch Changes
