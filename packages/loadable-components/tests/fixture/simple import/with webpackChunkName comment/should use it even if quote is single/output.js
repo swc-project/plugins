@@ -1,7 +1,7 @@
 loadable({
     resolved: {},
     chunkName () {
-        return "'ChunkA'";
+        return "ChunkA";
     },
     isReady (props) {
         const key = this.resolve(props);
@@ -13,7 +13,7 @@ loadable({
         }
         return false;
     },
-    importAsync: ()=>import(/*webpackChunkName: "'ChunkA'"*/ ""),
+    importAsync: ()=>import(/*webpackChunkName: "ChunkA"*/ ""),
     requireAsync (props) {
         const key = this.resolve(props);
         this.resolved[key] = false;
