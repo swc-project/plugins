@@ -469,7 +469,7 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
                                 }
                             }
                         }
-                    } else if !self.in_jsx_element {
+                    } else {
                         // Make sure we hit the get the children of the expression too.
                         // https://github.com/swc-project/plugins/issues/303
                         return expr.fold_children_with(self);
