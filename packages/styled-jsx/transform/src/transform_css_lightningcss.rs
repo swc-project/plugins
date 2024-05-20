@@ -600,6 +600,9 @@ fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Selector<'i> {
             TokenOrValue::UnresolvedColor(..) => {
                 unimplemented!("parse_token_list: unresolved color")
             }
+            TokenOrValue::AnimationName(_) => {
+                unimplemented!("parse_token_list: animation name")
+            }
         }
     }
 
