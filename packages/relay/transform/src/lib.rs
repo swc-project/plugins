@@ -10,7 +10,7 @@ use serde::Deserialize;
 use swc_atoms::JsWord;
 use swc_common::{FileName, Mark, DUMMY_SP};
 use swc_ecma_ast::*;
-use swc_ecma_utils::{quote_ident, ExprFactory};
+use swc_ecma_utils::{prepend_stmts, quote_ident, ExprFactory};
 use swc_ecma_visit::{Fold, FoldWith};
 
 #[derive(Copy, Clone, Debug, Deserialize)]
@@ -165,16 +165,17 @@ impl<'a> Fold for Relay<'a> {
     }
 
     fn fold_module_items(&mut self, items: Vec<ModuleItem>) -> Vec<ModuleItem> {
-        let items = items
+        let mut items = items
             .into_iter()
             .map(|item| item.fold_children_with(self))
             .collect::<Vec<_>>();
 
-        self.imports
-            .iter()
-            .map(|import| import.as_module_item())
-            .chain(items)
-            .collect()
+        prepend_stmts(
+            &mut items,
+            self.imports.iter().map(|import| import.as_module_item()),
+        );
+
+        items
     }
 }
 
