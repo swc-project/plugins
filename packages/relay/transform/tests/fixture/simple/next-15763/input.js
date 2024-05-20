@@ -1,8 +1,7 @@
 import { graphql } from "relay-runtime";
 import { revalidatePath } from "next/cache";
-import type { actionsSetValueMutation } from '@/relay/actionsSetValueMutation.graphql';
 
-export async function setValue(string: string): Promise<void> {
+export async function setValue(string) {
     "use server";
 
     // comment out the next two statements to successfully compile
@@ -27,7 +26,7 @@ export async function setValue(string: string): Promise<void> {
       `,
             variables: {
                 value: string,
-            } satisfies actionsSetValueMutation["variables"],
+            },
         }),
         headers: {
             "Content-Type": "application/json",
@@ -35,7 +34,7 @@ export async function setValue(string: string): Promise<void> {
         method: "POST",
     });
 
-    const data = await response.json() as actionsSetValueMutation["response"];
+    const data = await response.json();
 
     // the ui should flush this value when revalidated
     console.log(data);
