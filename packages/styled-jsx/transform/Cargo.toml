@@ -18,7 +18,7 @@ custom_transform = ["swc_common/concurrent"]
 
 [dependencies]
 anyhow = "1"
-lightningcss = { version = "1.0.0-alpha.55", features = [
+lightningcss = { version = "1.0.0-alpha.56", features = [
   "visitor",
   "into_owned",
 ] }
