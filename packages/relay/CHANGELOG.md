@@ -1,5 +1,11 @@
 # @swc/plugin-relay
 
+## 2.0.6
+
+### Patch Changes
+
+- 67f7bc2: Publish packages
+
 ## 2.0.5
 
 ### Patch Changes
