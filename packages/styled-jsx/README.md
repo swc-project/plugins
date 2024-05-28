@@ -2,6 +2,12 @@
 
 # @swc/plugin-styled-jsx
 
+## 2.0.9
+
+### Patch Changes
+
+- fa630b9: Bump lightningcss
+
 ## 2.0.8
 
 ### Patch Changes
