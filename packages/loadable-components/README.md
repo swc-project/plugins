@@ -1,10 +1,16 @@
 # loadable-components
 
 ## Config
-
+If you use the .swcrc :
 ```json
 ["@swc/plugin-loadable-components", {}]
 ```
+
+If you use the json config:
+```json
+["loadable-components", {}]
+```
+
 
 # @swc/plugin-loadable-components
 
