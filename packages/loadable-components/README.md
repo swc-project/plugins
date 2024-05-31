@@ -3,7 +3,7 @@
 ## Config
 
 ```json
-["loadable-components", {}]
+["@swc/plugin-loadable-components", {}]
 ```
 
 # @swc/plugin-loadable-components
