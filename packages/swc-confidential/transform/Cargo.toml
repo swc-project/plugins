@@ -10,7 +10,7 @@ license      = { workspace = true }
 name         = "swc_confidential"
 repository   = { workspace = true }
 rust-version = { workspace = true }
-version      = "0.19.12"
+version      = "0.19.13"
 
 
 [dependencies]
@@ -20,12 +20,12 @@ magic-crypt    = "3.1.13"
 serde          = { version = "1.0.201", features = ["derive"] }
 swc_atoms      = "0.6.7"
 swc_common     = "0.33.26"
-swc_ecma_ast   = "0.113.2"
-swc_ecma_utils = "0.128.1"
+swc_ecma_ast   = "0.113.7"
+swc_ecma_utils = "0.128.3"
 swc_ecma_visit = "0.99.1"
 
 [dev-dependencies]
-swc_ecma_parser             = "0.144.1"
-swc_ecma_transforms_base    = "0.138.2"
+swc_ecma_parser             = "0.144.2"
+swc_ecma_transforms_base    = "0.138.3"
 swc_ecma_transforms_testing = "0.141.1"
-testing                     = "0.35.24"
+testing                     = "0.35.25"

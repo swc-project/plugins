@@ -2,6 +2,12 @@
 
 # @swc/plugin-styled-jsx
 
+## 2.0.10
+
+### Patch Changes
+
+- fc30490: Update swc_core to v0.93.0
+
 ## 2.0.9
 
 ### Patch Changes

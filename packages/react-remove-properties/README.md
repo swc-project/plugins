@@ -23,6 +23,12 @@ or
 
 # @swc/plugin-react-remove-properties
 
+## 2.0.5
+
+### Patch Changes
+
+- fc30490: Update swc_core to v0.93.0
+
 ## 2.0.4
 
 ### Patch Changes
