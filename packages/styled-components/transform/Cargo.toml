@@ -27,14 +27,14 @@ regex = { version = "1.10.4", features = [
 serde = { version = "1.0.201", features = ["derive"] }
 swc_atoms = "0.6.7"
 swc_common = "0.33.26"
-swc_ecma_ast = "0.113.2"
-swc_ecma_utils = "0.128.1"
+swc_ecma_ast = "0.113.7"
+swc_ecma_utils = "0.128.3"
 swc_ecma_visit = "0.99.1"
 tracing = "0.1.40"
 
 [dev-dependencies]
 serde_json                  = "1"
-swc_ecma_parser             = "0.144.1"
+swc_ecma_parser             = "0.144.2"
 swc_ecma_transforms         = "0.230.1"
 swc_ecma_transforms_testing = "0.141.1"
-testing                     = "0.35.24"
+testing                     = "0.35.25"

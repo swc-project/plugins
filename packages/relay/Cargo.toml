@@ -20,9 +20,9 @@ regex            = "1.10"
 serde            = "1"
 serde_json       = "1"
 swc_common       = { version = "0.33.26", features = ["concurrent"] }
-swc_core         = { version = "0.92.2", features = ["ecma_plugin_transform"] }
-swc_ecma_ast     = "0.113.2"
-swc_ecma_utils   = "0.128.1"
+swc_core         = { version = "0.93.0", features = ["ecma_plugin_transform"] }
+swc_ecma_ast     = "0.113.7"
+swc_ecma_utils   = "0.128.3"
 swc_ecma_visit   = "0.99.1"
 swc_plugin_macro = "0.9.16"
 swc_relay        = { path = "./transform" }
