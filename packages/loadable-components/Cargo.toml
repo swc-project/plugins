@@ -19,17 +19,17 @@ crate-type = ["cdylib", "rlib"]
 once_cell = "1.19.0"
 regex = "1.10.4"
 serde_json = "1.0.117"
-swc_common = { version = "0.33.26", features = ["concurrent"] }
-swc_core = { version = "0.93.0", features = [
+swc_common = { version = "0.34.0", features = ["concurrent"] }
+swc_core = { version = "0.95.0", features = [
   "ecma_quote",
   "ecma_plugin_transform",
 ] }
-swc_ecma_ast = "0.113.7"
-swc_ecma_utils = "0.128.3"
-swc_ecma_visit = "0.99.1"
+swc_ecma_ast = "0.115.0"
+swc_ecma_utils = "0.130.0"
+swc_ecma_visit = "0.101.0"
 swc_plugin_macro = "0.9.16"
-swc_plugin_proxy = "0.42.1"
+swc_plugin_proxy = "0.44.0"
 tracing = { version = "0.1.40", features = ["release_max_level_off"] }
 
 [dev-dependencies]
-testing = "0.35.25"
+testing = "0.36.0"
