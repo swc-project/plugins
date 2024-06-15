@@ -18,6 +18,12 @@
 
 # @swc/plugin-transform-imports
 
+## 2.0.6
+
+### Patch Changes
+
+- 41a8f56: Update swc_core to v0.95.x
+
 ## 2.0.5
 
 ### Patch Changes
