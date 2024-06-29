@@ -28,6 +28,22 @@ module.exports = {
             eagerEsModules: true,
           },
         ],
+        // Or if you want to use multiple projects
+        [
+          "@swc/plugin-relay",
+          {
+            projects: [
+              {
+                rootDir: path.resolve(__dirname, '../project1'),
+              },
+              {
+                rootDir: path.resolve(__dirname, '../project2'),
+              }
+            ],
+            language: "typescript",
+            eagerEsModules: true,
+          },
+        ],
       ],
     },
     parser: {
