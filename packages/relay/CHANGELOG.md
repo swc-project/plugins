@@ -1,5 +1,11 @@
 # @swc/plugin-relay
 
+## 2.0.9
+
+### Patch Changes
+
+- be5f997: Support multi-project mode
+
 ## 2.0.8
 
 ### Patch Changes

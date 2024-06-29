@@ -28,6 +28,22 @@ module.exports = {
             eagerEsModules: true,
           },
         ],
+        // Or if you want to use multiple projects
+        [
+          "@swc/plugin-relay",
+          {
+            projects: [
+              {
+                rootDir: path.resolve(__dirname, '../project1'),
+              },
+              {
+                rootDir: path.resolve(__dirname, '../project2'),
+              }
+            ],
+            language: "typescript",
+            eagerEsModules: true,
+          },
+        ],
       ],
     },
     parser: {
@@ -87,6 +103,12 @@ plugins: [
 In this example typescript graphql files will output transpiled import path of `javascript` ending with `.js`.
 
 # @swc/plugin-relay
+
+## 2.0.9
+
+### Patch Changes
+
+- be5f997: Support multi-project mode
 
 ## 2.0.8
 

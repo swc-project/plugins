@@ -98,11 +98,11 @@ impl RelayImport {
     }
 }
 
-struct Relay<'a> {
+struct Relay {
     root_dir: PathBuf,
     pages_dir: Option<PathBuf>,
     file_name: FileName,
-    config: &'a Config,
+    config: Config,
     imports: Vec<RelayImport>,
     unresolved_mark: Option<Mark>,
 }
@@ -110,13 +110,27 @@ struct Relay<'a> {
 #[derive(Deserialize, Debug, Default, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Config {
+    #[serde(default)]
+    pub projects: Vec<ProjectConfig>,
+
+    #[serde(default)]
     pub artifact_directory: Option<PathBuf>,
+
     #[serde(default)]
     pub language: RelayLanguageConfig,
+
     #[serde(default)]
     pub eager_es_modules: bool,
     #[serde(default)]
     pub output_file_extension: OutputFileExtension,
+}
+
+#[derive(Deserialize, Debug, Default, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct ProjectConfig {
+    pub root_dir: PathBuf,
+    #[serde(default)]
+    pub artifact_directory: Option<PathBuf>,
 }
 
 fn pull_first_operation_name_from_tpl(tpl: &TaggedTpl) -> Option<String> {
@@ -148,7 +162,7 @@ fn build_require_expr_from_path(path: &str, mark: Option<Mark>) -> Expr {
     })
 }
 
-impl<'a> Fold for Relay<'a> {
+impl Fold for Relay {
     fn fold_expr(&mut self, expr: Expr) -> Expr {
         let expr = expr.fold_children_with(self);
 
@@ -190,7 +204,7 @@ enum BuildRequirePathError {
     ArtifactDirectoryExpected { file_name: String },
 }
 
-impl<'a> Relay<'a> {
+impl Relay {
     fn path_for_artifact(
         &self,
         real_file_name: &Path,
@@ -205,6 +219,19 @@ impl<'a> Relay<'a> {
                 RelayLanguageConfig::JavaScript => format!("{}.graphql.js", definition_name),
             },
         };
+
+        if !self.config.projects.is_empty() {
+            for project in &self.config.projects {
+                if real_file_name.starts_with(&project.root_dir) {
+                    return Ok(project
+                        .artifact_directory
+                        .as_deref()
+                        .unwrap_or_else(|| &self.root_dir)
+                        .join("__generated__")
+                        .join(filename));
+                }
+            }
+        }
 
         if let Some(artifact_directory) = &self.config.artifact_directory {
             Ok(self.root_dir.join(artifact_directory).join(filename))
@@ -303,12 +330,12 @@ impl<'a> Relay<'a> {
 }
 
 pub fn relay(
-    config: &Config,
+    config: Config,
     file_name: FileName,
     root_dir: PathBuf,
     pages_dir: Option<PathBuf>,
     unresolved_mark: Option<Mark>,
-) -> impl Fold + '_ {
+) -> impl Fold {
     Relay {
         root_dir,
         file_name,
