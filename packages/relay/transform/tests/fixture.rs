@@ -1,8 +1,8 @@
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use swc_common::FileName;
 use swc_ecma_transforms_testing::test_fixture;
-use swc_relay::{relay, Config, OutputFileExtension, RelayLanguageConfig};
+use swc_relay::{relay, Config, OutputFileExtension, ProjectConfig, RelayLanguageConfig};
 
 #[testing::fixture("tests/fixture/simple/**/input.js")]
 fn fixture(input: PathBuf) {
@@ -101,6 +101,49 @@ fn fixture_output_file_extension_typescript(input: PathBuf) {
                     output_file_extension: OutputFileExtension::TypeScript,
                 },
                 FileName::Real("file.js".parse().unwrap()),
+                Default::default(),
+                None,
+                None,
+            )
+        },
+        &input,
+        &output,
+        Default::default(),
+    );
+}
+
+#[testing::fixture("tests/fixture/multi-projects/**/input.js")]
+fn fixture_multi_projects(input: PathBuf) {
+    let output = input.parent().unwrap().join("output.js");
+
+    test_fixture(
+        Default::default(),
+        &|_| {
+            relay(
+                Config {
+                    projects: vec![
+                        ProjectConfig {
+                            artifact_directory: Path::new(".")
+                                .canonicalize()
+                                .unwrap()
+                                .join("tests/fixture/multi-projects/project1"),
+
+                            language: Default::default(),
+                        },
+                        ProjectConfig {
+                            artifact_directory: Path::new(".")
+                                .canonicalize()
+                                .unwrap()
+                                .join("tests/fixture/multi-projects/project2"),
+                            language: Default::default(),
+                        },
+                    ],
+                    artifact_directory: None,
+                    language: RelayLanguageConfig::JavaScript,
+                    eager_es_modules: true,
+                    output_file_extension: OutputFileExtension::TypeScript,
+                },
+                FileName::Real(input.clone()),
                 Default::default(),
                 None,
                 None,

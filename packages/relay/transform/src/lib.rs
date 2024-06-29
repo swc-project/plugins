@@ -128,7 +128,7 @@ pub struct Config {
 #[derive(Deserialize, Debug, Default, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct ProjectConfig {
-    pub artifact_directory: Option<PathBuf>,
+    pub artifact_directory: PathBuf,
     #[serde(default)]
     pub language: RelayLanguageConfig,
 }
@@ -222,10 +222,11 @@ impl Relay {
 
         if !self.config.projects.is_empty() {
             for project in &self.config.projects {
-                if let Some(artifact_directory) = &project.artifact_directory {
-                    if real_file_name.starts_with(artifact_directory) {
-                        return Ok(artifact_directory.join("./__generated__").join(filename));
-                    }
+                if real_file_name.starts_with(&project.artifact_directory) {
+                    return Ok(project
+                        .artifact_directory
+                        .join("__generated__")
+                        .join(filename));
                 }
             }
         }
