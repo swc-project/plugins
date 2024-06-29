@@ -128,9 +128,9 @@ pub struct Config {
 #[derive(Deserialize, Debug, Default, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct ProjectConfig {
-    pub artifact_directory: PathBuf,
+    pub root_dir: PathBuf,
     #[serde(default)]
-    pub language: RelayLanguageConfig,
+    pub artifact_directory: Option<PathBuf>,
 }
 
 fn pull_first_operation_name_from_tpl(tpl: &TaggedTpl) -> Option<String> {
@@ -222,9 +222,11 @@ impl Relay {
 
         if !self.config.projects.is_empty() {
             for project in &self.config.projects {
-                if real_file_name.starts_with(&project.artifact_directory) {
+                if real_file_name.starts_with(&project.root_dir) {
                     return Ok(project
                         .artifact_directory
+                        .as_deref()
+                        .unwrap_or_else(|| &self.root_dir)
                         .join("__generated__")
                         .join(filename));
                 }
