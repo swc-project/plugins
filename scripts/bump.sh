@@ -5,7 +5,7 @@ pnpm changeset || true
 pnpm changeset version
 
 for pkg in $(ls -d packages/*); do
-    CHANGELOG=$(cat ./$pkg/CHANGELOG.md) envsubst < ./$pkg/README.md.tmpl > ./$pkg/README.md
+    CHANGELOG=$(cat ./$pkg/CHANGELOG.md) envsubst < ./$pkg/README.tmpl.md > ./$pkg/README.md
     git add ./$pkg/README.md
 done
 
