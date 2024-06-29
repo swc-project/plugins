@@ -1,8 +1,9 @@
-import loadable from "@loadable/component";
-loadable({
+import { lazy as renamedLazy } from "@loadable/component";
+
+renamedLazy({
     resolved: {},
     chunkName () {
-        return `ModA`.replace(/[^a-zA-Z0-9_!§$()=\\-^°]+/g, "-");
+        return "ModA";
     },
     isReady (props) {
         const key = this.resolve(props);
@@ -14,7 +15,7 @@ loadable({
         }
         return false;
     },
-    importAsync: ()=>import(/*webpackChunkName: "ModA"*/ `./ModA`),
+    importAsync: ()=>import(/*webpackChunkName: "ModA"*/ "./ModA"),
     requireAsync (props) {
         const key = this.resolve(props);
         this.resolved[key] = false;
@@ -32,8 +33,8 @@ loadable({
     },
     resolve () {
         if (require.resolveWeak) {
-            return require.resolveWeak(`./ModA`);
+            return require.resolveWeak("./ModA");
         }
-        return eval('require.resolve')(`./ModA`);
+        return eval('require.resolve')("./ModA");
     }
 });
