@@ -123,19 +123,23 @@ fn fixture_multi_projects(input: PathBuf) {
                 Config {
                     projects: vec![
                         ProjectConfig {
-                            artifact_directory: Path::new(".")
+                            root_dir: Path::new(".")
                                 .canonicalize()
                                 .unwrap()
                                 .join("tests/fixture/multi-projects/project1"),
-
-                            language: Default::default(),
+                            artifact_directory: Some(
+                                Path::new(".")
+                                    .canonicalize()
+                                    .unwrap()
+                                    .join("tests/projects1"),
+                            ),
                         },
                         ProjectConfig {
-                            artifact_directory: Path::new(".")
+                            root_dir: Path::new(".")
                                 .canonicalize()
                                 .unwrap()
                                 .join("tests/fixture/multi-projects/project2"),
-                            language: Default::default(),
+                            ..Default::default()
                         },
                     ],
                     artifact_directory: None,
