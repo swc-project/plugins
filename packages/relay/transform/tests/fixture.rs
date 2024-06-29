@@ -12,7 +12,8 @@ fn fixture(input: PathBuf) {
         Default::default(),
         &|_| {
             relay(
-                &Config {
+                Config {
+                    projects: Default::default(),
                     artifact_directory: None,
                     language: RelayLanguageConfig::TypeScript,
                     eager_es_modules: false,
@@ -38,7 +39,8 @@ fn fixture_es_modules(input: PathBuf) {
         Default::default(),
         &|_| {
             relay(
-                &Config {
+                Config {
+                    projects: Default::default(),
                     artifact_directory: None,
                     language: RelayLanguageConfig::TypeScript,
                     eager_es_modules: true,
@@ -64,7 +66,8 @@ fn fixture_output_file_extension_javascript(input: PathBuf) {
         Default::default(),
         &|_| {
             relay(
-                &Config {
+                Config {
+                    projects: Default::default(),
                     artifact_directory: None,
                     language: RelayLanguageConfig::TypeScript,
                     eager_es_modules: true,
@@ -90,7 +93,8 @@ fn fixture_output_file_extension_typescript(input: PathBuf) {
         Default::default(),
         &|_| {
             relay(
-                &Config {
+                Config {
+                    projects: Default::default(),
                     artifact_directory: None,
                     language: RelayLanguageConfig::JavaScript,
                     eager_es_modules: true,
