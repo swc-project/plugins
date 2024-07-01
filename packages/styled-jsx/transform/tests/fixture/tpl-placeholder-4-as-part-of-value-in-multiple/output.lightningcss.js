@@ -10,7 +10,6 @@ export default class {
                 ]
             ]
         ])}>
-
         <p className={_JSXStyle.dynamic([
             [
                 "ad45da86ca763331",
@@ -20,12 +19,10 @@ export default class {
                 ]
             ]
         ])}>test</p>
-
         <_JSXStyle id={"ad45da86ca763331"} dynamic={[
             a || "var(--c)",
             b || "inherit"
         ]}>{`.a:hover .b.__jsx-style-dynamic-selector{padding:0 ${a || "var(--c)"};color:${b || "inherit"};display:inline-block}`}</_JSXStyle>
-
       </div>;
     }
 }

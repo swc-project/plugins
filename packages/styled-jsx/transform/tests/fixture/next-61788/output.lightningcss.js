@@ -9,7 +9,6 @@ export default function Home() {
             ]
         ]
     ])}>
-
       <h1 className={_JSXStyle.dynamic([
         [
             "e9062ed9ed84de84",
@@ -18,10 +17,8 @@ export default function Home() {
             ]
         ]
     ]) + " " + "header"}>Hello</h1>
-
       <_JSXStyle id={"e9062ed9ed84de84"} dynamic={[
         MOBILE_MAX
     ]}>{`.header.__jsx-style-dynamic-selector{font-size:48px}`}</_JSXStyle>
-
     </div>;
 }

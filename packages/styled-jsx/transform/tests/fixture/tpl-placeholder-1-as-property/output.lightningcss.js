@@ -9,7 +9,6 @@ export default class {
                 ]
             ]
         ])}>
-
         <p className={_JSXStyle.dynamic([
             [
                 "a173e97e0622f4f8",
@@ -18,11 +17,9 @@ export default class {
                 ]
             ]
         ])}>test</p>
-
         <_JSXStyle id={"a173e97e0622f4f8"} dynamic={[
             inputSize ? "height: calc(2 * var(--a)) !important;" : ""
         ]}>{`@media only screen{a.__jsx-style-dynamic-selector{${inputSize ? "height: calc(2 * var(--a)) !important;" : ""}}}`}</_JSXStyle>
-
       </div>;
     }
 }

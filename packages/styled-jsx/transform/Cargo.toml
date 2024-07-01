@@ -10,7 +10,7 @@ license      = { workspace = true }
 name         = "styled_jsx"
 repository   = { workspace = true }
 rust-version = { workspace = true }
-version      = "0.73.24"
+version      = "0.73.25"
 
 
 [features]
@@ -27,22 +27,22 @@ serde = { version = "1", features = ["derive"] }
 tracing = "0.1.40"
 
 preset_env_base   = "0.4.13"
-swc_common        = "0.34.0"
+swc_common        = "0.34.3"
 swc_css_ast       = "0.141.0"
 swc_css_codegen   = "0.152.0"
 swc_css_compat    = "0.28.0"
-swc_css_minifier  = "0.117.0"
+swc_css_minifier  = "0.117.1"
 swc_css_parser    = "0.151.0"
-swc_css_prefixer  = "0.154.0"
+swc_css_prefixer  = "0.155.0"
 swc_css_visit     = "0.140.0"
-swc_ecma_ast      = "0.115.0"
-swc_ecma_minifier = "0.197.0"
-swc_ecma_parser   = "0.146.0"
-swc_ecma_utils    = "0.130.0"
+swc_ecma_ast      = "0.115.1"
+swc_ecma_minifier = "0.197.1"
+swc_ecma_parser   = "0.146.7"
+swc_ecma_utils    = "0.130.1"
 swc_ecma_visit    = "0.101.0"
 swc_plugin_macro  = "0.9.16"
 
 [dev-dependencies]
-swc_ecma_transforms         = "0.232.0"
-swc_ecma_transforms_testing = "0.143.0"
+swc_ecma_transforms         = "0.232.1"
+swc_ecma_transforms_testing = "0.143.1"
 testing                     = "0.36.0"

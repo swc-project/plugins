@@ -9,7 +9,6 @@ export default class {
                 ]
             ]
         ])}>
-
         <p className={_JSXStyle.dynamic([
             [
                 "1ba1d68ae392f2b1",
@@ -18,11 +17,9 @@ export default class {
                 ]
             ]
         ])}>test</p>
-
         <_JSXStyle id={"1ba1d68ae392f2b1"} dynamic={[
             a
         ]}>{`@media only screen{a.__jsx-style-dynamic-selector{color:${a}}}`}</_JSXStyle>
-
       </div>;
     }
 }

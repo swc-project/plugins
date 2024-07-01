@@ -12,7 +12,7 @@ homepage     = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
 rust-version = { workspace = true }
-version      = "0.96.17"
+version      = "0.96.18"
 
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -26,15 +26,15 @@ regex = { version = "1.10.4", features = [
 ], default-features = false }
 serde = { version = "1.0.201", features = ["derive"] }
 swc_atoms = "0.6.7"
-swc_common = "0.34.0"
-swc_ecma_ast = "0.115.0"
-swc_ecma_utils = "0.130.0"
+swc_common = "0.34.3"
+swc_ecma_ast = "0.115.1"
+swc_ecma_utils = "0.130.1"
 swc_ecma_visit = "0.101.0"
 tracing = "0.1.40"
 
 [dev-dependencies]
 serde_json                  = "1"
-swc_ecma_parser             = "0.146.0"
-swc_ecma_transforms         = "0.232.0"
-swc_ecma_transforms_testing = "0.143.0"
+swc_ecma_parser             = "0.146.7"
+swc_ecma_transforms         = "0.232.1"
+swc_ecma_transforms_testing = "0.143.1"
 testing                     = "0.36.0"

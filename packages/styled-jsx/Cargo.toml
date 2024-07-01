@@ -25,16 +25,16 @@ anyhow            = "1"
 serde_json        = "1"
 styled_jsx        = { path = "./transform" }
 swc_atoms         = "0.6.7"
-swc_common        = "0.34.0"
-swc_core          = { version = "0.95.0", features = ["ecma_plugin_transform"] }
-swc_ecma_ast      = "0.115.0"
-swc_ecma_minifier = "0.197.0"
-swc_ecma_parser   = "0.146.0"
-swc_ecma_utils    = "0.130.0"
+swc_common        = "0.34.3"
+swc_core          = { version = "0.96.0", features = ["ecma_plugin_transform"] }
+swc_ecma_ast      = "0.115.1"
+swc_ecma_minifier = "0.197.1"
+swc_ecma_parser   = "0.146.7"
+swc_ecma_utils    = "0.130.1"
 swc_ecma_visit    = "0.101.0"
 swc_plugin_macro  = "0.9.16"
 tracing           = { version = "0.1.40", features = ["release_max_level_off"] }
 
 [dev-dependencies]
-swc_ecma_transforms_testing = "0.143.0"
+swc_ecma_transforms_testing = "0.143.1"
 testing                     = "0.36.0"
