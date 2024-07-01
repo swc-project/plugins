@@ -19,46 +19,32 @@ const Thing2 = styled(Thing).withConfig({
  * Basic fixtures
  */ const StaticString = (p)=><_StyledP>A</_StyledP>;
 const StaticTemplate = (p)=><_StyledP2>
-
     A
-
   </_StyledP2>;
 const ObjectProp = (p)=><_StyledP3>A</_StyledP3>;
 const NoChildren = (p)=><_StyledP4/>;
 const CssHelperProp = (p)=><_StyledP5>
-
     A
-
   </_StyledP5>;
 /*
  * Dynamic prop
  */ const CustomComp = (p)=><_StyledParagraph>H</_StyledParagraph>;
 const DynamicProp = (p)=><_StyledP6 $_css={props.cssText}>H</_StyledP6>;
 const LocalInterpolation = (p)=><_StyledP7 $_css2={props.bg}>
-
     H
-
   </_StyledP7>;
 const FuncInterpolation = (p)=><_StyledP8>
-
     H
-
   </_StyledP8>;
 const radius = 10;
 const GlobalInterpolation = (p)=><_StyledP9>
-
     H
-
   </_StyledP9>;
 const LocalCssHelperProp = (p)=><_StyledP10 $_css3={p.color}>
-
     A
-
   </_StyledP10>;
 const DynamicCssHelperProp = (p)=><_StyledP11>
-
     A
-
   </_StyledP11>;
 const CustomCompWithDot = (p)=><_StyledButtonGhost>H</_StyledButtonGhost>;
 const NestedCompWithDot = (p)=><_StyledButtonGhostNew>H</_StyledButtonGhostNew>;
@@ -69,17 +55,13 @@ const getAfterValue = ()=>'"bar"';
 const ObjectPropMixedInputs = (p)=>{
     const color = "red";
     return <_StyledP12 $_css4={p.background} $_css5={color} $_css6={globalVar} $_css7={getAfterValue()}>
-
       A
-
     </_StyledP12>;
 };
 const SpreadObjectPropMixedInputs = (p)=>{
     const color = "red";
     return <_StyledP13 $_css8={globalVar} $_css9={getAfterValue()} $_css10={globalVar} $_css11={getAfterValue()} $_css12={p.background} $_css13={globalVar} $_css14={getAfterValue()}>
-
       A
-
     </_StyledP13>;
 };
 /* styled component defined after function it's used in */ const EarlyUsageComponent = (p)=><_StyledThing/>;
@@ -134,41 +116,31 @@ const RequiredComponentUsage = (p)=><_StyledSomeOtherComponent/>;
 const ObjectInterpolation = (p)=>{
     const theme = useTheme();
     return <_StyledP14 $_css15={theme.colors.red}>
-
       H
-
     </_StyledP14>;
 };
 const ObjectInterpolationCustomComponent = (p)=>{
     const theme = useTheme();
     return <_StyledThing3 $_css16={theme.colors.red}>
-
       H
-
     </_StyledThing3>;
 };
 const ObjectInterpolationInKey = (p)=>{
     const theme = useTheme();
     return <_StyledThing4 $_css17={theme.breakpoints.md}>
-
       H
-
     </_StyledThing4>;
 };
 const ObjectFnInterpolationInKey = (p)=>{
     const theme = useTheme();
     return <_StyledThing5 $_css18={theme.breakpoints.md()}>
-
       H
-
     </_StyledThing5>;
 };
 const ObjectFnSimpleInterpolationInKey = (p)=>{
     const foo = "@media screen and (max-width: 600px)";
     return <_StyledThing6 $_css19={foo}>
-
       H
-
     </_StyledThing6>;
 };
 const ObjectPropWithSpread = ()=>{

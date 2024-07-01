@@ -14,7 +14,6 @@ export default class {
                 ]
             ]
         ])}>
-
         <p className={_JSXStyle.dynamic([
             [
                 "469be1774c8967f0",
@@ -28,7 +27,6 @@ export default class {
                 ]
             ]
         ])}>test</p>
-
         <_JSXStyle id={"469be1774c8967f0"} dynamic={[
             Typography.base.size.default,
             Typography.base.lineHeight,
@@ -37,7 +35,6 @@ export default class {
             Target.largePlus,
             Typography.base.size.largePlus
         ]}>{`html{font-size:${Typography.base.size.default};line-height:${Typography.base.lineHeight}}@media ${Target.mediumPlus}{html{font-size:${Typography.base.size.mediumPlus}}}@media ${Target.largePlus}{html{font-size:${Typography.base.size.largePlus}}}`}</_JSXStyle>
-
       </div>;
     }
 }
