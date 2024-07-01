@@ -18,7 +18,8 @@ fn fixture(input: PathBuf) {
                     language: RelayLanguageConfig::TypeScript,
                     eager_es_modules: false,
                     output_file_extension: OutputFileExtension::Undefined,
-                },
+                }
+                .into(),
                 FileName::Real("file.js".parse().unwrap()),
                 Default::default(),
                 None,
@@ -45,7 +46,8 @@ fn fixture_es_modules(input: PathBuf) {
                     language: RelayLanguageConfig::TypeScript,
                     eager_es_modules: true,
                     output_file_extension: OutputFileExtension::Undefined,
-                },
+                }
+                .into(),
                 FileName::Real("file.js".parse().unwrap()),
                 Default::default(),
                 None,
@@ -72,7 +74,8 @@ fn fixture_output_file_extension_javascript(input: PathBuf) {
                     language: RelayLanguageConfig::TypeScript,
                     eager_es_modules: true,
                     output_file_extension: OutputFileExtension::JavaScript,
-                },
+                }
+                .into(),
                 FileName::Real("file.js".parse().unwrap()),
                 Default::default(),
                 None,
@@ -99,7 +102,8 @@ fn fixture_output_file_extension_typescript(input: PathBuf) {
                     language: RelayLanguageConfig::JavaScript,
                     eager_es_modules: true,
                     output_file_extension: OutputFileExtension::TypeScript,
-                },
+                }
+                .into(),
                 FileName::Real("file.js".parse().unwrap()),
                 Default::default(),
                 None,
@@ -146,7 +150,8 @@ fn fixture_multi_projects(input: PathBuf) {
                     language: RelayLanguageConfig::JavaScript,
                     eager_es_modules: true,
                     output_file_extension: OutputFileExtension::TypeScript,
-                },
+                }
+                .into(),
                 FileName::Real(input.clone()),
                 Default::default(),
                 None,
