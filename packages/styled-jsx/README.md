@@ -2,6 +2,12 @@
 
 # @swc/plugin-styled-jsx
 
+## 2.0.13
+
+### Patch Changes
+
+- d79add2: Update preset_env_base
+
 ## 2.0.12
 
 ### Patch Changes
