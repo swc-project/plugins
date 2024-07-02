@@ -185,7 +185,7 @@ impl<'a> Rewriter<'a> {
                         with: None,
                     });
                 }
-                ExportSpecifier::Namespace(ns_spec) => {
+                ExportSpecifier::Namespace(ns_spec) if !self.config.prevent_full_import => {
                     let name_str = match &ns_spec.name {
                         ModuleExportName::Ident(x) => x.as_ref(),
                         ModuleExportName::Str(x) => x.value.as_ref(),
@@ -253,7 +253,7 @@ impl<'a> Rewriter<'a> {
                         phase: Default::default(),
                     });
                 }
-                ImportSpecifier::Namespace(ns_spec) => {
+                ImportSpecifier::Namespace(ns_spec) if !self.config.prevent_full_import => {
                     let name_str = ns_spec.local.as_ref();
                     let new_path = self.new_path(Some(name_str));
                     let specifier = ImportSpecifier::Namespace(ns_spec.clone());
@@ -266,7 +266,7 @@ impl<'a> Rewriter<'a> {
                         phase: Default::default(),
                     });
                 }
-                ImportSpecifier::Default(def_spec) => {
+                ImportSpecifier::Default(def_spec) if !self.config.prevent_full_import => {
                     let name_str = def_spec.local.as_ref();
                     let new_path = self.new_path(Some(name_str));
                     let specifier = ImportSpecifier::Default(def_spec.clone());
