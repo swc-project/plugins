@@ -79,7 +79,7 @@ fn modularize_imports_fixture(input: PathBuf) {
                         },
                     ),
                     (
-                        "my-(module-namespace|default)".to_string(),
+                        "my-(module-namespace|default|mixed-(named|star))".to_string(),
                         PackageConfig {
                             transform: "transformed-{{matches.[1]}}".into(),
                             prevent_full_import: false,
