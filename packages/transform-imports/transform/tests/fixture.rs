@@ -78,6 +78,14 @@ fn modularize_imports_fixture(input: PathBuf) {
                             skip_default_conversion: true,
                         },
                     ),
+                    (
+                        "my-(module-namespace)".to_string(),
+                        PackageConfig {
+                            transform: "transformed-{{matches.[1]}}".into(),
+                            prevent_full_import: false,
+                            skip_default_conversion: true,
+                        },
+                    ),
                 ]
                 .into_iter()
                 .collect(),
