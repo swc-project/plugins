@@ -266,6 +266,19 @@ impl<'a> Rewriter<'a> {
                         phase: Default::default(),
                     });
                 }
+                ImportSpecifier::Default(def_spec) => {
+                    let name_str = def_spec.local.as_ref();
+                    let new_path = self.new_path(Some(name_str));
+                    let specifier = ImportSpecifier::Default(def_spec.clone());
+                    out.push(ImportDecl {
+                        specifiers: vec![specifier],
+                        src: Box::new(Str::from(new_path.as_ref())),
+                        span: old_decl.span,
+                        type_only: false,
+                        with: None,
+                        phase: Default::default(),
+                    });
+                }
                 _ => {
                     if self.config.prevent_full_import {
                         panic!(
