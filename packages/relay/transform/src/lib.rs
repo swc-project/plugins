@@ -2,7 +2,10 @@
 
 //! TODO: Once refactoring next-swc is done, remove duplicated codes and import
 //! packages directly
-use std::path::{Path, PathBuf};
+use std::{
+    path::{Path, PathBuf},
+    sync::Arc,
+};
 
 use once_cell::sync::Lazy;
 use regex::Regex;
@@ -102,7 +105,7 @@ struct Relay {
     root_dir: PathBuf,
     pages_dir: Option<PathBuf>,
     file_name: FileName,
-    config: Config,
+    config: Arc<Config>,
     imports: Vec<RelayImport>,
     unresolved_mark: Option<Mark>,
 }
@@ -330,7 +333,7 @@ impl Relay {
 }
 
 pub fn relay(
-    config: Config,
+    config: Arc<Config>,
     file_name: FileName,
     root_dir: PathBuf,
     pages_dir: Option<PathBuf>,

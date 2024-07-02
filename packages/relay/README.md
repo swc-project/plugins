@@ -104,6 +104,12 @@ In this example typescript graphql files will output transpiled import path of `
 
 # @swc/plugin-relay
 
+## 2.0.11
+
+### Patch Changes
+
+- 7984823: Use Arc<Config> instead of Config
+
 ## 2.0.10
 
 ### Patch Changes

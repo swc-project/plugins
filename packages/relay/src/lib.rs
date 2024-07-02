@@ -61,7 +61,7 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
     };
 
     let mut relay = relay(
-        config,
+        config.into(),
         filename,
         root_dir,
         None,
