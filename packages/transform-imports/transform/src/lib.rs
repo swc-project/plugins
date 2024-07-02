@@ -185,6 +185,21 @@ impl<'a> Rewriter<'a> {
                         with: None,
                     });
                 }
+                ExportSpecifier::Namespace(ns_spec) => {
+                    let name_str = match &ns_spec.name {
+                        ModuleExportName::Ident(x) => x.as_ref(),
+                        ModuleExportName::Str(x) => x.value.as_ref(),
+                    };
+                    let new_path = self.new_path(Some(name_str));
+                    let specifier = ExportSpecifier::Namespace(ns_spec.clone());
+                    out.push(NamedExport {
+                        specifiers: vec![specifier],
+                        src: Some(Box::new(Str::from(new_path.as_ref()))),
+                        span: old_decl.span,
+                        type_only: false,
+                        with: None,
+                    });
+                }
                 _ => {
                     if self.config.prevent_full_import {
                         panic!(
