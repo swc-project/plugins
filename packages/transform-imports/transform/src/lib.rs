@@ -185,6 +185,21 @@ impl<'a> Rewriter<'a> {
                         with: None,
                     });
                 }
+                ExportSpecifier::Namespace(ns_spec) if !self.config.prevent_full_import => {
+                    let name_str = match &ns_spec.name {
+                        ModuleExportName::Ident(x) => x.as_ref(),
+                        ModuleExportName::Str(x) => x.value.as_ref(),
+                    };
+                    let new_path = self.new_path(Some(name_str));
+                    let specifier = ExportSpecifier::Namespace(ns_spec.clone());
+                    out.push(NamedExport {
+                        specifiers: vec![specifier],
+                        src: Some(Box::new(Str::from(new_path.as_ref()))),
+                        span: old_decl.span,
+                        type_only: false,
+                        with: None,
+                    });
+                }
                 _ => {
                     if self.config.prevent_full_import {
                         panic!(
@@ -229,6 +244,32 @@ impl<'a> Rewriter<'a> {
                             span: named_spec.span,
                         })
                     };
+                    out.push(ImportDecl {
+                        specifiers: vec![specifier],
+                        src: Box::new(Str::from(new_path.as_ref())),
+                        span: old_decl.span,
+                        type_only: false,
+                        with: None,
+                        phase: Default::default(),
+                    });
+                }
+                ImportSpecifier::Namespace(ns_spec) if !self.config.prevent_full_import => {
+                    let name_str = ns_spec.local.as_ref();
+                    let new_path = self.new_path(Some(name_str));
+                    let specifier = ImportSpecifier::Namespace(ns_spec.clone());
+                    out.push(ImportDecl {
+                        specifiers: vec![specifier],
+                        src: Box::new(Str::from(new_path.as_ref())),
+                        span: old_decl.span,
+                        type_only: false,
+                        with: None,
+                        phase: Default::default(),
+                    });
+                }
+                ImportSpecifier::Default(def_spec) if !self.config.prevent_full_import => {
+                    let name_str = def_spec.local.as_ref();
+                    let new_path = self.new_path(Some(name_str));
+                    let specifier = ImportSpecifier::Default(def_spec.clone());
                     out.push(ImportDecl {
                         specifiers: vec![specifier],
                         src: Box::new(Str::from(new_path.as_ref())),
