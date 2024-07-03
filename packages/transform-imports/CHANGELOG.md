@@ -1,5 +1,11 @@
 # @swc/plugin-transform-imports
 
+## 2.0.8
+
+### Patch Changes
+
+- 334a617: Add support for default and namespace imports/exports
+
 ## 2.0.7
 
 ### Patch Changes
