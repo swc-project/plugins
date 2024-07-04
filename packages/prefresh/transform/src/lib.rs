@@ -239,7 +239,7 @@ impl VisitMut for PrefreshPlugin {
         let key = var_declarator_expr
             .name
             .as_ident()
-            .map(|id| id.sym.to_string())
+            .map(|id| id.sym.clone())
             .unwrap_or_default();
 
         if key.is_empty() {
