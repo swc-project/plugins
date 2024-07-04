@@ -2,7 +2,7 @@
 
 Plugins for SWC, written in Rust
 
-#### Currently Available
+#### Currently Available:
 
 - [`emotion`](packages/emotion)
 - [`jest`](packages/jest)

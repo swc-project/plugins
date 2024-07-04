@@ -16,9 +16,11 @@ And SWC has built-in React Refresh transformation, therefore, this plugin only i
     "experimental": {
       "plugins": [
         [
-          "@swc/plugin-prefresh", // enable prefresh specific transformation
+          // enable prefresh specific transformation
+          "@swc/plugin-prefresh",
           {
-            "library": ["preact-like-framework"] // the customizable preact name, default is `["preact", "preact/compat", "react"]`
+            // the customizable preact name, default is `["preact", "preact/compat", "react"]`
+            "library": ["preact-like-framework"]
           }
         ]
       ]
