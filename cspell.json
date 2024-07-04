@@ -6,6 +6,7 @@
     "lightningcss",
     "quasis",
     "rustc",
-    "swcrc"
+    "swcrc",
+    "prefresh"
   ]
 }

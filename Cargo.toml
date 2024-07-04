@@ -13,6 +13,7 @@ members = [
   "packages/swc-confidential",
   "packages/swc-magic",
   "packages/transform-imports",
+  "packages/prefresh",
 ]
 
 
