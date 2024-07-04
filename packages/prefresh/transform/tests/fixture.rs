@@ -18,11 +18,11 @@ fn fixture(input: PathBuf) {
                 resolver(Mark::new(), Mark::new(), false),
                 swc_prefresh::swc_prefresh(
                     swc_prefresh::PrefreshPluginConfig {
-                        library: Some(vec![
+                        library: vec![
                             "@custom/preact".to_string(),
                             "preact".to_string(),
                             "react".to_string()
-                        ]),
+                        ],
                     },
                     "__file_hash__".to_string(),
                 )

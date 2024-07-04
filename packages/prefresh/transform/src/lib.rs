@@ -25,7 +25,7 @@ pub struct PrefreshPluginConfig {
     pub library: Vec<String>,
 }
 fn default_library() -> Vec<String> {
-    vec!["preact".into(), "react".into()]
+    vec!["preact".into(), "react".into(), "preact/compat".into()]
 }
 pub fn hash_string(s: &str) -> String {
     let mut hasher = DefaultHasher::new();
@@ -89,12 +89,7 @@ impl PrefreshPlugin {
 impl VisitMut for PrefreshPlugin {
     fn visit_mut_import_decl(&mut self, import_decl: &mut ImportDecl) {
         let import_from = import_decl.src.value.to_string();
-        let is_library = self
-            .config
-            .library
-            .as_ref()
-            .unwrap_or(&vec!["preact".into(), "react".into()])
-            .contains(&import_from);
+        let is_library = self.config.library.contains(&import_from);
 
         if !is_library {
             return;
@@ -222,69 +217,50 @@ impl VisitMut for PrefreshPlugin {
     }
 
     fn visit_mut_object_pat_prop(&mut self, obj_pat_prop: &mut ObjectPatProp) {
-        let key = obj_pat_prop
-            .as_key_value()
-            .and_then(|kv| kv.key.as_str())
-            .map(|s| s.value.to_string())
-            .unwrap_or_default();
-
-        if key.is_empty() {
-            obj_pat_prop.visit_mut_children_with(self);
-        } else {
+        if let Some(key) = obj_pat_prop.as_key_value().and_then(|kv| kv.key.as_str()) {
             let old_key = self.parent_key.clone();
-            self.parent_key = format!("__{key}");
+            self.parent_key = format!("__{}", key.value);
             obj_pat_prop.visit_mut_children_with(self);
             self.parent_key = old_key;
+        } else {
+            obj_pat_prop.visit_mut_children_with(self);
         }
     }
 
     fn visit_mut_var_declarator(&mut self, var_declarator_expr: &mut VarDeclarator) {
-        let key = var_declarator_expr
-            .name
-            .as_ident()
-            .map(|id| id.sym.clone())
-            .unwrap_or_default();
-
-        if key.is_empty() {
-            var_declarator_expr.visit_mut_children_with(self);
-        } else {
+        if let Some(id) = var_declarator_expr.name.as_ident() {
             let old_key = self.parent_key.clone();
-            self.parent_key = format!("${key}");
+            self.parent_key = format!("${}", id.sym);
             var_declarator_expr.visit_mut_children_with(self);
             self.parent_key = old_key;
+        } else {
+            var_declarator_expr.visit_mut_children_with(self);
         }
     }
 
     fn visit_mut_assign_expr(&mut self, assign_expr: &mut AssignExpr) {
-        let key = assign_expr
-            .left
-            .as_ident()
-            .map(|id| id.sym.to_string())
-            .unwrap_or_else(|| hash_string(&format!("{:?}", assign_expr.left))); // used getSource() in babel
-
-        if key.is_empty() {
-            assign_expr.visit_mut_children_with(self);
-        } else {
+        if let Some(id) = assign_expr.left.as_ident() {
             let old_key = self.parent_key.clone();
-            self.parent_key = format!("_{key}");
+            self.parent_key = format!("_{}", id.sym);
             assign_expr.visit_mut_children_with(self);
             self.parent_key = old_key;
+        } else {
+            assign_expr.visit_mut_children_with(self);
         }
     }
 
     fn visit_mut_function(&mut self, func: &mut Function) {
-        let key = func
+        let params = func
             .params
             .iter()
             .filter_map(|p| p.pat.as_ident().map(|id| id.sym.to_string()))
-            .collect::<Vec<String>>()
-            .join("_PARAM");
+            .collect::<Vec<String>>();
 
-        if key.is_empty() {
+        if params.is_empty() {
             func.visit_mut_children_with(self);
         } else {
             let old_key = self.param_key.clone();
-            self.param_key = format!("__PARAM{key}");
+            self.param_key = format!("__PARAM{}", params.join("_PARAM"));
             func.visit_mut_children_with(self);
             self.param_key = old_key;
         }
