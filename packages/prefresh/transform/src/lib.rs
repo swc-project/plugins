@@ -21,7 +21,8 @@ pub fn swc_prefresh(config: PrefreshPluginConfig, file_hash: String) -> impl Fol
 #[derive(Debug, Clone, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct PrefreshPluginConfig {
-    pub library: Option<Vec<String>>,
+    #[serde(default = "default_library")]
+    pub library: Vec<String>,
 }
 fn default_library() -> Vec<String> {
     vec!["preact".into(), "react".into()]
