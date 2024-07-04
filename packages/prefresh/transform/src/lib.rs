@@ -23,7 +23,9 @@ pub fn swc_prefresh(config: PrefreshPluginConfig, file_hash: String) -> impl Fol
 pub struct PrefreshPluginConfig {
     pub library: Option<Vec<String>>,
 }
-
+fn default_library() -> Vec<String> {
+    vec!["preact".into(), "react".into()]
+}
 pub fn hash_string(s: &str) -> String {
     let mut hasher = DefaultHasher::new();
     hasher.write(s.as_bytes());
