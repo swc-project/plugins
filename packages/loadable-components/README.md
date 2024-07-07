@@ -23,6 +23,12 @@ By default `loadable-components` are configured to transform dynamic imports use
 
 # @swc/plugin-loadable-components
 
+## 1.0.9
+
+### Patch Changes
+
+- 979274e: Transpile lazy and signatures configuration
+
 ## 1.0.8
 
 ### Patch Changes
