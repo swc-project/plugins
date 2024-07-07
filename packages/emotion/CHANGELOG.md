@@ -1,5 +1,11 @@
 # @swc/plugin-emotion
 
+## 3.0.9
+
+### Patch Changes
+
+- 7830879: Fix filename handling for Windows
+
 ## 3.0.8
 
 ### Patch Changes
