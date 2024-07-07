@@ -2192,7 +2192,7 @@ dependencies = [
 
 [[package]]
 name = "styled_jsx"
-version = "0.73.26"
+version = "0.73.27"
 dependencies = [
  "anyhow",
  "lightningcss",
@@ -3133,7 +3133,7 @@ dependencies = [
 
 [[package]]
 name = "swc_prefresh"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "serde",
  "swc_atoms",
