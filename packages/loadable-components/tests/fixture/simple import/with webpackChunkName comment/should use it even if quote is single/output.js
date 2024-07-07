@@ -1,3 +1,5 @@
+import loadable from "@loadable/component";
+
 loadable({
     resolved: {},
     chunkName () {
