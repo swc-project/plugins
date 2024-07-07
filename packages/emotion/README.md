@@ -34,6 +34,12 @@ Source code for plugin itself (not transforms) are copied from https://github.co
 
 # @swc/plugin-emotion
 
+## 3.0.9
+
+### Patch Changes
+
+- 7830879: Fix filename handling for Windows
+
 ## 3.0.8
 
 ### Patch Changes
