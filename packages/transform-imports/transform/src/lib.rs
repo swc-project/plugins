@@ -189,7 +189,7 @@ impl<'a> Rewriter<'a> {
                         with: None,
                     });
                 }
-                ExportSpecifier::Namespace(ns_spec) if !self.config.prevent_full_import => {
+                ExportSpecifier::Namespace(ns_spec) if !self.config.handle_namespace_import => {
                     let name_str = match &ns_spec.name {
                         ModuleExportName::Ident(x) => x.as_ref(),
                         ModuleExportName::Str(x) => x.value.as_ref(),
