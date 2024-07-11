@@ -18,6 +18,12 @@
 
 # @swc/plugin-transform-imports
 
+## 2.0.9
+
+### Patch Changes
+
+- f39705a: Disable default/namespace import handling by default
+
 ## 2.0.8
 
 ### Patch Changes
