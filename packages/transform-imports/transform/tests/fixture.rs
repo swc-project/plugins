@@ -26,6 +26,8 @@ fn modularize_imports_fixture(input: PathBuf) {
                             transform: "react-bootstrap/lib/{{member}}".into(),
                             prevent_full_import: false,
                             skip_default_conversion: false,
+                            handle_default_import: true,
+                            handle_namespace_import: true,
                         },
                     ),
                     (
@@ -34,6 +36,8 @@ fn modularize_imports_fixture(input: PathBuf) {
                             transform: "my-library/{{ matches.[1] }}/{{member}}".into(),
                             prevent_full_import: false,
                             skip_default_conversion: false,
+                            handle_default_import: true,
+                            handle_namespace_import: true,
                         },
                     ),
                     (
@@ -42,6 +46,8 @@ fn modularize_imports_fixture(input: PathBuf) {
                             transform: "my-library-2/{{ camelCase member }}".into(),
                             prevent_full_import: false,
                             skip_default_conversion: true,
+                            handle_default_import: true,
+                            handle_namespace_import: true,
                         },
                     ),
                     (
@@ -50,6 +56,8 @@ fn modularize_imports_fixture(input: PathBuf) {
                             transform: "my-library-3/{{ kebabCase member }}".into(),
                             prevent_full_import: false,
                             skip_default_conversion: true,
+                            handle_default_import: true,
+                            handle_namespace_import: true,
                         },
                     ),
                     (
@@ -76,6 +84,8 @@ fn modularize_imports_fixture(input: PathBuf) {
                             .into(),
                             prevent_full_import: false,
                             skip_default_conversion: true,
+                            handle_default_import: true,
+                            handle_namespace_import: true,
                         },
                     ),
                     (
@@ -84,6 +94,8 @@ fn modularize_imports_fixture(input: PathBuf) {
                             transform: "transformed-{{matches.[1]}}".into(),
                             prevent_full_import: false,
                             skip_default_conversion: true,
+                            handle_default_import: true,
+                            handle_namespace_import: true,
                         },
                     ),
                 ]
