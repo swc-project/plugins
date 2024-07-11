@@ -219,8 +219,8 @@ impl<C: Comments> EmotionTransformer<C> {
                 .and_then(|s| {
                     s.rfind('\\')
                         .map(|pos| &s[pos + 1..]) // if backslashes are found, take the last part
-                        .or(Some(s))              // otherwise use the whole path
-                    })
+                        .or(Some(s)) // otherwise use the whole path
+                })
                 .map(|s| s.to_owned()),
             cm,
             comments,
