@@ -26,6 +26,10 @@ pub struct PackageConfig {
     #[serde(default)]
     pub prevent_full_import: bool,
     #[serde(default)]
+    pub handle_default_import: bool,
+    #[serde(default)]
+    pub handle_namespace_import: bool,
+    #[serde(default)]
     pub skip_default_conversion: bool,
 }
 
@@ -253,7 +257,7 @@ impl<'a> Rewriter<'a> {
                         phase: Default::default(),
                     });
                 }
-                ImportSpecifier::Namespace(ns_spec) if !self.config.prevent_full_import => {
+                ImportSpecifier::Namespace(ns_spec) if !self.config.handle_namespace_import => {
                     let name_str = ns_spec.local.as_ref();
                     let new_path = self.new_path(Some(name_str));
                     let specifier = ImportSpecifier::Namespace(ns_spec.clone());
@@ -266,7 +270,7 @@ impl<'a> Rewriter<'a> {
                         phase: Default::default(),
                     });
                 }
-                ImportSpecifier::Default(def_spec) if !self.config.prevent_full_import => {
+                ImportSpecifier::Default(def_spec) if !self.config.handle_default_import => {
                     let name_str = def_spec.local.as_ref();
                     let new_path = self.new_path(Some(name_str));
                     let specifier = ImportSpecifier::Default(def_spec.clone());
