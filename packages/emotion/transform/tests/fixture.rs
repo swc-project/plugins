@@ -1,14 +1,14 @@
 use std::path::PathBuf;
 
 use swc_common::{chain, comments::SingleThreadedComments, Mark};
-use swc_ecma_parser::{Syntax, TsConfig};
+use swc_ecma_parser::{Syntax, TsSyntax};
 use swc_ecma_transforms_react::{jsx, Runtime};
 use swc_ecma_transforms_testing::test_fixture;
 use swc_emotion::EmotionOptions;
 use testing::fixture;
 
 fn ts_syntax() -> Syntax {
-    Syntax::Typescript(TsConfig {
+    Syntax::Typescript(TsSyntax {
         tsx: true,
         ..Default::default()
     })

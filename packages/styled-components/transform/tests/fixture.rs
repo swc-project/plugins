@@ -4,7 +4,7 @@ use std::{fs::read_to_string, path::PathBuf};
 
 use styled_components::{styled_components, Config};
 use swc_common::{chain, Mark};
-use swc_ecma_parser::{EsConfig, Syntax};
+use swc_ecma_parser::{EsSyntax, Syntax};
 use swc_ecma_transforms::resolver;
 use swc_ecma_transforms_testing::test_fixture;
 
@@ -16,7 +16,7 @@ fn fixture(input: PathBuf) {
     let config: Config = serde_json::from_str(&config).unwrap();
 
     test_fixture(
-        Syntax::Es(EsConfig {
+        Syntax::Es(EsSyntax {
             jsx: true,
             ..Default::default()
         }),

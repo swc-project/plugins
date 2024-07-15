@@ -1,12 +1,12 @@
 use std::path::PathBuf;
 
 use modularize_imports::{modularize_imports, PackageConfig};
-use swc_ecma_parser::{EsConfig, Syntax};
+use swc_ecma_parser::{EsSyntax, Syntax};
 use swc_ecma_transforms_testing::{test_fixture, FixtureTestConfig};
 use testing::fixture;
 
 fn syntax() -> Syntax {
-    Syntax::Es(EsConfig {
+    Syntax::Es(EsSyntax {
         jsx: true,
         ..Default::default()
     })

@@ -3,6 +3,7 @@
 //! TODO: Once refactoring next-swc is done, remove duplicated codes and import
 //! packages directly
 use std::{
+    borrow::Cow,
     path::{Path, PathBuf},
     sync::Arc,
 };
@@ -136,12 +137,32 @@ pub struct ProjectConfig {
     pub artifact_directory: Option<PathBuf>,
 }
 
-fn pull_first_operation_name_from_tpl(tpl: &TaggedTpl) -> Option<String> {
-    tpl.tpl.quasis.iter().find_map(|quasis| {
-        static OPERATION_REGEX: Lazy<Regex> =
-            Lazy::new(|| Regex::new(r"(fragment|mutation|query|subscription) (\w+)").unwrap());
+/// A line starting with `#` is a comment.
+fn strip_comments(s: &str) -> Cow<str> {
+    if s.contains('#') {
+        let mut buf = String::with_capacity(s.len());
+        for line in s.lines() {
+            if let Some(idx) = line.find('#') {
+                buf.push_str(&line[..idx]);
+            } else {
+                buf.push_str(line);
+            }
+            buf.push('\n');
+        }
+        buf.into()
+    } else {
+        s.into()
+    }
+}
 
-        let capture_group = OPERATION_REGEX.captures_iter(&quasis.raw).next();
+fn pull_first_operation_name_from_tpl(tpl: &TaggedTpl) -> Option<String> {
+    static OPERATION_REGEX: Lazy<Regex> =
+        Lazy::new(|| Regex::new(r"(fragment|mutation|query|subscription) (\w+)").unwrap());
+
+    tpl.tpl.quasis.iter().find_map(|quasis| {
+        let raw = strip_comments(&quasis.raw);
+
+        let capture_group = OPERATION_REGEX.captures_iter(&raw).next();
 
         capture_group.map(|capture_group| capture_group[2].to_string())
     })
