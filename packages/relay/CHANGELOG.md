@@ -1,5 +1,11 @@
 # @swc/plugin-relay
 
+## 2.0.12
+
+### Patch Changes
+
+- 06e1e66: Fix operation name detection
+
 ## 2.0.11
 
 ### Patch Changes
