@@ -5,13 +5,13 @@ use lightningcss::stylesheet::ParserOptions;
 use preset_env_base::Versions;
 use styled_jsx::visitor::{styled_jsx, NativeConfig};
 use swc_common::{chain, FileName, Mark, Span, DUMMY_SP};
-use swc_ecma_parser::{EsConfig, Syntax};
+use swc_ecma_parser::{EsSyntax, Syntax};
 use swc_ecma_transforms::resolver;
 use swc_ecma_transforms_testing::{test_fixture, FixtureTestConfig};
 use testing::fixture;
 
 fn syntax() -> Syntax {
-    Syntax::Es(EsConfig {
+    Syntax::Es(EsSyntax {
         jsx: true,
         ..Default::default()
     })
