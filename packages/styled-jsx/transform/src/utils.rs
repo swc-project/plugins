@@ -293,8 +293,7 @@ pub fn styled_jsx_import_decl(style_import_name: &str) -> ModuleItem {
         specifiers: vec![ImportSpecifier::Default(ImportDefaultSpecifier {
             local: Ident {
                 sym: style_import_name.into(),
-                span: DUMMY_SP,
-                optional: false,
+                ..Default::default()
             },
             span: DUMMY_SP,
         })],
@@ -319,11 +318,10 @@ pub fn string_literal_expr(s: &str) -> Expr {
     s.replace("\\`", "`").into()
 }
 
-pub fn ident(s: &str) -> Ident {
-    Ident {
+pub fn ident(s: &str) -> IdentName {
+    IdentName {
         sym: s.into(),
-        span: DUMMY_SP,
-        optional: false,
+        ..Default::default()
     }
 }
 

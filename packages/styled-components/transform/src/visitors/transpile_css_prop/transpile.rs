@@ -331,7 +331,7 @@ impl VisitMut for TranspileCssProp {
             match attr {
                 JSXAttrOrSpread::JSXAttr(attr) => {
                     if match &attr.name {
-                        JSXAttrName::Ident(Ident { sym, .. }) => sym.is_empty(),
+                        JSXAttrName::Ident(IdentName { sym, .. }) => sym.is_empty(),
                         _ => false,
                     } {
                         return false;
@@ -549,7 +549,7 @@ fn set_value_of_prop(prop: &mut Prop, value: Box<Expr>) {
     match prop {
         Prop::Shorthand(p) => {
             *prop = Prop::KeyValue(KeyValueProp {
-                key: PropName::Ident(p.clone()),
+                key: PropName::Ident(p.clone().into()),
                 value,
             });
         }

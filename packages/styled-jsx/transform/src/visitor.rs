@@ -566,10 +566,9 @@ impl StyledJSXTransformer<'_> {
                 return JSXStyle::External(ExternalStyle {
                     expr: Expr::Member(MemberExpr {
                         obj: Box::new(Expr::Ident(ident.clone())),
-                        prop: MemberProp::Ident(Ident {
+                        prop: MemberProp::Ident(IdentName {
                             sym: "__hash".into(),
-                            span: DUMMY_SP,
-                            optional: false,
+                            ..Default::default()
                         }),
                         span: DUMMY_SP,
                     }),
