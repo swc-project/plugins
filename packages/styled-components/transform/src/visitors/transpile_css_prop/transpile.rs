@@ -296,13 +296,13 @@ impl VisitMut for TranspileCssProp {
                                 span: DUMMY_SP,
                                 callee: styled.as_callee(),
                                 args: vec![css.as_arg()],
-                                type_args: Default::default(),
+                                ..Default::default()
                             })),
                             _ => Box::new(Expr::TaggedTpl(TaggedTpl {
                                 span: DUMMY_SP,
                                 tag: Box::new(styled),
-                                type_params: Default::default(),
                                 tpl: Box::new(css.expect_tpl()),
+                                ..Default::default()
                             })),
                         }),
                         definite: false,
@@ -589,10 +589,10 @@ fn set_key_of_prop(prop: &mut Prop, key: Box<Expr>) {
     });
 }
 
-fn get_local_identifier(idx: &mut usize, expr: &Expr) -> Ident {
+fn get_local_identifier(idx: &mut usize, expr: &Expr) -> IdentName {
     *idx += 1;
 
-    let identifier = quote_ident!(expr.span(), append_if_gt_one("$_css", *idx));
+    let identifier = IdentName::new(append_if_gt_one("$_css", *idx).into(), expr.span());
 
     // TODO: Unique identifier
 

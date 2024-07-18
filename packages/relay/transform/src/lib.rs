@@ -183,7 +183,7 @@ fn build_require_expr_from_path(path: &str, mark: Option<Mark>) -> Expr {
             raw: None,
         })
         .as_arg()],
-        type_args: None,
+        ..Default::default()
     })
 }
 
