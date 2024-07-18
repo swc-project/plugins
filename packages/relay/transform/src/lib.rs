@@ -12,7 +12,7 @@ use once_cell::sync::Lazy;
 use regex::Regex;
 use serde::Deserialize;
 use swc_atoms::JsWord;
-use swc_common::{FileName, Mark, DUMMY_SP};
+use swc_common::{FileName, Mark, SyntaxContext, DUMMY_SP};
 use swc_ecma_ast::*;
 use swc_ecma_utils::{prepend_stmts, quote_ident, ExprFactory};
 use swc_ecma_visit::{Fold, FoldWith};
@@ -86,10 +86,11 @@ impl RelayImport {
             specifiers: vec![ImportSpecifier::Default(ImportDefaultSpecifier {
                 span: Default::default(),
                 local: Ident {
-                    span: self
+                    ctxt: self
                         .unresolved_mark
-                        .map(|m| DUMMY_SP.apply_mark(m))
+                        .map(|m| SyntaxContext::empty().apply_mark(m))
                         .unwrap_or_default(),
+                    span: DUMMY_SP,
                     sym: self.item.clone(),
                     optional: false,
                 },
