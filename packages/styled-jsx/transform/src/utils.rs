@@ -252,8 +252,7 @@ pub fn make_local_styled_jsx_el(
     let opening = JSXOpeningElement {
         name: JSXElementName::Ident(Ident {
             sym: style_import_name.into(),
-            span: DUMMY_SP,
-            optional: false,
+            ..Default::default()
         }),
         attrs,
         span: DUMMY_SP,
@@ -264,8 +263,7 @@ pub fn make_local_styled_jsx_el(
     let closing = Some(JSXClosingElement {
         name: JSXElementName::Ident(Ident {
             sym: style_import_name.into(),
-            span: DUMMY_SP,
-            optional: false,
+            ..Default::default()
         }),
         span: DUMMY_SP,
     });

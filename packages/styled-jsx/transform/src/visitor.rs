@@ -702,10 +702,9 @@ impl StyledJSXTransformer<'_> {
             return Ok(Expr::Object(ObjectLit {
                 props: vec![
                     PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
-                        key: PropName::Ident(Ident {
+                        key: PropName::Ident(IdentName {
                             sym: "styles".into(),
-                            span: DUMMY_SP,
-                            optional: false,
+                            ..Default::default()
                         }),
                         value: Box::new(Expr::JSXElement(Box::new(make_local_styled_jsx_el(
                             style,
@@ -715,10 +714,9 @@ impl StyledJSXTransformer<'_> {
                         )))),
                     }))),
                     PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
-                        key: PropName::Ident(Ident {
+                        key: PropName::Ident(IdentName {
                             sym: "className".into(),
-                            span: DUMMY_SP,
-                            optional: false,
+                            ..Default::default()
                         }),
                         value: Box::new(class_name.unwrap()),
                     }))),

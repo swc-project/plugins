@@ -61,7 +61,7 @@ fn report(
 
         let mut db = DiagnosticBuilder::new(handler, level, &err.kind.to_string());
         if let Some(lo) = lo {
-            db.set_span(Span::new(lo, lo, Default::default()));
+            db.set_span(Span::new(lo, lo));
         }
 
         db.emit();
