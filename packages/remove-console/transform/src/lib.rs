@@ -33,7 +33,7 @@ struct RemoveConsole {
 
 impl RemoveConsole {
     fn is_global_console(&self, ident: &Ident) -> bool {
-        &ident.sym == "console" && ident.span.ctxt == self.unresolved_ctxt
+        &ident.sym == "console" && ident.ctxt == self.unresolved_ctxt
     }
 
     fn should_remove_call(&mut self, n: &CallExpr) -> bool {
