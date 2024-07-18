@@ -1,7 +1,6 @@
-
   x Detected nested styled-jsx tag.
   | Read more: https://nextjs.org/docs/messages/nested-styled-jsx-tags
-    ,-[input.js:21:1]
+    ,-[input.js:22:1]
  21 |     
  22 | ,->             <style jsx>{`
  23 | |           .text:hover {

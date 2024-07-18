@@ -321,19 +321,16 @@ where
             key: PropName::Ident(quote_ident!("chunkName")),
             function: Box::new(Function {
                 params: clone_params(func),
-                decorators: Default::default(),
-                span: DUMMY_SP,
                 body: Some(BlockStmt {
-                    span: DUMMY_SP,
                     stmts: vec![Stmt::Return(ReturnStmt {
                         span: DUMMY_SP,
                         arg: Some(Box::new(self.replace_chunk_name(import))),
                     })],
+                    ..Default::default()
                 }),
                 is_generator: false,
                 is_async: false,
-                type_params: Default::default(),
-                return_type: Default::default(),
+                ..Default::default()
             }),
         }
     }
@@ -347,8 +344,6 @@ where
                     decorators: Default::default(),
                     pat: Pat::Ident(quote_ident!("props").into()),
                 }],
-                decorators: Default::default(),
-                span: DUMMY_SP,
                 body: Some(
                     quote!(
                         "
@@ -370,8 +365,7 @@ where
                 ),
                 is_generator: false,
                 is_async: false,
-                type_params: Default::default(),
-                return_type: Default::default(),
+                ..Default::default()
             }),
         }
     }
@@ -392,8 +386,6 @@ where
                     decorators: Default::default(),
                     pat: Pat::Ident(quote_ident!("props").into()),
                 }],
-                decorators: Default::default(),
-                span: DUMMY_SP,
                 body: Some(
                     quote!(
                         "
@@ -411,8 +403,7 @@ where
                 ),
                 is_generator: false,
                 is_async: false,
-                type_params: Default::default(),
-                return_type: Default::default(),
+                ..Default::default()
             }),
         }
     }
@@ -426,8 +417,6 @@ where
                     decorators: Default::default(),
                     pat: Pat::Ident(quote_ident!("props").into()),
                 }],
-                decorators: Default::default(),
-                span: DUMMY_SP,
                 body: Some(
                     quote!(
                         "
@@ -446,8 +435,7 @@ where
                 ),
                 is_generator: false,
                 is_async: false,
-                type_params: Default::default(),
-                return_type: Default::default(),
+                ..Default::default()
             }),
         }
     }
@@ -463,8 +451,6 @@ where
             key: PropName::Ident(quote_ident!("resolve")),
             function: Box::new(Function {
                 params: clone_params(func),
-                decorators: Default::default(),
-                span: DUMMY_SP,
                 body: Some(
                     quote!(
                         "
@@ -482,8 +468,7 @@ where
                 ),
                 is_generator: false,
                 is_async: false,
-                type_params: Default::default(),
-                return_type: Default::default(),
+                ..Default::default()
             }),
         }
     }
@@ -564,7 +549,7 @@ where
                 .as_arg(),
                 "-".as_arg(),
             ],
-            type_args: Default::default(),
+            ..Default::default()
         })
     }
 

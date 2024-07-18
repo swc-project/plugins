@@ -155,9 +155,8 @@ impl VisitMut for PrefreshPlugin {
             .skip(1)
             .map(|s| {
                 Box::new(Expr::Ident(Ident {
-                    span: DUMMY_SP,
                     sym: Atom::from(s.replace('}', "").to_string()),
-                    optional: false,
+                    ..Default::default()
                 }))
             })
             .collect::<Vec<_>>();

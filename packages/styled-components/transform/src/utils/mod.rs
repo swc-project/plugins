@@ -21,7 +21,7 @@ pub(crate) fn get_prop_key_as_expr(p: &Prop) -> Cow<Expr> {
 
 pub(crate) fn prop_name_to_expr(p: &PropName) -> Cow<Expr> {
     match p {
-        PropName::Ident(p) => Cow::Owned(Expr::Ident(p.clone())),
+        PropName::Ident(p) => Cow::Owned(Expr::Ident(p.clone().into())),
         PropName::Str(p) => Cow::Owned(Expr::Lit(Lit::Str(p.clone()))),
         PropName::Num(p) => Cow::Owned(Expr::Lit(Lit::Num(p.clone()))),
         PropName::BigInt(p) => Cow::Owned(Expr::Lit(Lit::BigInt(p.clone()))),
@@ -42,9 +42,9 @@ pub(crate) fn get_prop_name(p: &Prop) -> Option<&PropName> {
 
 pub(crate) fn get_prop_name2(p: &Prop) -> PropName {
     match p {
-        Prop::Shorthand(ident) => PropName::Ident(ident.clone()),
+        Prop::Shorthand(ident) => PropName::Ident(ident.clone().into()),
         Prop::KeyValue(p) => p.key.clone(),
-        Prop::Assign(x) => PropName::Ident(x.key.clone()),
+        Prop::Assign(x) => PropName::Ident(x.key.clone().into()),
         Prop::Getter(p) => p.key.clone(),
         Prop::Setter(p) => p.key.clone(),
         Prop::Method(p) => p.key.clone(),
@@ -93,7 +93,7 @@ impl State {
             }) => {
                 if let Expr::Ident(obj) = &**obj {
                     if Some(obj.to_id()) == self.import_local_name("default", Some(obj))
-                        && !self.is_helper(&Expr::Ident(prop.clone()))
+                        && !self.is_helper(&Expr::Ident(prop.clone().into()))
                     {
                         return true;
                     }

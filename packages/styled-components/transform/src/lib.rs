@@ -1,6 +1,6 @@
 #![deny(unused)]
 
-use std::{cell::RefCell, rc::Rc};
+use std::{cell::RefCell, rc::Rc, sync::Arc};
 
 use serde::Deserialize;
 use swc_atoms::JsWord;
@@ -72,7 +72,7 @@ impl Config {
 }
 
 pub fn styled_components<C>(
-    file_name: FileName,
+    file_name: Arc<FileName>,
     src_file_hash: u128,
     config: Config,
     comments: C,

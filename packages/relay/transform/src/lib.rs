@@ -12,7 +12,7 @@ use once_cell::sync::Lazy;
 use regex::Regex;
 use serde::Deserialize;
 use swc_atoms::JsWord;
-use swc_common::{FileName, Mark, DUMMY_SP};
+use swc_common::{FileName, Mark, SyntaxContext, DUMMY_SP};
 use swc_ecma_ast::*;
 use swc_ecma_utils::{prepend_stmts, quote_ident, ExprFactory};
 use swc_ecma_visit::{Fold, FoldWith};
@@ -86,10 +86,11 @@ impl RelayImport {
             specifiers: vec![ImportSpecifier::Default(ImportDefaultSpecifier {
                 span: Default::default(),
                 local: Ident {
-                    span: self
+                    ctxt: self
                         .unresolved_mark
-                        .map(|m| DUMMY_SP.apply_mark(m))
+                        .map(|m| SyntaxContext::empty().apply_mark(m))
                         .unwrap_or_default(),
+                    span: DUMMY_SP,
                     sym: self.item.clone(),
                     optional: false,
                 },
@@ -172,7 +173,8 @@ fn build_require_expr_from_path(path: &str, mark: Option<Mark>) -> Expr {
     Expr::Call(CallExpr {
         span: Default::default(),
         callee: quote_ident!(
-            mark.map(|m| DUMMY_SP.apply_mark(m)).unwrap_or(DUMMY_SP),
+            mark.map(|m| SyntaxContext::empty().apply_mark(m))
+                .unwrap_or_default(),
             "require"
         )
         .as_callee(),
@@ -182,7 +184,7 @@ fn build_require_expr_from_path(path: &str, mark: Option<Mark>) -> Expr {
             raw: None,
         })
         .as_arg()],
-        type_args: None,
+        ..Default::default()
     })
 }
 
@@ -316,12 +318,12 @@ impl Relay {
                             unresolved_mark: self.unresolved_mark,
                         });
                         let operation_ident = Ident {
-                            span: self
+                            ctxt: self
                                 .unresolved_mark
-                                .map(|m| DUMMY_SP.apply_mark(m))
+                                .map(|m| SyntaxContext::empty().apply_mark(m))
                                 .unwrap_or_default(),
                             sym: ident_name,
-                            optional: false,
+                            ..Default::default()
                         };
                         Some(Expr::Ident(operation_ident))
                     } else {

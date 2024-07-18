@@ -84,7 +84,7 @@ impl Visit for Analyzer<'_> {
 
                         if is_styled {
                             self.state.styled_required = Some(name.id.to_id());
-                            self.state.unresolved_ctxt = Some(callee.span.ctxt);
+                            self.state.unresolved_ctxt = Some(callee.ctxt);
                         }
                     }
                 }

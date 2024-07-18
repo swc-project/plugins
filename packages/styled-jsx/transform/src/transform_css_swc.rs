@@ -2,8 +2,8 @@ use std::{panic, sync::Arc};
 
 use anyhow::{bail, Error};
 use swc_common::{
-    errors::HANDLER, source_map::Pos, util::take::Take, BytePos, SourceMap, Span, Spanned,
-    SyntaxContext, DUMMY_SP,
+    errors::HANDLER, source_map::SmallPos, util::take::Take, BytePos, SourceMap, Span, Spanned,
+    DUMMY_SP,
 };
 use swc_css_ast::{
     ClassSelector, Combinator, CombinatorValue, ComplexSelector, ComplexSelectorChildren,
@@ -243,7 +243,7 @@ impl Namespacer {
                     let hi = tokens.last().map(|v| v.span_hi()).unwrap_or(BytePos(0));
 
                     Tokens {
-                        span: Span::new(lo, hi, Default::default()),
+                        span: Span::new(lo, hi),
                         tokens,
                     }
                 };
@@ -366,7 +366,6 @@ fn get_front_selector_tokens(selector_tokens: &Tokens) -> Vec<TokenAndSpan> {
             span: Span {
                 lo: BytePos(start_pos),
                 hi: BytePos(start_pos + 1),
-                ctxt: SyntaxContext::empty(),
             },
             token: Token::Ident {
                 raw: "a".into(),
@@ -377,7 +376,6 @@ fn get_front_selector_tokens(selector_tokens: &Tokens) -> Vec<TokenAndSpan> {
             span: Span {
                 lo: BytePos(start_pos + 1),
                 hi: BytePos(start_pos + 2),
-                ctxt: SyntaxContext::empty(),
             },
             token: Token::WhiteSpace { value: " ".into() },
         },

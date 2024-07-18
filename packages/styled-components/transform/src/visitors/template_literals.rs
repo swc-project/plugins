@@ -63,7 +63,7 @@ impl VisitMut for TemplateLiterals {
                 span: tagged.span,
                 callee: tagged.tag.into(),
                 args,
-                type_args: tagged.type_params,
+                ..Default::default()
             })
         });
     }
