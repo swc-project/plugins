@@ -301,11 +301,13 @@ impl Fold for StyledJSXTransformer<'_> {
         let declarator = declarator.fold_children_with(self);
         if let Some(external_hash) = &self.external_hash.take() {
             if let Pat::Ident(BindingIdent {
-                id: Ident { span, sym, .. },
+                id: Ident {
+                    span, ctxt, sym, ..
+                },
                 ..
             }) = &declarator.name
             {
-                self.add_hash = Some(((sym.clone(), span.ctxt), external_hash.clone()));
+                self.add_hash = Some(((sym.clone(), *ctxt), external_hash.clone()));
             }
         }
         declarator
@@ -360,7 +362,7 @@ impl Fold for StyledJSXTransformer<'_> {
                         definite: false,
                         span: DUMMY_SP,
                     }],
-                    span: DUMMY_SP,
+                    ..Default::default()
                 })))));
                 self.add_default_decl = None;
                 if let Some(add_hash) = self.add_hash.take() {
@@ -598,7 +600,7 @@ impl StyledJSXTransformer<'_> {
 
         let is_global = el.opening.attrs.iter().any(|attr| {
             if let JSXAttrOrSpread::JSXAttr(JSXAttr {
-                name: JSXAttrName::Ident(Ident { sym, .. }),
+                name: JSXAttrName::Ident(IdentName { sym, .. }),
                 ..
             }) = &attr
             {
@@ -665,7 +667,7 @@ impl StyledJSXTransformer<'_> {
         let tag = match &*tagged_tpl.tag {
             Expr::Ident(Ident { sym, .. }) => sym.to_string(),
             Expr::Member(MemberExpr {
-                prop: MemberProp::Ident(Ident { sym, .. }),
+                prop: MemberProp::Ident(IdentName { sym, .. }),
                 ..
             }) => sym.to_string(),
             _ => String::from("not_styled_jsx_tag"),
@@ -727,15 +729,13 @@ impl StyledJSXTransformer<'_> {
         Ok(Expr::New(NewExpr {
             callee: Box::new(Expr::Ident(Ident {
                 sym: "String".into(),
-                span: DUMMY_SP,
-                optional: false,
+                ..Default::default()
             })),
             args: Some(vec![ExprOrSpread {
                 expr: Box::new(css),
                 spread: None,
             }]),
-            span: DUMMY_SP,
-            type_args: None,
+            ..Default::default()
         }))
     }
 
@@ -767,7 +767,7 @@ fn is_styled_jsx(el: &JSXElement) -> bool {
 
     el.opening.attrs.iter().any(|attr| {
         if let JSXAttrOrSpread::JSXAttr(JSXAttr {
-            name: JSXAttrName::Ident(Ident { sym, .. }),
+            name: JSXAttrName::Ident(IdentName { sym, .. }),
             ..
         }) = &attr
         {
@@ -788,7 +788,7 @@ fn is_global(el: &JSXElement) -> bool {
 
     el.opening.attrs.iter().any(|attr| {
         if let JSXAttrOrSpread::JSXAttr(JSXAttr {
-            name: JSXAttrName::Ident(Ident { sym, .. }),
+            name: JSXAttrName::Ident(IdentName { sym, .. }),
             ..
         }) = &attr
         {
@@ -896,7 +896,7 @@ fn get_existing_class_name(el: &JSXOpeningElement) -> (Option<Expr>, Option<usiz
                     for j in 0..props.len() {
                         if let PropOrSpread::Prop(prop) = &props[j] {
                             if let Prop::KeyValue(KeyValueProp {
-                                key: PropName::Ident(Ident { sym, .. }),
+                                key: PropName::Ident(IdentName { sym, .. }),
                                 value,
                             }) = &**prop
                             {

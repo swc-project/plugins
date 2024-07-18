@@ -171,7 +171,11 @@ impl<'a> Rewriter<'a> {
                     } else {
                         ExportSpecifier::Named(ExportNamedSpecifier {
                             span: named_spec.span,
-                            orig: ModuleExportName::Ident(Ident::new("default".into(), DUMMY_SP)),
+                            orig: ModuleExportName::Ident(Ident::new(
+                                "default".into(),
+                                DUMMY_SP,
+                                Default::default(),
+                            )),
                             exported: Some(
                                 named_spec
                                     .exported
