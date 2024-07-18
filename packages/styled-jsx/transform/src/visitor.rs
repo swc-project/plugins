@@ -349,7 +349,8 @@ impl Fold for StyledJSXTransformer<'_> {
                         name: Pat::Ident(BindingIdent {
                             id: Ident {
                                 sym: default_ident.0.clone(),
-                                span: DUMMY_SP.with_ctxt(default_ident.1),
+                                ctxt: default_ident.1,
+                                span: DUMMY_SP,
                                 optional: false,
                             },
                             type_ann: None,

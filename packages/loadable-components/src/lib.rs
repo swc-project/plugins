@@ -451,8 +451,6 @@ where
             key: PropName::Ident(quote_ident!("resolve")),
             function: Box::new(Function {
                 params: clone_params(func),
-                decorators: Default::default(),
-                span: DUMMY_SP,
                 body: Some(
                     quote!(
                         "
@@ -470,8 +468,7 @@ where
                 ),
                 is_generator: false,
                 is_async: false,
-                type_params: Default::default(),
-                return_type: Default::default(),
+                ..Default::default()
             }),
         }
     }
