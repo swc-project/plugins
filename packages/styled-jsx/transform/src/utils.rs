@@ -216,10 +216,9 @@ pub fn make_local_styled_jsx_el(
         _ => style_info.hash.clone(),
     };
     let mut attrs = vec![JSXAttrOrSpread::JSXAttr(JSXAttr {
-        name: JSXAttrName::Ident(Ident {
+        name: JSXAttrName::Ident(IdentName {
             sym: "id".into(),
-            span: DUMMY_SP,
-            optional: false,
+            ..Default::default()
         }),
         value: Some(JSXAttrValue::JSXExprContainer(JSXExprContainer {
             expr: JSXExpr::Expr(Box::new(string_literal_expr(
@@ -232,10 +231,9 @@ pub fn make_local_styled_jsx_el(
 
     if style_info.is_dynamic {
         attrs.push(JSXAttrOrSpread::JSXAttr(JSXAttr {
-            name: JSXAttrName::Ident(Ident {
+            name: JSXAttrName::Ident(IdentName {
                 sym: "dynamic".into(),
                 span: DUMMY_SP,
-                optional: false,
             }),
             value: Some(JSXAttrValue::JSXExprContainer(JSXExprContainer {
                 expr: JSXExpr::Expr(Box::new(Expr::Array(ArrayLit {
