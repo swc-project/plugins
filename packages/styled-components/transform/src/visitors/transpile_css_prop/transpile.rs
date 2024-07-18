@@ -610,7 +610,7 @@ fn get_name_ident(el: &JSXElementName) -> Ident {
         JSXElementName::JSXMemberExpr(e) => Ident {
             sym: format!("{}_{}", get_name_of_jsx_obj(&e.obj), e.prop.sym).into(),
             span: e.prop.span,
-            optional: false,
+            ..Default::default()
         },
         _ => {
             unimplemented!("get_name_ident for namespaced jsx element")

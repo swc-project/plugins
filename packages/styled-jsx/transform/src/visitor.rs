@@ -193,13 +193,14 @@ impl Fold for StyledJSXTransformer<'_> {
 
         el.attrs = el.attrs.fold_with(self);
 
-        if let JSXElementName::Ident(Ident { sym, span, .. }) = &el.name {
+        if let JSXElementName::Ident(Ident {
+            sym, span, ctxt, ..
+        }) = &el.name
+        {
             if sym != "style"
                 && sym != self.style_import_name.as_ref().unwrap()
                 && (!is_capitalized(sym)
-                    || self
-                        .nearest_scope_bindings
-                        .contains(&(sym.clone(), span.ctxt)))
+                    || self.nearest_scope_bindings.contains(&(sym.clone(), *ctxt)))
             {
                 let (existing_class_name, existing_index, existing_spread_index) =
                     get_existing_class_name(&el);
@@ -871,7 +872,7 @@ fn get_existing_class_name(el: &JSXOpeningElement) -> (Option<Expr>, Option<usiz
     for i in (0..el.attrs.len()).rev() {
         match &el.attrs[i] {
             JSXAttrOrSpread::JSXAttr(JSXAttr {
-                name: JSXAttrName::Ident(Ident { sym, .. }),
+                name: JSXAttrName::Ident(IdentName { sym, .. }),
                 value,
                 ..
             }) => {

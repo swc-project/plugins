@@ -243,7 +243,7 @@ impl Namespacer {
                     let hi = tokens.last().map(|v| v.span_hi()).unwrap_or(BytePos(0));
 
                     Tokens {
-                        span: Span::new(lo, hi, Default::default()),
+                        span: Span::new(lo, hi),
                         tokens,
                     }
                 };
