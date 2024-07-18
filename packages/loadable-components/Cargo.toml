@@ -21,7 +21,7 @@ regex = "1.10.4"
 serde = { version = "1.0.203", features = ["derive"] }
 serde_json = "1.0.117"
 swc_common = { version = "0.36.0", features = ["concurrent"] }
-swc_core = { version = "0.99.0", features = [
+swc_core = { version = "0.99.1", features = [
   "ecma_quote",
   "ecma_plugin_transform",
 ] }

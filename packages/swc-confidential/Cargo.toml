@@ -19,7 +19,7 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 serde_json = "1.0.117"
-swc_core   = { version = "0.99.0", features = ["ecma_plugin_transform"] }
+swc_core   = { version = "0.99.1", features = ["ecma_plugin_transform"] }
 
 
 swc_confidential = { path = "./transform" }

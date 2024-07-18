@@ -23,7 +23,7 @@ serde_json        = "1.0.117"
 styled_components = { path = "./transform" }
 swc_atoms         = "0.6.7"
 swc_common        = { version = "0.36.0", features = ["concurrent"] }
-swc_core          = { version = "0.99.0", features = ["ecma_plugin_transform"] }
+swc_core          = { version = "0.99.1", features = ["ecma_plugin_transform"] }
 swc_ecma_ast      = "0.117.0"
 swc_ecma_utils    = "0.133.0"
 swc_ecma_visit    = "0.103.0"
