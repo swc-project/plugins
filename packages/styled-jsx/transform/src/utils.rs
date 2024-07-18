@@ -66,13 +66,11 @@ pub fn compute_class_names(
             callee: Callee::Expr(Box::new(Expr::Member(MemberExpr {
                 obj: Box::new(Expr::Ident(Ident {
                     sym: style_import_name.into(),
-                    span: DUMMY_SP,
-                    optional: false,
+                    ..Default::default()
                 })),
-                prop: MemberProp::Ident(Ident {
+                prop: MemberProp::Ident(IdentName {
                     sym: "dynamic".into(),
                     span: DUMMY_SP,
-                    optional: false,
                 }),
                 span: DUMMY_SP,
             }))),
@@ -121,8 +119,7 @@ pub fn compute_class_names(
                 })),
                 spread: None,
             }],
-            span: DUMMY_SP,
-            type_args: None,
+            ..Default::default()
         })),
     };
 
@@ -161,7 +158,7 @@ pub fn compute_class_names(
 
 pub fn make_external_styled_jsx_el(style: &ExternalStyle, style_import_name: &str) -> JSXElement {
     let attrs = vec![JSXAttrOrSpread::JSXAttr(JSXAttr {
-        name: JSXAttrName::Ident(Ident {
+        name: JSXAttrName::Ident(IdentName {
             sym: "id".into(),
             ..Default::default()
         }),
@@ -185,8 +182,7 @@ pub fn make_external_styled_jsx_el(style: &ExternalStyle, style_import_name: &st
     let closing = Some(JSXClosingElement {
         name: JSXElementName::Ident(Ident {
             sym: style_import_name.into(),
-            span: DUMMY_SP,
-            optional: false,
+            ..Default::default()
         }),
         span: DUMMY_SP,
     });
