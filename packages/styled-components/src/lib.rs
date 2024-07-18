@@ -1,5 +1,7 @@
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 
+use std::sync::Arc;
+
 use styled_components::Config;
 use swc_common::{SourceMapper, Spanned};
 use swc_core::{
@@ -21,10 +23,12 @@ fn styled_components(mut program: Program, data: TransformPluginProgramMetadata)
     )
     .expect("invalid config for styled-components");
 
-    let file_name = match data.get_context(&TransformPluginMetadataContextKind::Filename) {
-        Some(s) => FileName::Real(s.into()),
-        None => FileName::Anon,
-    };
+    let file_name = Arc::new(
+        match data.get_context(&TransformPluginMetadataContextKind::Filename) {
+            Some(s) => FileName::Real(s.into()),
+            None => FileName::Anon,
+        },
+    );
 
     let pos = data.source_map.lookup_char_pos(program.span().lo);
     let hash = pos.file.src_hash;

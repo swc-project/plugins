@@ -989,13 +989,12 @@ fn add_hash_statement((id, hash): (Id, String)) -> Stmt {
             left: MemberExpr {
                 obj: Box::new(Expr::Ident(Ident {
                     sym: id.0,
-                    span: DUMMY_SP.with_ctxt(id.1),
-                    optional: false,
+                    ctxt: id.1,
+                    ..Default::default()
                 })),
-                prop: MemberProp::Ident(Ident {
+                prop: MemberProp::Ident(IdentName {
                     sym: "__hash".into(),
                     span: DUMMY_SP,
-                    optional: false,
                 }),
                 span: DUMMY_SP,
             }

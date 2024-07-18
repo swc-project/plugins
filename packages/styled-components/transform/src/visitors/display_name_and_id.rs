@@ -1,4 +1,4 @@
-use std::{cell::RefCell, convert::TryInto, path::Path, rc::Rc};
+use std::{cell::RefCell, convert::TryInto, path::Path, rc::Rc, sync::Arc};
 
 use once_cell::sync::Lazy;
 use regex::Regex;
@@ -15,7 +15,7 @@ use crate::{
 };
 
 pub fn display_name_and_id(
-    file_name: FileName,
+    file_name: Arc<FileName>,
     src_file_hash: u128,
     config: Rc<Config>,
     state: Rc<RefCell<State>>,
@@ -36,7 +36,7 @@ static DISPLAY_NAME_REGEX: Lazy<Regex> =
 
 #[derive(Debug)]
 struct DisplayNameAndId {
-    file_name: FileName,
+    file_name: Arc<FileName>,
     src_file_hash: u128,
 
     config: Rc<Config>,
@@ -69,7 +69,7 @@ impl DisplayNameAndId {
     fn get_display_name(&mut self, _: &Expr) -> JsWord {
         let component_name = self.cur_display_name.clone().unwrap_or(js_word!(""));
 
-        match &self.file_name {
+        match &*self.file_name {
             FileName::Real(f) if self.config.file_name => {
                 let block_name = self.get_block_name(f);
 
