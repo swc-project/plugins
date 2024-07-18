@@ -24,8 +24,8 @@ serde_json     = "1"
 swc_atoms      = "0.6.7"
 swc_common     = { version = "0.36.0", features = ["concurrent"] }
 swc_ecma_ast   = "0.117.0"
-swc_ecma_utils = "0.133.0"
-swc_ecma_visit = "0.103.0"
+swc_ecma_utils = "0.133.1"
+swc_ecma_visit = "0.103.1"
 tracing        = { version = "0.1.40" }
 
 [dev-dependencies]

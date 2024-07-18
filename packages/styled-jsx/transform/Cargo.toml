@@ -36,10 +36,10 @@ swc_css_parser    = "0.153.0"
 swc_css_prefixer  = "0.157.0"
 swc_css_visit     = "0.142.0"
 swc_ecma_ast      = "0.117.0"
-swc_ecma_minifier = "0.200.0"
+swc_ecma_minifier = "0.200.1"
 swc_ecma_parser   = "0.148.0"
-swc_ecma_utils    = "0.133.0"
-swc_ecma_visit    = "0.103.0"
+swc_ecma_utils    = "0.133.1"
+swc_ecma_visit    = "0.103.1"
 swc_plugin_macro  = "0.9.16"
 
 [dev-dependencies]
