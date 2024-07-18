@@ -190,7 +190,6 @@ impl DisplayNameAndId {
 
         if let Expr::TaggedTpl(e) = e {
             e.tag = Box::new(Expr::Call(CallExpr {
-                span: DUMMY_SP,
                 callee: e
                     .tag
                     .take()
@@ -201,7 +200,7 @@ impl DisplayNameAndId {
                     props: with_config_props,
                 }
                 .as_arg()],
-                type_args: Default::default(),
+                ..Default::default()
             }));
             return;
         }

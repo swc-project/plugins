@@ -9,7 +9,7 @@ use swc_atoms::JsWord;
 use swc_common::{
     collections::{AHashMap, AHashSet},
     util::take::Take,
-    Spanned, DUMMY_SP,
+    Spanned, SyntaxContext, DUMMY_SP,
 };
 use swc_ecma_ast::*;
 use swc_ecma_utils::{prepend_stmt, private_ident, quote_ident, ExprFactory};
@@ -97,6 +97,7 @@ impl VisitMut for TranspileCssProp {
                     let id_sym = JsWord::from(id_sym);
                     let styled_idx = self.next_styled_idx(id_sym.clone());
                     let id = quote_ident!(
+                        SyntaxContext::empty(),
                         elem.opening.name.span(),
                         append_if_gt_one(&format!("_Styled{}", id_sym), styled_idx)
                     );
@@ -112,7 +113,7 @@ impl VisitMut for TranspileCssProp {
                                     raw: None,
                                 })
                                 .as_arg()],
-                                type_args: Default::default(),
+                                ..Default::default()
                             })),
                             None::<Ident>,
                         )
@@ -124,7 +125,7 @@ impl VisitMut for TranspileCssProp {
                                 span: DUMMY_SP,
                                 callee: import_name.as_callee(),
                                 args: vec![name_expr.as_arg()],
-                                type_args: Default::default(),
+                                ..Default::default()
                             }),
                             if self.is_top_level_ident(&name) {
                                 Some(name)
@@ -210,7 +211,7 @@ impl VisitMut for TranspileCssProp {
                         let p = quote_ident!("p");
 
                         let mut reducer = PropertyReducer {
-                            p: p.clone(),
+                            p: p.clone().into(),
                             replace_object_with_prop_function: false,
                             extra_attrs: Default::default(),
                             identifier_idx: &mut self.identifier_idx,
@@ -269,15 +270,13 @@ impl VisitMut for TranspileCssProp {
                                     }));
 
                                     acc.push(Box::new(Expr::Arrow(ArrowExpr {
-                                        span: DUMMY_SP,
                                         params: vec![Pat::Ident(p.clone().into())],
                                         body: Box::new(BlockStmtOrExpr::Expr(
                                             p.make_member(identifier).into(),
                                         )),
                                         is_async: false,
                                         is_generator: false,
-                                        type_params: Default::default(),
-                                        return_type: Default::default(),
+                                        ..Default::default()
                                     })));
 
                                     acc
@@ -306,10 +305,10 @@ impl VisitMut for TranspileCssProp {
                         definite: false,
                     };
                     let stmt = Stmt::Decl(Decl::Var(Box::new(VarDecl {
-                        span: DUMMY_SP,
                         kind: VarDeclKind::Var,
                         declare: false,
                         decls: vec![var],
+                        ..Default::default()
                     })));
                     match inject_after {
                         Some(injector) => {
