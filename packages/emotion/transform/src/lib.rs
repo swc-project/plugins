@@ -588,13 +588,13 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
                                             args: expr.args,
                                             callee: CallExpr {
                                                 span: DUMMY_SP,
-                                                type_args: None,
                                                 callee: Ident::new(i.sym.clone(), i.span, i.ctxt)
                                                     .as_callee(),
                                                 args,
                                                 ..Default::default()
                                             }
                                             .as_callee(),
+                                            ..Default::default()
                                         };
                                     }
                                 }
@@ -671,7 +671,7 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
                                 if self.options.auto_label.unwrap_or(false) {
                                     object_props.push(PropOrSpread::Prop(Box::new(
                                         Prop::KeyValue(KeyValueProp {
-                                            key: PropName::Ident(Ident::new(
+                                            key: PropName::Ident(IdentName::new(
                                                 "label".into(),
                                                 DUMMY_SP,
                                             )),
@@ -732,7 +732,7 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
                                         }
                                         args
                                     },
-                                    type_args: None,
+                                    ..Default::default()
                                 });
                             }
                         }
@@ -754,10 +754,9 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
                             }
                         }
                         return Expr::Call(CallExpr {
-                            span: DUMMY_SP,
                             callee: i.take().as_callee(),
                             args,
-                            type_args: None,
+                            ..Default::default()
                         });
                     }
                 }
@@ -774,7 +773,7 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
                                         if self.options.auto_label.unwrap_or(false) {
                                             object_props.push(PropOrSpread::Prop(Box::new(
                                                 Prop::KeyValue(KeyValueProp {
-                                                    key: PropName::Ident(Ident::new(
+                                                    key: PropName::Ident(IdentName::new(
                                                         "label".into(),
                                                         DUMMY_SP,
                                                     )),
@@ -793,11 +792,7 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
 
                                         self.comments.add_pure_comment(member_expr.span.lo());
                                         return Expr::Call(CallExpr {
-                                            span: DUMMY_SP,
-                                            type_args: None,
                                             callee: CallExpr {
-                                                type_args: None,
-                                                span: DUMMY_SP,
                                                 callee: i.take().as_callee(),
                                                 args: vec![
                                                     prop.take().sym.as_arg(),
@@ -807,9 +802,11 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
                                                     })
                                                     .as_arg(),
                                                 ],
+                                                ..Default::default()
                                             }
                                             .as_callee(),
                                             args,
+                                            ..Default::default()
                                         });
                                     }
                                 }
@@ -820,7 +817,6 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
                                     {
                                         self.comments.add_pure_comment(member_expr.span.lo());
                                         return Expr::Call(CallExpr {
-                                            span: DUMMY_SP,
                                             callee: member_expr.take().as_callee(),
                                             args: {
                                                 let mut args = self.create_args_from_tagged_tpl(
@@ -836,7 +832,7 @@ impl<C: Comments> Fold for EmotionTransformer<C> {
                                                 }
                                                 args
                                             },
-                                            type_args: None,
+                                            ..Default::default()
                                         });
                                     }
                                 }

@@ -59,18 +59,18 @@ impl Jest {
                             ) => match &*callee.obj {
                                 Expr::Ident(i) if i.sym == *"jest" => match prop {
                                     _ if HOIST_METHODS.contains(&*prop.sym) => {
-                                        hoisted.push(T::from_stmt(stmt));
+                                        hoisted.push(T::from(stmt));
                                     }
-                                    _ => new.push(T::from_stmt(stmt)),
+                                    _ => new.push(T::from(stmt)),
                                 },
-                                _ => new.push(T::from_stmt(stmt)),
+                                _ => new.push(T::from(stmt)),
                             },
-                            _ => new.push(T::from_stmt(stmt)),
+                            _ => new.push(T::from(stmt)),
                         },
-                        _ => new.push(T::from_stmt(stmt)),
+                        _ => new.push(T::from(stmt)),
                     },
 
-                    _ => new.push(T::from_stmt(stmt)),
+                    _ => new.push(T::from(stmt)),
                 },
                 Err(node) => new.push(node),
             };
