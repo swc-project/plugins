@@ -173,7 +173,8 @@ fn build_require_expr_from_path(path: &str, mark: Option<Mark>) -> Expr {
     Expr::Call(CallExpr {
         span: Default::default(),
         callee: quote_ident!(
-            mark.map(|m| DUMMY_SP.apply_mark(m)).unwrap_or(DUMMY_SP),
+            mark.map(|m| SyntaxContext::empty().apply_mark(m))
+                .unwrap_or_default(),
             "require"
         )
         .as_callee(),
@@ -317,12 +318,12 @@ impl Relay {
                             unresolved_mark: self.unresolved_mark,
                         });
                         let operation_ident = Ident {
-                            span: self
+                            ctxt: self
                                 .unresolved_mark
-                                .map(|m| DUMMY_SP.apply_mark(m))
+                                .map(|m| SyntaxContext::empty().apply_mark(m))
                                 .unwrap_or_default(),
                             sym: ident_name,
-                            optional: false,
+                            ..Default::default()
                         };
                         Some(Expr::Ident(operation_ident))
                     } else {

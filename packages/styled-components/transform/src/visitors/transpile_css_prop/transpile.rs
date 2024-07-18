@@ -228,13 +228,11 @@ impl VisitMut for TranspileCssProp {
 
                         if reducer.replace_object_with_prop_function {
                             css = Expr::Arrow(ArrowExpr {
-                                span: DUMMY_SP,
                                 params: vec![Pat::Ident(p.clone().into())],
                                 body: Box::new(BlockStmtOrExpr::Expr(Box::new(css.take()))),
                                 is_async: false,
                                 is_generator: false,
-                                type_params: Default::default(),
-                                return_type: Default::default(),
+                                ..Default::default()
                             });
                         }
                     } else {

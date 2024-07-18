@@ -93,7 +93,7 @@ impl State {
             }) => {
                 if let Expr::Ident(obj) = &**obj {
                     if Some(obj.to_id()) == self.import_local_name("default", Some(obj))
-                        && !self.is_helper(&Expr::Ident(prop.clone()))
+                        && !self.is_helper(&Expr::Ident(prop.clone().into()))
                     {
                         return true;
                     }

@@ -222,7 +222,7 @@ impl DisplayNameAndId {
                     props: with_config_props,
                 }
                 .as_arg()],
-                type_args: Default::default(),
+                ..Default::default()
             }));
             return;
         }

@@ -549,7 +549,7 @@ where
                 .as_arg(),
                 "-".as_arg(),
             ],
-            type_args: Default::default(),
+            ..Default::default()
         })
     }
 
