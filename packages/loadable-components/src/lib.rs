@@ -386,8 +386,6 @@ where
                     decorators: Default::default(),
                     pat: Pat::Ident(quote_ident!("props").into()),
                 }],
-                decorators: Default::default(),
-                span: DUMMY_SP,
                 body: Some(
                     quote!(
                         "
@@ -405,8 +403,7 @@ where
                 ),
                 is_generator: false,
                 is_async: false,
-                type_params: Default::default(),
-                return_type: Default::default(),
+                ..Default::default()
             }),
         }
     }
@@ -420,8 +417,6 @@ where
                     decorators: Default::default(),
                     pat: Pat::Ident(quote_ident!("props").into()),
                 }],
-                decorators: Default::default(),
-                span: DUMMY_SP,
                 body: Some(
                     quote!(
                         "
@@ -440,8 +435,7 @@ where
                 ),
                 is_generator: false,
                 is_async: false,
-                type_params: Default::default(),
-                return_type: Default::default(),
+                ..Default::default()
             }),
         }
     }
