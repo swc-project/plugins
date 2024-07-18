@@ -163,8 +163,7 @@ pub fn make_external_styled_jsx_el(style: &ExternalStyle, style_import_name: &st
     let attrs = vec![JSXAttrOrSpread::JSXAttr(JSXAttr {
         name: JSXAttrName::Ident(Ident {
             sym: "id".into(),
-            span: DUMMY_SP,
-            optional: false,
+            ..Default::default()
         }),
         value: Some(JSXAttrValue::JSXExprContainer(JSXExprContainer {
             expr: JSXExpr::Expr(Box::new(style.expr.clone())),
@@ -175,8 +174,7 @@ pub fn make_external_styled_jsx_el(style: &ExternalStyle, style_import_name: &st
     let opening = JSXOpeningElement {
         name: JSXElementName::Ident(Ident {
             sym: style_import_name.into(),
-            span: DUMMY_SP,
-            optional: false,
+            ..Default::default()
         }),
         attrs,
         span: DUMMY_SP,
