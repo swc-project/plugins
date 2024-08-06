@@ -1,5 +1,11 @@
 # @swc/plugin-swc-confidential
 
+## 1.0.9
+
+### Patch Changes
+
+- 7391419: Update swc_core to v0.100.0
+
 ## 1.0.8
 
 ### Patch Changes

@@ -10,7 +10,7 @@ license      = { workspace = true }
 name         = "styled_jsx"
 repository   = { workspace = true }
 rust-version = { workspace = true }
-version      = "0.73.28"
+version      = "0.73.29"
 
 
 [features]
@@ -27,22 +27,22 @@ serde = { version = "1", features = ["derive"] }
 tracing = "0.1.40"
 
 preset_env_base   = "0.5.1"
-swc_common        = "0.36.0"
-swc_css_ast       = "0.143.0"
-swc_css_codegen   = "0.154.0"
-swc_css_compat    = "0.30.0"
-swc_css_minifier  = "0.119.0"
-swc_css_parser    = "0.153.0"
-swc_css_prefixer  = "0.157.0"
-swc_css_visit     = "0.142.0"
-swc_ecma_ast      = "0.117.0"
-swc_ecma_minifier = "0.200.1"
-swc_ecma_parser   = "0.148.0"
-swc_ecma_utils    = "0.133.1"
-swc_ecma_visit    = "0.103.1"
+swc_common        = "0.37.0"
+swc_css_ast       = "0.144.0"
+swc_css_codegen   = "0.155.0"
+swc_css_compat    = "0.31.0"
+swc_css_minifier  = "0.120.0"
+swc_css_parser    = "0.154.0"
+swc_css_prefixer  = "0.158.0"
+swc_css_visit     = "0.143.0"
+swc_ecma_ast      = "0.118.0"
+swc_ecma_minifier = "0.201.0"
+swc_ecma_parser   = "0.149.0"
+swc_ecma_utils    = "0.134.0"
+swc_ecma_visit    = "0.104.0"
 swc_plugin_macro  = "0.9.16"
 
 [dev-dependencies]
-swc_ecma_transforms         = "0.235.0"
-swc_ecma_transforms_testing = "0.146.0"
-testing                     = "0.38.0"
+swc_ecma_transforms         = "0.236.0"
+swc_ecma_transforms_testing = "0.147.0"
+testing                     = "0.39.0"
