@@ -1,5 +1,11 @@
 # @swc/plugin-emotion
 
+## 3.0.12
+
+### Patch Changes
+
+- c3f0459: Update sourcemap
+
 ## 3.0.11
 
 ### Patch Changes
