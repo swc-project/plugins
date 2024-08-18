@@ -1,5 +1,11 @@
 # @swc/plugin-emotion
 
+## 3.0.13
+
+### Patch Changes
+
+- 7d17e25: Update swc_core to v0.101.x
+
 ## 3.0.12
 
 ### Patch Changes

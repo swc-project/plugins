@@ -1,5 +1,11 @@
 # @swc/plugin-transform-imports
 
+## 2.0.12
+
+### Patch Changes
+
+- 7d17e25: Update swc_core to v0.101.x
+
 ## 2.0.11
 
 ### Patch Changes
