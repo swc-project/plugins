@@ -22,10 +22,10 @@ regex          = "1.10"
 serde          = "1"
 serde_json     = "1"
 swc_atoms      = "0.6.7"
-swc_common     = { version = "0.37.0", features = ["concurrent"] }
-swc_ecma_ast   = "0.118.0"
-swc_ecma_utils = "0.134.0"
-swc_ecma_visit = "0.104.0"
+swc_common     = { version = "0.37.3", features = ["concurrent"] }
+swc_ecma_ast   = "0.118.1"
+swc_ecma_utils = "0.134.1"
+swc_ecma_visit = "0.104.5"
 tracing        = { version = "0.1.40" }
 
 [dev-dependencies]
