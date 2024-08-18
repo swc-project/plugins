@@ -1,5 +1,11 @@
 # @swc/plugin-loadable-components
 
+## 1.0.12
+
+### Patch Changes
+
+- 7d17e25: Update swc_core to v0.101.x
+
 ## 1.0.11
 
 ### Patch Changes

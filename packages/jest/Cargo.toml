@@ -15,12 +15,12 @@ version      = "0.31.4"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-phf              = { version = "0.11.2", features = ["macros"] }
-serde            = { version = "1.0.201", features = ["derive"] }
-swc_common       = { version = "0.37.0", features = ["concurrent"] }
-swc_core         = { version = "0.100.0", features = ["ecma_plugin_transform"] }
-swc_ecma_ast     = "0.118.0"
-swc_ecma_utils   = "0.134.0"
-swc_ecma_visit   = "0.104.0"
-swc_plugin_macro = "0.9.16"
-tracing          = { version = "0.1.40", features = ["release_max_level_off"] }
+phf              = { workspace = true, features = ["macros"] }
+serde            = { workspace = true, features = ["derive"] }
+swc_common       = { workspace = true, features = ["concurrent"] }
+swc_core         = { workspace = true, features = ["ecma_plugin_transform"] }
+swc_ecma_ast     = { workspace = true }
+swc_ecma_utils   = { workspace = true }
+swc_ecma_visit   = { workspace = true }
+swc_plugin_macro = { workspace = true }
+tracing          = { workspace = true, features = ["release_max_level_off"] }
