@@ -12,6 +12,6 @@ version      = "0.1.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow         = "1.0.83"
-cargo_metadata = "0.18.1"
-clap           = { version = "4.5.4", features = ["derive"] }
+anyhow         = { workspace = true }
+cargo_metadata = { workspace = true }
+clap           = { workspace = true, features = ["derive"] }

@@ -17,32 +17,29 @@ version      = "0.73.29"
 custom_transform = ["swc_common/concurrent"]
 
 [dependencies]
-anyhow = "1"
-lightningcss = { version = "1.0.0-alpha.57", features = [
-  "visitor",
-  "into_owned",
-] }
-parcel_selectors = "0.26.4"
-serde = { version = "1", features = ["derive"] }
-tracing = "0.1.40"
+anyhow           = { workspace = true }
+lightningcss     = { workspace = true, features = ["visitor", "into_owned"] }
+parcel_selectors = { workspace = true }
+serde            = { workspace = true, features = ["derive"] }
+tracing          = { workspace = true }
 
-preset_env_base   = "0.5.1"
-swc_common        = "0.37.3"
-swc_css_ast       = "0.144.0"
-swc_css_codegen   = "0.155.0"
-swc_css_compat    = "0.31.0"
-swc_css_minifier  = "0.120.0"
-swc_css_parser    = "0.154.0"
-swc_css_prefixer  = "0.158.0"
-swc_css_visit     = "0.143.4"
-swc_ecma_ast      = "0.118.1"
-swc_ecma_minifier = "0.203.1"
-swc_ecma_parser   = "0.149.0"
-swc_ecma_utils    = "0.134.1"
-swc_ecma_visit    = "0.104.5"
-swc_plugin_macro  = "0.9.16"
+preset_env_base   = { workspace = true }
+swc_common        = { workspace = true }
+swc_css_ast       = { workspace = true }
+swc_css_codegen   = { workspace = true }
+swc_css_compat    = { workspace = true }
+swc_css_minifier  = { workspace = true }
+swc_css_parser    = { workspace = true }
+swc_css_prefixer  = { workspace = true }
+swc_css_visit     = { workspace = true }
+swc_ecma_ast      = { workspace = true }
+swc_ecma_minifier = { workspace = true }
+swc_ecma_parser   = { workspace = true }
+swc_ecma_utils    = { workspace = true }
+swc_ecma_visit    = { workspace = true }
+swc_plugin_macro  = { workspace = true }
 
 [dev-dependencies]
-swc_ecma_transforms         = "0.238.0"
-swc_ecma_transforms_testing = "0.147.0"
-testing                     = "0.39.0"
+swc_ecma_transforms         = { workspace = true }
+swc_ecma_transforms_testing = { workspace = true }
+testing                     = { workspace = true }
