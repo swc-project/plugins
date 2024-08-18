@@ -193,10 +193,7 @@ impl Fold for StyledJSXTransformer<'_> {
 
         el.attrs = el.attrs.fold_with(self);
 
-        if let JSXElementName::Ident(Ident {
-            sym, span, ctxt, ..
-        }) = &el.name
-        {
+        if let JSXElementName::Ident(Ident { sym, ctxt, .. }) = &el.name {
             if sym != "style"
                 && sym != self.style_import_name.as_ref().unwrap()
                 && (!is_capitalized(sym)
@@ -301,9 +298,7 @@ impl Fold for StyledJSXTransformer<'_> {
         let declarator = declarator.fold_children_with(self);
         if let Some(external_hash) = &self.external_hash.take() {
             if let Pat::Ident(BindingIdent {
-                id: Ident {
-                    span, ctxt, sym, ..
-                },
+                id: Ident { ctxt, sym, .. },
                 ..
             }) = &declarator.name
             {
