@@ -10,7 +10,7 @@ homepage     = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
 rust-version = { workspace = true }
-version      = "0.1.4"
+version      = "0.1.5"
 
 [dependencies]
 serde          = { workspace = true, features = ["derive"] }
