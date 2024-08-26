@@ -7,7 +7,7 @@ license      = { workspace = true }
 name         = "swc_emotion"
 repository   = { workspace = true }
 rust-version = { workspace = true }
-version      = "0.72.20"
+version      = "0.72.21"
 
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
