@@ -1162,7 +1162,7 @@ checksum = "68354c5c6bd36d73ff3feceb05efa59b6acb7626617f4962be322a825e61f79a"
 
 [[package]]
 name = "modularize_imports"
-version = "0.68.23"
+version = "0.68.24"
 dependencies = [
  "convert_case",
  "handlebars",
@@ -2121,7 +2121,7 @@ dependencies = [
 
 [[package]]
 name = "styled_jsx"
-version = "0.73.31"
+version = "0.73.32"
 dependencies = [
  "anyhow",
  "lightningcss",

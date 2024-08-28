@@ -2,6 +2,12 @@
 
 # @swc/plugin-styled-jsx
 
+## 3.0.1
+
+### Patch Changes
+
+- fdd2dda: Fix comment stripping
+
 ## 3.0.0
 
 ### Major Changes
