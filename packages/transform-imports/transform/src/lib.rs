@@ -333,6 +333,12 @@ impl Fold for FoldImports {
         for item in module.body {
             match item {
                 ModuleItem::ModuleDecl(ModuleDecl::Import(decl)) => {
+                    // Ignore side-effect only imports
+                    if decl.specifiers.is_empty() {
+                        new_items.push(ModuleItem::ModuleDecl(ModuleDecl::Import(decl)));
+                        continue;
+                    }
+
                     match self.should_rewrite(&decl.src.value) {
                         Some(rewriter) => {
                             let rewritten = rewriter.rewrite_import(&decl);
