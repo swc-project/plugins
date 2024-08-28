@@ -208,46 +208,47 @@ fn convert_browsers(browsers: &Versions) -> Browsers {
     }
 }
 
-pub(super) fn strip_comments(s: &str) -> Cow<str> {
-    if !s.contains("//") {
-        return Cow::Borrowed(s);
-    }
-
-    let mut buf = String::with_capacity(s.len());
-
-    for line in s.lines() {
-        let line = line.trim();
-
-        buf.push_str(strip_comment_from_line(line));
-
-        buf.push('\n');
-    }
-
-    Cow::Owned(buf)
+/// Counts occurrences of a character inside string
+fn count_occurrences(s: impl AsRef<str>, c: char) -> usize {
+    s.as_ref().split(c).count() - 1
 }
 
-fn strip_comment_from_line(s: &str) -> &str {
-    // Check for ' or "
-    // if there's one, it's a string literal and we should not strip it.
-    // After then, we should check for two `/`s
+/// Joins substrings until predicate returns true
+fn reduce_substr(
+    substrs: impl IntoIterator<Item = impl AsRef<str>>,
+    join: &str,
+    predicate: impl Fn(&str) -> bool,
+) -> String {
+    let mut res = "".to_string();
 
-    let s = s.trim();
-
-    let mut in_string = false;
-    let mut last = '\0';
-    for (i, c) in s.char_indices() {
-        if c == '\'' || c == '"' {
-            in_string = !(in_string && last != '\\');
+    for (i, substr) in substrs.into_iter().enumerate() {
+        if i == 0 {
+            res.push_str(substr.as_ref());
+            continue;
         }
-
-        if !in_string && last == '/' && c == '/' {
-            return &s[..i - 1];
+        if predicate(&res) {
+            break;
         }
-
-        last = c;
+        res.push_str(join.as_ref());
+        res.push_str(substr.as_ref());
     }
 
-    s
+    res
+}
+
+pub(crate) fn strip_comments(s: &str) -> String {
+    s.lines().map(strip_line_comment).collect()
+}
+
+/// Joins at comment starts when it's inside a string or parentheses
+/// effectively removing line comments
+fn strip_line_comment(line: &str) -> String {
+    reduce_substr(line.split("//"), "//", |s| {
+        !s.ends_with(':') // NOTE: This is another guard against urls, if they're not inside strings or parantheses.
+            && count_occurrences(s, '\'') % 2 == 0
+            && count_occurrences(s, '"') % 2 == 0
+            && count_occurrences(s, '(') == count_occurrences(s, ')')
+    })
 }
 
 /// Returns `(length, expression_index)`
