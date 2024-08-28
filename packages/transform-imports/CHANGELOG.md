@@ -1,5 +1,11 @@
 # @swc/plugin-transform-imports
 
+## 3.0.1
+
+### Patch Changes
+
+- fb6cf58: Preserve side-effect imports
+
 ## 3.0.0
 
 ### Major Changes
