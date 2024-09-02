@@ -1,5 +1,11 @@
 # @swc/plugin-emotion
 
+## 4.0.1
+
+### Patch Changes
+
+- 04548e2: Update swc_core to 0.103.x
+
 ## 4.0.0
 
 ### Major Changes
