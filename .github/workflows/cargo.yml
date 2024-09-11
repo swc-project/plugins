@@ -78,7 +78,7 @@ jobs:
         uses: baptiste0928/cargo-install@v2
         with:
           crate: cargo-mono
-          version: "0.3.6"
+          version: "0.4.1"
           locked: true
 
       - name: Publish
