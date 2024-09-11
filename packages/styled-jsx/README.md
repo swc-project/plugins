@@ -2,6 +2,12 @@
 
 # @swc/plugin-styled-jsx
 
+## 3.0.3
+
+### Patch Changes
+
+- 6d841df: Update lightningcss
+
 ## 3.0.2
 
 ### Patch Changes
