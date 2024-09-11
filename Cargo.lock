@@ -1127,7 +1127,7 @@ dependencies = [
  "itertools 0.10.5",
  "lazy_static",
  "lightningcss-derive",
- "parcel_selectors 0.27.0",
+ "parcel_selectors",
  "parcel_sourcemap",
  "paste",
  "pathdiff",
@@ -1364,22 +1364,6 @@ name = "owo-colors"
 version = "4.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "caff54706df99d2a78a5a4e3455ff45448d81ef1bb63c22cd14052ca0e993a3f"
-
-[[package]]
-name = "parcel_selectors"
-version = "0.26.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ce9c47a67c66fee4a5a42756f9784d92941bd0ab2b653539a9e90521a44b66f0"
-dependencies = [
- "bitflags",
- "cssparser",
- "fxhash",
- "log",
- "phf 0.10.1",
- "phf_codegen",
- "precomputed-hash",
- "smallvec",
-]
 
 [[package]]
 name = "parcel_selectors"
@@ -2238,7 +2222,7 @@ version = "0.73.34"
 dependencies = [
  "anyhow",
  "lightningcss",
- "parcel_selectors 0.26.5",
+ "parcel_selectors",
  "preset_env_base",
  "serde",
  "swc_common",
