@@ -1,4 +1,4 @@
-use swc_atoms::JsWord;
+use swc_atoms::Atom;
 use swc_common::collections::{AHashMap, AHashSet};
 use swc_ecma_ast::*;
 use swc_ecma_visit::{noop_visit_type, Visit, VisitWith};
@@ -8,16 +8,16 @@ use crate::config::ImportItem;
 #[derive(Debug, Default)]
 pub(crate) struct ImportMap {
     /// Map from module name to (module path, exported symbol)
-    imports: AHashMap<Id, (JsWord, JsWord)>,
+    imports: AHashMap<Id, (Atom, Atom)>,
 
-    namespace_imports: AHashMap<Id, JsWord>,
+    namespace_imports: AHashMap<Id, Atom>,
 
-    imported_modules: AHashSet<JsWord>,
+    imported_modules: AHashSet<Atom>,
 }
 
 impl ImportMap {
     /// Returns true if `e` is an import of `orig_name` from `module`.
-    pub fn is_import(&self, e: &Expr, module: &str, orig_name: &str) -> bool {
+    pub fn is_import(&self, e: &Expr, module: &Atom, orig_name: &Atom) -> bool {
         match e {
             Expr::Ident(i) => {
                 if let Some((i_src, i_sym)) = self.imports.get(&i.to_id()) {
@@ -92,7 +92,7 @@ impl Visit for Analyzer<'_> {
     }
 }
 
-fn orig_name(n: &ModuleExportName) -> JsWord {
+fn orig_name(n: &ModuleExportName) -> Atom {
     match n {
         ModuleExportName::Ident(v) => v.sym.clone(),
         ModuleExportName::Str(v) => v.value.clone(),
