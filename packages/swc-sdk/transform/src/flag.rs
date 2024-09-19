@@ -103,7 +103,7 @@ where
         };
 
         let prop = PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
-            key: PropName::Str("key".into()),
+            key: PropName::Ident("key".into()),
             value: name.sym.clone().into(),
         })));
 
