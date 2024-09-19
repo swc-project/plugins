@@ -1,33 +1,21 @@
 #![feature(box_patterns)]
 
-use import_analyzer::ImportMap;
-use serde::Deserialize;
-use swc_atoms::Atom;
 use swc_common::{
     comments::Comments, errors::HANDLER, util::take::Take, Mark, Span, Spanned, DUMMY_SP,
 };
 use swc_ecma_ast::{CallExpr, Callee, EmptyStmt, Expr, Module, ModuleDecl, ModuleItem, Stmt};
 use swc_ecma_visit::{VisitMut, VisitMutWith};
 
-mod import_analyzer;
+use crate::{config::Config, import_analyzer::ImportMap};
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct Config {
-    #[serde(default = "default_import_path")]
-    pub import_path: Atom,
-}
+pub mod config;
+mod import_analyzer;
 
 #[derive(Debug, Clone)]
 pub struct Env {
     pub unresolved_mark: Mark,
     pub top_level_mark: Mark,
 }
-
-fn default_import_path() -> Atom {
-    Atom::from("@swc/sdk")
-}
-
-impl Config {}
 
 pub fn swc_sdk<C>(env: Env, config: Config, comments: C) -> impl VisitMut
 where
@@ -99,10 +87,6 @@ where
         self.imports = ImportMap::analyze(m);
 
         m.visit_mut_children_with(self);
-
-        // Remove Stmt::Empty
-        m.body
-            .retain(|item| !matches!(item, ModuleItem::Stmt(Stmt::Empty(..))));
     }
 
     fn visit_mut_module_item(&mut self, m: &mut ModuleItem) {
