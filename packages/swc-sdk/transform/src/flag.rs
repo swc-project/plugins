@@ -116,6 +116,20 @@ where
                 .as_arg(),
             );
         } else if let Some(obj) = find_object(&mut call_expr.args[0].expr) {
+            if obj
+                .props
+                .iter()
+                .filter_map(|p| p.as_prop())
+                .any(|p| match &**p {
+                    Prop::KeyValue(KeyValueProp { key, .. }) => {
+                        matches!(key, PropName::Ident(i) if i.sym == "key")
+                    }
+                    _ => false,
+                })
+            {
+                return None;
+            }
+
             obj.props.push(prop);
         }
 
