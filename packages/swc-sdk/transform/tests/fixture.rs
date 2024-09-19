@@ -18,10 +18,8 @@ fn pure(input: PathBuf) {
             chain!(
                 resolver(unresolved_mark, top_level_mark, false),
                 as_folder(swc_sdk::swc_sdk(
-                    unresolved_mark,
-                    swc_sdk::Config {
-                        import_path: "@swc/sdk".into()
-                    },
+                    swc_sdk::Env { unresolved_mark },
+                    swc_sdk::config::Config::default(),
                     tr.comments.clone()
                 ))
             )

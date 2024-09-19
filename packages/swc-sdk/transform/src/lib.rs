@@ -14,7 +14,6 @@ mod import_analyzer;
 #[derive(Debug, Clone)]
 pub struct Env {
     pub unresolved_mark: Mark,
-    pub top_level_mark: Mark,
 }
 
 pub fn swc_sdk<C>(env: Env, config: Config, comments: C) -> impl VisitMut
@@ -34,8 +33,10 @@ struct SwcSdkTransform<C>
 where
     C: Comments,
 {
+    #[allow(unused)]
     env: Env,
     config: Config,
+    #[allow(unused)]
     comments: C,
     imports: ImportMap,
 }
