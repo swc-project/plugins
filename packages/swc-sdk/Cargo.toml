@@ -1,0 +1,25 @@
+[package]
+
+description = "SWC Plugin for @swc/sdk"
+
+
+authors      = { workspace = true }
+edition      = { workspace = true }
+homepage     = { workspace = true }
+license      = { workspace = true }
+name         = "swc_plugin_swc_sdk"
+publish      = false
+repository   = { workspace = true }
+rust-version = { workspace = true }
+version      = "0.1.0"
+
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+serde_json = { workspace = true }
+swc_core   = { workspace = true, features = ["ecma_plugin_transform"] }
+
+
+swc_sdk = { path = "./transform" }
