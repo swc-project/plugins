@@ -1,5 +1,8 @@
 use swc_atoms::Atom;
-use swc_common::collections::{AHashMap, AHashSet};
+use swc_common::{
+    collections::{AHashMap, AHashSet},
+    Span,
+};
 use swc_ecma_ast::*;
 use swc_ecma_visit::{noop_visit_type, Visit, VisitWith};
 
@@ -7,23 +10,27 @@ use crate::config::ImportItem;
 
 #[derive(Debug, Default)]
 pub(crate) struct ImportMap {
-    /// Map from module name to (module path, exported symbol)
-    imports: AHashMap<Id, (Atom, Atom)>,
+    /// Map from module name to (module path, exported symbol, span)
+    imports: AHashMap<Id, (Atom, Atom, Span)>,
 
-    namespace_imports: AHashMap<Id, Atom>,
+    namespace_imports: AHashMap<Id, (Atom, Span)>,
 
     imported_modules: AHashSet<Atom>,
 }
 
 impl ImportMap {
     /// Returns true if `e` is an import of `orig_name` from `module`.
-    pub fn is_import(&self, e: &Expr, module: &Atom, orig_name: &Atom) -> bool {
+    pub fn is_import(&self, e: &Expr, module: &Atom, orig_name: &Atom) -> Option<Span> {
         match e {
             Expr::Ident(i) => {
-                if let Some((i_src, i_sym)) = self.imports.get(&i.to_id()) {
-                    i_src == module && i_sym == orig_name
+                if let Some((i_src, i_sym, i_span)) = self.imports.get(&i.to_id()) {
+                    if i_src == module && i_sym == orig_name {
+                        Some(*i_span)
+                    } else {
+                        None
+                    }
                 } else {
-                    false
+                    None
                 }
             }
 
@@ -32,21 +39,25 @@ impl ImportMap {
                 prop: MemberProp::Ident(prop),
                 ..
             }) => {
-                if let Some(obj_src) = self.namespace_imports.get(&obj.to_id()) {
-                    obj_src == module && prop.sym == *orig_name
+                if let Some((obj_src, obj_span)) = self.namespace_imports.get(&obj.to_id()) {
+                    if obj_src == module && prop.sym == *orig_name {
+                        Some(*obj_span)
+                    } else {
+                        None
+                    }
                 } else {
-                    false
+                    None
                 }
             }
 
-            _ => false,
+            _ => None,
         }
     }
 
-    pub fn is_in_import_items(&self, e: &Expr, import_items: &[ImportItem]) -> bool {
+    pub fn is_in_import_items(&self, e: &Expr, import_items: &[ImportItem]) -> Option<Span> {
         import_items
             .iter()
-            .any(|item| self.is_import(e, &item.module, &item.name))
+            .find_map(|item| self.is_import(e, &item.module, &item.name))
     }
 
     pub fn analyze(m: &Module) -> Self {

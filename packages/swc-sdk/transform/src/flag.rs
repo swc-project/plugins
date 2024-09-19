@@ -75,25 +75,26 @@ where
         let init = v.init.as_deref()?;
         let is_flag_call = self
             .imports
-            .is_in_import_items(init, &self.config.flag.import_sources);
-
-        if !is_flag_call {
-            return None;
-        }
+            .is_in_import_items(init, &self.config.flag.import_sources)?;
 
         let name = match &v.name {
             Pat::Ident(i) => i.clone(),
             _ => {
                 if self.config.flag.strict {
                     HANDLER.with(|handler| {
-                        handler.struct_span_err(
-                            v.name.span(),
-                            "The variable name for the `flag()` calls must be an identifier",
-                        )
+                        handler
+                            .struct_span_err(
+                                v.name.span(),
+                                "The variable name for the `flag()` calls must be an identifier",
+                            )
+                            .span_note(is_flag_call, "flag() is imported here")
+                            .emit();
                     });
                 }
                 return None;
             }
         };
+
+        None
     }
 }
