@@ -1,4 +1,5 @@
 #![feature(box_patterns)]
+#![feature(never_type)]
 
 use swc_common::{comments::Comments, util::take::Take, Mark};
 use swc_ecma_ast::{Module, ModuleDecl, ModuleItem, VarDeclarator};

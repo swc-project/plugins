@@ -14,6 +14,11 @@ pub struct Config {
 
 #[derive(Debug, Clone, Deserialize, SerdeDefault)]
 pub struct FlagConfig {
+    /// If true,
+    ///
+    /// - the variable name must be an identifier.
+    pub strict: bool,
+
     #[serde(default = "default_flag_import_source")]
     pub import_sources: Vec<ImportItem>,
 }

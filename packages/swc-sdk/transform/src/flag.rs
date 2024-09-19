@@ -1,5 +1,5 @@
-use swc_common::comments::Comments;
-use swc_ecma_ast::VarDeclarator;
+use swc_common::{comments::Comments, errors::HANDLER, Spanned};
+use swc_ecma_ast::{Pat, VarDeclarator};
 
 use crate::SwcSdkTransform;
 
@@ -71,14 +71,29 @@ where
     ///     decide: () => false,
     /// }));
     /// ```
-    pub(super) fn transform_flag(&mut self, v: &mut VarDeclarator) {
-        let is_flag_call = v.init.as_deref().map_or(false, |e| {
-            self.imports
-                .is_in_import_items(e, &self.config.flag.import_sources)
-        });
+    pub(super) fn transform_flag(&mut self, v: &mut VarDeclarator) -> Option<!> {
+        let init = v.init.as_deref()?;
+        let is_flag_call = self
+            .imports
+            .is_in_import_items(init, &self.config.flag.import_sources);
 
         if !is_flag_call {
-            return;
+            return None;
         }
+
+        let name = match &v.name {
+            Pat::Ident(i) => i.clone(),
+            _ => {
+                if self.config.flag.strict {
+                    HANDLER.with(|handler| {
+                        handler.struct_span_err(
+                            v.name.span(),
+                            "The variable name for the `flag()` calls must be an identifier",
+                        )
+                    });
+                }
+                return None;
+            }
+        };
     }
 }
