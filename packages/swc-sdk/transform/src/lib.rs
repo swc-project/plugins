@@ -27,7 +27,7 @@ pub fn swc_sdk<C>(_unreolved_mark: Mark, config: Config, comments: C) -> impl Vi
 where
     C: Comments,
 {
-    Magic {
+    SwcSdkTransform {
         config,
         comments,
         imports: Default::default(),
@@ -37,7 +37,7 @@ where
 const MARK_AS_PURE_FN_NAME: &str = "markAsPure";
 
 /// Handles functions from `@swc/sdk`.
-struct Magic<C>
+struct SwcSdkTransform<C>
 where
     C: Comments,
 {
@@ -46,7 +46,7 @@ where
     imports: ImportMap,
 }
 
-impl<C> VisitMut for Magic<C>
+impl<C> VisitMut for SwcSdkTransform<C>
 where
     C: Comments,
 {
