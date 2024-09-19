@@ -3132,6 +3132,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "swc_plugin_swc_sdk"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "swc_core",
+ "swc_sdk",
+]
+
+[[package]]
 name = "swc_plugin_transform_imports"
 version = "0.19.4"
 dependencies = [
@@ -3178,6 +3187,22 @@ dependencies = [
  "swc_ecma_visit",
  "testing",
  "tracing",
+]
+
+[[package]]
+name = "swc_sdk"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "swc_atoms",
+ "swc_common",
+ "swc_ecma_ast",
+ "swc_ecma_parser",
+ "swc_ecma_transforms_base",
+ "swc_ecma_transforms_testing",
+ "swc_ecma_utils",
+ "swc_ecma_visit",
+ "testing",
 ]
 
 [[package]]
