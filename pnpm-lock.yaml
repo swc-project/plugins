@@ -96,6 +96,12 @@ importers:
         specifier: ^0.1.3
         version: 0.1.3
 
+  packages/swc-sdk:
+    dependencies:
+      '@swc/counter':
+        specifier: ^0.1.3
+        version: 0.1.3
+
   packages/transform-imports:
     dependencies:
       '@swc/counter':
