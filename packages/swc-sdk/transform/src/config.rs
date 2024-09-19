@@ -17,6 +17,7 @@ pub struct FlagConfig {
     /// If true,
     ///
     /// - the variable name must be an identifier.
+    #[serde(default)]
     pub strict: bool,
 
     #[serde(default = "default_flag_import_source")]
