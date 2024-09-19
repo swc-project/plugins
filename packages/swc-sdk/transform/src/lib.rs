@@ -17,17 +17,24 @@ pub struct Config {
     pub import_path: Atom,
 }
 
+#[derive(Debug, Clone)]
+pub struct Env {
+    pub unresolved_mark: Mark,
+    pub top_level_mark: Mark,
+}
+
 fn default_import_path() -> Atom {
     Atom::from("@swc/sdk")
 }
 
 impl Config {}
 
-pub fn swc_sdk<C>(_unreolved_mark: Mark, config: Config, comments: C) -> impl VisitMut
+pub fn swc_sdk<C>(env: Env, config: Config, comments: C) -> impl VisitMut
 where
     C: Comments,
 {
     SwcSdkTransform {
+        env,
         config,
         comments,
         imports: Default::default(),
@@ -41,6 +48,7 @@ struct SwcSdkTransform<C>
 where
     C: Comments,
 {
+    env: Env,
     config: Config,
     comments: C,
     imports: ImportMap,
