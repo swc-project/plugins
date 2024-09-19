@@ -3,6 +3,8 @@ use swc_common::collections::{AHashMap, AHashSet};
 use swc_ecma_ast::*;
 use swc_ecma_visit::{noop_visit_type, Visit, VisitWith};
 
+use crate::config::ImportItem;
+
 #[derive(Debug, Default)]
 pub(crate) struct ImportMap {
     /// Map from module name to (module path, exported symbol)
@@ -39,6 +41,12 @@ impl ImportMap {
 
             _ => false,
         }
+    }
+
+    pub fn is_in_import_items(&self, e: &Expr, import_items: &[ImportItem]) -> bool {
+        import_items
+            .iter()
+            .any(|item| self.is_import(e, &item.module, &item.name))
     }
 
     pub fn analyze(m: &Module) -> Self {
