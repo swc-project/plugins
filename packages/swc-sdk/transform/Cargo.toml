@@ -1,0 +1,28 @@
+[package]
+
+description = "AST transforms visitor for swc-sdk"
+
+
+authors      = { workspace = true }
+edition      = { workspace = true }
+homepage     = { workspace = true }
+license      = { workspace = true }
+name         = "swc_sdk"
+repository   = { workspace = true }
+rust-version = { workspace = true }
+version      = "0.1.0"
+
+
+[dependencies]
+serde          = { workspace = true, features = ["derive"] }
+swc_atoms      = { workspace = true }
+swc_common     = { workspace = true }
+swc_ecma_ast   = { workspace = true }
+swc_ecma_utils = { workspace = true }
+swc_ecma_visit = { workspace = true }
+
+[dev-dependencies]
+swc_ecma_parser             = { workspace = true }
+swc_ecma_transforms_base    = { workspace = true }
+swc_ecma_transforms_testing = { workspace = true }
+testing                     = { workspace = true }
