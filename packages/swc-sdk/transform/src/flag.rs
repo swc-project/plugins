@@ -1,5 +1,8 @@
 use swc_common::{comments::Comments, errors::HANDLER, Spanned};
-use swc_ecma_ast::{Pat, VarDeclarator};
+use swc_ecma_ast::{
+    Expr, KeyValueProp, ObjectLit, Pat, Prop, PropName, PropOrSpread, VarDeclarator,
+};
+use swc_ecma_utils::ExprFactory;
 
 use crate::SwcSdkTransform;
 
@@ -72,10 +75,14 @@ where
     /// }));
     /// ```
     pub(super) fn transform_flag(&mut self, v: &mut VarDeclarator) -> Option<!> {
-        let init = v.init.as_deref()?;
-        let is_flag_call = self
+        let init = v.init.as_deref_mut()?;
+        let call_expr = init.as_mut_call()?;
+
+        let callee = call_expr.callee.as_mut_expr()?;
+
+        let import_of_flag_callee = self
             .imports
-            .is_in_import_items(init, &self.config.flag.import_sources)?;
+            .is_in_import_items(callee, &self.config.flag.import_sources)?;
 
         let name = match &v.name {
             Pat::Ident(i) => i.clone(),
@@ -87,7 +94,7 @@ where
                                 v.name.span(),
                                 "The variable name for the `flag()` calls must be an identifier",
                             )
-                            .span_note(is_flag_call, "flag() is imported here")
+                            .span_note(import_of_flag_callee, "flag() is imported here")
                             .emit();
                     });
                 }
@@ -95,6 +102,43 @@ where
             }
         };
 
+        let prop = PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
+            key: PropName::Str("key".into()),
+            value: name.sym.clone().into(),
+        })));
+
+        if call_expr.args.is_empty() {
+            call_expr.args.push(
+                ObjectLit {
+                    props: vec![prop],
+                    ..Default::default()
+                }
+                .as_arg(),
+            );
+        } else if let Some(obj) = find_object(&mut call_expr.args[0].expr) {
+            obj.props.push(prop);
+        }
+
         None
+    }
+}
+
+fn find_object(arg: &mut Expr) -> Option<&mut ObjectLit> {
+    match arg {
+        Expr::Object(obj) => Some(obj),
+        Expr::Call(call) => {
+            if call.args.is_empty() {
+                call.args.push(
+                    ObjectLit {
+                        ..Default::default()
+                    }
+                    .as_arg(),
+                );
+            }
+
+            let arg = call.args.get_mut(0)?;
+            find_object(&mut arg.expr)
+        }
+        _ => None,
     }
 }

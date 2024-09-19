@@ -91,14 +91,14 @@ impl Visit for Analyzer<'_> {
                 ImportSpecifier::Namespace(s) => {
                     self.data
                         .namespace_imports
-                        .insert(s.local.to_id(), import.src.value.clone());
+                        .insert(s.local.to_id(), (import.src.value.clone(), s.local.span));
                     continue;
                 }
             };
 
             self.data
                 .imports
-                .insert(local, (import.src.value.clone(), orig_sym));
+                .insert(local, (import.src.value.clone(), orig_sym, import.span));
         }
     }
 }
