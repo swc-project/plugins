@@ -1,20 +1,5 @@
 [workspace]
-members = [
-  "xtask",
-  "packages/emotion",
-  "packages/jest",
-  "packages/loadable-components",
-  "packages/noop",
-  "packages/react-remove-properties",
-  "packages/relay",
-  "packages/remove-console",
-  "packages/styled-components",
-  "packages/styled-jsx",
-  "packages/swc-confidential",
-  "packages/swc-magic",
-  "packages/transform-imports",
-  "packages/prefresh",
-]
+members = ["xtask", "packages/*"]
 
 
 resolver = "2"
