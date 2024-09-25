@@ -1,5 +1,11 @@
 # @swc/plugin-remove-console
 
+## 3.0.2
+
+### Patch Changes
+
+- 20162c8: Update swc_core to v0.106.0
+
 ## 3.0.1
 
 ### Patch Changes
