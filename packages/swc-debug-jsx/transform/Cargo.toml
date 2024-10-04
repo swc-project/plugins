@@ -1,0 +1,28 @@
+[package]
+
+description = "AST transforms visitor for swc-magic"
+
+
+authors      = { workspace = true }
+edition      = { workspace = true }
+homepage     = { workspace = true }
+license      = { workspace = true }
+name         = "debug_jsx"
+repository   = { workspace = true }
+rust-version = { workspace = true }
+version      = "0.1.0"
+
+
+[dependencies]
+serde          = { version = "1.0.189", features = ["derive"] }
+swc_atoms      = "1.0.1"
+swc_common     = "0.40.1"
+swc_ecma_ast   = "0.121.1"
+swc_ecma_utils = "0.137.0"
+swc_ecma_visit = "0.107.0"
+
+[dev-dependencies]
+swc_ecma_parser             = "0.152.1"
+swc_ecma_transforms_base    = "0.149.0"
+swc_ecma_transforms_testing = "0.152.0"
+testing                     = "0.42.0"
