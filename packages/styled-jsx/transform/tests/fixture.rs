@@ -89,6 +89,7 @@ fn run(input: PathBuf, use_lightningcss: bool) {
         &output,
         FixtureTestConfig {
             allow_error: true,
+            module: Some(true),
             ..Default::default()
         },
     );
@@ -137,6 +138,7 @@ fn styled_jsx_errors(input: PathBuf) {
             &output,
             FixtureTestConfig {
                 allow_error: true,
+                module: Some(true),
                 ..Default::default()
             },
         );
@@ -162,6 +164,7 @@ fn styled_jsx_errors(input: PathBuf) {
             &output,
             FixtureTestConfig {
                 allow_error: true,
+                module: Some(true),
                 ..Default::default()
             },
         );
