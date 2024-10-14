@@ -1,7 +1,7 @@
 use std::path::{Path, PathBuf};
 
 use swc_common::FileName;
-use swc_ecma_transforms_testing::test_fixture;
+use swc_ecma_transforms_testing::{test_fixture, FixtureTestConfig};
 use swc_relay::{relay, Config, OutputFileExtension, ProjectConfig, RelayLanguageConfig};
 
 #[testing::fixture("tests/fixture/simple/**/input.js")]
@@ -160,6 +160,9 @@ fn fixture_multi_projects(input: PathBuf) {
         },
         &input,
         &output,
-        Default::default(),
+        FixtureTestConfig {
+            module: Some(true),
+            ..Default::default()
+        },
     );
 }

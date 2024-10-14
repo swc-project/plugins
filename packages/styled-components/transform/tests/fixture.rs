@@ -6,7 +6,7 @@ use styled_components::{styled_components, Config};
 use swc_common::{chain, Mark};
 use swc_ecma_parser::{EsSyntax, Syntax};
 use swc_ecma_transforms::resolver;
-use swc_ecma_transforms_testing::test_fixture;
+use swc_ecma_transforms_testing::{test_fixture, FixtureTestConfig};
 
 #[testing::fixture("tests/fixtures/**/code.js")]
 fn fixture(input: PathBuf) {
@@ -36,6 +36,9 @@ fn fixture(input: PathBuf) {
         },
         &input,
         &dir.join("output.js"),
-        Default::default(),
+        FixtureTestConfig {
+            module: Some(true),
+            ..Default::default()
+        },
     )
 }
