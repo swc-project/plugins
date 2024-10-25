@@ -6,7 +6,6 @@ use std::{
 
 use base64::Engine;
 use fxhash::FxHashMap;
-use import_map::ImportMap;
 use once_cell::sync::Lazy;
 use regex::{Regex, RegexBuilder};
 use serde::{Deserialize, Serialize};
@@ -23,6 +22,8 @@ use swc_ecma_ast::{
 use swc_ecma_utils::ExprFactory;
 use swc_ecma_visit::{Fold, FoldWith};
 use swc_trace_macro::swc_trace;
+
+pub use crate::import_map::*;
 
 mod import_map;
 
