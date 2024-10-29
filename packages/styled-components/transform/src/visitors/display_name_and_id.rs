@@ -6,7 +6,7 @@ use swc_atoms::{js_word, JsWord};
 use swc_common::{util::take::Take, FileName, DUMMY_SP};
 use swc_ecma_ast::*;
 use swc_ecma_utils::{quote_ident, ExprFactory};
-use swc_ecma_visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith};
+use swc_ecma_visit::{noop_visit_mut_type, visit_mut_pass, VisitMut, VisitMutWith};
 use tracing::{debug, span, trace, Level};
 
 use crate::{
@@ -19,8 +19,8 @@ pub fn display_name_and_id(
     src_file_hash: u128,
     config: Rc<Config>,
     state: Rc<RefCell<State>>,
-) -> impl Fold + VisitMut {
-    as_folder(DisplayNameAndId {
+) -> impl Pass + VisitMut {
+    visit_mut_pass(DisplayNameAndId {
         file_name,
         src_file_hash,
 

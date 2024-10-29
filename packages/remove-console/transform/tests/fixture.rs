@@ -1,9 +1,10 @@
 use std::path::PathBuf;
 
-use swc_common::{chain, Mark, SyntaxContext};
+use swc_common::{Mark, SyntaxContext};
 use swc_ecma_parser::{EsSyntax, Syntax};
 use swc_ecma_transforms_base::resolver;
 use swc_ecma_transforms_testing::{test_fixture, FixtureTestConfig};
+use swc_ecma_visit::fold_pass;
 
 fn syntax() -> Syntax {
     Syntax::Es(EsSyntax {
@@ -21,12 +22,12 @@ fn fixture(input: PathBuf) {
             let unresolved_mark = Mark::new();
             let top_level_mark = Mark::new();
 
-            chain!(
+            (
                 resolver(unresolved_mark, top_level_mark, false),
-                remove_console::remove_console(
+                fold_pass(remove_console::remove_console(
                     remove_console::Config::All(true),
-                    SyntaxContext::empty().apply_mark(unresolved_mark)
-                )
+                    SyntaxContext::empty().apply_mark(unresolved_mark),
+                )),
             )
         },
         &input,

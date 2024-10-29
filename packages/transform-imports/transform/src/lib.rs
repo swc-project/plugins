@@ -397,7 +397,7 @@ impl Fold for FoldImports {
     }
 }
 
-pub fn modularize_imports(config: Config) -> impl Fold {
+pub fn modularize_imports(config: Config) -> impl Pass {
     let mut folder = FoldImports {
         renderer: handlebars::Handlebars::new(),
         packages: vec![],

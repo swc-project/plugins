@@ -13,7 +13,7 @@ use swc_common::{
 };
 use swc_ecma_ast::*;
 use swc_ecma_utils::{prepend_stmt, private_ident, quote_ident, ExprFactory};
-use swc_ecma_visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith};
+use swc_ecma_visit::{noop_visit_mut_type, visit_mut_pass, VisitMut, VisitMutWith};
 
 use super::top_level_binding_collector::collect_top_level_decls;
 use crate::{
@@ -24,8 +24,8 @@ use crate::{
 static TAG_NAME_REGEX: Lazy<Regex> =
     Lazy::new(|| Regex::new("^[a-z][a-z\\d]*(\\-[a-z][a-z\\d]*)?$").unwrap());
 
-pub fn transpile_css_prop(state: Rc<RefCell<State>>) -> impl Fold + VisitMut {
-    as_folder(TranspileCssProp {
+pub fn transpile_css_prop(state: Rc<RefCell<State>>) -> impl Pass + VisitMut {
+    visit_mut_pass(TranspileCssProp {
         state,
         ..Default::default()
     })

@@ -4,12 +4,12 @@ use std::{cell::RefCell, iter, rc::Rc};
 
 use swc_common::{util::take::Take, DUMMY_SP};
 use swc_ecma_ast::*;
-use swc_ecma_visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith};
+use swc_ecma_visit::{noop_visit_mut_type, visit_mut_pass, VisitMut, VisitMutWith};
 
 use crate::utils::State;
 
-pub fn template_literals(state: Rc<RefCell<State>>) -> impl Fold + VisitMut {
-    as_folder(TemplateLiterals { state })
+pub fn template_literals(state: Rc<RefCell<State>>) -> impl Pass + VisitMut {
+    visit_mut_pass(TemplateLiterals { state })
 }
 
 #[derive(Debug)]

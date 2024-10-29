@@ -361,7 +361,7 @@ pub fn relay(
     root_dir: PathBuf,
     pages_dir: Option<PathBuf>,
     unresolved_mark: Option<Mark>,
-) -> impl Fold {
+) -> impl Pass {
     Relay {
         root_dir,
         file_name,

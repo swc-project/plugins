@@ -25,7 +25,7 @@ pub struct Options {
     pub properties: Vec<String>,
 }
 
-pub fn react_remove_properties(config: Config) -> impl Fold {
+pub fn react_remove_properties(config: Config) -> impl Pass {
     let mut properties: Vec<CachedRegex> = match config {
         Config::WithOptions(x) => x
             .properties

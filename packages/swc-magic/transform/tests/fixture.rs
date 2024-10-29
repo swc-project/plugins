@@ -4,7 +4,7 @@ use swc_common::{chain, Mark};
 use swc_ecma_parser::Syntax;
 use swc_ecma_transforms_base::resolver;
 use swc_ecma_transforms_testing::test_fixture;
-use swc_ecma_visit::as_folder;
+use swc_ecma_visit::visit_mut_pass;
 
 #[testing::fixture("tests/fixture/**/input.js")]
 fn pure(input: PathBuf) {
@@ -15,15 +15,15 @@ fn pure(input: PathBuf) {
             let unresolved_mark = Mark::new();
             let top_level_mark = Mark::new();
 
-            chain!(
+            (
                 resolver(unresolved_mark, top_level_mark, false),
-                as_folder(swc_magic::swc_magic(
+                visit_mut_pass(swc_magic::swc_magic(
                     unresolved_mark,
                     swc_magic::Config {
-                        import_path: "@swc/magic".into()
+                        import_path: "@swc/magic".into(),
                     },
-                    tr.comments.clone()
-                ))
+                    tr.comments.clone(),
+                )),
             )
         },
         &input,

@@ -15,7 +15,7 @@ use swc_ecma_minifier::{
     marks::Marks,
 };
 use swc_ecma_utils::{collect_decls, drop_span, prepend_stmt, private_ident};
-use swc_ecma_visit::{Fold, FoldWith};
+use swc_ecma_visit::{fold_pass, Fold, FoldWith};
 
 use crate::{
     style::{ExternalStyle, JSXStyle, LocalStyle},
@@ -65,7 +65,7 @@ pub fn styled_jsx(
     file_name: FileName,
     config: Config,
     native_config: NativeConfig<'_>,
-) -> impl '_ + Fold {
+) -> impl '_ + Pass + Fold {
     let file_name = match file_name {
         FileName::Real(real_file_name) => real_file_name
             .to_str()
@@ -73,7 +73,7 @@ pub fn styled_jsx(
         _ => None,
     };
 
-    StyledJSXTransformer {
+    fold_pass(StyledJSXTransformer {
         cm,
         config,
         native_config,
@@ -95,7 +95,7 @@ pub fn styled_jsx(
         in_function_params: Default::default(),
         evaluator: Default::default(),
         visiting_styled_jsx_descendants: Default::default(),
-    }
+    })
 }
 
 struct StyledJSXTransformer<'a> {

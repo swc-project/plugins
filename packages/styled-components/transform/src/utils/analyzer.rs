@@ -2,14 +2,14 @@ use std::{cell::RefCell, rc::Rc};
 
 use swc_ecma_ast::*;
 use swc_ecma_visit::{
-    as_folder, noop_visit_mut_type, noop_visit_type, Fold, Visit, VisitMut, VisitWith,
+    noop_visit_mut_type, noop_visit_type, visit_mut_pass, Visit, VisitMut, VisitWith,
 };
 
 use super::State;
 use crate::Config;
 
-pub fn analyzer(config: Rc<Config>, state: Rc<RefCell<State>>) -> impl VisitMut + Fold {
-    as_folder(AsAnalyzer { config, state })
+pub fn analyzer(config: Rc<Config>, state: Rc<RefCell<State>>) -> impl Pass + VisitMut {
+    visit_mut_pass(AsAnalyzer { config, state })
 }
 
 struct AsAnalyzer {

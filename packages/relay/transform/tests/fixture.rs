@@ -2,6 +2,7 @@ use std::path::{Path, PathBuf};
 
 use swc_common::FileName;
 use swc_ecma_transforms_testing::{test_fixture, FixtureTestConfig};
+use swc_ecma_visit::fold_pass;
 use swc_relay::{relay, Config, OutputFileExtension, ProjectConfig, RelayLanguageConfig};
 
 #[testing::fixture("tests/fixture/simple/**/input.js")]
@@ -11,7 +12,7 @@ fn fixture(input: PathBuf) {
     test_fixture(
         Default::default(),
         &|_| {
-            relay(
+            fold_pass(relay(
                 Config {
                     projects: Default::default(),
                     artifact_directory: None,
@@ -24,7 +25,7 @@ fn fixture(input: PathBuf) {
                 Default::default(),
                 None,
                 None,
-            )
+            ))
         },
         &input,
         &output,
@@ -42,7 +43,7 @@ fn fixture_es_modules(input: PathBuf) {
     test_fixture(
         Default::default(),
         &|_| {
-            relay(
+            fold_pass(relay(
                 Config {
                     projects: Default::default(),
                     artifact_directory: None,
@@ -55,7 +56,7 @@ fn fixture_es_modules(input: PathBuf) {
                 Default::default(),
                 None,
                 None,
-            )
+            ))
         },
         &input,
         &output,
@@ -73,7 +74,7 @@ fn fixture_output_file_extension_javascript(input: PathBuf) {
     test_fixture(
         Default::default(),
         &|_| {
-            relay(
+            fold_pass(relay(
                 Config {
                     projects: Default::default(),
                     artifact_directory: None,
@@ -86,7 +87,7 @@ fn fixture_output_file_extension_javascript(input: PathBuf) {
                 Default::default(),
                 None,
                 None,
-            )
+            ))
         },
         &input,
         &output,
@@ -104,7 +105,7 @@ fn fixture_output_file_extension_typescript(input: PathBuf) {
     test_fixture(
         Default::default(),
         &|_| {
-            relay(
+            fold_pass(relay(
                 Config {
                     projects: Default::default(),
                     artifact_directory: None,
@@ -117,7 +118,7 @@ fn fixture_output_file_extension_typescript(input: PathBuf) {
                 Default::default(),
                 None,
                 None,
-            )
+            ))
         },
         &input,
         &output,
@@ -135,7 +136,7 @@ fn fixture_multi_projects(input: PathBuf) {
     test_fixture(
         Default::default(),
         &|_| {
-            relay(
+            fold_pass(relay(
                 Config {
                     projects: vec![
                         ProjectConfig {
@@ -168,7 +169,7 @@ fn fixture_multi_projects(input: PathBuf) {
                 Default::default(),
                 None,
                 None,
-            )
+            ))
         },
         &input,
         &output,

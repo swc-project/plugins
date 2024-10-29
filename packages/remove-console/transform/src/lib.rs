@@ -85,7 +85,7 @@ impl Fold for RemoveConsole {
     }
 }
 
-pub fn remove_console(config: Config, unresolved_ctxt: SyntaxContext) -> impl Fold {
+pub fn remove_console(config: Config, unresolved_ctxt: SyntaxContext) -> impl Pass {
     let exclude = match config {
         Config::WithOptions(x) => x.exclude,
         _ => vec![],
