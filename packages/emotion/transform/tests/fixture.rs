@@ -4,7 +4,6 @@ use swc_common::{comments::SingleThreadedComments, Mark};
 use swc_ecma_parser::{Syntax, TsSyntax};
 use swc_ecma_transforms_react::{jsx, Runtime};
 use swc_ecma_transforms_testing::test_fixture;
-use swc_ecma_visit::fold_pass;
 use swc_emotion::EmotionOptions;
 use testing::fixture;
 
@@ -41,7 +40,7 @@ fn next_emotion_fixture(input: PathBuf) {
                 serde_json::from_str(include_str!("./testImportMap.json")).unwrap();
             let fm = tr.cm.load_file(&input).unwrap();
             (
-                fold_pass(swc_emotion::emotion(
+                swc_emotion::emotion(
                     EmotionOptions {
                         enabled: Some(true),
                         sourcemap: Some(true),
@@ -53,7 +52,7 @@ fn next_emotion_fixture(input: PathBuf) {
                     fm.src_hash as u32,
                     tr.cm.clone(),
                     tr.comments.as_ref().clone(),
-                )),
+                ),
                 jsx,
             )
         },
@@ -115,7 +114,7 @@ fn emotion_label_option_fixture(output: PathBuf) {
             );
             let fm: std::sync::Arc<swc_common::SourceFile> = tr.cm.load_file(&input).unwrap();
             (
-                fold_pass(swc_emotion::emotion(
+                swc_emotion::emotion(
                     EmotionOptions {
                         enabled: Some(true),
                         sourcemap: Some(true),
@@ -127,7 +126,7 @@ fn emotion_label_option_fixture(output: PathBuf) {
                     fm.src_hash as u32,
                     tr.cm.clone(),
                     tr.comments.as_ref().clone(),
-                )),
+                ),
                 jsx,
             )
         },
@@ -180,7 +179,7 @@ fn emotion_label(input: PathBuf, label: String) {
             );
             let fm = tr.cm.load_file(&input).unwrap();
             (
-                fold_pass(swc_emotion::emotion(
+                swc_emotion::emotion(
                     EmotionOptions {
                         enabled: Some(true),
                         sourcemap: Some(true),
@@ -192,7 +191,7 @@ fn emotion_label(input: PathBuf, label: String) {
                     fm.src_hash as u32,
                     tr.cm.clone(),
                     tr.comments.as_ref().clone(),
-                )),
+                ),
                 jsx,
             )
         },

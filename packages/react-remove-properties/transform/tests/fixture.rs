@@ -5,7 +5,6 @@ use swc_common::Mark;
 use swc_ecma_parser::{EsSyntax, Syntax};
 use swc_ecma_transforms_base::resolver;
 use swc_ecma_transforms_testing::{test_fixture, FixtureTestConfig};
-use swc_ecma_visit::fold_pass;
 
 fn syntax() -> Syntax {
     Syntax::Es(EsSyntax {
@@ -25,7 +24,7 @@ fn fixture(input: PathBuf) {
 
             (
                 resolver(unresolved_mark, top_level_mark, false),
-                fold_pass(react_remove_properties::react_remove_properties(
+                react_remove_properties::react_remove_properties(
                     if input.to_string_lossy().contains("custom") {
                         react_remove_properties::Config::WithOptions(Options {
                             properties: vec!["^data-custom$".into()],
@@ -33,7 +32,7 @@ fn fixture(input: PathBuf) {
                     } else {
                         react_remove_properties::Config::All(true)
                     },
-                )),
+                ),
             )
         },
         &input,

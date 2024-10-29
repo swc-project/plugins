@@ -1,7 +1,7 @@
 use serde::Deserialize;
 use swc_cached::regex::CachedRegex;
 use swc_ecma_ast::*;
-use swc_ecma_visit::{noop_fold_type, Fold, FoldWith};
+use swc_ecma_visit::{fold_pass, noop_fold_type, Fold, FoldWith};
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(untagged)]
@@ -42,7 +42,7 @@ pub fn react_remove_properties(config: Config) -> impl Pass {
         // Keep the default regex identical to `babel-plugin-react-remove-properties`.
         properties.push(CachedRegex::new(r"^data-test").unwrap());
     }
-    RemoveProperties { properties }
+    fold_pass(RemoveProperties { properties })
 }
 
 struct RemoveProperties {

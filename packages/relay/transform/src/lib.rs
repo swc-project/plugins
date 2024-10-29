@@ -15,7 +15,7 @@ use swc_atoms::JsWord;
 use swc_common::{FileName, Mark, SyntaxContext, DUMMY_SP};
 use swc_ecma_ast::*;
 use swc_ecma_utils::{prepend_stmts, quote_ident, ExprFactory};
-use swc_ecma_visit::{Fold, FoldWith};
+use swc_ecma_visit::{fold_pass, Fold, FoldWith};
 
 #[derive(Copy, Clone, Debug, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -362,12 +362,12 @@ pub fn relay(
     pages_dir: Option<PathBuf>,
     unresolved_mark: Option<Mark>,
 ) -> impl Pass {
-    Relay {
+    fold_pass(Relay {
         root_dir,
         file_name,
         config,
         pages_dir,
         imports: vec![],
         unresolved_mark,
-    }
+    })
 }

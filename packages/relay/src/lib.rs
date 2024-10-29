@@ -68,5 +68,5 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
         Some(metadata.unresolved_mark),
     );
 
-    program.fold_with(&mut relay)
+    program.apply(relay)
 }

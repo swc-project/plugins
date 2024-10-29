@@ -12,7 +12,7 @@ fn fixture(input: PathBuf) {
     test_fixture(
         Default::default(),
         &|_| {
-            fold_pass(relay(
+            relay(
                 Config {
                     projects: Default::default(),
                     artifact_directory: None,
@@ -25,7 +25,7 @@ fn fixture(input: PathBuf) {
                 Default::default(),
                 None,
                 None,
-            ))
+            )
         },
         &input,
         &output,
