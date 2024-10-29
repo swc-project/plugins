@@ -34,6 +34,12 @@ Source code for plugin itself (not transforms) are copied from https://github.co
 
 # @swc/plugin-emotion
 
+## 5.0.0
+
+### Major Changes
+
+- f5e393d: Make it configurable from Rust code
+
 ## 4.0.3
 
 ### Patch Changes
