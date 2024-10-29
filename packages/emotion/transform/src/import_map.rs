@@ -8,17 +8,18 @@ use crate::{EmotionModuleConfig, ExportItem};
 pub type ImportMap = AHashMap<JsWord, ImportMapValue>;
 
 /// key: `localExportName`
-pub type ImportMapValue = AHashMap<JsWord, Config>;
+pub type ImportMapValue = AHashMap<JsWord, ImportItemConfig>;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Config {
-    canonical_import: ImportItem,
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct ImportItemConfig {
+    pub canonical_import: ItemSpecifier,
+    pub styled_base_import: Option<ItemSpecifier>,
 }
 
 /// `(packageName, exportName)`
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub(crate) struct ImportItem(JsWord, JsWord);
+pub struct ItemSpecifier(pub JsWord, pub JsWord);
 
 pub(crate) fn expand_import_map(
     map: Option<&ImportMap>,
@@ -26,10 +27,14 @@ pub(crate) fn expand_import_map(
 ) -> Vec<EmotionModuleConfig> {
     if let Some(map) = map {
         map.iter().for_each(|(import_source, value)| {
-            value
-                .iter()
-                .for_each(|(local_export_name, Config { canonical_import })| {
-                    let ImportItem(package_name, export_name) = canonical_import;
+            value.iter().for_each(
+                |(
+                    local_export_name,
+                    ImportItemConfig {
+                        canonical_import, ..
+                    },
+                )| {
+                    let ItemSpecifier(package_name, export_name) = canonical_import;
 
                     if &**package_name == "@emotion/react" && &**export_name == "jsx" {
                         return;
@@ -73,7 +78,8 @@ pub(crate) fn expand_import_map(
                         }],
                         default_export: package_transformers.default_export,
                     });
-                })
+                },
+            )
         });
     }
 

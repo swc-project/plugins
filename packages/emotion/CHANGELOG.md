@@ -1,5 +1,11 @@
 # @swc/plugin-emotion
 
+## 5.0.0
+
+### Major Changes
+
+- f5e393d: Make it configurable from Rust code
+
 ## 4.0.3
 
 ### Patch Changes
