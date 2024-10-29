@@ -2,7 +2,7 @@ use serde::Deserialize;
 use swc_atoms::JsWord;
 use swc_common::{SyntaxContext, DUMMY_SP};
 use swc_ecma_ast::*;
-use swc_ecma_visit::{noop_fold_type, Fold, FoldWith};
+use swc_ecma_visit::{fold_pass, noop_fold_type, Fold, FoldWith};
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(untagged)]
@@ -85,13 +85,13 @@ impl Fold for RemoveConsole {
     }
 }
 
-pub fn remove_console(config: Config, unresolved_ctxt: SyntaxContext) -> impl Fold {
+pub fn remove_console(config: Config, unresolved_ctxt: SyntaxContext) -> impl Pass {
     let exclude = match config {
         Config::WithOptions(x) => x.exclude,
         _ => vec![],
     };
-    RemoveConsole {
+    fold_pass(RemoveConsole {
         exclude,
         unresolved_ctxt,
-    }
+    })
 }

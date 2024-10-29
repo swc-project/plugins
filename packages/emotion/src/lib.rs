@@ -5,7 +5,6 @@ use std::path::Path;
 use serde::Deserialize;
 use swc_common::{plugin::metadata::TransformPluginMetadataContextKind, SourceMapper, Spanned};
 use swc_ecma_ast::Program;
-use swc_ecma_visit::FoldWith;
 use swc_emotion::EmotionOptions;
 use swc_plugin_macro::plugin_transform;
 use swc_plugin_proxy::TransformPluginProgramMetadata;
@@ -72,7 +71,7 @@ pub fn process_transform(program: Program, data: TransformPluginProgramMetadata)
     let source_map = std::sync::Arc::new(data.source_map);
     let pos = source_map.lookup_char_pos(program.span().lo);
     let hash = pos.file.src_hash as u32;
-    program.fold_with(&mut swc_emotion::emotion(
+    program.apply(swc_emotion::emotion(
         config,
         path,
         hash,

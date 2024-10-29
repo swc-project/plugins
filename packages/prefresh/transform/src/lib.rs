@@ -9,13 +9,13 @@ use swc_common::DUMMY_SP;
 use swc_core::quote;
 use swc_ecma_ast::{
     AssignExpr, Callee, ComputedPropName, Expr, ExprOrSpread, Function, Id, Ident, ImportDecl,
-    ImportSpecifier, Lit, MemberExpr, ModuleExportName, ObjectPatProp, Tpl, TplElement,
+    ImportSpecifier, Lit, MemberExpr, ModuleExportName, ObjectPatProp, Pass, Tpl, TplElement,
     VarDeclarator,
 };
-use swc_ecma_visit::{as_folder, Fold, VisitMut, VisitMutWith};
+use swc_ecma_visit::{visit_mut_pass, VisitMut, VisitMutWith};
 
-pub fn swc_prefresh(config: PrefreshPluginConfig, file_hash: String) -> impl Fold {
-    as_folder(PrefreshPlugin::new(config, file_hash))
+pub fn swc_prefresh(config: PrefreshPluginConfig, file_hash: String) -> impl Pass {
+    visit_mut_pass(PrefreshPlugin::new(config, file_hash))
 }
 
 #[derive(Debug, Clone, Deserialize, Default)]

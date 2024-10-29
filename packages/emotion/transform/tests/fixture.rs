@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use swc_common::{chain, comments::SingleThreadedComments, Mark};
+use swc_common::{comments::SingleThreadedComments, Mark};
 use swc_ecma_parser::{Syntax, TsSyntax};
 use swc_ecma_transforms_react::{jsx, Runtime};
 use swc_ecma_transforms_testing::test_fixture;
@@ -39,7 +39,7 @@ fn next_emotion_fixture(input: PathBuf) {
             let test_import_map =
                 serde_json::from_str(include_str!("./testImportMap.json")).unwrap();
             let fm = tr.cm.load_file(&input).unwrap();
-            chain!(
+            (
                 swc_emotion::emotion(
                     EmotionOptions {
                         enabled: Some(true),
@@ -53,7 +53,7 @@ fn next_emotion_fixture(input: PathBuf) {
                     tr.cm.clone(),
                     tr.comments.as_ref().clone(),
                 ),
-                jsx
+                jsx,
             )
         },
         &input,
@@ -112,8 +112,8 @@ fn emotion_label_option_fixture(output: PathBuf) {
                 top_level_mark,
                 unresolved_mark,
             );
-            let fm = tr.cm.load_file(&input).unwrap();
-            chain!(
+            let fm: std::sync::Arc<swc_common::SourceFile> = tr.cm.load_file(&input).unwrap();
+            (
                 swc_emotion::emotion(
                     EmotionOptions {
                         enabled: Some(true),
@@ -127,7 +127,7 @@ fn emotion_label_option_fixture(output: PathBuf) {
                     tr.cm.clone(),
                     tr.comments.as_ref().clone(),
                 ),
-                jsx
+                jsx,
             )
         },
         &input,
@@ -178,7 +178,7 @@ fn emotion_label(input: PathBuf, label: String) {
                 unresolved_mark,
             );
             let fm = tr.cm.load_file(&input).unwrap();
-            chain!(
+            (
                 swc_emotion::emotion(
                     EmotionOptions {
                         enabled: Some(true),
@@ -192,7 +192,7 @@ fn emotion_label(input: PathBuf, label: String) {
                     tr.cm.clone(),
                     tr.comments.as_ref().clone(),
                 ),
-                jsx
+                jsx,
             )
         },
         &input,

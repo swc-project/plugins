@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use serde::Deserialize;
 use swc_common::{plugin::metadata::TransformPluginMetadataContextKind, FileName};
 use swc_core::{
-    ecma::{ast::Program, visit::FoldWith},
+    ecma::ast::Program,
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
 };
 use swc_relay::{relay, Config, OutputFileExtension, ProjectConfig, RelayLanguageConfig};
@@ -60,7 +60,7 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
         output_file_extension: plugin_config.output_file_extension,
     };
 
-    let mut relay = relay(
+    let relay = relay(
         config.into(),
         filename,
         root_dir,
@@ -68,5 +68,5 @@ fn relay_plugin_transform(program: Program, metadata: TransformPluginProgramMeta
         Some(metadata.unresolved_mark),
     );
 
-    program.fold_with(&mut relay)
+    program.apply(relay)
 }

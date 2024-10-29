@@ -2,7 +2,7 @@
 
 use swc_common::{SourceMapper, Spanned};
 use swc_core::{
-    ecma::{ast::Program, visit::FoldWith},
+    ecma::ast::Program,
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
 };
 #[plugin_transform]
@@ -19,5 +19,5 @@ fn swc_plugin(program: Program, data: TransformPluginProgramMetadata) -> Program
     let pos = source_map.lookup_char_pos(program.span().lo);
     let hash = format!("{:x}", pos.file.src_hash);
 
-    program.fold_with(&mut swc_prefresh::swc_prefresh(config, hash))
+    program.apply(swc_prefresh::swc_prefresh(config, hash))
 }

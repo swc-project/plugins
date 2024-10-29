@@ -1,6 +1,6 @@
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 use swc_core::{
-    ecma::{ast::Program, visit::FoldWith},
+    ecma::ast::Program,
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
 };
 
@@ -13,7 +13,7 @@ fn transform_imports_plugin(program: Program, data: TransformPluginProgramMetada
     )
     .expect("invalid packages");
 
-    program.fold_with(&mut modularize_imports::modularize_imports(
+    program.apply(modularize_imports::modularize_imports(
         modularize_imports::Config { packages },
     ))
 }

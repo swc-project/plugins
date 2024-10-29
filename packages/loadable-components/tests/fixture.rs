@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 
-use swc_core::ecma::{transforms::testing::test_fixture, visit::as_folder};
+use swc_core::ecma::transforms::testing::test_fixture;
+use swc_ecma_visit::visit_mut_pass;
 use swc_plugin_loadable_components::{loadable_transform, Signature};
 
 #[testing::fixture("tests/fixture/aggressive import/**/input.js")]
@@ -14,7 +15,7 @@ fn fixture_default_signatures(input: PathBuf) {
     test_fixture(
         Default::default(),
         &|t| {
-            as_folder(loadable_transform(
+            visit_mut_pass(loadable_transform(
                 t.comments.clone(),
                 vec![Signature::default(), Signature::default_lazy()],
             ))
@@ -32,7 +33,7 @@ fn fixture_custom_signatures(input: PathBuf) {
     test_fixture(
         Default::default(),
         &|t| {
-            as_folder(loadable_transform(
+            visit_mut_pass(loadable_transform(
                 t.comments.clone(),
                 vec![
                     Signature {

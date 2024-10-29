@@ -4,13 +4,13 @@ use std::{cell::RefCell, rc::Rc};
 
 use swc_common::DUMMY_SP;
 use swc_ecma_ast::*;
-use swc_ecma_visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith};
+use swc_ecma_visit::{noop_visit_mut_type, visit_mut_pass, VisitMut, VisitMutWith};
 
 use super::css::{minify_raw_values, MinifyResult};
 use crate::utils::State;
 
-pub fn minify(state: Rc<RefCell<State>>) -> impl Fold + VisitMut {
-    as_folder(Minify { state })
+pub fn minify(state: Rc<RefCell<State>>) -> impl Pass + VisitMut {
+    visit_mut_pass(Minify { state })
 }
 
 #[derive(Debug)]

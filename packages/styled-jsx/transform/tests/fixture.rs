@@ -4,7 +4,7 @@ use anyhow::bail;
 use lightningcss::stylesheet::ParserOptions;
 use preset_env_base::Versions;
 use styled_jsx::visitor::{styled_jsx, NativeConfig};
-use swc_common::{chain, FileName, Mark, Span, DUMMY_SP};
+use swc_common::{FileName, Mark, Span, DUMMY_SP};
 use swc_ecma_parser::{EsSyntax, Syntax};
 use swc_ecma_transforms::resolver;
 use swc_ecma_transforms_testing::{test_fixture, FixtureTestConfig};
@@ -36,7 +36,7 @@ fn run(input: PathBuf, use_lightningcss: bool) {
 
                 ..Default::default()
             };
-            chain!(
+            (
                 resolver(Mark::new(), Mark::new(), false),
                 styled_jsx(
                     t.cm.clone(),
@@ -81,8 +81,8 @@ fn run(input: PathBuf, use_lightningcss: bool) {
                                 Ok(output.code)
                             })),
                         }
-                    }
-                )
+                    },
+                ),
             )
         },
         &input,

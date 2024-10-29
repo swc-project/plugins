@@ -4,15 +4,15 @@ use std::{cell::RefCell, rc::Rc};
 
 use swc_common::{comments::Comments, Span};
 use swc_ecma_ast::*;
-use swc_ecma_visit::{as_folder, noop_visit_mut_type, Fold, VisitMut, VisitMutWith};
+use swc_ecma_visit::{noop_visit_mut_type, visit_mut_pass, VisitMut, VisitMutWith};
 
 use crate::utils::State;
 
-pub fn pure_annotation<C>(comments: C, state: Rc<RefCell<State>>) -> impl Fold + VisitMut
+pub fn pure_annotation<C>(comments: C, state: Rc<RefCell<State>>) -> impl Pass + VisitMut
 where
     C: Comments,
 {
-    as_folder(PureAnnotation { comments, state })
+    visit_mut_pass(PureAnnotation { comments, state })
 }
 
 #[derive(Debug)]

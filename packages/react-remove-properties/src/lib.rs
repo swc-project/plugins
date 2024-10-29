@@ -1,6 +1,6 @@
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 use swc_core::{
-    ecma::{ast::Program, visit::FoldWith},
+    ecma::ast::Program,
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
 };
 
@@ -14,7 +14,5 @@ fn swc_plugin(program: Program, data: TransformPluginProgramMetadata) -> Program
     .expect("invalid packages")
     .unwrap_or(react_remove_properties::Config::All(true));
 
-    program.fold_with(&mut react_remove_properties::react_remove_properties(
-        config,
-    ))
+    program.apply(react_remove_properties::react_remove_properties(config))
 }
