@@ -1,5 +1,11 @@
 # @swc/plugin-styled-jsx
 
+## 3.0.6
+
+### Patch Changes
+
+- 0508b6d: Update swc_core to v3
+
 ## 3.0.5
 
 ### Patch Changes

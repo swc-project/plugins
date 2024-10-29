@@ -10,7 +10,7 @@ license      = { workspace = true }
 name         = "styled_jsx"
 repository   = { workspace = true }
 rust-version = { workspace = true }
-version      = "0.73.36"
+version      = "0.73.37"
 
 
 [features]

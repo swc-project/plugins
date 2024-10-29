@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-prefresh",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "SWC plugin for preact refresh",
   "main": "swc_plugin_prefresh.wasm",
   "scripts": {
