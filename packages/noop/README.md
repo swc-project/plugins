@@ -2,6 +2,12 @@
 
 # @swc/plugin-noop
 
+## 3.0.4
+
+### Patch Changes
+
+- 0508b6d: Update swc_core to v3
+
 ## 3.0.3
 
 ### Patch Changes
