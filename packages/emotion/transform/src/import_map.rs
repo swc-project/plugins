@@ -14,6 +14,7 @@ pub type ImportMapValue = AHashMap<JsWord, ImportItemConfig>;
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct ImportItemConfig {
     pub canonical_import: ItemSpecifier,
+    pub styled_base_import: Option<ItemSpecifier>,
 }
 
 /// `(packageName, exportName)`
@@ -27,7 +28,12 @@ pub(crate) fn expand_import_map(
     if let Some(map) = map {
         map.iter().for_each(|(import_source, value)| {
             value.iter().for_each(
-                |(local_export_name, ImportItemConfig { canonical_import })| {
+                |(
+                    local_export_name,
+                    ImportItemConfig {
+                        canonical_import, ..
+                    },
+                )| {
                     let ItemSpecifier(package_name, export_name) = canonical_import;
 
                     if &**package_name == "@emotion/react" && &**export_name == "jsx" {
