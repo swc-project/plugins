@@ -12,7 +12,7 @@ use swc_ecma_ast::{
     ImportSpecifier, Lit, MemberExpr, ModuleExportName, ObjectPatProp, Pass, Tpl, TplElement,
     VarDeclarator,
 };
-use swc_ecma_visit::{visit_mut_pass, Fold, VisitMut, VisitMutWith};
+use swc_ecma_visit::{visit_mut_pass, VisitMut, VisitMutWith};
 
 pub fn swc_prefresh(config: PrefreshPluginConfig, file_hash: String) -> impl Pass {
     visit_mut_pass(PrefreshPlugin::new(config, file_hash))

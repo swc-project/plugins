@@ -9,7 +9,7 @@ use swc_atoms::Atom;
 use swc_cached::regex::CachedRegex;
 use swc_common::DUMMY_SP;
 use swc_ecma_ast::{ImportDecl, ImportSpecifier, ModuleExportName, *};
-use swc_ecma_visit::{noop_fold_type, Fold};
+use swc_ecma_visit::{fold_pass, noop_fold_type, Fold};
 
 static DUP_SLASH_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"//").unwrap());
 
@@ -424,7 +424,7 @@ pub fn modularize_imports(config: Config) -> impl Pass {
             v,
         ));
     }
-    folder
+    fold_pass(folder)
 }
 
 fn helper_lower_case(

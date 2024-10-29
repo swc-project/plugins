@@ -1,7 +1,7 @@
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 use swc_common::SyntaxContext;
 use swc_core::{
-    ecma::{ast::Program, visit::FoldWith},
+    ecma::ast::Program,
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
 };
 
@@ -15,7 +15,7 @@ fn swc_plugin(program: Program, data: TransformPluginProgramMetadata) -> Program
     .expect("invalid packages")
     .unwrap_or_else(|| remove_console::Config::All(true));
 
-    program.fold_with(&mut remove_console::remove_console(
+    program.apply(remove_console::remove_console(
         config,
         SyntaxContext::empty().apply_mark(data.unresolved_mark),
     ))

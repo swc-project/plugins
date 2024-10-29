@@ -5,7 +5,6 @@ use std::path::Path;
 use serde::Deserialize;
 use swc_common::{plugin::metadata::TransformPluginMetadataContextKind, SourceMapper, Spanned};
 use swc_ecma_ast::Program;
-use swc_ecma_visit::FoldWith;
 use swc_emotion::EmotionOptions;
 use swc_plugin_macro::plugin_transform;
 use swc_plugin_proxy::TransformPluginProgramMetadata;
