@@ -1,5 +1,11 @@
 # @swc/plugin-relay
 
+## 4.0.0
+
+### Major Changes
+
+- ba13397: Update swc_core to v4
+
 ## 3.0.4
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-relay",
-  "version": "3.0.4",
+  "version": "4.0.0",
   "description": "SWC plugin for relay",
   "main": "swc_plugin_relay.wasm",
   "types": "./types.d.ts",
