@@ -7,7 +7,7 @@ export default (({ level = 1 })=>{
     </Element>;
 });
 export const TestLowerCase = ({ level = 1 })=>{
-    const element = `h${level}`;
+    const element1 = `h${level}`;
     return <element className={"jsx-fca64cc3f069b519" + " " + "root"}>
       <p className={"jsx-fca64cc3f069b519"}>dynamic element</p>
       <_JSXStyle id={"fca64cc3f069b519"}>{".root.jsx-fca64cc3f069b519{background:red}"}</_JSXStyle>
