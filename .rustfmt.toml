@@ -1,3 +1,4 @@
+edition                  = "2018"
 format_strings           = true
 group_imports            = "StdExternalCrate"
 hex_literal_case         = "Lower"
