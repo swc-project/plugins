@@ -1,5 +1,11 @@
 # @swc/plugin-transform-imports
 
+## 4.0.0
+
+### Major Changes
+
+- ba13397: Update swc_core to v4
+
 ## 3.0.5
 
 ### Patch Changes
