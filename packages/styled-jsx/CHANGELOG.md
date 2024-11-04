@@ -1,5 +1,11 @@
 # @swc/plugin-styled-jsx
 
+## 4.0.1
+
+### Patch Changes
+
+- e55398b: Update lightningcss
+
 ## 4.0.0
 
 ### Major Changes
