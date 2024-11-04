@@ -42,7 +42,8 @@ fn report(
 ) {
     // We need :global(selector) to be parsed as a selector.
     if let ParserError::SelectorError(
-        lightningcss::error::SelectorError::UnsupportedPseudoClassOrElement(..),
+        lightningcss::error::SelectorError::UnsupportedPseudoClass(..)
+        | lightningcss::error::SelectorError::UnsupportedPseudoElement(..),
     ) = &err.kind
     {
         return;
