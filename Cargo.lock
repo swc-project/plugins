@@ -2323,16 +2323,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "swc-plugin-formatjs"
-version = "0.0.2"
-dependencies = [
- "serde",
- "serde_json",
- "swc-formatjs-visitor",
- "swc_core",
-]
-
-[[package]]
 name = "swc_allocator"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3032,6 +3022,16 @@ dependencies = [
  "swc_plugin_macro",
  "swc_plugin_proxy",
  "tracing",
+]
+
+[[package]]
+name = "swc_plugin_formatjs"
+version = "1.0.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "swc-formatjs-visitor",
+ "swc_core",
 ]
 
 [[package]]
