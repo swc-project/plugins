@@ -14,12 +14,12 @@ version = "0.0.2"
 crate-type = ["cdylib"]
 
 [dependencies]
-serde = "1"
-serde_json = "1"
+serde = { workspace = true }
+serde_json = { workspace = true }
 swc-formatjs-visitor = { path = "./swc-formatjs-visitor", version = "0.0.2", features = [
   "plugin",
 ] }
-swc_core = { version = "0.106.0", features = [
+swc_core = { workspace = true, features = [
   "ecma_plugin_transform",
   "ecma_ast_serde",
 ] }
