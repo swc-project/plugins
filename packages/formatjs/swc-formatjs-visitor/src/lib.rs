@@ -496,8 +496,6 @@ fn get_call_expr_icu_message_value(
 fn interpolate_name(resource_path: &str, name: &str, content: &str) -> Option<String> {
     let filename = name;
 
-    let content = content;
-
     // let ext = "bin";
     // let basename = "file";
     // let directory = "";

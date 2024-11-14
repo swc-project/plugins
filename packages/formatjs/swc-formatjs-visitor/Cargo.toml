@@ -1,11 +1,14 @@
 [package]
-authors     = ["OJ Kwon <kwon.ohjoong@gmail.com>"]
+authors = [
+  "OJ Kwon <kwon.ohjoong@gmail.com>",
+  "DongYoon Kang <kdy1997.dev@gmail.com>",
+]
 description = "formatjs custom transform visitor for SWC"
-edition     = "2021"
-license     = "MIT"
-name        = "swc-formatjs-visitor"
-repository  = "https://github.com/formatjs/formatjs"
-version     = "0.0.2"
+edition = "2021"
+license = "MIT"
+name = "swc-formatjs-visitor"
+repository = "https://github.com/swc-project/plugins"
+version = "1.0.0"
 
 [features]
 custom_transform = []
