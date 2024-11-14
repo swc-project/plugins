@@ -1035,7 +1035,7 @@ impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
         let id_attr = jsx_opening_elem.attrs.iter().find(|attr| match attr {
             JSXAttrOrSpread::JSXAttr(attr) => {
                 if let JSXAttrName::Ident(ident) = &attr.name {
-                    return &*ident.sym == "id";
+                    &*ident.sym == "id"
                 } else {
                     false
                 }
@@ -1043,7 +1043,7 @@ impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
             _ => false,
         });
 
-        let first_attr = jsx_opening_elem.attrs.first().is_some();
+        let first_attr = !jsx_opening_elem.attrs.is_empty();
 
         // Do not support overrideIdFn, only support idInterpolatePattern
         if descriptor.id.is_some() {
