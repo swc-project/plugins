@@ -4,15 +4,14 @@ authors = [
   "DongYoon Kang <kdy1997.dev@gmail.com>",
 ]
 description = "formatjs custom transform visitor for SWC"
-edition = "2021"
-license = "MIT"
+edition.workspace = true
+license.workspace = true
 name = "swc-formatjs-visitor"
-repository = "https://github.com/swc-project/plugins"
+repository.workspace = true
 version = "1.0.0"
 
 [features]
 custom_transform = []
-plugin           = ["swc_core/ecma_plugin_transform"]
 
 [dependencies]
 base64ct = { workspace = true, features = ["alloc"] }

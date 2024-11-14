@@ -4,11 +4,11 @@ authors = [
   "DongYoon Kang <kdy1997.dev@gmail.com>",
 ]
 description = "formatjs plugin for SWC"
-edition = "2021"
-license = "MIT"
+edition.workspace = true
+license.workspace = true
 name = "swc_plugin_formatjs"
 publish = false
-repository = "https://github.com/swc-project/plugins"
+repository.workspace = true
 version = "1.0.0"
 
 [lib]

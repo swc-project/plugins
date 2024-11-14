@@ -4,11 +4,12 @@ authors = [
   "DongYoon Kang <kdy1997.dev@gmail.com>",
 ]
 description = "ICU MessageFormat Parser"
-edition = "2021"
-license = "MIT"
+edition.workspace = true
+license.workspace = true
 name = "icu-messageformat-parser"
-repository = "https://github.com/swc-project/plugins"
+repository.workspace = true
 version = "1.0.0"
+
 
 [features]
 utf16 = ["widestring"]
