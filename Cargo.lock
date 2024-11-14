@@ -989,21 +989,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu-messageformat-parser"
-version = "0.0.2"
-dependencies = [
- "langtag",
- "once_cell",
- "regex",
- "serde",
- "serde_json",
- "serde_repr",
- "similar-asserts",
- "testing",
- "widestring",
-]
-
-[[package]]
 name = "ident_case"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2308,21 +2293,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "swc-formatjs-visitor"
-version = "0.0.2"
-dependencies = [
- "base64ct",
- "icu-messageformat-parser",
- "once_cell",
- "pretty_assertions",
- "regex",
- "serde",
- "serde_json",
- "sha2 0.10.8",
- "swc_core",
-]
-
-[[package]]
 name = "swc_allocator"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2972,6 +2942,36 @@ dependencies = [
 ]
 
 [[package]]
+name = "swc_formatjs_transform"
+version = "1.0.0"
+dependencies = [
+ "base64ct",
+ "once_cell",
+ "pretty_assertions",
+ "regex",
+ "serde",
+ "serde_json",
+ "sha2 0.10.8",
+ "swc_core",
+ "swc_icu_messageformat_parser",
+]
+
+[[package]]
+name = "swc_icu_messageformat_parser"
+version = "1.0.0"
+dependencies = [
+ "langtag",
+ "once_cell",
+ "regex",
+ "serde",
+ "serde_json",
+ "serde_repr",
+ "similar-asserts",
+ "testing",
+ "widestring",
+]
+
+[[package]]
 name = "swc_macros_common"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3030,8 +3030,8 @@ version = "1.0.0"
 dependencies = [
  "serde",
  "serde_json",
- "swc-formatjs-visitor",
  "swc_core",
+ "swc_formatjs_transform",
 ]
 
 [[package]]
