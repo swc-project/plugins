@@ -5,16 +5,12 @@ use swc_core::{
         proxies::TransformPluginProgramMetadata,
     },
 };
-use swc_formatjs_visitor::{create_formatjs_visitor, FormatJSPluginOptions};
+use swc_formatjs_transform::{create_formatjs_visitor, FormatJSPluginOptions};
 
 #[plugin_transform]
-pub fn process(program: Program, metadata: TransformPluginProgramMetadata) -> Program {
+pub fn process(mut program: Program, metadata: TransformPluginProgramMetadata) -> Program {
     let filename = metadata.get_context(&TransformPluginMetadataContextKind::Filename);
-    let filename = if let Some(filename) = filename.as_deref() {
-        filename
-    } else {
-        "unknown.js"
-    };
+    let filename = filename.as_deref().unwrap_or("unknown.js");
 
     let plugin_config = metadata.get_transform_plugin_config();
     let plugin_options: FormatJSPluginOptions = if let Some(plugin_config) = plugin_config {
@@ -27,12 +23,14 @@ pub fn process(program: Program, metadata: TransformPluginProgramMetadata) -> Pr
         Default::default()
     };
 
-    let visitor = create_formatjs_visitor(
+    let mut visitor = create_formatjs_visitor(
         std::sync::Arc::new(metadata.source_map),
         metadata.comments.as_ref(),
         plugin_options,
         filename,
     );
 
-    program.fold_with(&mut as_folder(visitor))
+    program.visit_mut_with(&mut visitor);
+
+    program
 }

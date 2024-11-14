@@ -1,7 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
 use base64ct::{Base64, Encoding};
-use icu_messageformat_parser::{Parser, ParserOptions};
 use once_cell::sync::Lazy;
 use regex::{Captures, Regex as Regexp};
 use serde::{ser::SerializeMap, Deserialize, Serialize};
@@ -22,6 +21,7 @@ use swc_core::{
         visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
     },
 };
+use swc_icu_messageformat_parser::{Parser, ParserOptions};
 
 pub static WHITESPACE_REGEX: Lazy<Regexp> = Lazy::new(|| Regexp::new(r"\s+").unwrap());
 
