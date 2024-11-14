@@ -70,7 +70,7 @@ enum CtxData<'a> {
     Array(&'a [&'a str]),
 }
 
-impl<'a> Rewriter<'a> {
+impl Rewriter<'_> {
     fn new_path(&self, name_str: Option<&str>) -> Atom {
         let mut ctx: HashMap<&str, CtxData> = HashMap::new();
         ctx.insert("matches", CtxData::Array(&self.group[..]));

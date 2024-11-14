@@ -1,0 +1,24 @@
+[package]
+authors = [
+  "OJ Kwon <kwon.ohjoong@gmail.com>",
+  "DongYoon Kang <kdy1997.dev@gmail.com>",
+]
+description = "formatjs plugin for SWC"
+edition.workspace = true
+license.workspace = true
+name = "swc_plugin_formatjs"
+publish = false
+repository.workspace = true
+version = "1.0.0"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+swc_core = { workspace = true, features = [
+  "ecma_plugin_transform",
+  "ecma_ast_serde",
+] }
+swc_formatjs_transform = { path = "./transform", version = "1.0.0" }

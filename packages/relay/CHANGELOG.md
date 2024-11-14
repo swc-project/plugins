@@ -1,5 +1,11 @@
 # @swc/plugin-relay
 
+## 5.0.1
+
+### Patch Changes
+
+- 4ff3b22: Move formatjs plugin to official plugin repository
+
 ## 5.0.0
 
 ### Major Changes

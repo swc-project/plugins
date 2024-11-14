@@ -227,7 +227,10 @@ fn unique_ident_name_from_operation_name(operation_name: &str) -> String {
 #[derive(Debug)]
 enum BuildRequirePathError {
     FileNameNotReal,
-    ArtifactDirectoryExpected { file_name: String },
+    ArtifactDirectoryExpected {
+        #[allow(unused)]
+        file_name: String,
+    },
 }
 
 impl Relay {

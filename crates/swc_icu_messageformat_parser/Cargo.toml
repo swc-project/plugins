@@ -1,0 +1,28 @@
+[package]
+authors = [
+  "OJ Kwon <kwon.ohjoong@gmail.com>",
+  "DongYoon Kang <kdy1997.dev@gmail.com>",
+]
+description = "ICU MessageFormat Parser"
+edition.workspace = true
+license.workspace = true
+name = "swc_icu_messageformat_parser"
+repository.workspace = true
+version = "1.0.0"
+
+
+[features]
+utf16 = ["widestring"]
+
+[dependencies]
+langtag    = { workspace = true }
+once_cell  = { workspace = true }
+regex      = { workspace = true }
+serde      = { workspace = true, features = ["derive"] }
+serde_repr = { workspace = true }
+widestring = { workspace = true, optional = true }
+
+[dev-dependencies]
+serde_json      = { workspace = true }
+similar-asserts = { workspace = true }
+testing         = { workspace = true }
