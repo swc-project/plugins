@@ -97,6 +97,7 @@ where
         }
     }
 
+    #[allow(clippy::only_used_in_recursion)]
     fn is_supported(&self, e: &Expr) -> bool {
         match e {
             Expr::Paren(e) => self.is_supported(&e.expr),

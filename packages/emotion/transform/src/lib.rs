@@ -179,6 +179,7 @@ pub fn emotion<C: Comments>(
 
 pub struct EmotionTransformer<C: Comments> {
     pub options: EmotionOptions,
+    #[allow(unused)]
     filepath_hash: Option<u32>,
     filepath: PathBuf,
     dirname: Option<String>,
