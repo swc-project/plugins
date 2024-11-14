@@ -183,10 +183,7 @@ fn get_jsx_message_descriptor_value(
                 _ => None,
             }
         }
-        JSXAttrValue::Lit(lit) => match &lit {
-            Lit::Str(str) => Some(str.value.to_string()),
-            _ => None,
-        },
+        JSXAttrValue::Lit(Lit::Str(s)) => Some(s.value.to_string()),
         _ => None,
     }
 }
@@ -204,10 +201,7 @@ fn get_call_expr_message_descriptor_value(
     // NOTE: do not support evaluatePath
     match value {
         Expr::Ident(ident) => Some(ident.sym.to_string()),
-        Expr::Lit(lit) => match &lit {
-            Lit::Str(str) => Some(str.value.to_string()),
-            _ => None,
-        },
+        Expr::Lit(Lit::Str(s)) => Some(s.value.to_string()),
         Expr::Tpl(tpl) => {
             //NOTE: This doesn't fully evaluate templates
             Some(
@@ -239,7 +233,7 @@ impl Serialize for MessageDescriptionValue {
         S: serde::Serializer,
     {
         match self {
-            MessageDescriptionValue::Str(str) => serializer.serialize_str(str),
+            MessageDescriptionValue::Str(s) => serializer.serialize_str(s),
             // NOTE: this is good enough to barely pass key-value object serialization. Not a
             // complete implementation.
             MessageDescriptionValue::Obj(obj) => {
@@ -259,7 +253,7 @@ impl Serialize for MessageDescriptionValue {
                                     };
                                     let value = match &*key_value.value {
                                         Expr::Lit(lit) => match &lit {
-                                            Lit::Str(str) => str.value.to_string(),
+                                            Lit::Str(s) => s.value.to_string(),
                                             _ => {
                                                 //unexpected
                                                 continue;
