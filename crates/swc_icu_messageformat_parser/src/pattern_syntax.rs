@@ -207,11 +207,11 @@ mod tests {
 
     #[test]
     fn test_is_pattern_syntax_1() {
-        assert_eq!(is_pattern_syntax('.'), true);
+        assert!(is_pattern_syntax('.'));
     }
 
     #[test]
     fn test_is_pattern_syntax_2() {
-        assert_eq!(is_pattern_syntax('a'), false);
+        assert!(!is_pattern_syntax('a'));
     }
 }

@@ -1087,9 +1087,9 @@ impl<'s> Parser<'s> {
 
                 // Extract style or skeleton
                 if let Some((style, style_span)) = style_and_span {
-                    if style.starts_with("::") {
+                    if let Some(skeleton) = style.strip_prefix("::") {
                         // Skeleton starts with `::`.
-                        let skeleton = style[2..].trim_start();
+                        let skeleton = skeleton.trim_start();
 
                         Ok(match arg_type {
                             "number" => {
@@ -1117,7 +1117,7 @@ impl<'s> Parser<'s> {
                                 }
 
                                 let pattern = if let Some(locale) = &self.options.locale {
-                                    get_best_pattern(skeleton, &locale)
+                                    get_best_pattern(skeleton, locale)
                                 } else {
                                     skeleton.to_string()
                                 };
@@ -1344,7 +1344,7 @@ impl<'s> Parser<'s> {
         expecting_close_tag: bool,
         #[cfg(feature = "utf16")] parsed_first_identifier: (&'s Utf16Str, Span),
         #[cfg(not(feature = "utf16"))] parsed_first_identifier: (&'s str, Span),
-    ) -> Result<PluralOrSelectOptions> {
+    ) -> Result<PluralOrSelectOptions<'s>> {
         let mut has_other_clause = false;
 
         let mut options = vec![];
@@ -1472,7 +1472,7 @@ impl<'s> Parser<'s> {
         }
 
         let mut digits = String::new();
-        while !self.is_eof() && self.char().is_digit(10) {
+        while !self.is_eof() && self.char().is_ascii_digit() {
             digits.push(self.char());
             self.bump();
         }
