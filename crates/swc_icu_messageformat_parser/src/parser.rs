@@ -106,7 +106,7 @@ fn is_whitespace(ch: char) -> bool {
 
 fn is_alpha(ch: Option<char>) -> bool {
     if let Some(ch) = ch {
-        matches!(ch, 'a'..='z' | 'A'..='Z')
+        ch.is_ascii_alphabetic()
     } else {
         false
     }
@@ -644,7 +644,7 @@ fn parse_number_skeleton(skeleton: &Vec<NumberSkeletonToken>) -> JsIntlNumberFor
                     ret.maximum_fraction_digits = g1_len;
                 }
 
-                let opt = token.options.get(0);
+                let opt = token.options.first();
                 // https://unicode-org.github.io/icu/userguide/format_parse/numbers/skeletons.html#trailing-zero-display
                 if let Some(opt) = opt {
                     if *opt == "w" {
@@ -1032,7 +1032,7 @@ impl<'s> Parser<'s> {
         expecting_close_tag: bool,
         value: String,
         opening_brace_position: Position,
-    ) -> Result<AstElement> {
+    ) -> Result<AstElement<'s>> {
         // Parse this range:
         // {name, type, style}
         //        ^---^
@@ -1108,7 +1108,7 @@ impl<'s> Parser<'s> {
                                     } else {
                                         None
                                     },
-                                    style: Some(NumberArgStyle::Skeleton(skeleton)),
+                                    style: Some(NumberArgStyle::Skeleton(Box::new(skeleton))),
                                 }
                             }
                             _ => {

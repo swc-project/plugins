@@ -270,7 +270,7 @@ pub enum AstElement<'s> {
 }
 
 // Until this is resolved, we have to roll our own serialization: https://github.com/serde-rs/serde/issues/745
-impl<'s> Serialize for AstElement<'s> {
+impl Serialize for AstElement<'_> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
@@ -407,7 +407,7 @@ pub struct PluralOrSelectOptions<'s>(pub Vec<(&'s Utf16Str, PluralOrSelectOption
 #[derive(Clone, Debug, PartialEq)]
 pub struct PluralOrSelectOptions<'s>(pub Vec<(&'s str, PluralOrSelectOption<'s>)>);
 
-impl<'s> Serialize for PluralOrSelectOptions<'s> {
+impl Serialize for PluralOrSelectOptions<'_> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
@@ -431,7 +431,7 @@ impl<'s> Serialize for PluralOrSelectOptions<'s> {
 #[serde(untagged)]
 pub enum NumberArgStyle<'s> {
     Style(&'s str),
-    Skeleton(NumberSkeleton<'s>),
+    Skeleton(Box<NumberSkeleton<'s>>),
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize)]
@@ -495,7 +495,7 @@ mod tests {
     #[test]
     fn serialize_number_arg_style_with_skeleton() {
         similar_asserts::assert_eq!(
-            serde_json::to_value(NumberArgStyle::Skeleton(NumberSkeleton {
+            serde_json::to_value(NumberArgStyle::Skeleton(Box::new(NumberSkeleton {
                 skeleton_type: SkeletonType::Number,
                 tokens: vec![NumberSkeletonToken {
                     stem: "foo",
@@ -503,7 +503,7 @@ mod tests {
                 }],
                 location: Some(Span::new(Position::new(0, 1, 1), Position::new(11, 1, 12))),
                 parsed_options: JsIntlNumberFormatOptions::default(),
-            }))
+            })))
             .unwrap(),
             json!({
                 "tokens": [{
