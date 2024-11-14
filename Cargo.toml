@@ -1,5 +1,5 @@
 [workspace]
-members = ["xtask", "packages/*"]
+members = ["xtask", "crates/*", "packages/*"]
 
 
 resolver = "2"
@@ -70,6 +70,8 @@ swc_trace_macro             = "2.0.0"
 testing                     = "4.0.0"
 tracing                     = "0.1.40"
 widestring                  = "1.0.2"
+
+icu-messageformat-parser = { version = "1.0.0", path = "./crates/icu-messageformat-parser" }
 
 
 [profile.release]

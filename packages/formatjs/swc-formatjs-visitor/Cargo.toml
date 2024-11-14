@@ -14,16 +14,14 @@ version = "1.0.0"
 custom_transform = []
 
 [dependencies]
-base64ct = { workspace = true, features = ["alloc"] }
-icu-messageformat-parser = { version = "0.0.2", path = "../icu-messageformat-parser", features = [
-  "utf16",
-] }
-once_cell = { workspace = true }
-regex = { workspace = true }
-serde = { workspace = true, features = ["derive"] }
-serde_json = { workspace = true }
-sha2 = { workspace = true }
-swc_core = { workspace = true, features = ["common", "ecma_visit", "ecma_ast"] }
+base64ct                 = { workspace = true, features = ["alloc"] }
+icu-messageformat-parser = { workspace = true, features = ["utf16"] }
+once_cell                = { workspace = true }
+regex                    = { workspace = true }
+serde                    = { workspace = true, features = ["derive"] }
+serde_json               = { workspace = true }
+sha2                     = { workspace = true }
+swc_core                 = { workspace = true, features = ["common", "ecma_visit", "ecma_ast"] }
 
 [dev-dependencies]
 pretty_assertions = { workspace = true }
