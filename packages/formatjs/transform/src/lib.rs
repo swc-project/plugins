@@ -245,7 +245,7 @@ impl Serialize for MessageDescriptionValue {
                                 Prop::KeyValue(key_value) => {
                                     let key = match &key_value.key {
                                         PropName::Ident(ident) => ident.sym.to_string(),
-                                        PropName::Str(str) => str.value.to_string(),
+                                        PropName::Str(s) => s.value.to_string(),
                                         _ => {
                                             //unexpected
                                             continue;
@@ -309,10 +309,10 @@ fn get_jsx_message_descriptor_value_maybe_object(
                 }
             }
 
-            return match &container.expr {
+            match &container.expr {
                 JSXExpr::Expr(expr) => match &**expr {
                     Expr::Lit(lit) => match &lit {
-                        Lit::Str(str) => Some(MessageDescriptionValue::Str(str.value.to_string())),
+                        Lit::Str(s) => Some(MessageDescriptionValue::Str(s.value.to_string())),
                         _ => None,
                     },
                     Expr::Object(object_lit) => {
@@ -321,10 +321,10 @@ fn get_jsx_message_descriptor_value_maybe_object(
                     _ => None,
                 },
                 _ => None,
-            };
+            }
         }
         JSXAttrValue::Lit(lit) => match &lit {
-            Lit::Str(str) => Some(MessageDescriptionValue::Str(str.value.to_string())),
+            Lit::Str(s) => Some(MessageDescriptionValue::Str(s.value.to_string())),
             _ => None,
         },
         _ => None,
