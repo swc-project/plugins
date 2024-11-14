@@ -452,7 +452,7 @@ fn get_call_expr_icu_message_value(
     message
 }
 
-fn interpolate_name(resource_path: &str, name: &str, content: &str) -> Option<String> {
+fn interpolate_name(_resource_path: &str, name: &str, content: &str) -> Option<String> {
     let filename = name;
 
     // let ext = "bin";
@@ -553,12 +553,8 @@ fn evaluate_jsx_message_descriptor(
             "[sha512:contenthash:base64:6]"
         };
 
-        let content = if let Some(description) = &description {
-            if let MessageDescriptionValue::Str(description) = description {
-                format!("{}#{}", default_message, description)
-            } else {
-                default_message.clone()
-            }
+        let content = if let Some(MessageDescriptionValue::Str(description)) = &description {
+            format!("{}#{}", default_message, description)
         } else {
             default_message.clone()
         };
@@ -589,7 +585,7 @@ fn evaluate_call_expr_message_descriptor(
     let description =
         get_call_expr_message_descriptor_value_maybe_object(&descriptor_path.description, None);
 
-    let id = if id.is_none() && default_message != "" {
+    let id = if id.is_none() && !default_message.is_empty() {
         let interpolate_pattern = if let Some(interpolate_pattern) = &options.id_interpolate_pattern
         {
             interpolate_pattern.as_str()
@@ -597,12 +593,8 @@ fn evaluate_call_expr_message_descriptor(
             "[sha512:contenthash:base64:6]"
         };
 
-        let content = if let Some(description) = &description {
-            if let MessageDescriptionValue::Str(description) = description {
-                format!("{}#{}", default_message, description)
-            } else {
-                default_message.clone()
-            }
+        let content = if let Some(MessageDescriptionValue::Str(description)) = &description {
+            format!("{}#{}", default_message, description)
         } else {
             default_message.clone()
         };
