@@ -20,7 +20,7 @@ struct Snapshot<'a> {
     err: Option<Error>,
 }
 
-fn read_sections<'a>(file: PathBuf) -> TestFixtureSections {
+fn read_sections(file: PathBuf) -> TestFixtureSections {
     let input = fs::read_to_string(file).expect("Should able to read fixture");
 
     let input: Vec<&str> = input.split("\n---\n").collect();

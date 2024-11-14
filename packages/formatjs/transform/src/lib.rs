@@ -13,8 +13,8 @@ use swc_core::{
     },
     ecma::{
         ast::{
-            ArrayLit, Bool, CallExpr, Callee, Expr, ExprOrSpread, Ident, IdentName, JSXAttr,
-            JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElementName, JSXExpr, JSXNamespacedName,
+            ArrayLit, Bool, CallExpr, Callee, Expr, ExprOrSpread, IdentName, JSXAttr, JSXAttrName,
+            JSXAttrOrSpread, JSXAttrValue, JSXElementName, JSXExpr, JSXNamespacedName,
             JSXOpeningElement, KeyValueProp, Lit, MemberProp, ModuleItem, Number, ObjectLit, Prop,
             PropName, PropOrSpread, Str,
         },
@@ -64,7 +64,7 @@ pub struct MessageDescriptor {
 fn get_message_descriptor_key_from_jsx(name: &JSXAttrName) -> &str {
     match name {
         JSXAttrName::Ident(name)
-        | JSXAttrName::JSXNamespacedName(JSXNamespacedName { name, .. }) => &*name.sym,
+        | JSXAttrName::JSXNamespacedName(JSXNamespacedName { name, .. }) => &name.sym,
     }
 
     // NOTE: Do not support evaluatePath()
@@ -160,12 +160,9 @@ fn get_jsx_message_descriptor_value(
                 }
             }
 
-            return match &container.expr {
+            match &container.expr {
                 JSXExpr::Expr(expr) => match &**expr {
-                    Expr::Lit(lit) => match &lit {
-                        Lit::Str(str) => Some(str.value.to_string()),
-                        _ => None,
-                    },
+                    Expr::Lit(Lit::Str(s)) => Some(s.value.to_string()),
                     Expr::Tpl(tpl) => {
                         //NOTE: This doesn't fully evaluate templates
                         Some(
@@ -184,7 +181,7 @@ fn get_jsx_message_descriptor_value(
                     _ => None,
                 },
                 _ => None,
-            };
+            }
         }
         JSXAttrValue::Lit(lit) => match &lit {
             Lit::Str(str) => Some(str.value.to_string()),
