@@ -6,9 +6,10 @@ authors = [
 description = "formatjs plugin for SWC"
 edition = "2021"
 license = "MIT"
-name = "swc-plugin-formatjs"
-repository = "https://github.com/formatjs/formatjs"
-version = "0.0.2"
+name = "swc_plugin_formatjs"
+publish = false
+repository = "https://github.com/swc-project/plugins"
+version = "1.0.0"
 
 [lib]
 crate-type = ["cdylib"]
