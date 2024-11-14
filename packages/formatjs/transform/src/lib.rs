@@ -1102,13 +1102,11 @@ impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
 
                     if &*ident.sym == "defineMessage" {
                         self.process_message_object(&mut message_obj);
-                    } else if let Some(obj) = message_obj {
-                        if let Expr::Object(obj) = obj {
-                            for prop in obj.props.iter_mut() {
-                                if let PropOrSpread::Prop(prop) = &mut *prop {
-                                    if let Prop::KeyValue(kv) = &mut **prop {
-                                        self.process_message_object(&mut Some(&mut *kv.value));
-                                    }
+                    } else if let Some(Expr::Object(obj)) = message_obj {
+                        for prop in obj.props.iter_mut() {
+                            if let PropOrSpread::Prop(prop) = &mut *prop {
+                                if let Prop::KeyValue(kv) = &mut **prop {
+                                    self.process_message_object(&mut Some(&mut *kv.value));
                                 }
                             }
                         }
