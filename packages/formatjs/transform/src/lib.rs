@@ -305,10 +305,9 @@ fn get_jsx_message_descriptor_value_maybe_object(
 
             match &container.expr {
                 JSXExpr::Expr(expr) => match &**expr {
-                    Expr::Lit(lit) => match &lit {
-                        Lit::Str(s) => Some(MessageDescriptionValue::Str(s.value.to_string())),
-                        _ => None,
-                    },
+                    Expr::Lit(Lit::Str(s)) => {
+                        Some(MessageDescriptionValue::Str(s.value.to_string()))
+                    }
                     Expr::Object(object_lit) => {
                         Some(MessageDescriptionValue::Obj(object_lit.clone()))
                     }
@@ -317,10 +316,7 @@ fn get_jsx_message_descriptor_value_maybe_object(
                 _ => None,
             }
         }
-        JSXAttrValue::Lit(lit) => match &lit {
-            Lit::Str(s) => Some(MessageDescriptionValue::Str(s.value.to_string())),
-            _ => None,
-        },
+        JSXAttrValue::Lit(Lit::Str(s)) => Some(MessageDescriptionValue::Str(s.value.to_string())),
         _ => None,
     }
 }
@@ -365,16 +361,8 @@ fn get_jsx_icu_message_value(
     let mut parser = Parser::new(message.as_str(), &ParserOptions::default());
 
     if let Err(e) = parser.parse() {
-        let is_literal_err = if let Some(message_path) = message_path {
-            if let JSXAttrValue::Lit(..) = message_path {
-                if message.contains("\\\\") {
-                    true
-                } else {
-                    false
-                }
-            } else {
-                false
-            }
+        let is_literal_err = if let Some(JSXAttrValue::Lit(..)) = message_path {
+            message.contains("\\\\")
         } else {
             false
         };
@@ -410,14 +398,14 @@ fn get_jsx_icu_message_value(
                         )
                         .emit();
                     handler
-                        .struct_err(&format!("SyntaxError: {}", e.kind.to_string()))
+                        .struct_err(&format!("SyntaxError: {}", e.kind))
                         .emit()
                 });
             }
         }
     }
 
-    return message;
+    message
 }
 
 fn get_call_expr_icu_message_value(
@@ -455,13 +443,13 @@ fn get_call_expr_icu_message_value(
                     )
                     .emit();
                 handler
-                    .struct_err(&format!("SyntaxError: {}", e.kind.to_string()))
+                    .struct_err(&format!("SyntaxError: {}", e.kind))
                     .emit()
             });
         }
     }
 
-    return message;
+    message
 }
 
 fn interpolate_name(resource_path: &str, name: &str, content: &str) -> Option<String> {
@@ -557,7 +545,7 @@ fn evaluate_jsx_message_descriptor(
         get_jsx_message_descriptor_value_maybe_object(&descriptor_path.description, None);
 
     // Note: do not support override fn
-    let id = if id.is_none() && default_message != "" {
+    let id = if id.is_none() && !default_message.is_empty() {
         let interpolate_pattern = if let Some(interpolate_pattern) = &options.id_interpolate_pattern
         {
             interpolate_pattern.as_str()
