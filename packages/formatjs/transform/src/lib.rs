@@ -337,10 +337,7 @@ fn get_call_expr_message_descriptor_value_maybe_object(
     // NOTE: do not support evaluatePath
     match value {
         Expr::Ident(ident) => Some(MessageDescriptionValue::Str(ident.sym.to_string())),
-        Expr::Lit(lit) => match &lit {
-            Lit::Str(str) => Some(MessageDescriptionValue::Str(str.value.to_string())),
-            _ => None,
-        },
+        Expr::Lit(Lit::Str(s)) => Some(MessageDescriptionValue::Str(s.value.to_string())),
         Expr::Object(object_lit) => Some(MessageDescriptionValue::Obj(object_lit.clone())),
         _ => None,
     }
