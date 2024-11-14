@@ -71,7 +71,7 @@ testing                     = "4.0.0"
 tracing                     = "0.1.40"
 widestring                  = "1.0.2"
 
-icu-messageformat-parser = { version = "1.0.0", path = "./crates/icu-messageformat-parser" }
+swc_icu_messageformat_parser = { version = "1.0.0", path = "./crates/swc_icu_messageformat_parser" }
 
 
 [profile.release]

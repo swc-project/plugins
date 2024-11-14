@@ -6,7 +6,7 @@ authors = [
 description = "ICU MessageFormat Parser"
 edition.workspace = true
 license.workspace = true
-name = "icu-messageformat-parser"
+name = "swc_icu_messageformat_parser"
 repository.workspace = true
 version = "1.0.0"
 
