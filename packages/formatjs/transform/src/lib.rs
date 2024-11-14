@@ -252,13 +252,7 @@ impl Serialize for MessageDescriptionValue {
                                         }
                                     };
                                     let value = match &*key_value.value {
-                                        Expr::Lit(lit) => match &lit {
-                                            Lit::Str(s) => s.value.to_string(),
-                                            _ => {
-                                                //unexpected
-                                                continue;
-                                            }
-                                        },
+                                        Expr::Lit(Lit::Str(s)) => s.value.to_string(),
                                         _ => {
                                             //unexpected
                                             continue;
