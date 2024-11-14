@@ -1,9 +1,9 @@
 #![allow(non_snake_case)]
 use std::{fs, path::PathBuf};
 
-use icu_messageformat_parser::{AstElement, Error, Parser, ParserOptions};
 use serde::Serialize;
 use serde_json::Value;
+use swc_icu_messageformat_parser::{AstElement, Error, Parser, ParserOptions};
 use testing::fixture;
 
 #[derive(Debug)]
@@ -26,7 +26,7 @@ fn read_sections<'a>(file: PathBuf) -> TestFixtureSections {
     let input: Vec<&str> = input.split("\n---\n").collect();
 
     TestFixtureSections {
-        message: input.get(0).expect("").to_string(),
+        message: input.first().expect("").to_string(),
         snapshot_options: serde_json::from_str(input.get(1).expect(""))
             .expect("Should able to deserialize options"),
         expected: input.get(2).expect("").to_string(),

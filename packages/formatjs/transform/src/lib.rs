@@ -397,14 +397,9 @@ fn get_jsx_icu_message_value(
             false
         };
 
-        #[cfg(feature = "plugin")]
         let handler = &swc_core::plugin::errors::HANDLER;
 
-        #[cfg(feature = "custom_transform")]
-        let handler = &swc_core::common::errors::HANDLER;
-
         if is_literal_err {
-            #[cfg(any(feature = "plugin", feature = "custom_transform"))]
             {
                 handler.with(|handler| {
                     handler
@@ -421,7 +416,6 @@ fn get_jsx_icu_message_value(
                 });
             }
         } else {
-            #[cfg(any(feature = "plugin", feature = "custom_transform"))]
             {
                 handler.with(|handler| {
                     handler
@@ -465,13 +459,8 @@ fn get_call_expr_icu_message_value(
     let mut parser = Parser::new(message.as_str(), &ParserOptions::default());
 
     if let Err(e) = parser.parse() {
-        #[cfg(feature = "plugin")]
         let handler = &swc_core::plugin::errors::HANDLER;
 
-        #[cfg(feature = "custom_transform")]
-        let handler = &swc_core::common::errors::HANDLER;
-
-        #[cfg(any(feature = "plugin", feature = "custom_transform"))]
         {
             handler.with(|handler| {
                 handler
@@ -666,13 +655,8 @@ fn store_message(
     location: Option<(Loc, Loc)>,
 ) {
     if descriptor.id.is_none() && descriptor.default_message.is_none() {
-        #[cfg(feature = "plugin")]
         let handler = &swc_core::plugin::errors::HANDLER;
 
-        #[cfg(feature = "custom_transform")]
-        let handler = &swc_core::common::errors::HANDLER;
-
-        #[cfg(any(feature = "plugin", feature = "custom_transform"))]
         handler.with(|handler| {
             handler
                 .struct_err("[React Intl] Message Descriptors require an `id` or `defaultMessage`.")
@@ -741,13 +725,8 @@ fn assert_object_expression(expr: &Option<&mut Expr>, callee: &Callee) {
             None
         };
 
-        #[cfg(feature = "plugin")]
         let handler = &swc_core::plugin::errors::HANDLER;
 
-        #[cfg(feature = "custom_transform")]
-        let handler = &swc_core::common::errors::HANDLER;
-
-        #[cfg(any(feature = "plugin", feature = "custom_transform"))]
         handler.with(|handler| {
             handler
                 .struct_err(
