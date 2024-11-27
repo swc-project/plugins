@@ -1,5 +1,11 @@
 # @swc/plugin-loadable-components
 
+## 4.0.3
+
+### Patch Changes
+
+- f3cea5f: Bump versions
+
 ## 4.0.2
 
 ### Patch Changes
