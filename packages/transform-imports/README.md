@@ -18,6 +18,12 @@
 
 # @swc/plugin-transform-imports
 
+## 5.0.3
+
+### Patch Changes
+
+- f3cea5f: Bump versions
+
 ## 5.0.2
 
 ### Patch Changes

@@ -23,6 +23,12 @@ or
 
 # @swc/plugin-react-remove-properties
 
+## 5.0.2
+
+### Patch Changes
+
+- f3cea5f: Bump versions
+
 ## 5.0.1
 
 ### Patch Changes
