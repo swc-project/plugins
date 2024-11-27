@@ -4,10 +4,10 @@ authors = [
   "DongYoon Kang <kdy1997.dev@gmail.com>",
 ]
 description = "ICU MessageFormat Parser"
-edition.workspace = true
-license.workspace = true
+edition = { workspace = true }
+license = { workspace = true }
 name = "swc_icu_messageformat_parser"
-repository.workspace = true
+repository = { workspace = true }
 version = "1.0.0"
 
 
