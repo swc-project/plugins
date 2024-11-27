@@ -8,7 +8,7 @@ edition = { workspace = true }
 license = { workspace = true }
 name = "swc_icu_messageformat_parser"
 repository = { workspace = true }
-version = "1.0.0"
+version = "1.0.1"
 
 
 [features]
