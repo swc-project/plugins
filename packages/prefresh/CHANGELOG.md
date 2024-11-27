@@ -1,5 +1,11 @@
 # @swc/plugin-prefresh
 
+## 5.0.1
+
+### Patch Changes
+
+- a73664c: Update swc_core to v6.0.2
+
 ## 5.0.0
 
 ### Major Changes
