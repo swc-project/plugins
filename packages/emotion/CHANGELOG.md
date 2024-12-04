@@ -1,5 +1,11 @@
 # @swc/plugin-emotion
 
+## 8.0.1
+
+### Patch Changes
+
+- c9e75ce: Bump crate versions
+
 ## 8.0.0
 
 ### Major Changes
