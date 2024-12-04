@@ -4,6 +4,12 @@ FormatJS SWC plugin, maintained by SWC team.
 
 # @swc/plugin-formatjs
 
+## 2.0.1
+
+### Patch Changes
+
+- c9e75ce: Bump crate versions
+
 ## 2.0.0
 
 ### Major Changes

@@ -24,6 +24,12 @@ markAsPure(() => console.log("This will be removed by the SWC minifier"));
 
 # @swc/plugin-swc-magic
 
+## 6.0.1
+
+### Patch Changes
+
+- c9e75ce: Bump crate versions
+
 ## 6.0.0
 
 ### Major Changes

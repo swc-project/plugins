@@ -23,6 +23,12 @@ By default `loadable-components` are configured to transform dynamic imports use
 
 # @swc/plugin-loadable-components
 
+## 5.0.1
+
+### Patch Changes
+
+- c9e75ce: Bump crate versions
+
 ## 5.0.0
 
 ### Major Changes

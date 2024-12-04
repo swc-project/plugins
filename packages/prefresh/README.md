@@ -40,6 +40,12 @@ And SWC has built-in React Refresh transformation, therefore, this plugin only i
 
 # @swc/plugin-prefresh
 
+## 6.0.1
+
+### Patch Changes
+
+- c9e75ce: Bump crate versions
+
 ## 6.0.0
 
 ### Major Changes
