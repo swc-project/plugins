@@ -11,5 +11,5 @@ done
 
 git commit -am "Merge CHANGELOG into README"
 
-cargo mono bump -i
+cargo mono bump $@
 git commit -a -m "Bump crates" || true
