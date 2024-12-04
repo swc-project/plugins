@@ -3,7 +3,7 @@ export default class {
     render() {
         return <div className={_JSXStyle.dynamic([
             [
-                "15b816b3924dce9a",
+                "cc01b1d5a2273296",
                 [
                     a
                 ]
@@ -11,13 +11,13 @@ export default class {
         ])}>
         <p className={_JSXStyle.dynamic([
             [
-                "15b816b3924dce9a",
+                "cc01b1d5a2273296",
                 [
                     a
                 ]
             ]
         ])}>test</p>
-        <_JSXStyle id={"15b816b3924dce9a"} dynamic={[
+        <_JSXStyle id={"cc01b1d5a2273296"} dynamic={[
             a
         ]}>{`@media only screen{a.__jsx-style-dynamic-selector{color:${a}}}`}</_JSXStyle>
       </div>;

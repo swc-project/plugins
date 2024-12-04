@@ -8,20 +8,23 @@ edition = { workspace = true }
 license = { workspace = true }
 name = "swc_formatjs_transform"
 repository = { workspace = true }
-version = "1.0.1"
+version = "2.0.0"
 
 [features]
 custom_transform = []
 
 [dependencies]
-base64ct                     = { workspace = true, features = ["alloc"] }
-once_cell                    = { workspace = true }
-regex                        = { workspace = true }
-serde                        = { workspace = true, features = ["derive"] }
-serde_json                   = { workspace = true }
-sha2                         = { workspace = true }
-swc_core                     = { workspace = true, features = ["common", "ecma_visit", "ecma_ast"] }
-swc_icu_messageformat_parser = { workspace = true, features = ["utf16"] }
+base64ct   = { workspace = true, features = ["alloc"] }
+once_cell  = { workspace = true }
+regex      = { workspace = true }
+serde      = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+sha2       = { workspace = true }
+swc_core   = { workspace = true, features = ["common", "ecma_visit", "ecma_ast"] }
+
+swc_icu_messageformat_parser = { features = [
+  "utf16",
+], path = "../../../crates/swc_icu_messageformat_parser", version = "2.0.0" }
 
 [dev-dependencies]
 pretty_assertions = { workspace = true }

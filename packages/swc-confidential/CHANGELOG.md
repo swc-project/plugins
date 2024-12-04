@@ -1,5 +1,17 @@
 # @swc/plugin-swc-confidential
 
+## 5.0.1
+
+### Patch Changes
+
+- c9e75ce: Bump crate versions
+
+## 5.0.0
+
+### Major Changes
+
+- 4574a70: Update swc_core to v8.0.1
+
 ## 4.0.2
 
 ### Patch Changes
