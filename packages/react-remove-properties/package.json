@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-react-remove-properties",
-  "version": "5.0.2",
+  "version": "6.0.0",
   "description": "SWC plugin for https://www.npmjs.com/package/babel-plugin-react-remove-properties",
   "main": "swc_plugin_react_remove_properties.wasm",
   "scripts": {
