@@ -2,6 +2,18 @@
 
 # @swc/plugin-jest
 
+## 5.0.2
+
+### Patch Changes
+
+- f3cea5f: Bump versions
+
+## 5.0.1
+
+### Patch Changes
+
+- a73664c: Update swc_core to v6.0.2
+
 ## 5.0.0
 
 ### Major Changes
