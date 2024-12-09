@@ -3063,7 +3063,7 @@ dependencies = [
 
 [[package]]
 name = "swc_formatjs_transform"
-version = "2.0.0"
+version = "3.0.0"
 dependencies = [
  "base64ct",
  "once_cell",
@@ -3078,7 +3078,7 @@ dependencies = [
 
 [[package]]
 name = "swc_icu_messageformat_parser"
-version = "2.0.0"
+version = "3.0.0"
 dependencies = [
  "langtag",
  "once_cell",
@@ -3104,7 +3104,7 @@ dependencies = [
 
 [[package]]
 name = "swc_magic"
-version = "0.20.0"
+version = "0.21.0"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -3369,7 +3369,7 @@ dependencies = [
 
 [[package]]
 name = "swc_prefresh"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -3385,7 +3385,7 @@ dependencies = [
 
 [[package]]
 name = "swc_relay"
-version = "0.45.0"
+version = "0.46.0"
 dependencies = [
  "once_cell",
  "regex",
