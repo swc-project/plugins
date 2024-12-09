@@ -24,6 +24,12 @@ markAsPure(() => console.log("This will be removed by the SWC minifier"));
 
 # @swc/plugin-swc-sdk
 
+## 6.0.2
+
+### Patch Changes
+
+- f155bce: Update swc_core to v9
+
 ## 6.0.1
 
 ### Patch Changes
