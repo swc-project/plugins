@@ -1,5 +1,11 @@
 # @swc/plugin-remove-console
 
+## 6.0.2
+
+### Patch Changes
+
+- f155bce: Update swc_core to v9
+
 ## 6.0.1
 
 ### Patch Changes

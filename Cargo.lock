@@ -1344,7 +1344,7 @@ checksum = "68354c5c6bd36d73ff3feceb05efa59b6acb7626617f4962be322a825e61f79a"
 
 [[package]]
 name = "modularize_imports"
-version = "0.69.0"
+version = "0.70.0"
 dependencies = [
  "convert_case",
  "handlebars",
@@ -1844,7 +1844,7 @@ dependencies = [
 
 [[package]]
 name = "react_remove_properties"
-version = "0.25.0"
+version = "0.26.0"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -1919,7 +1919,7 @@ checksum = "ba39f3699c378cd8970968dcbff9c43159ea4cfbd88d43c00b22f2ef10a435d2"
 
 [[package]]
 name = "remove_console"
-version = "0.26.0"
+version = "0.27.0"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -2361,7 +2361,7 @@ checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
 
 [[package]]
 name = "styled_components"
-version = "0.97.0"
+version = "0.98.0"
 dependencies = [
  "Inflector",
  "once_cell",
@@ -2382,7 +2382,7 @@ dependencies = [
 
 [[package]]
 name = "styled_jsx"
-version = "0.74.0"
+version = "0.75.0"
 dependencies = [
  "anyhow",
  "lightningcss",
@@ -2486,7 +2486,7 @@ dependencies = [
 
 [[package]]
 name = "swc_confidential"
-version = "0.20.0"
+version = "0.21.0"
 dependencies = [
  "cipher 0.4.4",
  "hex",
@@ -2532,9 +2532,9 @@ dependencies = [
 
 [[package]]
 name = "swc_core"
-version = "8.0.1"
+version = "9.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "324e9dc1ddc05bb3ccef6b7541177a4bf7ae25ccaee65832a45a8c20a968ed80"
+checksum = "858b072245574ffc0925ab9f5ae5c94ea1f5dda6824a291607e99603f65bab21"
 dependencies = [
  "once_cell",
  "swc_allocator",
@@ -2824,9 +2824,9 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_transforms"
-version = "7.0.0"
+version = "8.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "85be851a12e79e29bb4a60175a57de46219d71e662b13b67d5fa97d41a000116"
+checksum = "dccedb5a1e52795e132615a3ca01e2adb8fc9214ee75c258f8a3124a9b42c47e"
 dependencies = [
  "swc_atoms",
  "swc_common",
@@ -2838,9 +2838,9 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_transforms_base"
-version = "6.0.1"
+version = "6.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2409f9c896f99481d9f609de89c7786ccd0dba008650a4116f1aef7a58926422"
+checksum = "f31557485025a2fd1f833d63601c53010857e45633f44bcc87510f3578bde0c5"
 dependencies = [
  "better_scoped_tls",
  "bitflags",
@@ -3000,7 +3000,7 @@ dependencies = [
 
 [[package]]
 name = "swc_emotion"
-version = "0.73.0"
+version = "0.74.0"
 dependencies = [
  "base64 0.22.1",
  "byteorder",
@@ -3063,7 +3063,7 @@ dependencies = [
 
 [[package]]
 name = "swc_formatjs_transform"
-version = "2.0.0"
+version = "3.0.0"
 dependencies = [
  "base64ct",
  "once_cell",
@@ -3078,7 +3078,7 @@ dependencies = [
 
 [[package]]
 name = "swc_icu_messageformat_parser"
-version = "2.0.0"
+version = "3.0.0"
 dependencies = [
  "langtag",
  "once_cell",
@@ -3104,7 +3104,7 @@ dependencies = [
 
 [[package]]
 name = "swc_magic"
-version = "0.20.0"
+version = "0.21.0"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -3369,7 +3369,7 @@ dependencies = [
 
 [[package]]
 name = "swc_prefresh"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -3385,7 +3385,7 @@ dependencies = [
 
 [[package]]
 name = "swc_relay"
-version = "0.45.0"
+version = "0.46.0"
 dependencies = [
  "once_cell",
  "regex",
