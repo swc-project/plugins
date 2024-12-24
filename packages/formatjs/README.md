@@ -4,6 +4,12 @@ FormatJS SWC plugin, maintained by SWC team.
 
 # @swc/plugin-formatjs
 
+## 2.0.3
+
+### Patch Changes
+
+- bb13cc8: Fix missing quotes of plural keys
+
 ## 2.0.2
 
 ### Patch Changes
