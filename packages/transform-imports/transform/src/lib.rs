@@ -324,7 +324,7 @@ impl FoldImports {
         None
     }
 
-    fn new_import_specifier_for_dynamic_import(&mut self, call: &CallExpr) -> Option<Atom> {
+    fn handle_dynamic_import(&mut self, call: &CallExpr) -> Option<Atom> {
         let first_arg = call.args.first()?;
         if first_arg.spread.is_some() {
             return None;
@@ -354,7 +354,7 @@ impl Fold for FoldImports {
         call = call.fold_children_with(self);
 
         if call.callee.is_import() {
-            if let Some(new_module) = self.new_import_specifier_for_dynamic_import(&call) {
+            if let Some(new_module) = self.handle_dynamic_import(&call) {
                 call.args.first_mut().unwrap().expr = new_module.into();
             }
         }
