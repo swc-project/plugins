@@ -98,6 +98,16 @@ fn modularize_imports_fixture(input: PathBuf) {
                             handle_namespace_import: true,
                         },
                     ),
+                    (
+                        "^(\\..*)(\\.tsx?)$".to_string(),
+                        PackageConfig {
+                            transform: "{{matches.[1]}}.js".into(),
+                            prevent_full_import: false,
+                            skip_default_conversion: false,
+                            handle_default_import: false,
+                            handle_namespace_import: false,
+                        },
+                    ),
                 ]
                 .into_iter()
                 .collect(),
