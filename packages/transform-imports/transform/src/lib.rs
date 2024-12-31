@@ -433,6 +433,7 @@ impl Fold for FoldImports {
                 }
             }
         }
+        let new_items = new_items.fold_children_with(self);
         module.body = new_items;
         module
     }
