@@ -337,12 +337,11 @@ impl FoldImports {
 
             Expr::Tpl(tpl) => {
                 if tpl.exprs.is_empty() {
-                    if let Some(cooked) = tpl.quasis[0].cooked.as_ref() {
-                        let rewriter = self.should_rewrite(cooked)?;
-                    }
+                    let cooked = &tpl.quasis[0].cooked?;
+                    let rewriter = self.should_rewrite(cooked)?;
                 }
             }
-            _ => {}
+            _ => None,
         }
     }
 }
