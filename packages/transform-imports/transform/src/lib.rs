@@ -333,12 +333,20 @@ impl FoldImports {
         match &*first_arg.expr {
             Expr::Lit(Lit::Str(s)) => {
                 let rewriter = self.should_rewrite(&s.value)?;
+
+                let new_module = rewriter.new_path(None);
+                Some(new_module)
             }
 
             Expr::Tpl(tpl) => {
                 if tpl.exprs.is_empty() {
-                    let cooked = &tpl.quasis[0].cooked?;
+                    let cooked = tpl.quasis[0].cooked.as_ref()?;
                     let rewriter = self.should_rewrite(cooked)?;
+
+                    let new_module = rewriter.new_path(None);
+                    Some(new_module)
+                } else {
+                    None
                 }
             }
             _ => None,
