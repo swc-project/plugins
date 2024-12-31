@@ -9,7 +9,7 @@ use swc_atoms::Atom;
 use swc_cached::regex::CachedRegex;
 use swc_common::DUMMY_SP;
 use swc_ecma_ast::{ImportDecl, ImportSpecifier, ModuleExportName, *};
-use swc_ecma_visit::{fold_pass, noop_fold_type, Fold};
+use swc_ecma_visit::{fold_pass, noop_fold_type, Fold, FoldWith};
 
 static DUP_SLASH_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"//").unwrap());
 
@@ -323,10 +323,51 @@ impl FoldImports {
         }
         None
     }
+
+    fn handle_dynamic_import(&mut self, call: &CallExpr) -> Option<Atom> {
+        let first_arg = call.args.first()?;
+        if first_arg.spread.is_some() {
+            return None;
+        }
+
+        match &*first_arg.expr {
+            Expr::Lit(Lit::Str(s)) => {
+                let rewriter = self.should_rewrite(&s.value)?;
+
+                let new_module = rewriter.new_path(None);
+                Some(new_module)
+            }
+
+            Expr::Tpl(tpl) => {
+                if tpl.exprs.is_empty() {
+                    let cooked = tpl.quasis[0].cooked.as_ref()?;
+                    let rewriter = self.should_rewrite(cooked)?;
+
+                    let new_module = rewriter.new_path(None);
+                    Some(new_module)
+                } else {
+                    None
+                }
+            }
+            _ => None,
+        }
+    }
 }
 
 impl Fold for FoldImports {
     noop_fold_type!();
+
+    fn fold_call_expr(&mut self, mut call: CallExpr) -> CallExpr {
+        call = call.fold_children_with(self);
+
+        if call.callee.is_import() {
+            if let Some(new_module) = self.handle_dynamic_import(&call) {
+                call.args.first_mut().unwrap().expr = new_module.into();
+            }
+        }
+
+        call
+    }
 
     fn fold_module(&mut self, mut module: Module) -> Module {
         let mut new_items: Vec<ModuleItem> = vec![];
@@ -392,6 +433,7 @@ impl Fold for FoldImports {
                 }
             }
         }
+        let new_items = new_items.fold_children_with(self);
         module.body = new_items;
         module
     }

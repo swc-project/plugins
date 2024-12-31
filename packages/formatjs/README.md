@@ -4,6 +4,12 @@ FormatJS SWC plugin, maintained by SWC team.
 
 # @swc/plugin-formatjs
 
+## 2.0.4
+
+### Patch Changes
+
+- 2ae5319: Fix parsing of unicode
+
 ## 2.0.3
 
 ### Patch Changes

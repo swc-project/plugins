@@ -38,6 +38,7 @@ fn read_sections(file: PathBuf) -> TestFixtureSections {
     fixture("tests/fixtures/treat_unicode_nbsp_as_whitespace")
 )]
 #[cfg_attr(feature = "utf16", fixture("tests/fixtures/trivial_2"))]
+#[cfg_attr(feature = "utf16", fixture("tests/fixtures/unicode_1"))]
 #[fixture("tests/fixtures/uppercase_tag_1")]
 #[fixture("tests/fixtures/expect_number_arg_skeleton_token_1")]
 #[fixture("tests/fixtures/self_closing_tag_1")]

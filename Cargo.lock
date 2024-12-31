@@ -3063,7 +3063,7 @@ dependencies = [
 
 [[package]]
 name = "swc_formatjs_transform"
-version = "3.0.0"
+version = "3.0.1"
 dependencies = [
  "base64ct",
  "once_cell",
@@ -3078,7 +3078,7 @@ dependencies = [
 
 [[package]]
 name = "swc_icu_messageformat_parser"
-version = "3.0.0"
+version = "3.0.1"
 dependencies = [
  "langtag",
  "once_cell",
