@@ -9,7 +9,8 @@
   "homepage": "https://swc.rs",
   "repository": {
     "type": "git",
-    "url": "+https://github.com/swc-project/plugins.git"
+    "url": "git+https://github.com/swc-project/plugins.git",
+    "directory": "packages/swc-magic"
   },
   "bugs": {
     "url": "https://github.com/swc-project/plugins/issues"
