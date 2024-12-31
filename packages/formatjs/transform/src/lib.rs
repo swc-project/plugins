@@ -1215,7 +1215,7 @@ fn json_value_to_expr(json_value: &serde_json::Value) -> Box<Expr> {
                 .iter()
                 .map(|(key, value)| {
                     PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
-                        key: PropName::Ident(IdentName::new(key.to_string().into(), DUMMY_SP)),
+                        key: PropName::Str(Str::from(key.clone())),
                         value: json_value_to_expr(value),
                     })))
                 })

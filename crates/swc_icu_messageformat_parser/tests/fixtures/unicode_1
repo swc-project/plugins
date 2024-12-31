@@ -1,0 +1,43 @@
+<a>ö🚀</a>
+---
+{}
+---
+{
+  "err": null,
+  "val": [
+    {
+      "children": [
+        {
+          "location": {
+            "end": {
+              "column": 6,
+              "line": 1,
+              "offset": 6
+            },
+            "start": {
+              "column": 4,
+              "line": 1,
+              "offset": 3
+            }
+          },
+          "type": 0,
+          "value": "ö🚀"
+        }
+      ],
+      "location":  {
+        "end":  {
+          "column": 10,
+          "line": 1,
+          "offset": 10
+        },
+        "start":  {
+          "column": 1,
+          "line": 1,
+          "offset": 0
+        }
+      },
+      "type": 8,
+      "value": "a"
+    }
+  ]
+}

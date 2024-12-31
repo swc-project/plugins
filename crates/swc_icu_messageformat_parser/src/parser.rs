@@ -832,7 +832,16 @@ impl<'s> Parser<'s> {
             self.bump();
         }
 
-        &self.message[start_offset..self.offset()]
+        let length = self.offset() - start_offset;
+        #[cfg(feature = "utf16")]
+        let (start_offset, length) = (
+            self.message_utf16[..start_offset].to_string().len(),
+            self.message_utf16[start_offset..start_offset + length]
+                .to_string()
+                .len(),
+        );
+
+        &self.message[start_offset..start_offset + length]
     }
 
     fn parse_literal(&self, nesting_level: usize, parent_arg_type: &str) -> Result<AstElement> {
@@ -1735,9 +1744,16 @@ impl<'s> Parser<'s> {
         if self.is_eof() {
             return None;
         }
-        self.message[self.offset() + self.char().len_utf8()..]
+
+        #[cfg(feature = "utf16")]
+        return self.message_utf16[self.offset() + self.char().len_utf16()..]
             .chars()
-            .next()
+            .next();
+
+        #[cfg(not(feature = "utf16"))]
+        return self.message[self.offset() + self.char().len_utf8()..]
+            .chars()
+            .next();
     }
 
     /// Returns true if the next call to `bump` would return false.
