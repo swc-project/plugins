@@ -2,6 +2,12 @@
 
 # @swc/plugin-jest
 
+## 6.0.3
+
+### Patch Changes
+
+- f436a09: Update swc_core to v10.
+
 ## 6.0.2
 
 ### Patch Changes

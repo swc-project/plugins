@@ -1,5 +1,11 @@
 # @swc/plugin-loadable-components
 
+## 5.0.3
+
+### Patch Changes
+
+- f436a09: Update swc_core to v10.
+
 ## 5.0.2
 
 ### Patch Changes
