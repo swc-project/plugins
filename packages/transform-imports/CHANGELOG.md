@@ -1,5 +1,11 @@
 # @swc/plugin-transform-imports
 
+## 6.0.3
+
+### Patch Changes
+
+- a7a22a2: feat: Support dynamic imports from `transform-imports` plugin
+
 ## 6.0.2
 
 ### Patch Changes
