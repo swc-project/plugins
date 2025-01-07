@@ -1344,7 +1344,7 @@ checksum = "68354c5c6bd36d73ff3feceb05efa59b6acb7626617f4962be322a825e61f79a"
 
 [[package]]
 name = "modularize_imports"
-version = "0.70.0"
+version = "0.70.1"
 dependencies = [
  "convert_case",
  "handlebars",
@@ -1844,7 +1844,7 @@ dependencies = [
 
 [[package]]
 name = "react_remove_properties"
-version = "0.26.0"
+version = "0.26.1"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -1919,7 +1919,7 @@ checksum = "ba39f3699c378cd8970968dcbff9c43159ea4cfbd88d43c00b22f2ef10a435d2"
 
 [[package]]
 name = "remove_console"
-version = "0.27.0"
+version = "0.27.1"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -2361,7 +2361,7 @@ checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
 
 [[package]]
 name = "styled_components"
-version = "0.98.0"
+version = "0.98.1"
 dependencies = [
  "Inflector",
  "once_cell",
@@ -2382,7 +2382,7 @@ dependencies = [
 
 [[package]]
 name = "styled_jsx"
-version = "0.75.0"
+version = "0.75.1"
 dependencies = [
  "anyhow",
  "lightningcss",
@@ -2486,7 +2486,7 @@ dependencies = [
 
 [[package]]
 name = "swc_confidential"
-version = "0.21.0"
+version = "0.21.1"
 dependencies = [
  "cipher 0.4.4",
  "hex",
@@ -3003,7 +3003,7 @@ dependencies = [
 
 [[package]]
 name = "swc_emotion"
-version = "0.74.0"
+version = "0.74.1"
 dependencies = [
  "base64 0.22.1",
  "byteorder",
@@ -3066,7 +3066,7 @@ dependencies = [
 
 [[package]]
 name = "swc_formatjs_transform"
-version = "3.0.1"
+version = "3.0.2"
 dependencies = [
  "base64ct",
  "once_cell",
@@ -3107,7 +3107,7 @@ dependencies = [
 
 [[package]]
 name = "swc_magic"
-version = "0.21.0"
+version = "0.21.1"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -3381,7 +3381,7 @@ dependencies = [
 
 [[package]]
 name = "swc_prefresh"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -3397,7 +3397,7 @@ dependencies = [
 
 [[package]]
 name = "swc_relay"
-version = "0.46.0"
+version = "0.46.1"
 dependencies = [
  "once_cell",
  "regex",
@@ -3415,7 +3415,7 @@ dependencies = [
 
 [[package]]
 name = "swc_sdk"
-version = "0.2.0"
+version = "0.1.2"
 dependencies = [
  "default-from-serde",
  "serde",

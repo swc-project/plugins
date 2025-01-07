@@ -10,7 +10,7 @@ license      = { workspace = true }
 name         = "swc_sdk"
 repository   = { workspace = true }
 rust-version = { workspace = true }
-version      = "0.2.0"
+version      = "0.1.2"
 
 
 [dependencies]
