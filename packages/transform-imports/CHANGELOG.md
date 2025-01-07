@@ -1,5 +1,11 @@
 # @swc/plugin-transform-imports
 
+## 6.0.4
+
+### Patch Changes
+
+- f436a09: Update swc_core to v10.
+
 ## 6.0.3
 
 ### Patch Changes
