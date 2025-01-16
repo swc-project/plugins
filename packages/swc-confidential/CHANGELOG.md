@@ -1,5 +1,11 @@
 # @swc/plugin-swc-confidential
 
+## 5.0.4
+
+### Patch Changes
+
+- e8973e8: Update swc_core to v10.2.3
+
 ## 5.0.3
 
 ### Patch Changes
