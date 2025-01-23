@@ -24,7 +24,6 @@ cipher                      = "0.4.4"
 clap                        = "4.5.4"
 convert_case                = "0.6.0"
 default-from-serde          = "0.1"
-fxhash                      = "0.2.1"
 handlebars                  = "5.1.2"
 hex                         = "0.4.3"
 langtag                     = "0.3.2"
@@ -71,6 +70,7 @@ testing                     = "5.0.0"
 tracing                     = "0.1.40"
 widestring                  = "1.0.2"
 
+rustc-hash                   = "2.1.0"
 swc_icu_messageformat_parser = { version = "1.0.0", path = "./crates/swc_icu_messageformat_parser" }
 
 
