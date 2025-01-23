@@ -3,6 +3,7 @@
 use std::path::Path;
 
 use serde::Deserialize;
+use swc_atoms::{atom, Atom};
 use swc_common::{plugin::metadata::TransformPluginMetadataContextKind, SourceMapper, Spanned};
 use swc_ecma_ast::Program;
 use swc_emotion::EmotionOptions;
@@ -23,7 +24,7 @@ enum EmotionJsAutoLabel {
 struct EmotionJsOptions {
     source_map: Option<bool>,
     auto_label: Option<EmotionJsAutoLabel>,
-    label_format: Option<String>,
+    label_format: Option<Atom>,
     #[serde(flatten)]
     extra: swc_emotion::EmotionOptions,
 }
@@ -44,7 +45,7 @@ impl EmotionJsOptions {
                     EmotionJsAutoLabel::DevOnly => matches!(env_name, "development"),
                 },
             ),
-            label_format: Some(self.label_format.unwrap_or_else(|| "[local]".to_string())),
+            label_format: Some(self.label_format.unwrap_or_else(|| atom!("[local]"))),
             ..self.extra
         }
     }

@@ -1,5 +1,6 @@
 use std::path::PathBuf;
 
+use swc_atoms::Atom;
 use swc_common::{comments::SingleThreadedComments, Mark};
 use swc_ecma_parser::{Syntax, TsSyntax};
 use swc_ecma_transforms_react::{jsx, Runtime};
@@ -82,16 +83,17 @@ fn emotion_label_option_fixture(output: PathBuf) {
     let mut pseudo_input_path = PathBuf::from(output_folder);
     pseudo_input_path.push("input.tsx");
 
-    let label_option = if output_folder_name.contains('-') {
+    let label_option: Atom = if output_folder_name.contains('-') {
         // Multiple labelling specifiers, e.g. [filename]-[local]
         output_folder_name
             .split('-')
             .map(|s| format!("[{s}]"))
             .collect::<Vec<String>>()
             .join("-")
+            .into()
     } else {
         // Singular labelling specifiers, e.g. [local]
-        format!("[{output_folder_name}]")
+        format!("[{output_folder_name}]").into()
     };
 
     test_fixture(
@@ -119,7 +121,7 @@ fn emotion_label_option_fixture(output: PathBuf) {
                         enabled: Some(true),
                         sourcemap: Some(true),
                         auto_label: Some(true),
-                        label_format: Some(label_option.to_string()),
+                        label_format: Some(label_option.clone()),
                         ..Default::default()
                     },
                     &PathBuf::from(format!("{output_folder_name}/index.tsx")),
@@ -184,7 +186,7 @@ fn emotion_label(input: PathBuf, label: String) {
                         enabled: Some(true),
                         sourcemap: Some(true),
                         auto_label: Some(true),
-                        label_format: Some(label.to_owned()),
+                        label_format: Some(label.clone().into()),
                         ..Default::default()
                     },
                     &PathBuf::from(format!("{output_folder_name}/{input_file_name}")),

@@ -17,6 +17,7 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 serde            = { workspace = true }
 serde_json       = { workspace = true }
+swc_atoms        = { workspace = true }
 swc_common       = { workspace = true, features = ["concurrent"] }
 swc_core         = { workspace = true, features = ["ecma_plugin_transform"] }
 swc_ecma_ast     = { workspace = true }

@@ -2,6 +2,12 @@
 
 # @swc/plugin-styled-jsx
 
+## 6.1.0
+
+### Minor Changes
+
+- 05a2458: Improve performance greatly
+
 ## 6.0.4
 
 ### Patch Changes
