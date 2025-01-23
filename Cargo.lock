@@ -2373,7 +2373,7 @@ dependencies = [
 
 [[package]]
 name = "styled_jsx"
-version = "0.75.1"
+version = "0.75.2"
 dependencies = [
  "anyhow",
  "lightningcss",
@@ -2997,7 +2997,7 @@ dependencies = [
 
 [[package]]
 name = "swc_emotion"
-version = "0.74.1"
+version = "0.74.2"
 dependencies = [
  "base64 0.22.1",
  "byteorder",
