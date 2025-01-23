@@ -1033,4 +1033,22 @@ struct ShouldWorkChecker {
     should_work: bool,
 }
 
-impl Visit for ShouldWorkChecker {}
+impl Visit for ShouldWorkChecker {
+    fn visit_import_decl(&mut self, i: &ImportDecl) {
+        if i.src.value == "styled-jsx/css" {
+            self.should_work = true;
+            return;
+        }
+
+        i.visit_children_with(self);
+    }
+
+    fn visit_jsx_element(&mut self, e: &JSXElement) {
+        if is_styled_jsx(e) {
+            self.should_work = true;
+            return;
+        }
+
+        e.visit_children_with(self);
+    }
+}
