@@ -10,7 +10,7 @@ use once_cell::sync::Lazy;
 use regex::{Regex, RegexBuilder};
 use serde::{Deserialize, Serialize};
 use sourcemap::{RawToken, SourceMap as RawSourcemap};
-use swc_atoms::JsWord;
+use swc_atoms::{atom, Atom};
 use swc_common::{comments::Comments, util::take::Take, BytePos, SourceMapperDyn, DUMMY_SP};
 use swc_ecma_ast::{
     ArrayLit, CallExpr, Callee, ClassDecl, ClassMethod, ClassProp, Expr, ExprOrSpread, FnDecl, Id,
@@ -19,8 +19,9 @@ use swc_ecma_ast::{
     MemberProp, MethodProp, ModuleExportName, ObjectLit, Pass, Pat, Prop, PropName, PropOrSpread,
     SourceMapperExt, SpreadElement, Tpl, VarDeclarator,
 };
+use swc_ecma_transforms::perf::Check;
 use swc_ecma_utils::ExprFactory;
-use swc_ecma_visit::{fold_pass, Fold, FoldWith};
+use swc_ecma_visit::{fold_pass, Fold, FoldWith, Visit};
 use swc_trace_macro::swc_trace;
 
 pub use crate::import_map::*;
@@ -104,13 +105,17 @@ static MULTI_LINE_COMMENT: Lazy<Regex> = Lazy::new(|| {
 static SPACE_AROUND_COLON: Lazy<Regex> =
     Lazy::new(|| Regex::new(r"\s*(?P<s>[:;,\{,\}])\s*").unwrap());
 
+fn default_label_format() -> Atom {
+    atom!("[local]")
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct EmotionOptions {
     pub enabled: Option<bool>,
     pub sourcemap: Option<bool>,
     pub auto_label: Option<bool>,
-    pub label_format: Option<String>,
+    pub label_format: Option<Atom>,
     pub import_map: Option<ImportMap>,
 }
 
@@ -120,7 +125,7 @@ impl Default for EmotionOptions {
             enabled: Some(false),
             sourcemap: Some(true),
             auto_label: Some(true),
-            label_format: Some("[local]".to_owned()),
+            label_format: Some(default_label_format()),
             import_map: None,
         }
     }
@@ -128,7 +133,7 @@ impl Default for EmotionOptions {
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct EmotionModuleConfig {
-    module_name: JsWord,
+    module_name: Atom,
     exported_names: Vec<ExportItem>,
     default_export: Option<ExprKind>,
 }
@@ -258,7 +263,7 @@ impl<C: Comments> EmotionTransformer<C> {
             self.options
                 .label_format
                 .clone()
-                .unwrap_or_else(|| "[local]".to_owned())
+                .unwrap_or_else(default_label_format)
         );
         if let Some(current_context) = &self.current_context {
             label = label.replace("[local]", &self.sanitize_label_part(current_context));
