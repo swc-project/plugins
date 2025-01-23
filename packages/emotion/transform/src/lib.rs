@@ -992,7 +992,10 @@ where
     C: Comments,
 {
     fn process(&mut self, program: &mut swc_ecma_ast::Program) {
-        let mut checker = ShouldWorkChecker { should_work: false };
+        let mut checker = ShouldWorkChecker {
+            should_work: false,
+            registered_imports: &self.registered_imports,
+        };
         program.visit_with(&mut checker);
         if !checker.should_work {
             return;
@@ -1002,11 +1005,26 @@ where
     }
 }
 
-struct ShouldWorkChecker {
+struct ShouldWorkChecker<'a> {
     should_work: bool,
+
+    registered_imports: &'a [EmotionModuleConfig],
 }
 
-impl Visit for ShouldWorkChecker {}
+impl Visit for ShouldWorkChecker<'_> {
+    fn visit_import_decl(&mut self, i: &ImportDecl) {
+        if self
+            .registered_imports
+            .iter()
+            .any(|item| item.module_name == i.src.value)
+        {
+            self.should_work = true;
+            return;
+        }
+
+        i.visit_children_with(self);
+    }
+}
 
 #[cfg(test)]
 mod test_emotion {
