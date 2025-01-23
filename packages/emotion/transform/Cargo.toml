@@ -13,22 +13,23 @@ version      = "0.74.1"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-base64           = { workspace = true }
-byteorder        = { workspace = true }
-fxhash           = { workspace = true }
-once_cell        = { workspace = true }
-radix_fmt        = { workspace = true }
-regex            = { workspace = true }
-serde            = { workspace = true }
-sourcemap        = { workspace = true }
-swc_atoms        = { workspace = true }
-swc_common       = { workspace = true }
-swc_ecma_ast     = { workspace = true }
-swc_ecma_codegen = { workspace = true }
-swc_ecma_utils   = { workspace = true }
-swc_ecma_visit   = { workspace = true }
-swc_trace_macro  = { workspace = true }
-tracing          = { workspace = true }
+base64              = { workspace = true }
+byteorder           = { workspace = true }
+fxhash              = { workspace = true }
+once_cell           = { workspace = true }
+radix_fmt           = { workspace = true }
+regex               = { workspace = true }
+serde               = { workspace = true }
+sourcemap           = { workspace = true }
+swc_atoms           = { workspace = true }
+swc_common          = { workspace = true }
+swc_ecma_ast        = { workspace = true }
+swc_ecma_codegen    = { workspace = true }
+swc_ecma_transforms = { workspace = true }
+swc_ecma_utils      = { workspace = true }
+swc_ecma_visit      = { workspace = true }
+swc_trace_macro     = { workspace = true }
+tracing             = { workspace = true }
 
 [dev-dependencies]
 serde_json                  = { workspace = true }
