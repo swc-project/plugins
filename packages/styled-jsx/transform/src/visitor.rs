@@ -14,8 +14,9 @@ use swc_ecma_minifier::{
     eval::{EvalResult, Evaluator},
     marks::Marks,
 };
+use swc_ecma_transforms_base::perf::Check;
 use swc_ecma_utils::{collect_decls, drop_span, prepend_stmt, private_ident};
-use swc_ecma_visit::{fold_pass, Fold, FoldWith};
+use swc_ecma_visit::{fold_pass, Fold, FoldWith, Visit};
 
 use crate::{
     style::{ExternalStyle, JSXStyle, LocalStyle},
@@ -1014,3 +1015,16 @@ fn is_styled_css_import(item: &ModuleItem) -> bool {
     }
     false
 }
+
+#[derive(Default)]
+struct ShouldWorkChecker {
+    should_work: bool,
+}
+
+impl Check for ShouldWorkChecker {
+    fn should_handle(&self) -> bool {
+        self.should_work
+    }
+}
+
+impl Visit for ShouldWorkChecker {}

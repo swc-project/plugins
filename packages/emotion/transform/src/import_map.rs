@@ -1,14 +1,14 @@
+use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
 use swc_atoms::JsWord;
-use swc_common::collections::AHashMap;
 
 use crate::{EmotionModuleConfig, ExportItem};
 
 /// key: `importSource`
-pub type ImportMap = AHashMap<JsWord, ImportMapValue>;
+pub type ImportMap = FxHashMap<JsWord, ImportMapValue>;
 
 /// key: `localExportName`
-pub type ImportMapValue = AHashMap<JsWord, ImportItemConfig>;
+pub type ImportMapValue = FxHashMap<JsWord, ImportItemConfig>;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]

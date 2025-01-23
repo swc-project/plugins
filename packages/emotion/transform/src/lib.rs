@@ -5,9 +5,9 @@ use std::{
 };
 
 use base64::Engine;
-use fxhash::FxHashMap;
 use once_cell::sync::Lazy;
 use regex::{Regex, RegexBuilder};
+use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
 use sourcemap::{RawToken, SourceMap as RawSourcemap};
 use swc_atoms::{atom, Atom};
@@ -993,6 +993,19 @@ fn remove_space_around_colon(input: &str, is_first_item: bool, is_last_item: boo
         "$s",
     )
 }
+
+#[derive(Default)]
+struct ShouldWorkChecker {
+    should_work: bool,
+}
+
+impl Check for ShouldWorkChecker {
+    fn should_handle(&self) -> bool {
+        self.should_work
+    }
+}
+
+impl Visit for ShouldWorkChecker {}
 
 #[cfg(test)]
 mod test_emotion {
