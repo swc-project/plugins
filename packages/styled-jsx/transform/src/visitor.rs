@@ -8,15 +8,16 @@ use std::{
 use anyhow::{bail, format_err, Error, Result};
 use preset_env_base::Versions;
 use serde::Deserialize;
-use swc_common::{collections::AHashSet, errors::HANDLER, FileName, SourceMap, Span, DUMMY_SP};
+use swc_common::{
+    collections::AHashSet, errors::HANDLER, util::take::Take, FileName, SourceMap, Span, DUMMY_SP,
+};
 use swc_ecma_ast::*;
 use swc_ecma_minifier::{
     eval::{EvalResult, Evaluator},
     marks::Marks,
 };
-use swc_ecma_transforms_base::perf::Check;
 use swc_ecma_utils::{collect_decls, drop_span, prepend_stmt, private_ident};
-use swc_ecma_visit::{fold_pass, Fold, FoldWith, Visit};
+use swc_ecma_visit::{Fold, FoldWith, Visit, VisitWith};
 
 use crate::{
     style::{ExternalStyle, JSXStyle, LocalStyle},
@@ -74,7 +75,7 @@ pub fn styled_jsx(
         _ => None,
     };
 
-    fold_pass(StyledJSXTransformer {
+    StyledJSXTransformer {
         cm,
         config,
         native_config,
@@ -96,7 +97,7 @@ pub fn styled_jsx(
         in_function_params: Default::default(),
         evaluator: Default::default(),
         visiting_styled_jsx_descendants: Default::default(),
-    })
+    }
 }
 
 struct StyledJSXTransformer<'a> {
@@ -1016,15 +1017,20 @@ fn is_styled_css_import(item: &ModuleItem) -> bool {
     false
 }
 
-#[derive(Default)]
-struct ShouldWorkChecker {
-    should_work: bool,
+impl Pass for StyledJSXTransformer<'_> {
+    fn process(&mut self, program: &mut swc_ecma_ast::Program) {
+        let mut checker = ShouldWorkChecker { should_work: false };
+        program.visit_with(&mut checker);
+        if !checker.should_work {
+            return;
+        }
+
+        program.map_with_mut(|p| p.fold_with(self));
+    }
 }
 
-impl Check for ShouldWorkChecker {
-    fn should_handle(&self) -> bool {
-        self.should_work
-    }
+struct ShouldWorkChecker {
+    should_work: bool,
 }
 
 impl Visit for ShouldWorkChecker {}

@@ -19,9 +19,8 @@ use swc_ecma_ast::{
     MemberProp, MethodProp, ModuleExportName, ObjectLit, Pass, Pat, Prop, PropName, PropOrSpread,
     SourceMapperExt, SpreadElement, Tpl, VarDeclarator,
 };
-use swc_ecma_transforms::perf::Check;
 use swc_ecma_utils::ExprFactory;
-use swc_ecma_visit::{fold_pass, Fold, FoldWith, Visit};
+use swc_ecma_visit::{Fold, FoldWith, Visit, VisitWith};
 use swc_trace_macro::swc_trace;
 
 pub use crate::import_map::*;
@@ -173,13 +172,7 @@ pub fn emotion<C: Comments>(
     cm: Arc<SourceMapperDyn>,
     comments: C,
 ) -> impl Pass {
-    fold_pass(EmotionTransformer::new(
-        emotion_options,
-        path,
-        src_file_hash,
-        cm,
-        comments,
-    ))
+    EmotionTransformer::new(emotion_options, path, src_file_hash, cm, comments)
 }
 
 pub struct EmotionTransformer<C: Comments> {
@@ -994,15 +987,23 @@ fn remove_space_around_colon(input: &str, is_first_item: bool, is_last_item: boo
     )
 }
 
-#[derive(Default)]
-struct ShouldWorkChecker {
-    should_work: bool,
+impl<C> Pass for EmotionTransformer<C>
+where
+    C: Comments,
+{
+    fn process(&mut self, program: &mut swc_ecma_ast::Program) {
+        let mut checker = ShouldWorkChecker { should_work: false };
+        program.visit_with(&mut checker);
+        if !checker.should_work {
+            return;
+        }
+
+        program.map_with_mut(|p| p.fold_with(self));
+    }
 }
 
-impl Check for ShouldWorkChecker {
-    fn should_handle(&self) -> bool {
-        self.should_work
-    }
+struct ShouldWorkChecker {
+    should_work: bool,
 }
 
 impl Visit for ShouldWorkChecker {}
