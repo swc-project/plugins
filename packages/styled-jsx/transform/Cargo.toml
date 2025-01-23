@@ -23,22 +23,23 @@ parcel_selectors = { workspace = true }
 serde            = { workspace = true, features = ["derive"] }
 tracing          = { workspace = true }
 
-preset_env_base   = { workspace = true }
-swc_atoms         = { workspace = true }
-swc_common        = { workspace = true }
-swc_css_ast       = { workspace = true }
-swc_css_codegen   = { workspace = true }
-swc_css_compat    = { workspace = true }
-swc_css_minifier  = { workspace = true }
-swc_css_parser    = { workspace = true }
-swc_css_prefixer  = { workspace = true }
-swc_css_visit     = { workspace = true }
-swc_ecma_ast      = { workspace = true }
-swc_ecma_minifier = { workspace = true }
-swc_ecma_parser   = { workspace = true }
-swc_ecma_utils    = { workspace = true }
-swc_ecma_visit    = { workspace = true }
-swc_plugin_macro  = { workspace = true }
+preset_env_base          = { workspace = true }
+swc_atoms                = { workspace = true }
+swc_common               = { workspace = true }
+swc_css_ast              = { workspace = true }
+swc_css_codegen          = { workspace = true }
+swc_css_compat           = { workspace = true }
+swc_css_minifier         = { workspace = true }
+swc_css_parser           = { workspace = true }
+swc_css_prefixer         = { workspace = true }
+swc_css_visit            = { workspace = true }
+swc_ecma_ast             = { workspace = true }
+swc_ecma_minifier        = { workspace = true }
+swc_ecma_parser          = { workspace = true }
+swc_ecma_transforms_base = { workspace = true }
+swc_ecma_utils           = { workspace = true }
+swc_ecma_visit           = { workspace = true }
+swc_plugin_macro         = { workspace = true }
 
 [dev-dependencies]
 swc_ecma_transforms         = { workspace = true }
