@@ -2389,6 +2389,7 @@ dependencies = [
  "parcel_selectors",
  "preset_env_base",
  "serde",
+ "swc_atoms",
  "swc_common",
  "swc_css_ast",
  "swc_css_codegen",
