@@ -1,5 +1,11 @@
 # @swc/plugin-styled-jsx
 
+## 6.4.0
+
+### Minor Changes
+
+- 728f208: Make it usable from custom Rust binaries
+
 ## 6.3.0
 
 ### Minor Changes
