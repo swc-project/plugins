@@ -1335,7 +1335,7 @@ checksum = "68354c5c6bd36d73ff3feceb05efa59b6acb7626617f4962be322a825e61f79a"
 
 [[package]]
 name = "modularize_imports"
-version = "0.71.0"
+version = "0.71.1"
 dependencies = [
  "convert_case",
  "handlebars",
@@ -2352,7 +2352,7 @@ checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
 
 [[package]]
 name = "styled_components"
-version = "0.99.0"
+version = "0.99.1"
 dependencies = [
  "Inflector",
  "once_cell",
@@ -2373,7 +2373,7 @@ dependencies = [
 
 [[package]]
 name = "styled_jsx"
-version = "0.76.0"
+version = "0.76.1"
 dependencies = [
  "anyhow",
  "lightningcss",
@@ -2997,7 +2997,7 @@ dependencies = [
 
 [[package]]
 name = "swc_emotion"
-version = "0.75.0"
+version = "0.75.1"
 dependencies = [
  "base64 0.22.1",
  "byteorder",
