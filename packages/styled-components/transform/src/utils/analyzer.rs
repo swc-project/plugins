@@ -8,16 +8,16 @@ use swc_ecma_visit::{
 use super::State;
 use crate::Config;
 
-pub fn analyzer(config: Rc<Config>, state: Rc<RefCell<State>>) -> impl Pass {
+pub fn analyzer(config: &Config, state: Rc<RefCell<State>>) -> impl '_ + Pass {
     visit_mut_pass(AsAnalyzer { config, state })
 }
 
-struct AsAnalyzer {
-    config: Rc<Config>,
+struct AsAnalyzer<'a> {
+    config: &'a Config,
     state: Rc<RefCell<State>>,
 }
 
-impl VisitMut for AsAnalyzer {
+impl VisitMut for AsAnalyzer<'_> {
     noop_visit_mut_type!();
 
     fn visit_mut_module(&mut self, p: &mut Module) {

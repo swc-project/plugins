@@ -1,6 +1,6 @@
 #![deny(unused)]
 
-use std::{cell::RefCell, rc::Rc, sync::Arc};
+use std::{cell::RefCell, rc::Rc};
 
 use serde::Deserialize;
 use swc_atoms::JsWord;
@@ -83,7 +83,7 @@ where
     let state: Rc<RefCell<State>> = Default::default();
 
     (
-        analyzer(config.clone(), state.clone()),
+        analyzer(config, state.clone()),
         Optional {
             enabled: config.css_prop,
             visitor: transpile_css_prop(state.clone()),
