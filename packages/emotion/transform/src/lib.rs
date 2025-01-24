@@ -165,21 +165,21 @@ enum PackageMeta {
     Namespace(EmotionModuleConfig),
 }
 
-pub fn emotion<C: Comments>(
-    emotion_options: &EmotionOptions,
-    path: &Path,
+pub fn emotion<'a, C: Comments>(
+    emotion_options: &'a EmotionOptions,
+    path: &'a Path,
     src_file_hash: u32,
     cm: Arc<SourceMapperDyn>,
     comments: C,
-) -> impl '_ + Pass {
+) -> impl 'a + Pass {
     EmotionTransformer::new(emotion_options, path, src_file_hash, cm, comments)
 }
 
 pub struct EmotionTransformer<'a, C: Comments> {
-    pub options: EmotionOptions,
+    pub options: &'a EmotionOptions,
     #[allow(unused)]
     filepath_hash: Option<u32>,
-    filepath: PathBuf,
+    filepath: &'a Path,
     dirname: Option<String>,
     filename: Option<String>,
     src_file_hash: u32,
