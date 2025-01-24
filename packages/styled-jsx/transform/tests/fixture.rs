@@ -124,10 +124,11 @@ fn styled_jsx_errors(input: PathBuf) {
             use_lightningcss: false,
             ..Default::default()
         };
+        let native_config = Default::default();
 
         test_fixture(
             syntax(),
-            &|t| styled_jsx(t.cm.clone(), &file_name, &config, Default::default()),
+            &|t| styled_jsx(t.cm.clone(), &file_name, &config, &native_config),
             &input,
             &output,
             FixtureTestConfig {
@@ -144,10 +145,11 @@ fn styled_jsx_errors(input: PathBuf) {
             use_lightningcss: true,
             ..Default::default()
         };
+        let native_config = Default::default();
 
         test_fixture(
             syntax(),
-            &|t| styled_jsx(t.cm.clone(), &file_name, &config, Default::default()),
+            &|t| styled_jsx(t.cm.clone(), &file_name, &config, &native_config),
             &input,
             &output,
             FixtureTestConfig {

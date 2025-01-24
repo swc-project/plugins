@@ -14,6 +14,6 @@ fn transform_imports_plugin(program: Program, data: TransformPluginProgramMetada
     .expect("invalid packages");
 
     program.apply(modularize_imports::modularize_imports(
-        modularize_imports::Config { packages },
+        &modularize_imports::Config { packages },
     ))
 }
