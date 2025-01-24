@@ -120,20 +120,14 @@ fn styled_jsx_errors(input: PathBuf) {
     };
     {
         let output = input.parent().unwrap().join("output-swc.js");
+        let config = styled_jsx::visitor::Config {
+            use_lightningcss: false,
+            ..Default::default()
+        };
 
         test_fixture(
             syntax(),
-            &|t| {
-                styled_jsx(
-                    t.cm.clone(),
-                    file_name.clone(),
-                    styled_jsx::visitor::Config {
-                        use_lightningcss: false,
-                        ..Default::default()
-                    },
-                    Default::default(),
-                )
-            },
+            &|t| styled_jsx(t.cm.clone(), &file_name, &config, Default::default()),
             &input,
             &output,
             FixtureTestConfig {
@@ -146,20 +140,14 @@ fn styled_jsx_errors(input: PathBuf) {
 
     {
         let output = input.parent().unwrap().join("output-lightningcss.js");
+        let config = styled_jsx::visitor::Config {
+            use_lightningcss: true,
+            ..Default::default()
+        };
 
         test_fixture(
             syntax(),
-            &|t| {
-                styled_jsx(
-                    t.cm.clone(),
-                    file_name.clone(),
-                    styled_jsx::visitor::Config {
-                        use_lightningcss: true,
-                        ..Default::default()
-                    },
-                    Default::default(),
-                )
-            },
+            &|t| styled_jsx(t.cm.clone(), &file_name, &config, Default::default()),
             &input,
             &output,
             FixtureTestConfig {
