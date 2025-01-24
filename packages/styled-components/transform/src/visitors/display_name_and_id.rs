@@ -1,4 +1,4 @@
-use std::{cell::RefCell, convert::TryInto, path::Path, rc::Rc, sync::Arc};
+use std::{cell::RefCell, convert::TryInto, path::Path, rc::Rc};
 
 use once_cell::sync::Lazy;
 use regex::Regex;
@@ -14,12 +14,12 @@ use crate::{
     Config,
 };
 
-pub fn display_name_and_id(
-    file_name: Arc<FileName>,
+pub fn display_name_and_id<'a>(
+    file_name: &'a FileName,
     src_file_hash: u128,
-    config: Rc<Config>,
+    config: &'a Config,
     state: Rc<RefCell<State>>,
-) -> impl Pass + VisitMut {
+) -> impl 'a + Pass {
     visit_mut_pass(DisplayNameAndId {
         file_name,
         src_file_hash,
@@ -35,11 +35,11 @@ static DISPLAY_NAME_REGEX: Lazy<Regex> =
     Lazy::new(|| Regex::new(r"^[a-zA-Z][a-zA-Z0-9]$").unwrap());
 
 #[derive(Debug)]
-struct DisplayNameAndId {
-    file_name: Arc<FileName>,
+struct DisplayNameAndId<'a> {
+    file_name: &'a FileName,
     src_file_hash: u128,
 
-    config: Rc<Config>,
+    config: &'a Config,
     state: Rc<RefCell<State>>,
 
     cur_display_name: Option<JsWord>,
@@ -47,7 +47,7 @@ struct DisplayNameAndId {
     component_id: usize,
 }
 
-impl DisplayNameAndId {
+impl DisplayNameAndId<'_> {
     fn get_block_name(&self, p: &Path) -> String {
         match p.file_stem().map(|s| s.to_string_lossy()) {
             Some(file_stem)
@@ -69,7 +69,7 @@ impl DisplayNameAndId {
     fn get_display_name(&mut self, _: &Expr) -> JsWord {
         let component_name = self.cur_display_name.clone().unwrap_or(js_word!(""));
 
-        match &*self.file_name {
+        match self.file_name {
             FileName::Real(f) if self.config.file_name => {
                 let block_name = self.get_block_name(f);
 
@@ -230,7 +230,7 @@ impl DisplayNameAndId {
     }
 }
 
-impl VisitMut for DisplayNameAndId {
+impl VisitMut for DisplayNameAndId<'_> {
     noop_visit_mut_type!();
 
     fn visit_mut_assign_expr(&mut self, e: &mut AssignExpr) {

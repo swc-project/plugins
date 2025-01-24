@@ -62,12 +62,12 @@ impl NativeConfig<'_> {
     }
 }
 
-pub fn styled_jsx(
+pub fn styled_jsx<'a>(
     cm: Arc<SourceMap>,
-    file_name: FileName,
-    config: Config,
-    native_config: NativeConfig<'_>,
-) -> impl '_ + Pass + Fold {
+    file_name: &'a FileName,
+    config: &'a Config,
+    native_config: &'a NativeConfig<'a>,
+) -> impl 'a + Pass {
     let file_name = match file_name {
         FileName::Real(real_file_name) => real_file_name
             .to_str()
@@ -102,8 +102,8 @@ pub fn styled_jsx(
 
 struct StyledJSXTransformer<'a> {
     cm: Arc<SourceMap>,
-    config: Config,
-    native_config: NativeConfig<'a>,
+    config: &'a Config,
+    native_config: &'a NativeConfig<'a>,
 
     file_name: Option<String>,
     styles: Vec<JSXStyle>,
@@ -617,7 +617,7 @@ impl StyledJSXTransformer<'_> {
                         is_global,
                         &self.static_class_name,
                         &self.config.browsers,
-                        &self.native_config,
+                        self.native_config,
                     )?
                 } else {
                     crate::transform_css_swc::transform_css(
@@ -625,7 +625,7 @@ impl StyledJSXTransformer<'_> {
                         style_info,
                         is_global,
                         &self.static_class_name,
-                        &self.native_config,
+                        self.native_config,
                     )?
                 };
 
@@ -685,7 +685,7 @@ impl StyledJSXTransformer<'_> {
                 tag == "global",
                 &static_class_name,
                 &self.config.browsers,
-                &self.native_config,
+                self.native_config,
             )?
         } else {
             crate::transform_css_swc::transform_css(
@@ -693,7 +693,7 @@ impl StyledJSXTransformer<'_> {
                 style,
                 tag == "global",
                 &static_class_name,
-                &self.native_config,
+                self.native_config,
             )?
         };
         if tag == "resolve" {

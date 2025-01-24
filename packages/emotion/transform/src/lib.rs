@@ -1,8 +1,4 @@
-use std::{
-    borrow::Cow,
-    path::{Path, PathBuf},
-    sync::Arc,
-};
+use std::{borrow::Cow, path::Path, sync::Arc};
 
 use base64::Engine;
 use once_cell::sync::Lazy;
@@ -165,21 +161,24 @@ enum PackageMeta {
     Namespace(EmotionModuleConfig),
 }
 
-pub fn emotion<C: Comments>(
-    emotion_options: EmotionOptions,
-    path: &Path,
+pub fn emotion<'a, C>(
+    emotion_options: &'a EmotionOptions,
+    path: &'a Path,
     src_file_hash: u32,
     cm: Arc<SourceMapperDyn>,
     comments: C,
-) -> impl Pass {
+) -> impl 'a + Pass
+where
+    C: 'a + Comments,
+{
     EmotionTransformer::new(emotion_options, path, src_file_hash, cm, comments)
 }
 
-pub struct EmotionTransformer<C: Comments> {
-    pub options: EmotionOptions,
+pub struct EmotionTransformer<'a, C: Comments> {
+    pub options: &'a EmotionOptions,
     #[allow(unused)]
     filepath_hash: Option<u32>,
-    filepath: PathBuf,
+    filepath: &'a Path,
     dirname: Option<String>,
     filename: Option<String>,
     src_file_hash: u32,
@@ -196,10 +195,10 @@ pub struct EmotionTransformer<C: Comments> {
 }
 
 #[swc_trace]
-impl<C: Comments> EmotionTransformer<C> {
-    pub fn new(
-        options: EmotionOptions,
-        path: &Path,
+impl<'a, C: Comments> EmotionTransformer<'a, C> {
+    fn new(
+        options: &'a EmotionOptions,
+        path: &'a Path,
         src_file_hash: u32,
         cm: Arc<SourceMapperDyn>,
         comments: C,
@@ -212,7 +211,7 @@ impl<C: Comments> EmotionTransformer<C> {
         EmotionTransformer {
             options,
             filepath_hash: None,
-            filepath: path.to_owned(),
+            filepath: path,
             src_file_hash,
             dirname: path
                 .parent()
@@ -455,7 +454,7 @@ impl<C: Comments> EmotionTransformer<C> {
     }
 }
 
-impl<C: Comments> Fold for EmotionTransformer<C> {
+impl<C: Comments> Fold for EmotionTransformer<'_, C> {
     fn fold_call_expr(&mut self, mut expr: CallExpr) -> CallExpr {
         // If no package that we care about is imported, skip the following
         // transformation logic.
@@ -987,7 +986,7 @@ fn remove_space_around_colon(input: &str, is_first_item: bool, is_last_item: boo
     )
 }
 
-impl<C> Pass for EmotionTransformer<C>
+impl<C> Pass for EmotionTransformer<'_, C>
 where
     C: Comments,
 {

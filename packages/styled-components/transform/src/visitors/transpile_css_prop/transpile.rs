@@ -24,7 +24,7 @@ use crate::{
 static TAG_NAME_REGEX: Lazy<Regex> =
     Lazy::new(|| Regex::new("^[a-z][a-z\\d]*(\\-[a-z][a-z\\d]*)?$").unwrap());
 
-pub fn transpile_css_prop(state: Rc<RefCell<State>>) -> impl Pass + VisitMut {
+pub fn transpile_css_prop(state: Rc<RefCell<State>>) -> impl Pass {
     visit_mut_pass(TranspileCssProp {
         state,
         ..Default::default()

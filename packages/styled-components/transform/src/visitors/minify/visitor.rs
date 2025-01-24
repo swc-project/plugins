@@ -9,7 +9,7 @@ use swc_ecma_visit::{noop_visit_mut_type, visit_mut_pass, VisitMut, VisitMutWith
 use super::css::{minify_raw_values, MinifyResult};
 use crate::utils::State;
 
-pub fn minify(state: Rc<RefCell<State>>) -> impl Pass + VisitMut {
+pub fn minify(state: Rc<RefCell<State>>) -> impl Pass {
     visit_mut_pass(Minify { state })
 }
 

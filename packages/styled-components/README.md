@@ -28,6 +28,18 @@ Then update your `.swcrc` file like below:
 
 # @swc/plugin-styled-components
 
+## 6.3.0
+
+### Minor Changes
+
+- 4e7336c: Remove needless allocations
+
+## 6.2.0
+
+### Minor Changes
+
+- 54b4a1a: Remove needless allocations
+
 ## 6.1.0
 
 ### Minor Changes

@@ -33,9 +33,12 @@ fn styled_components(mut program: Program, data: TransformPluginProgramMetadata)
     let pos = data.source_map.lookup_char_pos(program.span().lo);
     let hash = pos.file.src_hash;
 
-    let pass = styled_components::styled_components(file_name, hash, config, PluginCommentsProxy);
-
-    program.mutate(pass);
+    program.mutate(styled_components::styled_components(
+        &file_name,
+        hash,
+        &config,
+        PluginCommentsProxy,
+    ));
 
     program
 }

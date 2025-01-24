@@ -3,7 +3,7 @@
 use std::{fs::read_to_string, path::PathBuf};
 
 use styled_components::{styled_components, Config};
-use swc_common::Mark;
+use swc_common::{FileName, Mark};
 use swc_ecma_parser::{EsSyntax, Syntax};
 use swc_ecma_transforms::resolver;
 use swc_ecma_transforms_testing::{test_fixture, FixtureTestConfig};
@@ -14,6 +14,8 @@ fn fixture(input: PathBuf) {
     let config = read_to_string(dir.join("config.json")).expect("failed to read config.json");
     println!("---- Config -----\n{}", config);
     let config: Config = serde_json::from_str(&config).unwrap();
+
+    let file_name = FileName::Real(input.clone());
 
     test_fixture(
         Syntax::Es(EsSyntax {
@@ -26,12 +28,7 @@ fn fixture(input: PathBuf) {
 
             (
                 resolver(Mark::new(), Mark::new(), false),
-                styled_components(
-                    fm.name.clone(),
-                    fm.src_hash,
-                    config.clone(),
-                    t.comments.clone(),
-                ),
+                styled_components(&file_name, fm.src_hash, &config, t.comments.clone()),
             )
         },
         &input,

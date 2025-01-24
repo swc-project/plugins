@@ -24,65 +24,65 @@ fn run(input: PathBuf, use_lightningcss: bool) {
         "output.swc.js"
     });
 
+    let browsers = Versions {
+        chrome: Some("64".parse().unwrap()),
+        edge: Some("79".parse().unwrap()),
+        firefox: Some("67".parse().unwrap()),
+        opera: Some("51".parse().unwrap()),
+        safari: Some("12".parse().unwrap()),
+
+        ..Default::default()
+    };
+
+    let file_name = FileName::Real(PathBuf::from("/some-project/src/some-file.js"));
+    let config = styled_jsx::visitor::Config {
+        use_lightningcss,
+        browsers,
+    };
+
+    let native_config = if use_lightningcss {
+        Default::default()
+    } else {
+        NativeConfig {
+            process_css: Some(Box::new(move |css| {
+                let ss = lightningcss::stylesheet::StyleSheet::parse(
+                    css,
+                    ParserOptions {
+                        error_recovery: true,
+                        ..Default::default()
+                    },
+                );
+
+                let ss = match ss {
+                    Ok(v) => v,
+                    Err(err) => {
+                        bail!(
+                            "failed to parse css using lightningcss: {}\nCode: {}",
+                            err,
+                            css
+                        )
+                    }
+                };
+
+                let output = ss.to_css(lightningcss::stylesheet::PrinterOptions {
+                    minify: true,
+                    source_map: None,
+                    project_root: None,
+                    targets: Default::default(),
+                    analyze_dependencies: None,
+                    pseudo_classes: None,
+                })?;
+                Ok(output.code)
+            })),
+        }
+    };
+
     test_fixture(
         syntax(),
         &|t| {
-            let browsers = Versions {
-                chrome: Some("64".parse().unwrap()),
-                edge: Some("79".parse().unwrap()),
-                firefox: Some("67".parse().unwrap()),
-                opera: Some("51".parse().unwrap()),
-                safari: Some("12".parse().unwrap()),
-
-                ..Default::default()
-            };
             (
                 resolver(Mark::new(), Mark::new(), false),
-                styled_jsx(
-                    t.cm.clone(),
-                    FileName::Real(PathBuf::from("/some-project/src/some-file.js")),
-                    styled_jsx::visitor::Config {
-                        use_lightningcss,
-                        browsers,
-                    },
-                    if use_lightningcss {
-                        Default::default()
-                    } else {
-                        NativeConfig {
-                            process_css: Some(Box::new(move |css| {
-                                let ss = lightningcss::stylesheet::StyleSheet::parse(
-                                    css,
-                                    ParserOptions {
-                                        error_recovery: true,
-                                        ..Default::default()
-                                    },
-                                );
-
-                                let ss = match ss {
-                                    Ok(v) => v,
-                                    Err(err) => {
-                                        bail!(
-                                            "failed to parse css using lightningcss: {}\nCode: {}",
-                                            err,
-                                            css
-                                        )
-                                    }
-                                };
-
-                                let output =
-                                    ss.to_css(lightningcss::stylesheet::PrinterOptions {
-                                        minify: true,
-                                        source_map: None,
-                                        project_root: None,
-                                        targets: Default::default(),
-                                        analyze_dependencies: None,
-                                        pseudo_classes: None,
-                                    })?;
-                                Ok(output.code)
-                            })),
-                        }
-                    },
-                ),
+                styled_jsx(t.cm.clone(), &file_name, &config, &native_config),
             )
         },
         &input,
@@ -120,20 +120,15 @@ fn styled_jsx_errors(input: PathBuf) {
     };
     {
         let output = input.parent().unwrap().join("output-swc.js");
+        let config = styled_jsx::visitor::Config {
+            use_lightningcss: false,
+            ..Default::default()
+        };
+        let native_config = Default::default();
 
         test_fixture(
             syntax(),
-            &|t| {
-                styled_jsx(
-                    t.cm.clone(),
-                    file_name.clone(),
-                    styled_jsx::visitor::Config {
-                        use_lightningcss: false,
-                        ..Default::default()
-                    },
-                    Default::default(),
-                )
-            },
+            &|t| styled_jsx(t.cm.clone(), &file_name, &config, &native_config),
             &input,
             &output,
             FixtureTestConfig {
@@ -146,20 +141,15 @@ fn styled_jsx_errors(input: PathBuf) {
 
     {
         let output = input.parent().unwrap().join("output-lightningcss.js");
+        let config = styled_jsx::visitor::Config {
+            use_lightningcss: true,
+            ..Default::default()
+        };
+        let native_config = Default::default();
 
         test_fixture(
             syntax(),
-            &|t| {
-                styled_jsx(
-                    t.cm.clone(),
-                    file_name.clone(),
-                    styled_jsx::visitor::Config {
-                        use_lightningcss: true,
-                        ..Default::default()
-                    },
-                    Default::default(),
-                )
-            },
+            &|t| styled_jsx(t.cm.clone(), &file_name, &config, &native_config),
             &input,
             &output,
             FixtureTestConfig {

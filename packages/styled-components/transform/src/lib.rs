@@ -1,6 +1,6 @@
 #![deny(unused)]
 
-use std::{cell::RefCell, rc::Rc, sync::Arc};
+use std::{cell::RefCell, rc::Rc};
 
 use serde::Deserialize;
 use swc_atoms::JsWord;
@@ -71,20 +71,19 @@ impl Config {
     }
 }
 
-pub fn styled_components<C>(
-    file_name: Arc<FileName>,
+pub fn styled_components<'a, C>(
+    file_name: &'a FileName,
     src_file_hash: u128,
-    config: Config,
+    config: &'a Config,
     comments: C,
-) -> impl Pass
+) -> impl 'a + Pass
 where
-    C: Comments,
+    C: 'a + Comments,
 {
     let state: Rc<RefCell<State>> = Default::default();
-    let config = Rc::new(config);
 
     (
-        analyzer(config.clone(), state.clone()),
+        analyzer(config, state.clone()),
         Optional {
             enabled: config.css_prop,
             visitor: transpile_css_prop(state.clone()),
@@ -95,7 +94,7 @@ where
                     enabled: config.minify,
                     visitor: minify(state.clone()),
                 },
-                display_name_and_id(file_name, src_file_hash, config.clone(), state.clone()),
+                display_name_and_id(file_name, src_file_hash, config, state.clone()),
                 Optional {
                     enabled: config.transpile_template_literals,
                     visitor: template_literals(state.clone()),
