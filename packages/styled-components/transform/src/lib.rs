@@ -123,9 +123,11 @@ where
     P: Pass,
 {
     fn process(&mut self, p: &mut Program) {
-        let state = self.state.borrow();
-        if !state.need_work() {
-            return;
+        {
+            let state = self.state.borrow();
+            if !state.need_work() {
+                return;
+            }
         }
 
         self.pass.process(p);
