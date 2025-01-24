@@ -169,7 +169,7 @@ pub fn emotion<'a, C: Comments>(
     emotion_options: &'a EmotionOptions,
     path: &'a Path,
     src_file_hash: u32,
-    cm: &'a SourceMapperDyn,
+    cm: Arc<SourceMapperDyn>,
     comments: C,
 ) -> impl 'a + Pass {
     EmotionTransformer::new(emotion_options, path, src_file_hash, cm, comments)
