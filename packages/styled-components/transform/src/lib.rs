@@ -74,14 +74,13 @@ impl Config {
 pub fn styled_components<C>(
     file_name: Arc<FileName>,
     src_file_hash: u128,
-    config: Config,
+    config: &Config,
     comments: C,
-) -> impl Pass
+) -> impl '_ + Pass
 where
     C: Comments,
 {
     let state: Rc<RefCell<State>> = Default::default();
-    let config = Rc::new(config);
 
     (
         analyzer(config.clone(), state.clone()),

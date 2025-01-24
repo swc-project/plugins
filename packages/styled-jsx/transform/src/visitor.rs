@@ -62,11 +62,11 @@ impl NativeConfig<'_> {
     }
 }
 
-pub fn styled_jsx(
+pub fn styled_jsx<'a>(
     cm: Arc<SourceMap>,
-    file_name: FileName,
-    config: Config,
-    native_config: NativeConfig<'_>,
+    file_name: &'a FileName,
+    config: &'a Config,
+    native_config: NativeConfig<'a>,
 ) -> impl '_ + Pass {
     let file_name = match file_name {
         FileName::Real(real_file_name) => real_file_name
@@ -102,7 +102,7 @@ pub fn styled_jsx(
 
 struct StyledJSXTransformer<'a> {
     cm: Arc<SourceMap>,
-    config: Config,
+    config: &'a Config,
     native_config: NativeConfig<'a>,
 
     file_name: Option<String>,

@@ -166,16 +166,16 @@ enum PackageMeta {
 }
 
 pub fn emotion<C: Comments>(
-    emotion_options: EmotionOptions,
+    emotion_options: &EmotionOptions,
     path: &Path,
     src_file_hash: u32,
     cm: Arc<SourceMapperDyn>,
     comments: C,
-) -> impl Pass {
+) -> impl '_ + Pass {
     EmotionTransformer::new(emotion_options, path, src_file_hash, cm, comments)
 }
 
-pub struct EmotionTransformer<C: Comments> {
+pub struct EmotionTransformer<'a, C: Comments> {
     pub options: EmotionOptions,
     #[allow(unused)]
     filepath_hash: Option<u32>,
@@ -196,14 +196,14 @@ pub struct EmotionTransformer<C: Comments> {
 }
 
 #[swc_trace]
-impl<C: Comments> EmotionTransformer<C> {
-    pub fn new(
-        options: EmotionOptions,
+impl<'a, C: Comments> EmotionTransformer<'a, C> {
+    fn new(
+        options: &'a EmotionOptions,
         path: &Path,
         src_file_hash: u32,
         cm: Arc<SourceMapperDyn>,
         comments: C,
-    ) -> impl Pass {
+    ) -> Self {
         let registered_imports = self::import_map::expand_import_map(
             options.import_map.as_ref(),
             EMOTION_OFFICIAL_LIBRARIES.to_vec(),
