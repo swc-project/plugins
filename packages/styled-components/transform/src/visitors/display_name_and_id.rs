@@ -69,7 +69,7 @@ impl DisplayNameAndId<'_> {
     fn get_display_name(&mut self, _: &Expr) -> JsWord {
         let component_name = self.cur_display_name.clone().unwrap_or(js_word!(""));
 
-        match &*self.file_name {
+        match self.file_name {
             FileName::Real(f) if self.config.file_name => {
                 let block_name = self.get_block_name(f);
 
