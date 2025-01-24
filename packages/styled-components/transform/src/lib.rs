@@ -85,12 +85,12 @@ where
 
     (
         analyzer(config.clone(), state.clone()),
+        Optional {
+            enabled: config.css_prop,
+            visitor: transpile_css_prop(state.clone()),
+        },
         MayWork {
             pass: (
-                Optional {
-                    enabled: config.css_prop,
-                    visitor: transpile_css_prop(state.clone()),
-                },
                 Optional {
                     enabled: config.minify,
                     visitor: minify(state.clone()),
