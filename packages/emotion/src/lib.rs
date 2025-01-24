@@ -73,7 +73,7 @@ pub fn process_transform(program: Program, data: TransformPluginProgramMetadata)
     let pos = source_map.lookup_char_pos(program.span().lo);
     let hash = pos.file.src_hash as u32;
     program.apply(swc_emotion::emotion(
-        config,
+        &config,
         path,
         hash,
         source_map,

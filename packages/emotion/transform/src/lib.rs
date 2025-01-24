@@ -1,8 +1,4 @@
-use std::{
-    borrow::Cow,
-    path::{Path, PathBuf},
-    sync::Arc,
-};
+use std::{borrow::Cow, path::Path, sync::Arc};
 
 use base64::Engine;
 use once_cell::sync::Lazy;
