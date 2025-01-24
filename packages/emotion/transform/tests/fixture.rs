@@ -29,6 +29,8 @@ fn next_emotion_fixture(input: PathBuf) {
         ..Default::default()
     };
 
+    let path = PathBuf::from("input.ts");
+
     test_fixture(
         ts_syntax(),
         &|tr| {
@@ -52,7 +54,7 @@ fn next_emotion_fixture(input: PathBuf) {
             (
                 swc_emotion::emotion(
                     &options,
-                    &PathBuf::from("input.ts"),
+                    &path,
                     fm.src_hash as u32,
                     tr.cm.clone(),
                     tr.comments.as_ref().clone(),

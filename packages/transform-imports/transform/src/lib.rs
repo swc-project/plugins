@@ -313,7 +313,7 @@ impl Rewriter<'_> {
     }
 }
 
-impl FoldImports {
+impl FoldImports<'_> {
     fn should_rewrite<'a>(&'a self, name: &'a str) -> Option<Rewriter<'a>> {
         for (regex, config) in &self.packages {
             let group = regex.captures(name);
@@ -362,7 +362,7 @@ impl FoldImports {
     }
 }
 
-impl Fold for FoldImports {
+impl Fold for FoldImports<'_> {
     noop_fold_type!();
 
     fn fold_call_expr(&mut self, mut call: CallExpr) -> CallExpr {
