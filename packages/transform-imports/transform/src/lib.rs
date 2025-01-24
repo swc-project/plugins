@@ -447,10 +447,10 @@ impl Fold for FoldImports<'_> {
     }
 }
 
-pub fn modularize_imports(config: &Config) -> impl Pass {
+pub fn modularize_imports(config: &Config) -> impl '_ + Pass {
     let mut folder = FoldImports { packages: vec![] };
 
-    for (mut k, v) in &config.packages {
+    for (k, v) in &config.packages {
         let mut k = Cow::Borrowed(k);
         // XXX: Should we keep this hack?
         if !k.starts_with('^') && !k.ends_with('$') {
