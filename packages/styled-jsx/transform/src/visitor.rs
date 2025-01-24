@@ -1,4 +1,5 @@
 use std::{
+    borrow::Cow,
     collections::hash_map::DefaultHasher,
     hash::{Hash, Hasher},
     mem::take,
@@ -64,11 +65,11 @@ impl NativeConfig<'_> {
 
 pub fn styled_jsx<'a>(
     cm: Arc<SourceMap>,
-    file_name: &'a FileName,
-    config: &'a Config,
-    native_config: &'a NativeConfig<'a>,
+    file_name: Cow<'a, FileName>,
+    config: Cow<'a, Config>,
+    native_config: Cow<'a, NativeConfig<'a>>,
 ) -> impl 'a + Pass {
-    let file_name = match file_name {
+    let file_name = match &*file_name {
         FileName::Real(real_file_name) => real_file_name
             .to_str()
             .map(|real_file_name| real_file_name.to_string()),
