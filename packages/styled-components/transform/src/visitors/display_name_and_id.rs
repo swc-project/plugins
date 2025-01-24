@@ -19,7 +19,7 @@ pub fn display_name_and_id(
     src_file_hash: u128,
     config: Rc<Config>,
     state: Rc<RefCell<State>>,
-) -> impl Pass + VisitMut {
+) -> impl Pass {
     visit_mut_pass(DisplayNameAndId {
         file_name,
         src_file_hash,

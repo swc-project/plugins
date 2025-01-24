@@ -8,7 +8,7 @@ use swc_ecma_visit::{
 use super::State;
 use crate::Config;
 
-pub fn analyzer(config: Rc<Config>, state: Rc<RefCell<State>>) -> impl Pass + VisitMut {
+pub fn analyzer(config: Rc<Config>, state: Rc<RefCell<State>>) -> impl Pass {
     visit_mut_pass(AsAnalyzer { config, state })
 }
 

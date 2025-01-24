@@ -203,7 +203,7 @@ impl<C: Comments> EmotionTransformer<C> {
         src_file_hash: u32,
         cm: Arc<SourceMapperDyn>,
         comments: C,
-    ) -> Self {
+    ) -> impl Pass {
         let registered_imports = self::import_map::expand_import_map(
             options.import_map.as_ref(),
             EMOTION_OFFICIAL_LIBRARIES.to_vec(),

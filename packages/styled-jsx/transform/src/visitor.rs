@@ -67,7 +67,7 @@ pub fn styled_jsx(
     file_name: FileName,
     config: Config,
     native_config: NativeConfig<'_>,
-) -> impl '_ + Pass + Fold {
+) -> impl '_ + Pass {
     let file_name = match file_name {
         FileName::Real(real_file_name) => real_file_name
             .to_str()
