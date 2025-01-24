@@ -447,7 +447,7 @@ impl Fold for FoldImports<'_> {
     }
 }
 
-pub fn modularize_imports(config: &Config) -> impl '_ + Pass {
+pub fn modularize_imports(config: Cow<Config>) -> impl '_ + Pass {
     let mut folder = FoldImports { packages: vec![] };
 
     for (k, v) in &config.packages {
