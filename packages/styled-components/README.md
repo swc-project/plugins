@@ -28,6 +28,12 @@ Then update your `.swcrc` file like below:
 
 # @swc/plugin-styled-components
 
+## 6.1.0
+
+### Minor Changes
+
+- d532813: Avoid allocation when not used
+
 ## 6.0.4
 
 ### Patch Changes
