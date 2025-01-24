@@ -99,6 +99,14 @@ fn emotion_label_option_fixture(output: PathBuf) {
         format!("[{output_folder_name}]").into()
     };
 
+    let options = EmotionOptions {
+        enabled: Some(true),
+        sourcemap: Some(true),
+        auto_label: Some(true),
+        label_format: Some(label_option.clone()),
+        ..Default::default()
+    };
+
     test_fixture(
         ts_syntax(),
         &|tr| {
@@ -120,13 +128,7 @@ fn emotion_label_option_fixture(output: PathBuf) {
             let fm: std::sync::Arc<swc_common::SourceFile> = tr.cm.load_file(&input).unwrap();
             (
                 swc_emotion::emotion(
-                    EmotionOptions {
-                        enabled: Some(true),
-                        sourcemap: Some(true),
-                        auto_label: Some(true),
-                        label_format: Some(label_option.clone()),
-                        ..Default::default()
-                    },
+                    options,
                     &PathBuf::from(format!("{output_folder_name}/index.tsx")),
                     fm.src_hash as u32,
                     tr.cm.clone(),
