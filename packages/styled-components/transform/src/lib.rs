@@ -1,6 +1,6 @@
 #![deny(unused)]
 
-use std::{cell::RefCell, rc::Rc};
+use std::{borrow::Cow, cell::RefCell, rc::Rc};
 
 use serde::Deserialize;
 use swc_atoms::JsWord;
@@ -72,9 +72,9 @@ impl Config {
 }
 
 pub fn styled_components<'a, C>(
-    file_name: &'a FileName,
+    file_name: Cow<'a, FileName>,
     src_file_hash: u128,
-    config: &'a Config,
+    config: Cow<'a, Config>,
     comments: C,
 ) -> impl 'a + Pass
 where
