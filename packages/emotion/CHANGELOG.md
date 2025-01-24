@@ -1,5 +1,11 @@
 # @swc/plugin-emotion
 
+## 8.2.0
+
+### Minor Changes
+
+- 54b4a1a: Remove needless allocations
+
 ## 8.1.0
 
 ### Minor Changes

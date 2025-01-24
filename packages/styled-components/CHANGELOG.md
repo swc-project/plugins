@@ -1,5 +1,11 @@
 # @swc/plugin-styled-components
 
+## 6.2.0
+
+### Minor Changes
+
+- 54b4a1a: Remove needless allocations
+
 ## 6.1.0
 
 ### Minor Changes
