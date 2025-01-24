@@ -108,6 +108,7 @@ fn emotion_label_option_fixture(output: PathBuf) {
         label_format: Some(label_option.clone()),
         ..Default::default()
     };
+    let file_name = PathBuf::from(format!("{output_folder_name}/index.tsx"));
 
     test_fixture(
         ts_syntax(),
@@ -131,7 +132,7 @@ fn emotion_label_option_fixture(output: PathBuf) {
             (
                 swc_emotion::emotion(
                     &options,
-                    &PathBuf::from(format!("{output_folder_name}/index.tsx")),
+                    &file_name,
                     fm.src_hash as u32,
                     tr.cm.clone(),
                     tr.comments.as_ref().clone(),
@@ -168,6 +169,13 @@ fn emotion_label(input: PathBuf, label: String) {
     let mut output = PathBuf::from(&input);
     output.set_extension("js");
 
+    let optiuons = EmotionOptions {
+        enabled: Some(true),
+        sourcemap: Some(true),
+        auto_label: Some(true),
+        label_format: Some(label.clone().into()),
+        ..Default::default()
+    };
     test_fixture(
         ts_syntax(),
         &|tr| {
@@ -189,13 +197,7 @@ fn emotion_label(input: PathBuf, label: String) {
             let fm = tr.cm.load_file(&input).unwrap();
             (
                 swc_emotion::emotion(
-                    EmotionOptions {
-                        enabled: Some(true),
-                        sourcemap: Some(true),
-                        auto_label: Some(true),
-                        label_format: Some(label.clone().into()),
-                        ..Default::default()
-                    },
+                    &options,
                     &PathBuf::from(format!("{output_folder_name}/{input_file_name}")),
                     fm.src_hash as u32,
                     tr.cm.clone(),

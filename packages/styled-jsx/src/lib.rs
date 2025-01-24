@@ -24,6 +24,6 @@ fn styled_jsx_plugin(program: Program, data: TransformPluginProgramMetadata) -> 
         cm,
         &FileName::Anon,
         &config,
-        Default::default(),
+        &Default::default(),
     ))
 }
