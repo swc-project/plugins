@@ -71,12 +71,12 @@ impl Config {
     }
 }
 
-pub fn styled_components<C>(
-    file_name: Arc<FileName>,
+pub fn styled_components<'a, C>(
+    file_name: &'a FileName,
     src_file_hash: u128,
-    config: &Config,
+    config: &'a Config,
     comments: C,
-) -> impl '_ + Pass
+) -> impl 'a + Pass
 where
     C: Comments,
 {
