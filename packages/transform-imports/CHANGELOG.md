@@ -1,5 +1,11 @@
 # @swc/plugin-transform-imports
 
+## 6.1.0
+
+### Minor Changes
+
+- 4e7336c: Remove needless allocations
+
 ## 6.0.5
 
 ### Patch Changes

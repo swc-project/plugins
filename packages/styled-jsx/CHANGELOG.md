@@ -1,5 +1,11 @@
 # @swc/plugin-styled-jsx
 
+## 6.3.0
+
+### Minor Changes
+
+- 4e7336c: Remove needless allocations
+
 ## 6.2.0
 
 ### Minor Changes
