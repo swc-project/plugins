@@ -617,7 +617,7 @@ impl StyledJSXTransformer<'_> {
                         is_global,
                         &self.static_class_name,
                         &self.config.browsers,
-                        &self.native_config,
+                        self.native_config,
                     )?
                 } else {
                     crate::transform_css_swc::transform_css(
@@ -625,7 +625,7 @@ impl StyledJSXTransformer<'_> {
                         style_info,
                         is_global,
                         &self.static_class_name,
-                        &self.native_config,
+                        self.native_config,
                     )?
                 };
 
@@ -685,7 +685,7 @@ impl StyledJSXTransformer<'_> {
                 tag == "global",
                 &static_class_name,
                 &self.config.browsers,
-                &self.native_config,
+                self.native_config,
             )?
         } else {
             crate::transform_css_swc::transform_css(
@@ -693,7 +693,7 @@ impl StyledJSXTransformer<'_> {
                 style,
                 tag == "global",
                 &static_class_name,
-                &self.native_config,
+                self.native_config,
             )?
         };
         if tag == "resolve" {
