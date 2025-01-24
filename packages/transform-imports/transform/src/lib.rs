@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{borrow::Cow, collections::HashMap};
 
 use convert_case::{Case, Casing};
 use handlebars::{Context, Handlebars, Helper, HelperResult, Output, RenderContext};
@@ -51,8 +51,8 @@ impl From<Vec<(String, String)>> for Transform {
     }
 }
 
-struct FoldImports {
-    packages: Vec<(CachedRegex, PackageConfig)>,
+struct FoldImports<'a> {
+    packages: Vec<(CachedRegex, &'a PackageConfig)>,
 }
 
 static HANDLEBARS: Lazy<Handlebars> = Lazy::new(|| {
@@ -450,10 +450,11 @@ impl Fold for FoldImports {
 pub fn modularize_imports(config: &Config) -> impl Pass {
     let mut folder = FoldImports { packages: vec![] };
 
-    for (mut k, v) in config.packages {
+    for (mut k, v) in &config.packages {
+        let mut k = Cow::Borrowed(k);
         // XXX: Should we keep this hack?
         if !k.starts_with('^') && !k.ends_with('$') {
-            k = format!("^{}$", k);
+            k = Cow::Owned(format!("^{}$", k));
         }
         folder.packages.push((
             CachedRegex::new(&k).expect("transform-imports: invalid regex"),
