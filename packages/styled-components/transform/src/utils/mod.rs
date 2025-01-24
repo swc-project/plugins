@@ -67,6 +67,13 @@ pub struct State {
 }
 
 impl State {
+    pub(crate) fn need_work(&self) -> bool {
+        self.styled_required.is_some()
+            || self.imported_local_name.is_some()
+            || !self.imported_local_named.is_empty()
+            || self.imported_local_ns.is_some()
+    }
+
     pub(crate) fn is_styled(&self, tag: &Expr) -> bool {
         if let Expr::Call(CallExpr {
             callee: Callee::Expr(callee),
