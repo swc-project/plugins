@@ -67,7 +67,7 @@ pub fn styled_jsx<'a>(
     file_name: &'a FileName,
     config: &'a Config,
     native_config: NativeConfig<'a>,
-) -> impl '_ + Pass {
+) -> impl 'a + Pass {
     let file_name = match file_name {
         FileName::Real(real_file_name) => real_file_name
             .to_str()

@@ -22,8 +22,8 @@ fn styled_jsx_plugin(program: Program, data: TransformPluginProgramMetadata) -> 
 
     program.apply(visitor::styled_jsx(
         cm,
-        FileName::Anon,
-        config,
+        &FileName::Anon,
+        &config,
         Default::default(),
     ))
 }
