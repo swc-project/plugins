@@ -18,6 +18,17 @@ fn ts_syntax() -> Syntax {
 #[fixture("tests/fixture/**/input.tsx")]
 fn next_emotion_fixture(input: PathBuf) {
     let output = input.parent().unwrap().join("output.ts");
+
+    let test_import_map = serde_json::from_str(include_str!("./testImportMap.json")).unwrap();
+
+    let options = EmotionOptions {
+        enabled: Some(true),
+        sourcemap: Some(true),
+        auto_label: Some(true),
+        import_map: Some(test_import_map),
+        ..Default::default()
+    };
+
     test_fixture(
         ts_syntax(),
         &|tr| {
@@ -37,18 +48,10 @@ fn next_emotion_fixture(input: PathBuf) {
                 unresolved_mark,
             );
 
-            let test_import_map =
-                serde_json::from_str(include_str!("./testImportMap.json")).unwrap();
             let fm = tr.cm.load_file(&input).unwrap();
             (
                 swc_emotion::emotion(
-                    EmotionOptions {
-                        enabled: Some(true),
-                        sourcemap: Some(true),
-                        auto_label: Some(true),
-                        import_map: Some(test_import_map),
-                        ..Default::default()
-                    },
+                    &options,
                     &PathBuf::from("input.ts"),
                     fm.src_hash as u32,
                     tr.cm.clone(),
