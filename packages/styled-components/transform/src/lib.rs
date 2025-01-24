@@ -78,7 +78,7 @@ pub fn styled_components<'a, C>(
     comments: C,
 ) -> impl 'a + Pass
 where
-    C: Comments,
+    C: 'a + Comments,
 {
     let state: Rc<RefCell<State>> = Default::default();
 
@@ -94,7 +94,7 @@ where
                     enabled: config.minify,
                     visitor: minify(state.clone()),
                 },
-                display_name_and_id(file_name, src_file_hash, config.clone(), state.clone()),
+                display_name_and_id(file_name, src_file_hash, config, state.clone()),
                 Optional {
                     enabled: config.transpile_template_literals,
                     visitor: template_literals(state.clone()),
