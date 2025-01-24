@@ -169,7 +169,7 @@ fn emotion_label(input: PathBuf, label: String) {
     let mut output = PathBuf::from(&input);
     output.set_extension("js");
 
-    let optiuons = EmotionOptions {
+    let options = EmotionOptions {
         enabled: Some(true),
         sourcemap: Some(true),
         auto_label: Some(true),
