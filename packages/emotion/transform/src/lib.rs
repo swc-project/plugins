@@ -455,7 +455,7 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
     }
 }
 
-impl<C: Comments> Fold for EmotionTransformer<C> {
+impl<C: Comments> Fold for EmotionTransformer<'_, C> {
     fn fold_call_expr(&mut self, mut expr: CallExpr) -> CallExpr {
         // If no package that we care about is imported, skip the following
         // transformation logic.
@@ -987,7 +987,7 @@ fn remove_space_around_colon(input: &str, is_first_item: bool, is_last_item: boo
     )
 }
 
-impl<C> Pass for EmotionTransformer<C>
+impl<C> Pass for EmotionTransformer<'_, C>
 where
     C: Comments,
 {
