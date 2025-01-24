@@ -176,6 +176,9 @@ fn emotion_label(input: PathBuf, label: String) {
         label_format: Some(label.clone().into()),
         ..Default::default()
     };
+
+    let file_name = PathBuf::from(format!("{output_folder_name}/{input_file_name}"));
+
     test_fixture(
         ts_syntax(),
         &|tr| {
@@ -198,7 +201,7 @@ fn emotion_label(input: PathBuf, label: String) {
             (
                 swc_emotion::emotion(
                     &options,
-                    &PathBuf::from(format!("{output_folder_name}/{input_file_name}")),
+                    &file_name,
                     fm.src_hash as u32,
                     tr.cm.clone(),
                     tr.comments.as_ref().clone(),
