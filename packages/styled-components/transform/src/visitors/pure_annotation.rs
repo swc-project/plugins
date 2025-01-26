@@ -6,9 +6,9 @@ use swc_ecma_visit::{noop_visit_mut_type, visit_mut_pass, VisitMut, VisitMutWith
 
 use crate::utils::State;
 
-pub fn pure_annotation<C>(comments: C, state: &State) -> impl '_ + Pass
+pub fn pure_annotation<'a, C>(comments: C, state: &'a State) -> impl 'a + Pass
 where
-    C: Comments,
+    C: 'a + Comments,
 {
     visit_mut_pass(PureAnnotation { comments, state })
 }

@@ -1,6 +1,6 @@
 //! Port of https://github.com/styled-components/babel-plugin-styled-components/blob/a20c3033508677695953e7a434de4746168eeb4e/src/visitors/transpileCssProp.js
 
-use std::{borrow::Cow, cell::RefCell, collections::HashMap, rc::Rc};
+use std::{borrow::Cow, collections::HashMap};
 
 use inflector::Inflector;
 use once_cell::sync::Lazy;
@@ -24,7 +24,7 @@ use crate::{
 static TAG_NAME_REGEX: Lazy<Regex> =
     Lazy::new(|| Regex::new("^[a-z][a-z\\d]*(\\-[a-z][a-z\\d]*)?$").unwrap());
 
-pub fn transpile_css_prop(state: &State) -> impl Pass {
+pub fn transpile_css_prop(state: &mut State) -> impl '_ + Pass {
     visit_mut_pass(TranspileCssProp {
         state,
         import_name: Default::default(),
@@ -37,7 +37,7 @@ pub fn transpile_css_prop(state: &State) -> impl Pass {
 }
 
 struct TranspileCssProp<'a> {
-    state: &'a State,
+    state: &'a mut State,
 
     import_name: Option<Ident>,
     injected_nodes: Vec<Stmt>,
@@ -81,7 +81,6 @@ impl<'a> VisitMut for TranspileCssProp<'a> {
 
                     let import_name = if let Some(ident) = self
                         .state
-                        .borrow()
                         .import_local_name("default", None)
                         .map(Ident::from)
                     {

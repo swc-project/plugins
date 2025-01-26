@@ -8,7 +8,7 @@ use swc_ecma_visit::{noop_visit_mut_type, visit_mut_pass, VisitMut, VisitMutWith
 
 use crate::utils::State;
 
-pub fn template_literals(state: &State) -> impl Pass {
+pub fn template_literals(state: &State) -> impl '_ + Pass {
     visit_mut_pass(TemplateLiterals { state })
 }
 

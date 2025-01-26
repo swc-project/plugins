@@ -1,11 +1,8 @@
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 
-use std::sync::Arc;
-
 use styled_components::Config;
 use swc_common::{SourceMapper, Spanned};
 use swc_core::{
-    common::FileName,
     ecma::ast::Program,
     plugin::{
         metadata::TransformPluginMetadataContextKind,
