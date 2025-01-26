@@ -4,7 +4,7 @@
 use styled_jsx::{visitor, visitor::Config};
 use swc_core::{
     common::{sync::Lrc, FileName, SourceMap},
-    ecma::{ast::Program, visit::FoldWith},
+    ecma::ast::Program,
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
 };
 
@@ -20,10 +20,10 @@ fn styled_jsx_plugin(program: Program, data: TransformPluginProgramMetadata) -> 
     // TODO(kdy1): This is wrong, but it does not use cm
     let cm = Lrc::new(SourceMap::default());
 
-    program.fold_with(&mut visitor::styled_jsx(
+    program.apply(visitor::styled_jsx(
         cm,
-        FileName::Anon,
-        config,
-        Default::default(),
+        &FileName::Anon,
+        &config,
+        &Default::default(),
     ))
 }

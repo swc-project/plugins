@@ -1,16 +1,12 @@
-use std::{
-    borrow::Cow,
-    path::{Path, PathBuf},
-    sync::Arc,
-};
+use std::{borrow::Cow, path::Path, sync::Arc};
 
 use base64::Engine;
-use fxhash::FxHashMap;
 use once_cell::sync::Lazy;
 use regex::{Regex, RegexBuilder};
+use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
 use sourcemap::{RawToken, SourceMap as RawSourcemap};
-use swc_atoms::JsWord;
+use swc_atoms::{atom, Atom};
 use swc_common::{comments::Comments, util::take::Take, BytePos, SourceMapperDyn, DUMMY_SP};
 use swc_ecma_ast::{
     ArrayLit, CallExpr, Callee, ClassDecl, ClassMethod, ClassProp, Expr, ExprOrSpread, FnDecl, Id,
@@ -20,7 +16,7 @@ use swc_ecma_ast::{
     SourceMapperExt, SpreadElement, Tpl, VarDeclarator,
 };
 use swc_ecma_utils::ExprFactory;
-use swc_ecma_visit::{fold_pass, Fold, FoldWith};
+use swc_ecma_visit::{Fold, FoldWith, Visit, VisitWith};
 use swc_trace_macro::swc_trace;
 
 pub use crate::import_map::*;
@@ -104,13 +100,17 @@ static MULTI_LINE_COMMENT: Lazy<Regex> = Lazy::new(|| {
 static SPACE_AROUND_COLON: Lazy<Regex> =
     Lazy::new(|| Regex::new(r"\s*(?P<s>[:;,\{,\}])\s*").unwrap());
 
+fn default_label_format() -> Atom {
+    atom!("[local]")
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct EmotionOptions {
     pub enabled: Option<bool>,
     pub sourcemap: Option<bool>,
     pub auto_label: Option<bool>,
-    pub label_format: Option<String>,
+    pub label_format: Option<Atom>,
     pub import_map: Option<ImportMap>,
 }
 
@@ -120,7 +120,7 @@ impl Default for EmotionOptions {
             enabled: Some(false),
             sourcemap: Some(true),
             auto_label: Some(true),
-            label_format: Some("[local]".to_owned()),
+            label_format: Some(default_label_format()),
             import_map: None,
         }
     }
@@ -128,7 +128,7 @@ impl Default for EmotionOptions {
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct EmotionModuleConfig {
-    module_name: JsWord,
+    module_name: Atom,
     exported_names: Vec<ExportItem>,
     default_export: Option<ExprKind>,
 }
@@ -161,27 +161,24 @@ enum PackageMeta {
     Namespace(EmotionModuleConfig),
 }
 
-pub fn emotion<C: Comments>(
-    emotion_options: EmotionOptions,
-    path: &Path,
+pub fn emotion<'a, C>(
+    emotion_options: &'a EmotionOptions,
+    path: &'a Path,
     src_file_hash: u32,
     cm: Arc<SourceMapperDyn>,
     comments: C,
-) -> impl Pass {
-    fold_pass(EmotionTransformer::new(
-        emotion_options,
-        path,
-        src_file_hash,
-        cm,
-        comments,
-    ))
+) -> impl 'a + Pass
+where
+    C: 'a + Comments,
+{
+    EmotionTransformer::new(emotion_options, path, src_file_hash, cm, comments)
 }
 
-pub struct EmotionTransformer<C: Comments> {
-    pub options: EmotionOptions,
+pub struct EmotionTransformer<'a, C: Comments> {
+    pub options: &'a EmotionOptions,
     #[allow(unused)]
     filepath_hash: Option<u32>,
-    filepath: PathBuf,
+    filepath: &'a Path,
     dirname: Option<String>,
     filename: Option<String>,
     src_file_hash: u32,
@@ -198,10 +195,10 @@ pub struct EmotionTransformer<C: Comments> {
 }
 
 #[swc_trace]
-impl<C: Comments> EmotionTransformer<C> {
-    pub fn new(
-        options: EmotionOptions,
-        path: &Path,
+impl<'a, C: Comments> EmotionTransformer<'a, C> {
+    fn new(
+        options: &'a EmotionOptions,
+        path: &'a Path,
         src_file_hash: u32,
         cm: Arc<SourceMapperDyn>,
         comments: C,
@@ -214,7 +211,7 @@ impl<C: Comments> EmotionTransformer<C> {
         EmotionTransformer {
             options,
             filepath_hash: None,
-            filepath: path.to_owned(),
+            filepath: path,
             src_file_hash,
             dirname: path
                 .parent()
@@ -258,7 +255,7 @@ impl<C: Comments> EmotionTransformer<C> {
             self.options
                 .label_format
                 .clone()
-                .unwrap_or_else(|| "[local]".to_owned())
+                .unwrap_or_else(default_label_format)
         );
         if let Some(current_context) = &self.current_context {
             label = label.replace("[local]", &self.sanitize_label_part(current_context));
@@ -457,7 +454,7 @@ impl<C: Comments> EmotionTransformer<C> {
     }
 }
 
-impl<C: Comments> Fold for EmotionTransformer<C> {
+impl<C: Comments> Fold for EmotionTransformer<'_, C> {
     fn fold_call_expr(&mut self, mut expr: CallExpr) -> CallExpr {
         // If no package that we care about is imported, skip the following
         // transformation logic.
@@ -987,6 +984,45 @@ fn remove_space_around_colon(input: &str, is_first_item: bool, is_last_item: boo
             }),
         "$s",
     )
+}
+
+impl<C> Pass for EmotionTransformer<'_, C>
+where
+    C: Comments,
+{
+    fn process(&mut self, program: &mut swc_ecma_ast::Program) {
+        let mut checker = ShouldWorkChecker {
+            should_work: false,
+            registered_imports: &self.registered_imports,
+        };
+        program.visit_with(&mut checker);
+        if !checker.should_work {
+            return;
+        }
+
+        program.map_with_mut(|p| p.fold_with(self));
+    }
+}
+
+struct ShouldWorkChecker<'a> {
+    should_work: bool,
+
+    registered_imports: &'a [EmotionModuleConfig],
+}
+
+impl Visit for ShouldWorkChecker<'_> {
+    fn visit_import_decl(&mut self, i: &ImportDecl) {
+        if self
+            .registered_imports
+            .iter()
+            .any(|item| item.module_name == i.src.value)
+        {
+            self.should_work = true;
+            return;
+        }
+
+        i.visit_children_with(self);
+    }
 }
 
 #[cfg(test)]

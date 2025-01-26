@@ -1,5 +1,6 @@
 use std::path::PathBuf;
 
+use swc_atoms::Atom;
 use swc_common::{comments::SingleThreadedComments, Mark};
 use swc_ecma_parser::{Syntax, TsSyntax};
 use swc_ecma_transforms_react::{jsx, Runtime};
@@ -17,6 +18,19 @@ fn ts_syntax() -> Syntax {
 #[fixture("tests/fixture/**/input.tsx")]
 fn next_emotion_fixture(input: PathBuf) {
     let output = input.parent().unwrap().join("output.ts");
+
+    let test_import_map = serde_json::from_str(include_str!("./testImportMap.json")).unwrap();
+
+    let options = EmotionOptions {
+        enabled: Some(true),
+        sourcemap: Some(true),
+        auto_label: Some(true),
+        import_map: Some(test_import_map),
+        ..Default::default()
+    };
+
+    let path = PathBuf::from("input.ts");
+
     test_fixture(
         ts_syntax(),
         &|tr| {
@@ -36,19 +50,11 @@ fn next_emotion_fixture(input: PathBuf) {
                 unresolved_mark,
             );
 
-            let test_import_map =
-                serde_json::from_str(include_str!("./testImportMap.json")).unwrap();
             let fm = tr.cm.load_file(&input).unwrap();
             (
                 swc_emotion::emotion(
-                    EmotionOptions {
-                        enabled: Some(true),
-                        sourcemap: Some(true),
-                        auto_label: Some(true),
-                        import_map: Some(test_import_map),
-                        ..Default::default()
-                    },
-                    &PathBuf::from("input.ts"),
+                    &options,
+                    &path,
                     fm.src_hash as u32,
                     tr.cm.clone(),
                     tr.comments.as_ref().clone(),
@@ -82,17 +88,27 @@ fn emotion_label_option_fixture(output: PathBuf) {
     let mut pseudo_input_path = PathBuf::from(output_folder);
     pseudo_input_path.push("input.tsx");
 
-    let label_option = if output_folder_name.contains('-') {
+    let label_option: Atom = if output_folder_name.contains('-') {
         // Multiple labelling specifiers, e.g. [filename]-[local]
         output_folder_name
             .split('-')
             .map(|s| format!("[{s}]"))
             .collect::<Vec<String>>()
             .join("-")
+            .into()
     } else {
         // Singular labelling specifiers, e.g. [local]
-        format!("[{output_folder_name}]")
+        format!("[{output_folder_name}]").into()
     };
+
+    let options = EmotionOptions {
+        enabled: Some(true),
+        sourcemap: Some(true),
+        auto_label: Some(true),
+        label_format: Some(label_option.clone()),
+        ..Default::default()
+    };
+    let file_name = PathBuf::from(format!("{output_folder_name}/index.tsx"));
 
     test_fixture(
         ts_syntax(),
@@ -115,14 +131,8 @@ fn emotion_label_option_fixture(output: PathBuf) {
             let fm: std::sync::Arc<swc_common::SourceFile> = tr.cm.load_file(&input).unwrap();
             (
                 swc_emotion::emotion(
-                    EmotionOptions {
-                        enabled: Some(true),
-                        sourcemap: Some(true),
-                        auto_label: Some(true),
-                        label_format: Some(label_option.to_string()),
-                        ..Default::default()
-                    },
-                    &PathBuf::from(format!("{output_folder_name}/index.tsx")),
+                    &options,
+                    &file_name,
                     fm.src_hash as u32,
                     tr.cm.clone(),
                     tr.comments.as_ref().clone(),
@@ -159,6 +169,16 @@ fn emotion_label(input: PathBuf, label: String) {
     let mut output = PathBuf::from(&input);
     output.set_extension("js");
 
+    let options = EmotionOptions {
+        enabled: Some(true),
+        sourcemap: Some(true),
+        auto_label: Some(true),
+        label_format: Some(label.clone().into()),
+        ..Default::default()
+    };
+
+    let file_name = PathBuf::from(format!("{output_folder_name}/{input_file_name}"));
+
     test_fixture(
         ts_syntax(),
         &|tr| {
@@ -180,14 +200,8 @@ fn emotion_label(input: PathBuf, label: String) {
             let fm = tr.cm.load_file(&input).unwrap();
             (
                 swc_emotion::emotion(
-                    EmotionOptions {
-                        enabled: Some(true),
-                        sourcemap: Some(true),
-                        auto_label: Some(true),
-                        label_format: Some(label.to_owned()),
-                        ..Default::default()
-                    },
-                    &PathBuf::from(format!("{output_folder_name}/{input_file_name}")),
+                    &options,
+                    &file_name,
                     fm.src_hash as u32,
                     tr.cm.clone(),
                     tr.comments.as_ref().clone(),

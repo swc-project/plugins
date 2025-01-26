@@ -8,14 +8,16 @@ use std::{
 use anyhow::{bail, format_err, Error, Result};
 use preset_env_base::Versions;
 use serde::Deserialize;
-use swc_common::{collections::AHashSet, errors::HANDLER, FileName, SourceMap, Span, DUMMY_SP};
+use swc_common::{
+    collections::AHashSet, errors::HANDLER, util::take::Take, FileName, SourceMap, Span, DUMMY_SP,
+};
 use swc_ecma_ast::*;
 use swc_ecma_minifier::{
     eval::{EvalResult, Evaluator},
     marks::Marks,
 };
 use swc_ecma_utils::{collect_decls, drop_span, prepend_stmt, private_ident};
-use swc_ecma_visit::{fold_pass, Fold, FoldWith};
+use swc_ecma_visit::{Fold, FoldWith, Visit, VisitWith};
 
 use crate::{
     style::{ExternalStyle, JSXStyle, LocalStyle},
@@ -60,12 +62,12 @@ impl NativeConfig<'_> {
     }
 }
 
-pub fn styled_jsx(
+pub fn styled_jsx<'a>(
     cm: Arc<SourceMap>,
-    file_name: FileName,
-    config: Config,
-    native_config: NativeConfig<'_>,
-) -> impl '_ + Pass + Fold {
+    file_name: &'a FileName,
+    config: &'a Config,
+    native_config: &'a NativeConfig<'a>,
+) -> impl 'a + Pass {
     let file_name = match file_name {
         FileName::Real(real_file_name) => real_file_name
             .to_str()
@@ -73,7 +75,7 @@ pub fn styled_jsx(
         _ => None,
     };
 
-    fold_pass(StyledJSXTransformer {
+    StyledJSXTransformer {
         cm,
         config,
         native_config,
@@ -95,13 +97,13 @@ pub fn styled_jsx(
         in_function_params: Default::default(),
         evaluator: Default::default(),
         visiting_styled_jsx_descendants: Default::default(),
-    })
+    }
 }
 
 struct StyledJSXTransformer<'a> {
     cm: Arc<SourceMap>,
-    config: Config,
-    native_config: NativeConfig<'a>,
+    config: &'a Config,
+    native_config: &'a NativeConfig<'a>,
 
     file_name: Option<String>,
     styles: Vec<JSXStyle>,
@@ -615,7 +617,7 @@ impl StyledJSXTransformer<'_> {
                         is_global,
                         &self.static_class_name,
                         &self.config.browsers,
-                        &self.native_config,
+                        self.native_config,
                     )?
                 } else {
                     crate::transform_css_swc::transform_css(
@@ -623,7 +625,7 @@ impl StyledJSXTransformer<'_> {
                         style_info,
                         is_global,
                         &self.static_class_name,
-                        &self.native_config,
+                        self.native_config,
                     )?
                 };
 
@@ -683,7 +685,7 @@ impl StyledJSXTransformer<'_> {
                 tag == "global",
                 &static_class_name,
                 &self.config.browsers,
-                &self.native_config,
+                self.native_config,
             )?
         } else {
             crate::transform_css_swc::transform_css(
@@ -691,7 +693,7 @@ impl StyledJSXTransformer<'_> {
                 style,
                 tag == "global",
                 &static_class_name,
-                &self.native_config,
+                self.native_config,
             )?
         };
         if tag == "resolve" {
@@ -1013,4 +1015,40 @@ fn is_styled_css_import(item: &ModuleItem) -> bool {
         }
     }
     false
+}
+
+impl Pass for StyledJSXTransformer<'_> {
+    fn process(&mut self, program: &mut swc_ecma_ast::Program) {
+        let mut checker = ShouldWorkChecker { should_work: false };
+        program.visit_with(&mut checker);
+        if !checker.should_work {
+            return;
+        }
+
+        program.map_with_mut(|p| p.fold_with(self));
+    }
+}
+
+struct ShouldWorkChecker {
+    should_work: bool,
+}
+
+impl Visit for ShouldWorkChecker {
+    fn visit_import_decl(&mut self, i: &ImportDecl) {
+        if i.src.value == "styled-jsx/css" {
+            self.should_work = true;
+            return;
+        }
+
+        i.visit_children_with(self);
+    }
+
+    fn visit_jsx_element(&mut self, e: &JSXElement) {
+        if is_styled_jsx(e) {
+            self.should_work = true;
+            return;
+        }
+
+        e.visit_children_with(self);
+    }
 }

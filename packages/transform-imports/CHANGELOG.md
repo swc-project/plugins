@@ -1,5 +1,29 @@
 # @swc/plugin-transform-imports
 
+## 6.1.0
+
+### Minor Changes
+
+- 4e7336c: Remove needless allocations
+
+## 6.0.5
+
+### Patch Changes
+
+- e8973e8: Update swc_core to v10.2.3
+
+## 6.0.4
+
+### Patch Changes
+
+- f436a09: Update swc_core to v10.
+
+## 6.0.3
+
+### Patch Changes
+
+- a7a22a2: feat: Support dynamic imports from `transform-imports` plugin
+
 ## 6.0.2
 
 ### Patch Changes

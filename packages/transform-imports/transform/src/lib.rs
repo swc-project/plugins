@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{borrow::Cow, collections::HashMap};
 
 use convert_case::{Case, Casing};
 use handlebars::{Context, Handlebars, Helper, HelperResult, Output, RenderContext};
@@ -51,13 +51,22 @@ impl From<Vec<(String, String)>> for Transform {
     }
 }
 
-struct FoldImports {
-    renderer: handlebars::Handlebars<'static>,
-    packages: Vec<(CachedRegex, PackageConfig)>,
+struct FoldImports<'a> {
+    packages: Vec<(CachedRegex, &'a PackageConfig)>,
 }
 
+static HANDLEBARS: Lazy<Handlebars> = Lazy::new(|| {
+    let mut renderer = Handlebars::new();
+
+    renderer.register_helper("lowerCase", Box::new(helper_lower_case));
+    renderer.register_helper("upperCase", Box::new(helper_upper_case));
+    renderer.register_helper("camelCase", Box::new(helper_camel_case));
+    renderer.register_helper("kebabCase", Box::new(helper_kebab_case));
+
+    renderer
+});
+
 struct Rewriter<'a> {
-    renderer: &'a handlebars::Handlebars<'static>,
     key: &'a str,
     config: &'a PackageConfig,
     group: Vec<&'a str>,
@@ -79,7 +88,7 @@ impl Rewriter<'_> {
         }
 
         let new_path = match &self.config.transform {
-            Transform::String(s) => self.renderer.render_template(s, &ctx).unwrap_or_else(|e| {
+            Transform::String(s) => HANDLEBARS.render_template(s, &ctx).unwrap_or_else(|e| {
                 panic!("error rendering template for '{}': {}", self.key, e);
             }),
             Transform::Vec(v) => {
@@ -114,7 +123,7 @@ impl Rewriter<'_> {
                                 .insert("memberMatches", CtxData::Array(&group[..]));
 
                             result = Some(
-                                self.renderer
+                                HANDLEBARS
                                     .render_template(val, &ctx_with_member_matches)
                                     .unwrap_or_else(|e| {
                                         panic!(
@@ -304,7 +313,7 @@ impl Rewriter<'_> {
     }
 }
 
-impl FoldImports {
+impl FoldImports<'_> {
     fn should_rewrite<'a>(&'a self, name: &'a str) -> Option<Rewriter<'a>> {
         for (regex, config) in &self.packages {
             let group = regex.captures(name);
@@ -314,7 +323,6 @@ impl FoldImports {
                     .map(|x| x.map(|x| x.as_str()).unwrap_or_default())
                     .collect::<Vec<&str>>();
                 return Some(Rewriter {
-                    renderer: &self.renderer,
                     key: name,
                     config,
                     group,
@@ -354,7 +362,7 @@ impl FoldImports {
     }
 }
 
-impl Fold for FoldImports {
+impl Fold for FoldImports<'_> {
     noop_fold_type!();
 
     fn fold_call_expr(&mut self, mut call: CallExpr) -> CallExpr {
@@ -439,27 +447,14 @@ impl Fold for FoldImports {
     }
 }
 
-pub fn modularize_imports(config: Config) -> impl Pass {
-    let mut folder = FoldImports {
-        renderer: handlebars::Handlebars::new(),
-        packages: vec![],
-    };
-    folder
-        .renderer
-        .register_helper("lowerCase", Box::new(helper_lower_case));
-    folder
-        .renderer
-        .register_helper("upperCase", Box::new(helper_upper_case));
-    folder
-        .renderer
-        .register_helper("camelCase", Box::new(helper_camel_case));
-    folder
-        .renderer
-        .register_helper("kebabCase", Box::new(helper_kebab_case));
-    for (mut k, v) in config.packages {
+pub fn modularize_imports(config: &Config) -> impl '_ + Pass {
+    let mut folder = FoldImports { packages: vec![] };
+
+    for (k, v) in &config.packages {
+        let mut k = Cow::Borrowed(k);
         // XXX: Should we keep this hack?
         if !k.starts_with('^') && !k.ends_with('$') {
-            k = format!("^{}$", k);
+            k = Cow::Owned(format!("^{}$", k));
         }
         folder.packages.push((
             CachedRegex::new(&k).expect("transform-imports: invalid regex"),
