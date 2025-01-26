@@ -1,6 +1,6 @@
 //! Port of https://github.com/styled-components/babel-plugin-styled-components/blob/4e2eb388d9c90f2921c306c760657d059d01a518/src/visitors/templateLiterals/transpile.js
 
-use std::{cell::RefCell, iter, rc::Rc};
+use std::iter;
 
 use swc_common::{util::take::Take, DUMMY_SP};
 use swc_ecma_ast::*;
@@ -8,16 +8,16 @@ use swc_ecma_visit::{noop_visit_mut_type, visit_mut_pass, VisitMut, VisitMutWith
 
 use crate::utils::State;
 
-pub fn template_literals(state: Rc<RefCell<State>>) -> impl Pass {
+pub fn template_literals(state: &State) -> impl '_ + Pass {
     visit_mut_pass(TemplateLiterals { state })
 }
 
 #[derive(Debug)]
-struct TemplateLiterals {
-    state: Rc<RefCell<State>>,
+struct TemplateLiterals<'a> {
+    state: &'a State,
 }
 
-impl VisitMut for TemplateLiterals {
+impl VisitMut for TemplateLiterals<'_> {
     noop_visit_mut_type!();
 
     fn visit_mut_expr(&mut self, expr: &mut Expr) {
@@ -26,14 +26,12 @@ impl VisitMut for TemplateLiterals {
         let Expr::TaggedTpl(tagged) = expr else {
             return;
         };
-        if !self.state.borrow().is_styled(&tagged.tag)
-            && !self.state.borrow().is_helper(&tagged.tag)
-        {
+        if !self.state.is_styled(&tagged.tag) && !self.state.is_helper(&tagged.tag) {
             return;
         }
 
         expr.map_with_mut(|expr| {
-            let tagged = expr.expect_tagged_tpl();
+            let tagged: TaggedTpl = expr.expect_tagged_tpl();
 
             let quasis = tagged
                 .tpl

@@ -1,42 +1,11 @@
-use std::{cell::RefCell, rc::Rc};
-
 use swc_ecma_ast::*;
-use swc_ecma_visit::{
-    noop_visit_mut_type, noop_visit_type, visit_mut_pass, Visit, VisitMut, VisitWith,
-};
+use swc_ecma_visit::{noop_visit_type, visit_pass, Visit, VisitWith};
 
 use super::State;
 use crate::Config;
 
-pub fn analyzer(config: &Config, state: Rc<RefCell<State>>) -> impl '_ + Pass {
-    visit_mut_pass(AsAnalyzer { config, state })
-}
-
-struct AsAnalyzer<'a> {
-    config: &'a Config,
-    state: Rc<RefCell<State>>,
-}
-
-impl VisitMut for AsAnalyzer<'_> {
-    noop_visit_mut_type!();
-
-    fn visit_mut_module(&mut self, p: &mut Module) {
-        let mut v = Analyzer {
-            config: self.config,
-            state: &mut self.state.borrow_mut(),
-        };
-
-        p.visit_with(&mut v);
-    }
-
-    fn visit_mut_script(&mut self, p: &mut Script) {
-        let mut v = Analyzer {
-            config: self.config,
-            state: &mut self.state.borrow_mut(),
-        };
-
-        p.visit_with(&mut v);
-    }
+pub fn analyzer<'a>(config: &'a Config, state: &'a mut State) -> impl 'a + Pass {
+    visit_pass(Analyzer { config, state })
 }
 
 pub fn analyze(config: &Config, program: &Program) -> State {

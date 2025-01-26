@@ -1,6 +1,6 @@
 //! Port of https://github.com/styled-components/babel-plugin-styled-components/blob/a20c3033508677695953e7a434de4746168eeb4e/src/visitors/transpileCssProp.js
 
-use std::{borrow::Cow, cell::RefCell, collections::HashMap, rc::Rc};
+use std::{borrow::Cow, collections::HashMap};
 
 use inflector::Inflector;
 use once_cell::sync::Lazy;
@@ -24,16 +24,20 @@ use crate::{
 static TAG_NAME_REGEX: Lazy<Regex> =
     Lazy::new(|| Regex::new("^[a-z][a-z\\d]*(\\-[a-z][a-z\\d]*)?$").unwrap());
 
-pub fn transpile_css_prop(state: Rc<RefCell<State>>) -> impl Pass {
+pub fn transpile_css_prop(state: &mut State) -> impl '_ + Pass {
     visit_mut_pass(TranspileCssProp {
         state,
-        ..Default::default()
+        import_name: Default::default(),
+        injected_nodes: Default::default(),
+        interleaved_injections: Default::default(),
+        identifier_idx: Default::default(),
+        styled_idx: Default::default(),
+        top_level_decls: Default::default(),
     })
 }
 
-#[derive(Default)]
-struct TranspileCssProp {
-    state: Rc<RefCell<State>>,
+struct TranspileCssProp<'a> {
+    state: &'a mut State,
 
     import_name: Option<Ident>,
     injected_nodes: Vec<Stmt>,
@@ -44,7 +48,7 @@ struct TranspileCssProp {
     top_level_decls: Option<AHashSet<Id>>,
 }
 
-impl TranspileCssProp {
+impl TranspileCssProp<'_> {
     fn next_styled_idx(&mut self, key: JsWord) -> usize {
         let idx = self.styled_idx.entry(key).or_insert(0);
         *idx += 1;
@@ -60,7 +64,7 @@ impl TranspileCssProp {
     }
 }
 
-impl VisitMut for TranspileCssProp {
+impl VisitMut for TranspileCssProp<'_> {
     noop_visit_mut_type!();
 
     fn visit_mut_jsx_element(&mut self, elem: &mut JSXElement) {
@@ -77,7 +81,6 @@ impl VisitMut for TranspileCssProp {
 
                     let import_name = if let Some(ident) = self
                         .state
-                        .borrow()
                         .import_local_name("default", None)
                         .map(Ident::from)
                     {
@@ -352,7 +355,7 @@ impl VisitMut for TranspileCssProp {
         self.top_level_decls = None;
 
         if let Some(import_name) = self.import_name.take() {
-            self.state.borrow_mut().set_import_name(import_name.to_id());
+            self.state.set_import_name(import_name.to_id());
             let specifier = ImportSpecifier::Default(ImportDefaultSpecifier {
                 span: DUMMY_SP,
                 local: import_name,

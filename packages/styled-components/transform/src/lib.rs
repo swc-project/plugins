@@ -1,11 +1,9 @@
 #![deny(unused)]
 
-use std::{cell::RefCell, rc::Rc};
-
 use serde::Deserialize;
 use swc_atoms::JsWord;
-use swc_common::{comments::Comments, pass::Optional, FileName};
-use swc_ecma_ast::{Pass, Program};
+use swc_common::{comments::Comments, pass::Optional};
+use swc_ecma_ast::{fn_pass, Pass};
 
 pub use crate::{
     utils::{analyze, analyzer, State},
@@ -72,63 +70,41 @@ impl Config {
 }
 
 pub fn styled_components<'a, C>(
-    file_name: &'a FileName,
+    file_name: Option<&'a str>,
     src_file_hash: u128,
     config: &'a Config,
     comments: C,
 ) -> impl 'a + Pass
 where
-    C: 'a + Comments,
+    C: 'a + Comments + Clone,
 {
-    let state: Rc<RefCell<State>> = Default::default();
+    fn_pass(move |program| {
+        let mut state = State::default();
 
-    (
-        analyzer(config, state.clone()),
-        Optional {
-            enabled: config.css_prop,
-            visitor: transpile_css_prop(state.clone()),
-        },
-        MayWork {
-            pass: (
-                Optional {
-                    enabled: config.minify,
-                    visitor: minify(state.clone()),
-                },
-                display_name_and_id(file_name, src_file_hash, config, state.clone()),
-                Optional {
-                    enabled: config.transpile_template_literals,
-                    visitor: template_literals(state.clone()),
-                },
-                Optional {
-                    enabled: config.pure,
-                    visitor: pure_annotation(comments, state.clone()),
-                },
-            ),
-            state,
-        },
-    )
-}
+        program.mutate(analyzer(config, &mut state));
 
-struct MayWork<P>
-where
-    P: Pass,
-{
-    pass: P,
-    state: Rc<RefCell<State>>,
-}
-
-impl<P> Pass for MayWork<P>
-where
-    P: Pass,
-{
-    fn process(&mut self, p: &mut Program) {
-        {
-            let state = self.state.borrow();
-            if !state.need_work() {
-                return;
-            }
+        if config.css_prop {
+            program.mutate(transpile_css_prop(&mut state));
         }
 
-        self.pass.process(p);
-    }
+        if !state.need_work() {
+            return;
+        }
+
+        program.mutate((
+            Optional {
+                enabled: config.minify,
+                visitor: minify(&state),
+            },
+            display_name_and_id(file_name, src_file_hash, config, &state),
+            Optional {
+                enabled: config.transpile_template_literals,
+                visitor: template_literals(&state),
+            },
+            Optional {
+                enabled: config.pure,
+                visitor: pure_annotation(comments.clone(), &state),
+            },
+        ));
+    })
 }

@@ -1,11 +1,8 @@
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 
-use std::sync::Arc;
-
 use styled_components::Config;
 use swc_common::{SourceMapper, Spanned};
 use swc_core::{
-    common::FileName,
     ecma::ast::Program,
     plugin::{
         metadata::TransformPluginMetadataContextKind,
@@ -23,18 +20,13 @@ fn styled_components(mut program: Program, data: TransformPluginProgramMetadata)
     )
     .expect("invalid config for styled-components");
 
-    let file_name = Arc::new(
-        match data.get_context(&TransformPluginMetadataContextKind::Filename) {
-            Some(s) => FileName::Real(s.into()),
-            None => FileName::Anon,
-        },
-    );
+    let file_name = data.get_context(&TransformPluginMetadataContextKind::Filename);
 
     let pos = data.source_map.lookup_char_pos(program.span().lo);
     let hash = pos.file.src_hash;
 
     program.mutate(styled_components::styled_components(
-        &file_name,
+        file_name.as_deref(),
         hash,
         &config,
         PluginCommentsProxy,

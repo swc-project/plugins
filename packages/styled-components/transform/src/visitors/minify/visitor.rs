@@ -1,7 +1,5 @@
 //! Port of https://github.com/styled-components/babel-plugin-styled-components/blob/4e2eb388d9c90f2921c306c760657d059d01a518/src/visitors/minify.js
 
-use std::{cell::RefCell, rc::Rc};
-
 use swc_common::DUMMY_SP;
 use swc_ecma_ast::*;
 use swc_ecma_visit::{noop_visit_mut_type, visit_mut_pass, VisitMut, VisitMutWith};
@@ -9,16 +7,16 @@ use swc_ecma_visit::{noop_visit_mut_type, visit_mut_pass, VisitMut, VisitMutWith
 use super::css::{minify_raw_values, MinifyResult};
 use crate::utils::State;
 
-pub fn minify(state: Rc<RefCell<State>>) -> impl Pass {
+pub fn minify(state: &State) -> impl '_ + Pass {
     visit_mut_pass(Minify { state })
 }
 
 #[derive(Debug)]
-struct Minify {
-    state: Rc<RefCell<State>>,
+struct Minify<'a> {
+    state: &'a State,
 }
 
-impl VisitMut for Minify {
+impl VisitMut for Minify<'_> {
     noop_visit_mut_type!();
 
     fn visit_mut_expr(&mut self, expr: &mut Expr) {
@@ -27,9 +25,7 @@ impl VisitMut for Minify {
         let Expr::TaggedTpl(tagged) = expr else {
             return;
         };
-        if !self.state.borrow().is_styled(&tagged.tag)
-            && !self.state.borrow().is_helper(&tagged.tag)
-        {
+        if !self.state.is_styled(&tagged.tag) && !self.state.is_helper(&tagged.tag) {
             return;
         }
 
