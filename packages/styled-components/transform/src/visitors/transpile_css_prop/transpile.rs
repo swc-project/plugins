@@ -377,6 +377,10 @@ impl VisitMut for TranspileCssProp<'_> {
             );
         }
 
+        if !self.state.need_work() {
+            return;
+        }
+
         let mut serialized_body: Vec<ModuleItem> = vec![];
         let body = std::mem::take(&mut n.body);
         for item in body {
