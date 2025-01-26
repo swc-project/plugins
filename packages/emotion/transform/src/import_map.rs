@@ -1,8 +1,11 @@
+use std::sync::Arc;
+
+use once_cell::sync::Lazy;
 use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
 use swc_atoms::JsWord;
 
-use crate::{EmotionModuleConfig, ExportItem};
+use crate::{EmotionModuleConfig, ExportItem, ExprKind};
 
 /// key: `importSource`
 pub type ImportMap = FxHashMap<JsWord, ImportMapValue>;
@@ -21,10 +24,65 @@ pub struct ImportItemConfig {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ItemSpecifier(pub JsWord, pub JsWord);
 
-pub(crate) fn expand_import_map(
-    map: Option<&ImportMap>,
-    mut imports: Vec<EmotionModuleConfig>,
-) -> Vec<EmotionModuleConfig> {
+static EMOTION_OFFICIAL_LIBRARIES: Lazy<Arc<Vec<EmotionModuleConfig>>> = Lazy::new(|| {
+    Arc::new(vec![
+        EmotionModuleConfig {
+            module_name: "@emotion/css".into(),
+            exported_names: vec![ExportItem {
+                name: "css".to_owned(),
+                kind: ExprKind::Css,
+            }],
+            default_export: Some(ExprKind::Css),
+        },
+        EmotionModuleConfig {
+            module_name: "@emotion/styled".into(),
+            exported_names: vec![],
+            default_export: Some(ExprKind::Styled),
+        },
+        EmotionModuleConfig {
+            module_name: "@emotion/react".into(),
+            exported_names: vec![
+                ExportItem {
+                    name: "css".to_owned(),
+                    kind: ExprKind::Css,
+                },
+                ExportItem {
+                    name: "keyframes".to_owned(),
+                    kind: ExprKind::Css,
+                },
+                ExportItem {
+                    name: "Global".to_owned(),
+                    kind: ExprKind::GlobalJSX,
+                },
+            ],
+            ..Default::default()
+        },
+        EmotionModuleConfig {
+            module_name: "@emotion/primitives".into(),
+            exported_names: vec![ExportItem {
+                name: "css".to_owned(),
+                kind: ExprKind::Css,
+            }],
+            default_export: Some(ExprKind::Styled),
+        },
+        EmotionModuleConfig {
+            module_name: "@emotion/native".into(),
+            exported_names: vec![ExportItem {
+                name: "css".to_owned(),
+                kind: ExprKind::Css,
+            }],
+            default_export: Some(ExprKind::Styled),
+        },
+    ])
+});
+
+pub(crate) fn expand_import_map(map: Option<&ImportMap>) -> Arc<Vec<EmotionModuleConfig>> {
+    if map.is_none() {
+        return EMOTION_OFFICIAL_LIBRARIES.clone();
+    }
+
+    let mut imports = EMOTION_OFFICIAL_LIBRARIES.to_vec();
+
     if let Some(map) = map {
         map.iter().for_each(|(import_source, value)| {
             value.iter().for_each(
@@ -83,5 +141,5 @@ pub(crate) fn expand_import_map(
         });
     }
 
-    imports
+    Arc::new(imports)
 }

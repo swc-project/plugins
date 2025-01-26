@@ -9,11 +9,11 @@ use sourcemap::{RawToken, SourceMap as RawSourcemap};
 use swc_atoms::{atom, Atom};
 use swc_common::{comments::Comments, util::take::Take, BytePos, SourceMapperDyn, DUMMY_SP};
 use swc_ecma_ast::{
-    ArrayLit, CallExpr, Callee, ClassDecl, ClassMethod, ClassProp, Expr, ExprOrSpread, FnDecl, Id,
-    Ident, IdentName, ImportDecl, ImportSpecifier, JSXAttr, JSXAttrName, JSXAttrOrSpread,
-    JSXAttrValue, JSXElement, JSXElementName, JSXExpr, JSXExprContainer, JSXObject, KeyValueProp,
-    MemberProp, MethodProp, ModuleExportName, ObjectLit, Pass, Pat, Prop, PropName, PropOrSpread,
-    SourceMapperExt, SpreadElement, Tpl, VarDeclarator,
+    fn_pass, ArrayLit, CallExpr, Callee, ClassDecl, ClassMethod, ClassProp, Expr, ExprOrSpread,
+    FnDecl, Id, Ident, IdentName, ImportDecl, ImportSpecifier, JSXAttr, JSXAttrName,
+    JSXAttrOrSpread, JSXAttrValue, JSXElement, JSXElementName, JSXExpr, JSXExprContainer,
+    JSXObject, KeyValueProp, MemberProp, MethodProp, ModuleExportName, ObjectLit, Pass, Pat, Prop,
+    PropName, PropOrSpread, SourceMapperExt, SpreadElement, Tpl, VarDeclarator,
 };
 use swc_ecma_utils::ExprFactory;
 use swc_ecma_visit::{Fold, FoldWith, Visit, VisitWith};
@@ -22,58 +22,6 @@ use swc_trace_macro::swc_trace;
 pub use crate::import_map::*;
 
 mod import_map;
-
-static EMOTION_OFFICIAL_LIBRARIES: Lazy<Vec<EmotionModuleConfig>> = Lazy::new(|| {
-    vec![
-        EmotionModuleConfig {
-            module_name: "@emotion/css".into(),
-            exported_names: vec![ExportItem {
-                name: "css".to_owned(),
-                kind: ExprKind::Css,
-            }],
-            default_export: Some(ExprKind::Css),
-        },
-        EmotionModuleConfig {
-            module_name: "@emotion/styled".into(),
-            exported_names: vec![],
-            default_export: Some(ExprKind::Styled),
-        },
-        EmotionModuleConfig {
-            module_name: "@emotion/react".into(),
-            exported_names: vec![
-                ExportItem {
-                    name: "css".to_owned(),
-                    kind: ExprKind::Css,
-                },
-                ExportItem {
-                    name: "keyframes".to_owned(),
-                    kind: ExprKind::Css,
-                },
-                ExportItem {
-                    name: "Global".to_owned(),
-                    kind: ExprKind::GlobalJSX,
-                },
-            ],
-            ..Default::default()
-        },
-        EmotionModuleConfig {
-            module_name: "@emotion/primitives".into(),
-            exported_names: vec![ExportItem {
-                name: "css".to_owned(),
-                kind: ExprKind::Css,
-            }],
-            default_export: Some(ExprKind::Styled),
-        },
-        EmotionModuleConfig {
-            module_name: "@emotion/native".into(),
-            exported_names: vec![ExportItem {
-                name: "css".to_owned(),
-                kind: ExprKind::Css,
-            }],
-            default_export: Some(ExprKind::Styled),
-        },
-    ]
-});
 
 static INVALID_LABEL_SPACES: Lazy<Regex> = Lazy::new(|| RegexBuilder::new(r"\s+").build().unwrap());
 
@@ -162,19 +110,43 @@ enum PackageMeta {
 }
 
 pub fn emotion<'a, C>(
-    emotion_options: &'a EmotionOptions,
+    options: &'a EmotionOptions,
     path: &'a Path,
     src_file_hash: u32,
     cm: Arc<SourceMapperDyn>,
     comments: C,
 ) -> impl 'a + Pass
 where
-    C: 'a + Comments,
+    C: 'a + Comments + Clone,
 {
-    EmotionTransformer::new(emotion_options, path, src_file_hash, cm, comments)
+    fn_pass(move |program| {
+        let registered_imports = self::import_map::expand_import_map(options.import_map.as_ref());
+
+        let mut checker = ShouldWorkChecker {
+            should_work: false,
+            registered_imports: &registered_imports,
+        };
+        program.visit_with(&mut checker);
+        if !checker.should_work {
+            return;
+        }
+
+        program.map_with_mut(|p| {
+            let mut pass = EmotionTransformer::new(
+                options,
+                path,
+                src_file_hash,
+                cm.clone(),
+                comments.clone(),
+                registered_imports,
+            );
+
+            p.fold_with(&mut pass)
+        });
+    })
 }
 
-pub struct EmotionTransformer<'a, C: Comments> {
+struct EmotionTransformer<'a, C: Comments> {
     pub options: &'a EmotionOptions,
     #[allow(unused)]
     filepath_hash: Option<u32>,
@@ -191,7 +163,7 @@ pub struct EmotionTransformer<'a, C: Comments> {
     // skip `css` transformation if it in JSX Element/Attribute
     in_jsx_element: bool,
 
-    registered_imports: Vec<EmotionModuleConfig>,
+    registered_imports: Arc<Vec<EmotionModuleConfig>>,
 }
 
 #[swc_trace]
@@ -202,12 +174,8 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
         src_file_hash: u32,
         cm: Arc<SourceMapperDyn>,
         comments: C,
+        registered_imports: Arc<Vec<EmotionModuleConfig>>,
     ) -> Self {
-        let registered_imports = self::import_map::expand_import_map(
-            options.import_map.as_ref(),
-            EMOTION_OFFICIAL_LIBRARIES.to_vec(),
-        );
-
         EmotionTransformer {
             options,
             filepath_hash: None,
@@ -984,24 +952,6 @@ fn remove_space_around_colon(input: &str, is_first_item: bool, is_last_item: boo
             }),
         "$s",
     )
-}
-
-impl<C> Pass for EmotionTransformer<'_, C>
-where
-    C: Comments,
-{
-    fn process(&mut self, program: &mut swc_ecma_ast::Program) {
-        let mut checker = ShouldWorkChecker {
-            should_work: false,
-            registered_imports: &self.registered_imports,
-        };
-        program.visit_with(&mut checker);
-        if !checker.should_work {
-            return;
-        }
-
-        program.map_with_mut(|p| p.fold_with(self));
-    }
 }
 
 struct ShouldWorkChecker<'a> {

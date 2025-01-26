@@ -1,5 +1,11 @@
 # @swc/plugin-emotion
 
+## 8.4.0
+
+### Minor Changes
+
+- 6f6fff8: Improve performance
+
 ## 8.3.0
 
 ### Minor Changes
