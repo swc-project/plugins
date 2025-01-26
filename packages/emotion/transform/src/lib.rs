@@ -9,11 +9,11 @@ use sourcemap::{RawToken, SourceMap as RawSourcemap};
 use swc_atoms::{atom, Atom};
 use swc_common::{comments::Comments, util::take::Take, BytePos, SourceMapperDyn, DUMMY_SP};
 use swc_ecma_ast::{
-    ArrayLit, CallExpr, Callee, ClassDecl, ClassMethod, ClassProp, Expr, ExprOrSpread, FnDecl, Id,
-    Ident, IdentName, ImportDecl, ImportSpecifier, JSXAttr, JSXAttrName, JSXAttrOrSpread,
-    JSXAttrValue, JSXElement, JSXElementName, JSXExpr, JSXExprContainer, JSXObject, KeyValueProp,
-    MemberProp, MethodProp, ModuleExportName, ObjectLit, Pass, Pat, Prop, PropName, PropOrSpread,
-    SourceMapperExt, SpreadElement, Tpl, VarDeclarator,
+    fn_pass, ArrayLit, CallExpr, Callee, ClassDecl, ClassMethod, ClassProp, Expr, ExprOrSpread,
+    FnDecl, Id, Ident, IdentName, ImportDecl, ImportSpecifier, JSXAttr, JSXAttrName,
+    JSXAttrOrSpread, JSXAttrValue, JSXElement, JSXElementName, JSXExpr, JSXExprContainer,
+    JSXObject, KeyValueProp, MemberProp, MethodProp, ModuleExportName, ObjectLit, Pass, Pat, Prop,
+    PropName, PropOrSpread, SourceMapperExt, SpreadElement, Tpl, VarDeclarator,
 };
 use swc_ecma_utils::ExprFactory;
 use swc_ecma_visit::{Fold, FoldWith, Visit, VisitWith};
@@ -171,7 +171,23 @@ pub fn emotion<'a, C>(
 where
     C: 'a + Comments,
 {
-    EmotionTransformer::new(emotion_options, path, src_file_hash, cm, comments)
+    fn_pass(move |program| {
+        let mut checker = ShouldWorkChecker {
+            should_work: false,
+            registered_imports: &self.registered_imports,
+        };
+        program.visit_with(&mut checker);
+        if !checker.should_work {
+            return;
+        }
+
+        program.map_with_mut(|p| {
+            let mut pass =
+                EmotionTransformer::new(emotion_options, path, src_file_hash, cm, comments);
+
+            p.fold_with(&mut pass)
+        });
+    })
 }
 
 struct EmotionTransformer<'a, C: Comments> {
@@ -984,24 +1000,6 @@ fn remove_space_around_colon(input: &str, is_first_item: bool, is_last_item: boo
             }),
         "$s",
     )
-}
-
-impl<C> Pass for EmotionTransformer<'_, C>
-where
-    C: Comments,
-{
-    fn process(&mut self, program: &mut swc_ecma_ast::Program) {
-        let mut checker = ShouldWorkChecker {
-            should_work: false,
-            registered_imports: &self.registered_imports,
-        };
-        program.visit_with(&mut checker);
-        if !checker.should_work {
-            return;
-        }
-
-        program.map_with_mut(|p| p.fold_with(self));
-    }
 }
 
 struct ShouldWorkChecker<'a> {
