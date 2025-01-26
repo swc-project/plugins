@@ -76,7 +76,7 @@ pub fn styled_components<'a, C>(
     comments: C,
 ) -> impl 'a + Pass
 where
-    C: 'a + Comments,
+    C: 'a + Comments + Clone,
 {
     fn_pass(move |program| {
         let mut state = State::default();
@@ -103,7 +103,7 @@ where
             },
             Optional {
                 enabled: config.pure,
-                visitor: pure_annotation(comments, &state),
+                visitor: pure_annotation(comments.clone(), &state),
             },
         ));
     })

@@ -1,4 +1,4 @@
-use std::{cell::RefCell, convert::TryInto, path::Path, rc::Rc};
+use std::{convert::TryInto, path::Path};
 
 use once_cell::sync::Lazy;
 use regex::Regex;
@@ -261,7 +261,7 @@ impl VisitMut for DisplayNameAndId<'_> {
         expr.visit_mut_children_with(self);
 
         let is_styled = match expr {
-            Expr::TaggedTpl(e) => self.state.borrow().is_styled(&e.tag),
+            Expr::TaggedTpl(e) => self.state.is_styled(&e.tag),
 
             Expr::Call(CallExpr {
                 callee: Callee::Expr(callee),
@@ -269,19 +269,19 @@ impl VisitMut for DisplayNameAndId<'_> {
             }) => {
                 (
                     // callee is styled.div
-                    self.state.borrow().is_styled(callee)
+                    self.state.is_styled(callee)
                         && get_property_as_ident(callee)
                             .map(|v| v != "withConfig")
                             .unwrap_or(false)
                 ) || (
                     // callee is styled(MyComponent)
-                    self.state.borrow().is_styled(callee)
+                    self.state.is_styled(callee)
                         && !get_callee(callee)
                             .map(|callee| callee.is_member())
                             .unwrap_or(false)
                 ) || (
                     // callee is styled(MyComponent).attrs(...)
-                    self.state.borrow().is_styled(callee)
+                    self.state.is_styled(callee)
                         && get_callee(callee)
                             .and_then(get_property_as_ident)
                             .map(|v| v != "withConfig")
@@ -289,7 +289,7 @@ impl VisitMut for DisplayNameAndId<'_> {
                 ) || (
                     // callee is styled(MyComponent).withConfig({ ... }), and componentId or
                     // displayName is not set
-                    self.state.borrow().is_styled(callee)
+                    self.state.is_styled(callee)
                         && get_callee(callee)
                             .and_then(get_property_as_ident)
                             .map(|v| v == "withConfig")
