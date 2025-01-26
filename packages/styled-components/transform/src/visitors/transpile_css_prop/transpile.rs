@@ -24,16 +24,20 @@ use crate::{
 static TAG_NAME_REGEX: Lazy<Regex> =
     Lazy::new(|| Regex::new("^[a-z][a-z\\d]*(\\-[a-z][a-z\\d]*)?$").unwrap());
 
-pub fn transpile_css_prop(state: Rc<RefCell<State>>) -> impl Pass {
+pub fn transpile_css_prop(state: &State) -> impl Pass {
     visit_mut_pass(TranspileCssProp {
         state,
-        ..Default::default()
+        import_name: Default::default(),
+        injected_nodes: Default::default(),
+        interleaved_injections: Default::default(),
+        identifier_idx: Default::default(),
+        styled_idx: Default::default(),
+        top_level_decls: Default::default(),
     })
 }
 
-#[derive(Default)]
-struct TranspileCssProp {
-    state: Rc<RefCell<State>>,
+struct TranspileCssProp<'a> {
+    state: &'a State,
 
     import_name: Option<Ident>,
     injected_nodes: Vec<Stmt>,
@@ -44,7 +48,7 @@ struct TranspileCssProp {
     top_level_decls: Option<AHashSet<Id>>,
 }
 
-impl TranspileCssProp {
+impl<'a> TranspileCssProp<'a> {
     fn next_styled_idx(&mut self, key: JsWord) -> usize {
         let idx = self.styled_idx.entry(key).or_insert(0);
         *idx += 1;
@@ -60,7 +64,7 @@ impl TranspileCssProp {
     }
 }
 
-impl VisitMut for TranspileCssProp {
+impl<'a> VisitMut for TranspileCssProp<'a> {
     noop_visit_mut_type!();
 
     fn visit_mut_jsx_element(&mut self, elem: &mut JSXElement) {
@@ -352,7 +356,7 @@ impl VisitMut for TranspileCssProp {
         self.top_level_decls = None;
 
         if let Some(import_name) = self.import_name.take() {
-            self.state.borrow_mut().set_import_name(import_name.to_id());
+            self.state.set_import_name(import_name.to_id());
             let specifier = ImportSpecifier::Default(ImportDefaultSpecifier {
                 span: DUMMY_SP,
                 local: import_name,

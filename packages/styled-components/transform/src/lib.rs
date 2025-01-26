@@ -1,11 +1,9 @@
 #![deny(unused)]
 
-use std::{cell::RefCell, rc::Rc};
-
 use serde::Deserialize;
 use swc_atoms::JsWord;
 use swc_common::{comments::Comments, pass::Optional};
-use swc_ecma_ast::{fn_pass, Pass, Program};
+use swc_ecma_ast::{fn_pass, Pass};
 
 pub use crate::{
     utils::{analyze, analyzer, State},
