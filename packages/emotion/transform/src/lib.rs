@@ -23,58 +23,6 @@ pub use crate::import_map::*;
 
 mod import_map;
 
-static EMOTION_OFFICIAL_LIBRARIES: Lazy<Vec<EmotionModuleConfig>> = Lazy::new(|| {
-    vec![
-        EmotionModuleConfig {
-            module_name: "@emotion/css".into(),
-            exported_names: vec![ExportItem {
-                name: "css".to_owned(),
-                kind: ExprKind::Css,
-            }],
-            default_export: Some(ExprKind::Css),
-        },
-        EmotionModuleConfig {
-            module_name: "@emotion/styled".into(),
-            exported_names: vec![],
-            default_export: Some(ExprKind::Styled),
-        },
-        EmotionModuleConfig {
-            module_name: "@emotion/react".into(),
-            exported_names: vec![
-                ExportItem {
-                    name: "css".to_owned(),
-                    kind: ExprKind::Css,
-                },
-                ExportItem {
-                    name: "keyframes".to_owned(),
-                    kind: ExprKind::Css,
-                },
-                ExportItem {
-                    name: "Global".to_owned(),
-                    kind: ExprKind::GlobalJSX,
-                },
-            ],
-            ..Default::default()
-        },
-        EmotionModuleConfig {
-            module_name: "@emotion/primitives".into(),
-            exported_names: vec![ExportItem {
-                name: "css".to_owned(),
-                kind: ExprKind::Css,
-            }],
-            default_export: Some(ExprKind::Styled),
-        },
-        EmotionModuleConfig {
-            module_name: "@emotion/native".into(),
-            exported_names: vec![ExportItem {
-                name: "css".to_owned(),
-                kind: ExprKind::Css,
-            }],
-            default_export: Some(ExprKind::Styled),
-        },
-    ]
-});
-
 static INVALID_LABEL_SPACES: Lazy<Regex> = Lazy::new(|| RegexBuilder::new(r"\s+").build().unwrap());
 
 static INVALID_CSS_CLASS_NAME_CHARACTERS: Lazy<Regex> = Lazy::new(|| {
@@ -172,10 +120,7 @@ where
     C: 'a + Comments + Clone,
 {
     fn_pass(move |program| {
-        let registered_imports = self::import_map::expand_import_map(
-            options.import_map.as_ref(),
-            EMOTION_OFFICIAL_LIBRARIES.to_vec(),
-        );
+        let registered_imports = self::import_map::expand_import_map(options.import_map.as_ref());
 
         let mut checker = ShouldWorkChecker {
             should_work: false,
@@ -218,7 +163,7 @@ struct EmotionTransformer<'a, C: Comments> {
     // skip `css` transformation if it in JSX Element/Attribute
     in_jsx_element: bool,
 
-    registered_imports: Vec<EmotionModuleConfig>,
+    registered_imports: Arc<Vec<EmotionModuleConfig>>,
 }
 
 #[swc_trace]
@@ -229,7 +174,7 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
         src_file_hash: u32,
         cm: Arc<SourceMapperDyn>,
         comments: C,
-        registered_imports: Vec<EmotionModuleConfig>,
+        registered_imports: Arc<Vec<EmotionModuleConfig>>,
     ) -> Self {
         EmotionTransformer {
             options,
