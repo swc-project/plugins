@@ -96,16 +96,16 @@ where
         program.mutate((
             Optional {
                 enabled: config.minify,
-                visitor: minify(state.clone()),
+                visitor: minify(&state),
             },
-            display_name_and_id(file_name, src_file_hash, config, state.clone()),
+            display_name_and_id(file_name, src_file_hash, config, &state),
             Optional {
                 enabled: config.transpile_template_literals,
-                visitor: template_literals(state.clone()),
+                visitor: template_literals(&state),
             },
             Optional {
                 enabled: config.pure,
-                visitor: pure_annotation(comments, state.clone()),
+                visitor: pure_annotation(comments, state),
             },
         ));
     })
