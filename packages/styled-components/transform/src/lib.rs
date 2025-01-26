@@ -4,7 +4,7 @@ use std::{cell::RefCell, rc::Rc};
 
 use serde::Deserialize;
 use swc_atoms::JsWord;
-use swc_common::{comments::Comments, pass::Optional, FileName};
+use swc_common::{comments::Comments, pass::Optional};
 use swc_ecma_ast::{Pass, Program};
 
 pub use crate::{
@@ -72,7 +72,7 @@ impl Config {
 }
 
 pub fn styled_components<'a, C>(
-    file_name: &'a FileName,
+    file_name: Option<&'a str>,
     src_file_hash: u128,
     config: &'a Config,
     comments: C,

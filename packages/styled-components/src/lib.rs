@@ -23,18 +23,16 @@ fn styled_components(mut program: Program, data: TransformPluginProgramMetadata)
     )
     .expect("invalid config for styled-components");
 
-    let file_name = Arc::new(
-        match data.get_context(&TransformPluginMetadataContextKind::Filename) {
-            Some(s) => FileName::Real(s.into()),
-            None => FileName::Anon,
-        },
-    );
+    let file_name = match data.get_context(&TransformPluginMetadataContextKind::Filename) {
+        Some(s) => Some(s),
+        None => None,
+    };
 
     let pos = data.source_map.lookup_char_pos(program.span().lo);
     let hash = pos.file.src_hash;
 
     program.mutate(styled_components::styled_components(
-        &file_name,
+        file_name.as_deref(),
         hash,
         &config,
         PluginCommentsProxy,

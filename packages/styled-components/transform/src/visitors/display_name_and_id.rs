@@ -3,7 +3,7 @@ use std::{cell::RefCell, convert::TryInto, path::Path, rc::Rc};
 use once_cell::sync::Lazy;
 use regex::Regex;
 use swc_atoms::{js_word, JsWord};
-use swc_common::{util::take::Take, FileName, DUMMY_SP};
+use swc_common::{util::take::Take, DUMMY_SP};
 use swc_ecma_ast::*;
 use swc_ecma_utils::{quote_ident, ExprFactory};
 use swc_ecma_visit::{noop_visit_mut_type, visit_mut_pass, VisitMut, VisitMutWith};
@@ -15,7 +15,7 @@ use crate::{
 };
 
 pub fn display_name_and_id<'a>(
-    file_name: &'a FileName,
+    file_name: Option<&'a str>,
     src_file_hash: u128,
     config: &'a Config,
     state: Rc<RefCell<State>>,
@@ -36,7 +36,7 @@ static DISPLAY_NAME_REGEX: Lazy<Regex> =
 
 #[derive(Debug)]
 struct DisplayNameAndId<'a> {
-    file_name: &'a FileName,
+    file_name: Option<&'a str>,
     src_file_hash: u128,
 
     config: &'a Config,
@@ -69,9 +69,9 @@ impl DisplayNameAndId<'_> {
     fn get_display_name(&mut self, _: &Expr) -> JsWord {
         let component_name = self.cur_display_name.clone().unwrap_or(js_word!(""));
 
-        match self.file_name {
-            FileName::Real(f) if self.config.file_name => {
-                let block_name = self.get_block_name(f);
+        if self.config.file_name {
+            if let Some(file_name) = self.file_name {
+                let block_name = self.get_block_name(Path::new(file_name));
 
                 if block_name == *component_name {
                     return component_name;
@@ -81,11 +81,11 @@ impl DisplayNameAndId<'_> {
                     return prefix_leading_digit(&block_name).into();
                 }
 
-                format!("{}__{}", prefix_leading_digit(&block_name), component_name).into()
+                return format!("{}__{}", prefix_leading_digit(&block_name), component_name).into();
             }
-
-            _ => component_name,
         }
+
+        component_name
     }
 
     fn next_id(&mut self) -> usize {
