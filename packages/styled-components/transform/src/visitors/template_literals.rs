@@ -8,16 +8,16 @@ use swc_ecma_visit::{noop_visit_mut_type, visit_mut_pass, VisitMut, VisitMutWith
 
 use crate::utils::State;
 
-pub fn template_literals(state: Rc<RefCell<State>>) -> impl Pass {
+pub fn template_literals(state: &State) -> impl Pass {
     visit_mut_pass(TemplateLiterals { state })
 }
 
 #[derive(Debug)]
-struct TemplateLiterals {
-    state: Rc<RefCell<State>>,
+struct TemplateLiterals<'a> {
+    state: &'a State,
 }
 
-impl VisitMut for TemplateLiterals {
+impl<'a> VisitMut for TemplateLiterals<'a> {
     noop_visit_mut_type!();
 
     fn visit_mut_expr(&mut self, expr: &mut Expr) {

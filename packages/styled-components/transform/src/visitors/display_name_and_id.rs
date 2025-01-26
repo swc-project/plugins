@@ -18,7 +18,7 @@ pub fn display_name_and_id<'a>(
     file_name: Option<&'a str>,
     src_file_hash: u128,
     config: &'a Config,
-    state: Rc<RefCell<State>>,
+    state: &'a State,
 ) -> impl 'a + Pass {
     visit_mut_pass(DisplayNameAndId {
         file_name,
@@ -40,7 +40,7 @@ struct DisplayNameAndId<'a> {
     src_file_hash: u128,
 
     config: &'a Config,
-    state: Rc<RefCell<State>>,
+    state: &'a State,
 
     cur_display_name: Option<JsWord>,
 

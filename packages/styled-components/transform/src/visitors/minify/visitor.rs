@@ -9,16 +9,16 @@ use swc_ecma_visit::{noop_visit_mut_type, visit_mut_pass, VisitMut, VisitMutWith
 use super::css::{minify_raw_values, MinifyResult};
 use crate::utils::State;
 
-pub fn minify(state: Rc<RefCell<State>>) -> impl Pass {
+pub fn minify(state: &State) -> impl Pass {
     visit_mut_pass(Minify { state })
 }
 
 #[derive(Debug)]
-struct Minify {
-    state: Rc<RefCell<State>>,
+struct Minify<'a> {
+    state: &'a State,
 }
 
-impl VisitMut for Minify {
+impl<'a> VisitMut for Minify<'a> {
     noop_visit_mut_type!();
 
     fn visit_mut_expr(&mut self, expr: &mut Expr) {
@@ -27,9 +27,7 @@ impl VisitMut for Minify {
         let Expr::TaggedTpl(tagged) = expr else {
             return;
         };
-        if !self.state.borrow().is_styled(&tagged.tag)
-            && !self.state.borrow().is_helper(&tagged.tag)
-        {
+        if !self.state.is_styled(&tagged.tag) && !self.state.is_helper(&tagged.tag) {
             return;
         }
 

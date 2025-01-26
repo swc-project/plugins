@@ -103,7 +103,7 @@ where
             },
             Optional {
                 enabled: config.pure,
-                visitor: pure_annotation(comments, state),
+                visitor: pure_annotation(comments, &state),
             },
         ));
     })

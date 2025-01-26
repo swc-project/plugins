@@ -8,7 +8,7 @@ use swc_ecma_visit::{noop_visit_mut_type, visit_mut_pass, VisitMut, VisitMutWith
 
 use crate::utils::State;
 
-pub fn pure_annotation<C>(comments: C, state: Rc<RefCell<State>>) -> impl Pass
+pub fn pure_annotation<C>(comments: C, state: &State) -> impl Pass
 where
     C: Comments,
 {
@@ -16,15 +16,15 @@ where
 }
 
 #[derive(Debug)]
-struct PureAnnotation<C>
+struct PureAnnotation<'a, C>
 where
     C: Comments,
 {
     comments: C,
-    state: Rc<RefCell<State>>,
+    state: &'a State,
 }
 
-impl<C> VisitMut for PureAnnotation<C>
+impl<'a, C> VisitMut for PureAnnotation<'a, C>
 where
     C: Comments,
 {
