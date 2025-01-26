@@ -1,5 +1,11 @@
 # @swc/plugin-transform-imports
 
+## 6.2.0
+
+### Minor Changes
+
+- 8bade7e: Improve performance
+
 ## 6.1.0
 
 ### Minor Changes
