@@ -174,7 +174,7 @@ where
     EmotionTransformer::new(emotion_options, path, src_file_hash, cm, comments)
 }
 
-pub struct EmotionTransformer<'a, C: Comments> {
+struct EmotionTransformer<'a, C: Comments> {
     pub options: &'a EmotionOptions,
     #[allow(unused)]
     filepath_hash: Option<u32>,
