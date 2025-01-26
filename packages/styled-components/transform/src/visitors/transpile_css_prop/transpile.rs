@@ -48,7 +48,7 @@ struct TranspileCssProp<'a> {
     top_level_decls: Option<AHashSet<Id>>,
 }
 
-impl<'a> TranspileCssProp<'a> {
+impl TranspileCssProp<'_> {
     fn next_styled_idx(&mut self, key: JsWord) -> usize {
         let idx = self.styled_idx.entry(key).or_insert(0);
         *idx += 1;
@@ -64,7 +64,7 @@ impl<'a> TranspileCssProp<'a> {
     }
 }
 
-impl<'a> VisitMut for TranspileCssProp<'a> {
+impl VisitMut for TranspileCssProp<'_> {
     noop_visit_mut_type!();
 
     fn visit_mut_jsx_element(&mut self, elem: &mut JSXElement) {

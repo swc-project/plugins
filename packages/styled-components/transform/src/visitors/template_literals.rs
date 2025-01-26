@@ -17,7 +17,7 @@ struct TemplateLiterals<'a> {
     state: &'a State,
 }
 
-impl<'a> VisitMut for TemplateLiterals<'a> {
+impl VisitMut for TemplateLiterals<'_> {
     noop_visit_mut_type!();
 
     fn visit_mut_expr(&mut self, expr: &mut Expr) {

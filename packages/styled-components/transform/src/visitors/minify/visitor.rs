@@ -16,7 +16,7 @@ struct Minify<'a> {
     state: &'a State,
 }
 
-impl<'a> VisitMut for Minify<'a> {
+impl VisitMut for Minify<'_> {
     noop_visit_mut_type!();
 
     fn visit_mut_expr(&mut self, expr: &mut Expr) {

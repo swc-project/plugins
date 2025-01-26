@@ -22,7 +22,7 @@ where
     state: &'a State,
 }
 
-impl<'a, C> VisitMut for PureAnnotation<'a, C>
+impl<C> VisitMut for PureAnnotation<'_, C>
 where
     C: Comments,
 {
