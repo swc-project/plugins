@@ -1,5 +1,11 @@
 # @swc/plugin-styled-components
 
+## 6.5.0
+
+### Minor Changes
+
+- 04c2925: Improve performance
+
 ## 6.4.0
 
 ### Minor Changes
