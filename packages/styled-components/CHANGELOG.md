@@ -1,5 +1,11 @@
 # @swc/plugin-styled-components
 
+## 6.4.0
+
+### Minor Changes
+
+- 1a6bbf1: Improve performance
+
 ## 6.3.0
 
 ### Minor Changes
