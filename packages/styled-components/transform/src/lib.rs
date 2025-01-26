@@ -85,53 +85,28 @@ where
 
         program.mutate(analyzer(config, &mut state));
 
-        let pass = (
-            Optional {
-                enabled: config.css_prop,
-                visitor: transpile_css_prop(state.clone()),
-            },
-            MayWork {
-                pass: (
-                    Optional {
-                        enabled: config.minify,
-                        visitor: minify(state.clone()),
-                    },
-                    display_name_and_id(file_name, src_file_hash, config, state.clone()),
-                    Optional {
-                        enabled: config.transpile_template_literals,
-                        visitor: template_literals(state.clone()),
-                    },
-                    Optional {
-                        enabled: config.pure,
-                        visitor: pure_annotation(comments, state.clone()),
-                    },
-                ),
-                state,
-            },
-        );
-    })
-}
-
-struct MayWork<P>
-where
-    P: Pass,
-{
-    pass: P,
-    state: Rc<RefCell<State>>,
-}
-
-impl<P> Pass for MayWork<P>
-where
-    P: Pass,
-{
-    fn process(&mut self, p: &mut Program) {
-        {
-            let state = self.state.borrow();
-            if !state.need_work() {
-                return;
-            }
+        if config.css_prop {
+            program.mutate(transpile_css_prop(&state));
         }
 
-        self.pass.process(p);
-    }
+        if !state.need_work() {
+            return;
+        }
+
+        program.mutate((
+            Optional {
+                enabled: config.minify,
+                visitor: minify(state.clone()),
+            },
+            display_name_and_id(file_name, src_file_hash, config, state.clone()),
+            Optional {
+                enabled: config.transpile_template_literals,
+                visitor: template_literals(state.clone()),
+            },
+            Optional {
+                enabled: config.pure,
+                visitor: pure_annotation(comments, state.clone()),
+            },
+        ));
+    })
 }
