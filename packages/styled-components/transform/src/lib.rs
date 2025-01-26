@@ -5,7 +5,7 @@ use std::{cell::RefCell, rc::Rc};
 use serde::Deserialize;
 use swc_atoms::JsWord;
 use swc_common::{comments::Comments, pass::Optional};
-use swc_ecma_ast::{Pass, Program};
+use swc_ecma_ast::{fn_pass, Pass, Program};
 
 pub use crate::{
     utils::{analyze, analyzer, State},
@@ -80,33 +80,35 @@ pub fn styled_components<'a, C>(
 where
     C: 'a + Comments,
 {
-    let state: Rc<RefCell<State>> = Default::default();
+    fn_pass(move |program| {
+        let mut state = State::default();
 
-    (
-        analyzer(config, state.clone()),
-        Optional {
-            enabled: config.css_prop,
-            visitor: transpile_css_prop(state.clone()),
-        },
-        MayWork {
-            pass: (
-                Optional {
-                    enabled: config.minify,
-                    visitor: minify(state.clone()),
-                },
-                display_name_and_id(file_name, src_file_hash, config, state.clone()),
-                Optional {
-                    enabled: config.transpile_template_literals,
-                    visitor: template_literals(state.clone()),
-                },
-                Optional {
-                    enabled: config.pure,
-                    visitor: pure_annotation(comments, state.clone()),
-                },
-            ),
-            state,
-        },
-    )
+        let pass = (
+            analyzer(config, state.clone()),
+            Optional {
+                enabled: config.css_prop,
+                visitor: transpile_css_prop(state.clone()),
+            },
+            MayWork {
+                pass: (
+                    Optional {
+                        enabled: config.minify,
+                        visitor: minify(state.clone()),
+                    },
+                    display_name_and_id(file_name, src_file_hash, config, state.clone()),
+                    Optional {
+                        enabled: config.transpile_template_literals,
+                        visitor: template_literals(state.clone()),
+                    },
+                    Optional {
+                        enabled: config.pure,
+                        visitor: pure_annotation(comments, state.clone()),
+                    },
+                ),
+                state,
+            },
+        );
+    })
 }
 
 struct MayWork<P>
