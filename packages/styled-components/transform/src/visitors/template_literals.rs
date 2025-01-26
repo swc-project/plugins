@@ -1,6 +1,6 @@
 //! Port of https://github.com/styled-components/babel-plugin-styled-components/blob/4e2eb388d9c90f2921c306c760657d059d01a518/src/visitors/templateLiterals/transpile.js
 
-use std::{cell::RefCell, iter, rc::Rc};
+use std::iter;
 
 use swc_common::{util::take::Take, DUMMY_SP};
 use swc_ecma_ast::*;
