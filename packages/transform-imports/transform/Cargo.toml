@@ -11,7 +11,7 @@ homepage     = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
 rust-version = { workspace = true }
-version      = "0.71.0"
+version      = "0.72.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -20,7 +20,7 @@ convert_case   = { workspace = true }
 handlebars     = { workspace = true }
 once_cell      = { workspace = true }
 regex          = { workspace = true }
-serde          = { workspace = true }
+serde          = { workspace = true, features = ["rc"] }
 swc_atoms      = { workspace = true }
 swc_cached     = { workspace = true }
 swc_common     = { workspace = true }

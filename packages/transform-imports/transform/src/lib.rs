@@ -1,4 +1,4 @@
-use std::{borrow::Cow, collections::HashMap};
+use std::{borrow::Cow, collections::HashMap, sync::Arc};
 
 use convert_case::{Case, Casing};
 use handlebars::{Context, Handlebars, Helper, HelperResult, Output, RenderContext};
@@ -16,7 +16,7 @@ static DUP_SLASH_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"//").unwrap());
 #[derive(Clone, Debug, Deserialize)]
 #[serde(transparent)]
 pub struct Config {
-    pub packages: HashMap<String, PackageConfig>,
+    pub packages: HashMap<String, Arc<PackageConfig>>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
