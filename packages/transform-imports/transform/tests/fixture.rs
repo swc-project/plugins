@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, sync::Arc};
 
 use modularize_imports::{modularize_imports, PackageConfig};
 use swc_ecma_parser::{EsSyntax, Syntax};
@@ -106,6 +106,7 @@ fn modularize_imports_fixture(input: PathBuf) {
             ),
         ]
         .into_iter()
+        .map(|(k, v)| (k, Arc::new(v)))
         .collect(),
     };
 
