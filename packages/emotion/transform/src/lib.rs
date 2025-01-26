@@ -162,19 +162,24 @@ enum PackageMeta {
 }
 
 pub fn emotion<'a, C>(
-    emotion_options: &'a EmotionOptions,
+    options: &'a EmotionOptions,
     path: &'a Path,
     src_file_hash: u32,
     cm: Arc<SourceMapperDyn>,
     comments: C,
 ) -> impl 'a + Pass
 where
-    C: 'a + Comments,
+    C: 'a + Comments + Clone,
 {
     fn_pass(move |program| {
+        let registered_imports = self::import_map::expand_import_map(
+            options.import_map.as_ref(),
+            EMOTION_OFFICIAL_LIBRARIES.to_vec(),
+        );
+
         let mut checker = ShouldWorkChecker {
             should_work: false,
-            registered_imports: &self.registered_imports,
+            registered_imports: &registered_imports,
         };
         program.visit_with(&mut checker);
         if !checker.should_work {
@@ -182,8 +187,14 @@ where
         }
 
         program.map_with_mut(|p| {
-            let mut pass =
-                EmotionTransformer::new(emotion_options, path, src_file_hash, cm, comments);
+            let mut pass = EmotionTransformer::new(
+                options,
+                path,
+                src_file_hash,
+                cm.clone(),
+                comments.clone(),
+                registered_imports,
+            );
 
             p.fold_with(&mut pass)
         });
@@ -218,12 +229,8 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
         src_file_hash: u32,
         cm: Arc<SourceMapperDyn>,
         comments: C,
+        registered_imports: Vec<EmotionModuleConfig>,
     ) -> Self {
-        let registered_imports = self::import_map::expand_import_map(
-            options.import_map.as_ref(),
-            EMOTION_OFFICIAL_LIBRARIES.to_vec(),
-        );
-
         EmotionTransformer {
             options,
             filepath_hash: None,
