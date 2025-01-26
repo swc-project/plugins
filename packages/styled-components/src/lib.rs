@@ -20,10 +20,7 @@ fn styled_components(mut program: Program, data: TransformPluginProgramMetadata)
     )
     .expect("invalid config for styled-components");
 
-    let file_name = match data.get_context(&TransformPluginMetadataContextKind::Filename) {
-        Some(s) => Some(s),
-        None => None,
-    };
+    let file_name = data.get_context(&TransformPluginMetadataContextKind::Filename);
 
     let pos = data.source_map.lookup_char_pos(program.span().lo);
     let hash = pos.file.src_hash;
