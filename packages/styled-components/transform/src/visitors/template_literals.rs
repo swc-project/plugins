@@ -27,44 +27,42 @@ impl<'a> VisitMut for TemplateLiterals<'a> {
             return;
         };
         if !self.state.is_styled(&tagged.tag) && !self.state.is_helper(&tagged.tag) {
-            {
-                return;
-            }
-
-            expr.map_with_mut(|expr| {
-                let tagged = expr.expect_tagged_tpl();
-
-                let quasis = tagged
-                    .tpl
-                    .quasis
-                    .into_iter()
-                    .map(|q| {
-                        Expr::Tpl(Tpl {
-                            span: q.span,
-                            exprs: vec![],
-                            quasis: vec![q],
-                        })
-                    })
-                    .map(ExprOrSpread::from)
-                    .map(Some);
-                let exprs = tagged.tpl.exprs.into_iter().map(ExprOrSpread::from);
-                let args = iter::once(
-                    Expr::Array(ArrayLit {
-                        span: DUMMY_SP,
-                        elems: quasis.collect(),
-                    })
-                    .into(),
-                )
-                .chain(exprs)
-                .collect();
-
-                Expr::Call(CallExpr {
-                    span: tagged.span,
-                    callee: tagged.tag.into(),
-                    args,
-                    ..Default::default()
-                })
-            });
+            return;
         }
+
+        expr.map_with_mut(|expr| {
+            let tagged: TaggedTpl = expr.expect_tagged_tpl();
+
+            let quasis = tagged
+                .tpl
+                .quasis
+                .into_iter()
+                .map(|q| {
+                    Expr::Tpl(Tpl {
+                        span: q.span,
+                        exprs: vec![],
+                        quasis: vec![q],
+                    })
+                })
+                .map(ExprOrSpread::from)
+                .map(Some);
+            let exprs = tagged.tpl.exprs.into_iter().map(ExprOrSpread::from);
+            let args = iter::once(
+                Expr::Array(ArrayLit {
+                    span: DUMMY_SP,
+                    elems: quasis.collect(),
+                })
+                .into(),
+            )
+            .chain(exprs)
+            .collect();
+
+            Expr::Call(CallExpr {
+                span: tagged.span,
+                callee: tagged.tag.into(),
+                args,
+                ..Default::default()
+            })
+        });
     }
 }

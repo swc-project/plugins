@@ -1,7 +1,5 @@
 //! Port of https://github.com/styled-components/babel-plugin-styled-components/blob/4e2eb388d9c90f2921c306c760657d059d01a518/src/visitors/minify.js
 
-use std::{cell::RefCell, rc::Rc};
-
 use swc_common::DUMMY_SP;
 use swc_ecma_ast::*;
 use swc_ecma_visit::{noop_visit_mut_type, visit_mut_pass, VisitMut, VisitMutWith};
@@ -9,7 +7,7 @@ use swc_ecma_visit::{noop_visit_mut_type, visit_mut_pass, VisitMut, VisitMutWith
 use super::css::{minify_raw_values, MinifyResult};
 use crate::utils::State;
 
-pub fn minify(state: &State) -> impl Pass {
+pub fn minify(state: &State) -> impl '_ + Pass {
     visit_mut_pass(Minify { state })
 }
 
