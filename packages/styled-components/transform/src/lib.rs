@@ -84,7 +84,7 @@ where
         program.mutate(analyzer(config, &mut state));
 
         if config.css_prop {
-            program.mutate(transpile_css_prop(&state));
+            program.mutate(transpile_css_prop(&mut state));
         }
 
         if !state.need_work() {
