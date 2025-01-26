@@ -83,8 +83,9 @@ where
     fn_pass(move |program| {
         let mut state = State::default();
 
+        program.mutate(analyzer(config, &mut state));
+
         let pass = (
-            analyzer(config, state.clone()),
             Optional {
                 enabled: config.css_prop,
                 visitor: transpile_css_prop(state.clone()),
