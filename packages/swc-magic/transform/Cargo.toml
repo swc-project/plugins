@@ -10,7 +10,7 @@ license      = { workspace = true }
 name         = "swc_magic"
 repository   = { workspace = true }
 rust-version = { workspace = true }
-version      = "0.21.1"
+version      = "0.22.0"
 
 
 [dependencies]
