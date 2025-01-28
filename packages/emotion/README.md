@@ -34,6 +34,12 @@ Source code for plugin itself (not transforms) are copied from https://github.co
 
 # @swc/plugin-emotion
 
+## 8.5.0
+
+### Minor Changes
+
+- 4c8b0e2: Update swc_core
+
 ## 8.4.0
 
 ### Minor Changes
