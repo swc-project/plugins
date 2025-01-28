@@ -3207,7 +3207,7 @@ dependencies = [
 
 [[package]]
 name = "swc_formatjs_transform"
-version = "3.0.2"
+version = "4.0.0"
 dependencies = [
  "base64ct",
  "once_cell",
@@ -3248,7 +3248,7 @@ dependencies = [
 
 [[package]]
 name = "swc_magic"
-version = "0.21.1"
+version = "0.22.0"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -3523,7 +3523,7 @@ dependencies = [
 
 [[package]]
 name = "swc_prefresh"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -3539,7 +3539,7 @@ dependencies = [
 
 [[package]]
 name = "swc_relay"
-version = "0.46.1"
+version = "0.47.0"
 dependencies = [
  "once_cell",
  "regex",
@@ -3557,7 +3557,7 @@ dependencies = [
 
 [[package]]
 name = "swc_sdk"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "default-from-serde",
  "serde",
