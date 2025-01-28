@@ -8,7 +8,7 @@ edition = { workspace = true }
 license = { workspace = true }
 name = "swc_formatjs_transform"
 repository = { workspace = true }
-version = "3.0.2"
+version = "4.0.0"
 
 [features]
 custom_transform = []
