@@ -1,5 +1,11 @@
 # @swc/plugin-loadable-components
 
+## 5.2.0
+
+### Minor Changes
+
+- b8c4e6c: Update swc_core to v12
+
 ## 5.1.0
 
 ### Minor Changes
