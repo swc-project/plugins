@@ -1,4 +1,4 @@
-# @swc/plugin-experimental-quickjs
+# @swc/plugin-experimental-babel
 
 ## Usage
 

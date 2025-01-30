@@ -1,8 +1,8 @@
 [package]
 
-description = "AST Transforms for experimental quickjs plugin"
+description = "AST Transforms for experimental babel plugin"
 
-name = "swc_experimental_quickjs"
+name = "swc_experimental_babel"
 
 authors      = { workspace = true }
 edition      = { workspace = true }
