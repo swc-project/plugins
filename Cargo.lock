@@ -3221,7 +3221,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "swc_experimental_quickjs"
+name = "swc_experimental_babel"
 version = "0.1.0"
 dependencies = [
  "rquickjs",
@@ -3230,6 +3230,7 @@ dependencies = [
  "swc_common",
  "swc_core",
  "swc_ecma_ast",
+ "swc_ecma_codegen",
  "swc_ecma_parser",
  "swc_ecma_transforms_base",
  "swc_ecma_transforms_testing",
@@ -3343,13 +3344,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "swc_plugin_experimental_quickjs"
+name = "swc_plugin_experimental_babel"
 version = "0.1.0"
 dependencies = [
  "serde_json",
  "swc_common",
  "swc_core",
- "swc_experimental_quickjs",
+ "swc_experimental_babel",
 ]
 
 [[package]]
