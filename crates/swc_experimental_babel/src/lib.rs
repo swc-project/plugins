@@ -15,8 +15,16 @@ pub struct TransformOutput {
     pub map: Option<String>,
 }
 
-impl Transform<'_> {
-    pub fn apply(&self, program: &Program) -> Program {
+impl TransformOutput {
+    pub fn from_swc(program: &Program) -> Result<Self> {
         todo!()
     }
+
+    pub fn parse(&self) -> Program {
+        todo!()
+    }
+}
+
+impl Transform<'_> {
+    pub fn apply(&self, program: &Program) -> Program {}
 }

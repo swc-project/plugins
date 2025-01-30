@@ -22,4 +22,4 @@ serde_json = { workspace = true }
 swc_common = { workspace = true }
 swc_core   = { workspace = true, features = ["ecma_plugin_transform"] }
 
-swc_experimental_babel = { path = "./transform" }
+swc_experimental_babel = { path = "../../crates/swc_experimental_babel" }
