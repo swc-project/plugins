@@ -1,0 +1,25 @@
+{
+  "name": "@swc/plugin-experimental-quickjs",
+  "version": "1.0.0",
+  "description": "SWC plugin for experimental quickjs",
+  "main": "swc_plugin_experimental_quickjs.wasm",
+  "scripts": {
+    "prepack": "cargo build --release -p swc_plugin_experimental_quickjs --target wasm32-wasi && cp ../../target/wasm32-wasi/release/swc_plugin_experimental_quickjs.wasm ."
+  },
+  "homepage": "https://swc.rs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/swc-project/plugins.git",
+    "directory": "packages/experimental-quickjs"
+  },
+  "bugs": {
+    "url": "https://github.com/swc-project/plugins/issues"
+  },
+  "author": "강동윤 <kdy1997.dev@gmail.com>",
+  "keywords": [],
+  "license": "Apache-2.0",
+  "preferUnplugged": true,
+  "dependencies": {
+    "@swc/counter": "^0.1.3"
+  }
+}
