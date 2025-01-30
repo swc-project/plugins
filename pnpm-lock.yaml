@@ -30,6 +30,12 @@ importers:
         specifier: ^0.1.3
         version: 0.1.3
 
+  packages/experimetal-quickjs:
+    dependencies:
+      '@swc/counter':
+        specifier: ^0.1.3
+        version: 0.1.3
+
   packages/formatjs:
     dependencies:
       '@swc/counter':
