@@ -7,7 +7,6 @@ export default defineConfig({
   output: {
     library: {
       type: 'module',
-      export: ['transform']
     },
     module: true
   },
