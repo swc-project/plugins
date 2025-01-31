@@ -1,13 +1,13 @@
 [package]
 
-description = "SWC plugin for experimental babel."
+description = "SWC plugin for experimental babel react compiler."
 
 
 authors      = { workspace = true }
 edition      = { workspace = true }
 homepage     = { workspace = true }
 license      = { workspace = true }
-name         = "swc_plugin_experimental_babel"
+name         = "swc_plugin_experimental_babel_react_compiler"
 publish      = false
 repository   = { workspace = true }
 rust-version = { workspace = true }

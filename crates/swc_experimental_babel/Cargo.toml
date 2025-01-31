@@ -15,7 +15,7 @@ version      = "0.1.0"
 [dependencies]
 anyhow           = { workspace = true }
 once_cell        = { workspace = true }
-rquickjs         = { workspace = true }
+rquickjs         = { workspace = true, features = ["bindgen"] }
 serde            = { workspace = true, features = ["derive"] }
 swc_atoms        = { workspace = true }
 swc_common       = { workspace = true }
