@@ -1,5 +1,5 @@
 use anyhow::{Context as _, Result};
-use rquickjs::{Function, IntoJs};
+use rquickjs::{FromJs, Function, IntoJs};
 use serde::{Deserialize, Serialize};
 use swc_common::{sync::Lrc, SourceMap, SourceMapper};
 use swc_ecma_ast::{Program, SourceMapperExt};
@@ -92,5 +92,20 @@ impl<'a> IntoJs<'a> for TransformOutput {
         obj.set("map", self.map);
 
         obj.into_js(ctx)
+    }
+}
+
+impl<'a> FromJs<'a> for TransformOutput {
+    fn from_js(_: &rquickjs::Ctx<'a>, value: rquickjs::Value<'a>) -> rquickjs::Result<Self> {
+        let obj = value.into_object().ok_or_else(|| rquickjs::Error::FromJs {
+            from: "Value",
+            to: "Object",
+            message: Some("expected an object".to_string()),
+        })?;
+
+        Ok(Self {
+            code: obj.get::<_, String>("code")?,
+            map: obj.get::<_, Option<String>>("map")?,
+        })
     }
 }
