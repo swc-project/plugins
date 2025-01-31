@@ -4,7 +4,7 @@ use swc_common::{sync::Lrc, FileName, Mark};
 use swc_ecma_transforms_base::resolver;
 use swc_ecma_transforms_testing::test_fixture;
 
-#[testing::fixture("tests/prefresh/**/input.js")]
+#[testing::fixture("tests/basic/**/input.js")]
 
 fn fixture(input: PathBuf) {
     let output = input
