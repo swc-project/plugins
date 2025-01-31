@@ -3349,6 +3349,7 @@ dependencies = [
 name = "swc_plugin_experimental_babel"
 version = "0.1.0"
 dependencies = [
+ "serde",
  "serde_json",
  "swc_common",
  "swc_core",
