@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-experimental-babel",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "SWC plugin for experimental babel",
   "main": "swc_plugin_experimental_babel.wasm",
   "scripts": {
