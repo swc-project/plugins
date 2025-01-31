@@ -13,7 +13,9 @@ export default defineConfig({
   optimization: {
     minimize: false,
   },
-  plugins: [new NodePolyfillPlugin()],
+  plugins: [new NodePolyfillPlugin({
+    additionalAliases: ['process'],
+  })],
   module: {
     rules: [
       {
