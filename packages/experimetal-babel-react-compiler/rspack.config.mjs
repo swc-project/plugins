@@ -7,6 +7,7 @@ export default defineConfig({
   output: {
     library: {
       type: 'var',
+      export: 'transform',
       name: 'transform'
     },
     module: false,
