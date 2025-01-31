@@ -76,6 +76,13 @@ where
     fn apply_transform(&self, input: TransformOutput) -> Result<TransformOutput> {
         with_quickjs_context(|ctx| {
             let module = Module::declare(ctx.clone(), "babel-transform", self.transform_code)
+                .or_else(|err| match err {
+                    rquickjs::Error::Exception => {
+                        let err = ctx.catch();
+                        anyhow::bail!("exception while declaring module: {err:?}");
+                    }
+                    err => Err(anyhow::anyhow!(err)),
+                })
                 .context("failed to declare the module")?
                 .eval()
                 .context("failed to evaluate the module")?
@@ -83,7 +90,7 @@ where
 
             let function: Function = module
                 .get("transform")
-                .context("failed to get the default export")?;
+                .context("failed to get the export named 'transform'")?;
 
             let mut args = Args::new(ctx.clone(), 1);
             args.push_arg(input)?;
