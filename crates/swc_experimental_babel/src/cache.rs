@@ -6,7 +6,14 @@ thread_local! {
 }
 
 thread_local! {
-    pub static QUICKJS_CONTEXT: Lazy<Context> = Lazy::new(|| {
+    static QUICKJS_CONTEXT: Lazy<Context> = Lazy::new(|| {
         QUICKJS_RUNTIME.with(|rt| Context::full(rt).expect("failed to create context"))
     });
+}
+
+pub fn with_quickjs_context<F, R>(f: F) -> R
+where
+    F: FnOnce(rquickjs::Ctx) -> R,
+{
+    QUICKJS_CONTEXT.with(|ctx| ctx.with(|ctx| f(ctx)))
 }
