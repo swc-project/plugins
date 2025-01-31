@@ -61,4 +61,6 @@ where
         let input = TransformOutput::from_swc(self.cm.clone(), program)?;
         todo!()
     }
+
+    fn apply_transform(&self, input: TransformOutput) -> Result<TransformOutput> {}
 }
