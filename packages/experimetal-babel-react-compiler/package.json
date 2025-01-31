@@ -1,0 +1,34 @@
+{
+  "name": "@swc/plugin-experimental-babel",
+  "version": "0.2.1",
+  "description": "SWC plugin for experimental babel",
+  "main": "swc_plugin_experimental_babel_react_compiler.wasm",
+  "scripts": {
+    "build": "rspack build",
+    "prepack": "cargo build --release -p swc_plugin_experimental_babel_react_compiler --target wasm32-wasi && cp ../../target/wasm32-wasi/release/swc_plugin_experimental_babel_react_compiler.wasm ."
+  },
+  "homepage": "https://swc.rs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/swc-project/plugins.git",
+    "directory": "packages/experimental-babel"
+  },
+  "bugs": {
+    "url": "https://github.com/swc-project/plugins/issues"
+  },
+  "author": "강동윤 <kdy1997.dev@gmail.com>",
+  "keywords": [],
+  "license": "Apache-2.0",
+  "preferUnplugged": true,
+  "dependencies": {
+    "@swc/counter": "^0.1.3"
+  },
+  "devDependencies": {
+    "@rspack/core": "1.2.2",
+    "@rspack/cli": "1.2.2",
+    "node-polyfill-webpack-plugin": "4.1.0",
+    "@babel/core": "^7.26.7",
+    "babel-plugin-react-compiler": "19.0.0-beta-27714ef-20250124",
+    "typescript": "^5.7.2"
+  }
+}

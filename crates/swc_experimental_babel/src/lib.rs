@@ -1,5 +1,5 @@
 use anyhow::{Context as _, Result};
-use rquickjs::{function::Args, FromJs, Function, IntoJs, Module};
+use rquickjs::{function::Args, FromJs, Function, IntoJs, Undefined};
 use serde::{Deserialize, Serialize};
 use swc_common::{sync::Lrc, FileName, SourceMap, SourceMapper};
 use swc_ecma_ast::{EsVersion, Pass, Program, SourceMapperExt};
@@ -9,6 +9,7 @@ use swc_ecma_parser::parse_file_as_program;
 use crate::qjs::with_quickjs_context;
 
 mod qjs;
+mod qjs_console;
 
 pub struct Transform<'a, S>
 where
@@ -75,28 +76,31 @@ where
 {
     fn apply_transform(&self, input: TransformOutput) -> Result<TransformOutput> {
         with_quickjs_context(|ctx| {
-            dbg!("declaring module", &self.transform_code);
+            let _: Undefined = ctx
+                .eval(self.transform_code)
+                .map_err(|err| match err {
+                    rquickjs::Error::Exception => {
+                        let err = ctx.catch();
+                        anyhow::anyhow!("failed to evaluate the transform code: {err:?}")
+                    }
+                    _ => anyhow::anyhow!(err),
+                })
+                .context("failed to evaluate the transform code")?;
 
-            let module = Module::declare(ctx.clone(), "babel-transform", self.transform_code)
-                .context("failed to declare the module")?
-                .eval()
-                .context("failed to evaluate the module")?
-                .0;
-
-            dbg!("declared module");
-
-            let function: Function = module
-                .get("transform")
-                .context("failed to get the default export")?;
-
-            dbg!("got function");
+            let function: Function = ctx
+                .eval("transform")
+                .context("failed to get the transform function")?;
 
             let mut args = Args::new(ctx.clone(), 1);
             args.push_arg(input)?;
 
-            let output = function
-                .call_arg(args)
-                .context("failed to call the transform function")?;
+            let output = function.call_arg(args).map_err(|err| match err {
+                rquickjs::Error::Exception => {
+                    let err = ctx.catch();
+                    anyhow::anyhow!("failed to call the transform function: {err:?}")
+                }
+                _ => anyhow::anyhow!(err).context("failed to call the transform function"),
+            })?;
 
             Ok(output)
         })

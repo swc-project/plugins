@@ -10,12 +10,12 @@ homepage     = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
 rust-version = { workspace = true }
-version      = "0.1.0"
+version      = "0.1.1"
 
 [dependencies]
 anyhow           = { workspace = true }
 once_cell        = { workspace = true }
-rquickjs         = { workspace = true }
+rquickjs         = { workspace = true, features = ["bindgen", "macro"] }
 serde            = { workspace = true, features = ["derive"] }
 swc_atoms        = { workspace = true }
 swc_common       = { workspace = true }
