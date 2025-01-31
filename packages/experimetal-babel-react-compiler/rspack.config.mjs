@@ -8,8 +8,9 @@ export default defineConfig({
     library: {
       type: 'module',
     },
-    module: true
+    module: true,
   },
+  devtool: false,
   optimization: {
     minimize: false,
   },
