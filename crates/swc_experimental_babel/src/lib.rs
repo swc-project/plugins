@@ -77,9 +77,11 @@ where
         with_quickjs_context(|ctx| {
             dbg!("declaring module", &self.transform_code);
 
-            let module: Module =
-                Module::declare(ctx.clone(), "babel-transform", self.transform_code)
-                    .context("failed to declare the module")?;
+            let module = Module::declare(ctx.clone(), "babel-transform", self.transform_code)
+                .context("failed to declare the module")?
+                .eval()
+                .context("failed to evaluate the module")?
+                .0;
 
             dbg!("declared module");
 
