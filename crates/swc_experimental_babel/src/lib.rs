@@ -75,21 +75,15 @@ where
 {
     fn apply_transform(&self, input: TransformOutput) -> Result<TransformOutput> {
         with_quickjs_context(|ctx| {
-            dbg!("declaring module", &self.transform_code);
-
             let module = Module::declare(ctx.clone(), "babel-transform", self.transform_code)
                 .context("failed to declare the module")?
                 .eval()
                 .context("failed to evaluate the module")?
                 .0;
 
-            dbg!("declared module");
-
             let function: Function = module
                 .get("transform")
                 .context("failed to get the default export")?;
-
-            dbg!("got function");
 
             let mut args = Args::new(ctx.clone(), 1);
             args.push_arg(input)?;
