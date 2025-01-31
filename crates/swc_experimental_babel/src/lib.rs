@@ -94,9 +94,13 @@ where
             let mut args = Args::new(ctx.clone(), 1);
             args.push_arg(input)?;
 
-            let output = function
-                .call_arg(args)
-                .context("failed to call the transform function")?;
+            let output = function.call_arg(args).map_err(|err| match err {
+                rquickjs::Error::Exception => {
+                    let err = ctx.catch();
+                    anyhow::anyhow!("failed to call the transform function: {err:?}")
+                }
+                _ => anyhow::anyhow!(err).context("failed to call the transform function"),
+            })?;
 
             Ok(output)
         })
