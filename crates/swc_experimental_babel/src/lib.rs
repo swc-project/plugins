@@ -18,7 +18,7 @@ where
 {
     pub transform_code: &'a str,
     pub config: &'a Config,
-    cm: Lrc<S>,
+    pub cm: Lrc<S>,
 }
 
 #[derive(Serialize, Deserialize)]
