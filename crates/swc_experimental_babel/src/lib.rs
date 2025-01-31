@@ -9,6 +9,7 @@ use swc_ecma_parser::parse_file_as_program;
 use crate::qjs::with_quickjs_context;
 
 mod qjs;
+mod qjs_console;
 
 pub struct Transform<'a, S>
 where
