@@ -1,4 +1,5 @@
 use anyhow::{Context as _, Result};
+use rquickjs::Function;
 use serde::{Deserialize, Serialize};
 use swc_common::{sync::Lrc, SourceMap, SourceMapper};
 use swc_ecma_ast::{Program, SourceMapperExt};
@@ -63,12 +64,22 @@ where
 {
     pub fn apply(&self, program: &Program) -> Result<Program> {
         let input = TransformOutput::from_swc(self.cm.clone(), program)?;
-        todo!()
+        let output = self.apply_transform(input)?;
+
+        Ok(output.parse())
     }
 
     fn apply_transform(&self, input: TransformOutput) -> Result<TransformOutput> {
         with_quickjs_context(|ctx| {
-            let code = ctx.eval(self.transform_code);
+            let function: Function = ctx
+                .eval(self.transform_code)
+                .context("failed to evaluate the transform code")?;
+
+            let output = function
+                .call(input)
+                .context("failed to call the transform function")?;
+
+            Ok(output)
         })
     }
 }
