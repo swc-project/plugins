@@ -18,7 +18,6 @@ version      = "0.1.0"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-serde      = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
 swc_common = { workspace = true }
 swc_core   = { workspace = true, features = ["ecma_plugin_transform"] }
