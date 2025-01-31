@@ -6,8 +6,8 @@ export default defineConfig({
   },
   output: {
     library: {
-      type: 'var',
-      name: 'transform'
+      type: 'module',
+      export: ['transform']
     }
   },
   plugins: [new nodePolyfillPlugin()],
