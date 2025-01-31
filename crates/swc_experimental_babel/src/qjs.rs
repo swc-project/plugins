@@ -15,5 +15,5 @@ pub fn with_quickjs_context<F, R>(f: F) -> R
 where
     F: FnOnce(rquickjs::Ctx) -> R,
 {
-    QUICKJS_CONTEXT.with(|ctx| ctx.with(|ctx| f(ctx)))
+    QUICKJS_CONTEXT.with(|ctx| ctx.with(f))
 }
