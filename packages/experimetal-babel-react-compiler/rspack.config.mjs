@@ -10,6 +10,9 @@ export default defineConfig({
       export: ['transform']
     }
   },
+  optimization: {
+    minimize: false,
+  },
   plugins: [new nodePolyfillPlugin()],
   module: {
     rules: [
