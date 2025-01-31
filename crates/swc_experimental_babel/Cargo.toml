@@ -1,0 +1,32 @@
+[package]
+
+description = "AST Transforms for experimental babel plugin"
+
+name = "swc_experimental_babel"
+
+authors      = { workspace = true }
+edition      = { workspace = true }
+homepage     = { workspace = true }
+license      = { workspace = true }
+repository   = { workspace = true }
+rust-version = { workspace = true }
+version      = "0.1.0"
+
+[dependencies]
+anyhow           = { workspace = true }
+once_cell        = { workspace = true }
+rquickjs         = { workspace = true }
+serde            = { workspace = true, features = ["derive"] }
+swc_atoms        = { workspace = true }
+swc_common       = { workspace = true }
+swc_core         = { workspace = true, features = [] }
+swc_ecma_ast     = { workspace = true }
+swc_ecma_codegen = { workspace = true }
+swc_ecma_parser  = { workspace = true }
+swc_ecma_visit   = { workspace = true }
+
+[dev-dependencies]
+swc_ecma_parser             = { workspace = true }
+swc_ecma_transforms_base    = { workspace = true }
+swc_ecma_transforms_testing = { workspace = true }
+testing                     = { workspace = true }

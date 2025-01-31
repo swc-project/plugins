@@ -70,6 +70,7 @@ testing                     = "5.0.0"
 tracing                     = "0.1.40"
 widestring                  = "1.0.2"
 
+rquickjs                     = "0.8.1"
 rustc-hash                   = "2.1.0"
 swc_icu_messageformat_parser = { version = "1.0.0", path = "./crates/swc_icu_messageformat_parser" }
 

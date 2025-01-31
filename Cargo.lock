@@ -2147,6 +2147,33 @@ dependencies = [
 ]
 
 [[package]]
+name = "rquickjs"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d16661bff09e9ed8e01094a188b463de45ec0693ade55b92ed54027d7ba7c40c"
+dependencies = [
+ "rquickjs-core",
+]
+
+[[package]]
+name = "rquickjs-core"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6c8db6379e204ef84c0811e90e7cc3e3e4d7688701db68a00d14a6db6849087b"
+dependencies = [
+ "rquickjs-sys",
+]
+
+[[package]]
+name = "rquickjs-sys"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4bc352c6b663604c3c186c000cfcc6c271f4b50bc135a285dd6d4f2a42f9790a"
+dependencies = [
+ "cc",
+]
+
+[[package]]
 name = "rustc-hash"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3191,6 +3218,26 @@ dependencies = [
  "once_cell",
  "parking_lot",
  "swc_common",
+]
+
+[[package]]
+name = "swc_experimental_babel"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "once_cell",
+ "rquickjs",
+ "serde",
+ "swc_atoms",
+ "swc_common",
+ "swc_core",
+ "swc_ecma_ast",
+ "swc_ecma_codegen",
+ "swc_ecma_parser",
+ "swc_ecma_transforms_base",
+ "swc_ecma_transforms_testing",
+ "swc_ecma_visit",
+ "testing",
 ]
 
 [[package]]
