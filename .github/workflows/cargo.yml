@@ -35,6 +35,11 @@ jobs:
         with:
           node-version: 20
 
+      - name: Install pnpm dependencies
+        run: |
+          corepack enable
+          pnpm install
+
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
@@ -54,7 +59,6 @@ jobs:
 
       - name: Run cargo test
         run: |
-          corepack enable
           cargo test --all --color always
 
   publish:
