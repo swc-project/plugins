@@ -6,7 +6,8 @@ export default defineConfig({
   },
   output: {
     library: {
-      type: 'commonjs'
+      type: 'var',
+      name: 'transform'
     }
   },
   plugins: [new nodePolyfillPlugin()],
