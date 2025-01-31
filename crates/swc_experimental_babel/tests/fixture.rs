@@ -18,7 +18,7 @@ fn fixture(input: PathBuf) {
             (
                 resolver(Mark::new(), Mark::new(), false),
                 swc_experimental_babel::Transform {
-                    transform_code: include_str!("./prefresh-transform.js"),
+                    transform_code: include_str!("./basic-transform.js"),
                     filename: Lrc::new(FileName::Real(input.clone())),
                     cm: tr.cm.clone(),
                 },
