@@ -4,9 +4,9 @@ use swc_common::{sync::Lrc, SourceMap, SourceMapper};
 use swc_ecma_ast::{Program, SourceMapperExt};
 use swc_ecma_codegen::{text_writer::JsWriter, Emitter, Node};
 
-use crate::cache::with_quickjs_context;
+use crate::qjs::with_quickjs_context;
 
-mod cache;
+mod qjs;
 
 pub struct Config {}
 
@@ -67,6 +67,8 @@ where
     }
 
     fn apply_transform(&self, input: TransformOutput) -> Result<TransformOutput> {
-        with_quickjs_context(|ctx| ctx.eval(self.transform_code))
+        with_quickjs_context(|ctx| {
+            let code = ctx.eval(self.transform_code);
+        })
     }
 }
