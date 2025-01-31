@@ -8,7 +8,8 @@ export default defineConfig({
     library: {
       type: 'module',
       export: ['transform']
-    }
+    },
+    module: true
   },
   optimization: {
     minimize: false,
