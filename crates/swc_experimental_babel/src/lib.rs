@@ -1,5 +1,5 @@
 use anyhow::{Context as _, Result};
-use rquickjs::{FromJs, Function, IntoJs};
+use rquickjs::{function::Args, FromJs, Function, IntoJs};
 use serde::{Deserialize, Serialize};
 use swc_common::{sync::Lrc, SourceMap, SourceMapper};
 use swc_ecma_ast::{Program, SourceMapperExt};
@@ -75,8 +75,11 @@ where
                 .eval(self.transform_code)
                 .context("failed to evaluate the transform code")?;
 
+            let mut args = Args::new(ctx.clone(), 1);
+            args.push_arg(input)?;
+
             let output = function
-                .call(input)
+                .call_arg(args)
                 .context("failed to call the transform function")?;
 
             Ok(output)
@@ -88,8 +91,8 @@ impl<'a> IntoJs<'a> for TransformOutput {
     fn into_js(self, ctx: &rquickjs::Ctx<'a>) -> rquickjs::Result<rquickjs::Value<'a>> {
         let obj = rquickjs::Object::new(ctx.clone())?;
 
-        obj.set("code", self.code);
-        obj.set("map", self.map);
+        obj.set("code", self.code)?;
+        obj.set("map", self.map)?;
 
         obj.into_js(ctx)
     }
