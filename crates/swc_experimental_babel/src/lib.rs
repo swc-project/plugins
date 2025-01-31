@@ -1,5 +1,5 @@
 use anyhow::{Context as _, Result};
-use rquickjs::Function;
+use rquickjs::{Function, IntoJs};
 use serde::{Deserialize, Serialize};
 use swc_common::{sync::Lrc, SourceMap, SourceMapper};
 use swc_ecma_ast::{Program, SourceMapperExt};
@@ -81,5 +81,16 @@ where
 
             Ok(output)
         })
+    }
+}
+
+impl<'a> IntoJs<'a> for TransformOutput {
+    fn into_js(self, ctx: &rquickjs::Ctx<'a>) -> rquickjs::Result<rquickjs::Value<'a>> {
+        let obj = rquickjs::Object::new(ctx.clone())?;
+
+        obj.set("code", self.code);
+        obj.set("map", self.map);
+
+        obj.into_js(ctx)
     }
 }
