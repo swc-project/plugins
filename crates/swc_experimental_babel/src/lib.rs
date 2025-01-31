@@ -1,4 +1,8 @@
-use anyhow::{Context, Result};
+mod cache;
+
+use anyhow::{Context as _, Result};
+use once_cell::sync::Lazy;
+use rquickjs::{Context, Runtime};
 use serde::{Deserialize, Serialize};
 use swc_common::{sync::Lrc, SourceMap, SourceMapper};
 use swc_ecma_ast::{Program, SourceMapperExt};
@@ -62,5 +66,7 @@ where
         todo!()
     }
 
-    fn apply_transform(&self, input: TransformOutput) -> Result<TransformOutput> {}
+    fn apply_transform(&self, input: TransformOutput) -> Result<TransformOutput> {
+        context.with(|ctx| ctx.eval(source))
+    }
 }
