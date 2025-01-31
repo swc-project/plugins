@@ -1,9 +1,10 @@
 use anyhow::{Context as _, Result};
 use rquickjs::{function::Args, FromJs, Function, IntoJs};
 use serde::{Deserialize, Serialize};
-use swc_common::{sync::Lrc, SourceMap, SourceMapper};
-use swc_ecma_ast::{Program, SourceMapperExt};
+use swc_common::{sync::Lrc, FileName, SourceMap, SourceMapper};
+use swc_ecma_ast::{EsVersion, Program, SourceMapperExt};
 use swc_ecma_codegen::{text_writer::JsWriter, Emitter, Node};
+use swc_ecma_parser::parse_file_as_program;
 
 use crate::qjs::with_quickjs_context;
 
@@ -53,8 +54,20 @@ impl TransformOutput {
         })
     }
 
-    pub fn parse(&self) -> Program {
-        todo!()
+    pub fn parse(self, filename: Lrc<FileName>) -> Result<Program> {
+        let cm = Lrc::new(SourceMap::default());
+        let fm = cm.new_source_file(filename, self.code);
+
+        let program = parse_file_as_program(
+            &fm,
+            Default::default(),
+            EsVersion::latest(),
+            None,
+            &mut vec![],
+        )
+        .map_err(|err| anyhow::anyhow!("failed to parse the file: {:?}", err))?;
+
+        Ok(program)
     }
 }
 
@@ -62,11 +75,13 @@ impl<S> Transform<'_, S>
 where
     S: SourceMapper + SourceMapperExt,
 {
-    pub fn apply(&self, program: &Program) -> Result<Program> {
+    pub fn apply(&self, filename: Lrc<FileName>, program: &Program) -> Result<Program> {
         let input = TransformOutput::from_swc(self.cm.clone(), program)?;
-        let output = self.apply_transform(input)?;
+        let output = self
+            .apply_transform(input)
+            .context("failed to apply the babel transform")?;
 
-        Ok(output.parse())
+        output.parse(filename).context("failed to parse the output")
     }
 
     fn apply_transform(&self, input: TransformOutput) -> Result<TransformOutput> {
