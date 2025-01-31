@@ -8,6 +8,5 @@ const reactCompilerConfig = {
 export function transform({ code, map }: { code: string; map?: string }) {
   return innerTransform(code, {
     plugins: [[reactCompilerPlugin, reactCompilerConfig]],
-    map,
   });
 }
