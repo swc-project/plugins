@@ -2,7 +2,7 @@ use anyhow::{Context as _, Result};
 use rquickjs::{function::Args, FromJs, Function, IntoJs};
 use serde::{Deserialize, Serialize};
 use swc_common::{sync::Lrc, FileName, SourceMap, SourceMapper};
-use swc_ecma_ast::{EsVersion, Program, SourceMapperExt};
+use swc_ecma_ast::{EsVersion, Pass, Program, SourceMapperExt};
 use swc_ecma_codegen::{text_writer::JsWriter, Emitter, Node};
 use swc_ecma_parser::parse_file_as_program;
 
@@ -10,15 +10,13 @@ use crate::qjs::with_quickjs_context;
 
 mod qjs;
 
-pub struct Config {}
-
 pub struct Transform<'a, S>
 where
     S: SourceMapper + SourceMapperExt,
 {
     pub transform_code: &'a str,
-    pub config: &'a Config,
     pub cm: Lrc<S>,
+    pub filename: Lrc<FileName>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -75,15 +73,6 @@ impl<S> Transform<'_, S>
 where
     S: SourceMapper + SourceMapperExt,
 {
-    pub fn apply(&self, filename: Lrc<FileName>, program: &Program) -> Result<Program> {
-        let input = TransformOutput::from_swc(self.cm.clone(), program)?;
-        let output = self
-            .apply_transform(input)
-            .context("failed to apply the babel transform")?;
-
-        output.parse(filename).context("failed to parse the output")
-    }
-
     fn apply_transform(&self, input: TransformOutput) -> Result<TransformOutput> {
         with_quickjs_context(|ctx| {
             let function: Function = ctx
@@ -99,6 +88,25 @@ where
 
             Ok(output)
         })
+    }
+}
+
+impl<S> Pass for Transform<'_, S>
+where
+    S: SourceMapper + SourceMapperExt,
+{
+    fn process(&mut self, program: &mut Program) {
+        let input = TransformOutput::from_swc(self.cm.clone(), program)
+            .expect("failed to convert swc program to babel input");
+        let output = self
+            .apply_transform(input)
+            .expect("failed to apply the babel transform");
+
+        let new_program = output
+            .parse(self.filename.clone())
+            .expect("failed to parse the output");
+
+        *program = new_program;
     }
 }
 
