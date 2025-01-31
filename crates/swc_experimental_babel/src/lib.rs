@@ -1,5 +1,3 @@
-mod cache;
-
 use anyhow::{Context as _, Result};
 use once_cell::sync::Lazy;
 use rquickjs::{Context, Runtime};
@@ -7,6 +5,10 @@ use serde::{Deserialize, Serialize};
 use swc_common::{sync::Lrc, SourceMap, SourceMapper};
 use swc_ecma_ast::{Program, SourceMapperExt};
 use swc_ecma_codegen::{text_writer::JsWriter, Emitter, Node};
+
+use self::cache::QUICKJS_CONTEXT;
+
+mod cache;
 
 pub struct Config {}
 
@@ -67,6 +69,6 @@ where
     }
 
     fn apply_transform(&self, input: TransformOutput) -> Result<TransformOutput> {
-        context.with(|ctx| ctx.eval(source))
+        QUICKJS_CONTEXT.with(|ctx| ctx.eval(source))
     }
 }

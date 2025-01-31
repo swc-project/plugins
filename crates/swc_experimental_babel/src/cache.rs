@@ -6,7 +6,7 @@ thread_local! {
 }
 
 thread_local! {
-    static QUICKJS_CONTEXT: Lazy<Context> = Lazy::new(|| {
+    pub static QUICKJS_CONTEXT: Lazy<Context> = Lazy::new(|| {
         QUICKJS_RUNTIME.with(|rt| Context::full(rt).expect("failed to create context"))
     });
 }
