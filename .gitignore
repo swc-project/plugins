@@ -6,3 +6,6 @@
 node_modules
 *.wasm
 .yarn/
+
+# pnpm pack
+*.tgz
