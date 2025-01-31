@@ -11,7 +11,7 @@ use swc_core::{
     },
 };
 
-const TRANSFORM_CODE: &str = include_str!("../dist/main.mjs");
+const TRANSFORM_CODE: &str = include_str!("../dist/main.js");
 
 #[plugin_transform]
 fn swc_plugin(program: Program, data: TransformPluginProgramMetadata) -> Program {

@@ -1,6 +1,6 @@
 
 
-export function transform({ code, map }) {
+function transform({ code, map }) {
 
 
     return {

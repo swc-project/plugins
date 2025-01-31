@@ -46,7 +46,7 @@ fn fixture_react_compiler(input: PathBuf) {
                 resolver(Mark::new(), Mark::new(), false),
                 swc_experimental_babel::Transform {
                     transform_code: include_str!(
-                        "../../../packages/experimetal-babel-react-compiler/dist/main.mjs"
+                        "../../../packages/experimetal-babel-react-compiler/dist/main.js"
                     ),
                     filename: Lrc::new(FileName::Real(input.clone())),
                     cm: tr.cm.clone(),

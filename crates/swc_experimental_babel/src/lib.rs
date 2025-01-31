@@ -1,8 +1,5 @@
 use anyhow::{Context as _, Result};
-use rquickjs::{
-    function::{self, Args},
-    FromJs, Function, IntoJs, Module, Value,
-};
+use rquickjs::{function::Args, FromJs, Function, IntoJs, Undefined};
 use serde::{Deserialize, Serialize};
 use swc_common::{sync::Lrc, FileName, SourceMap, SourceMapper};
 use swc_ecma_ast::{EsVersion, Pass, Program, SourceMapperExt};
@@ -78,26 +75,20 @@ where
 {
     fn apply_transform(&self, input: TransformOutput) -> Result<TransformOutput> {
         with_quickjs_context(|ctx| {
-            let module = Module::declare(ctx.clone(), "babel-transform", self.transform_code)
-                .or_else(|err| match err {
+            let _: Undefined = ctx
+                .eval(self.transform_code)
+                .map_err(|err| match err {
                     rquickjs::Error::Exception => {
                         let err = ctx.catch();
-                        anyhow::bail!("exception while declaring module: {err:?}");
+                        anyhow::anyhow!("failed to evaluate the transform code: {err:?}")
                     }
-                    err => Err(anyhow::anyhow!(err)),
+                    _ => anyhow::anyhow!(err),
                 })
-                .context("failed to declare the module")?
-                .eval()
-                .context("failed to evaluate the module")?
-                .0;
+                .context("failed to evaluate the transform code")?;
 
-            let function: Value = module
-                .get("transform")
-                .context("failed to get the export named 'transform'")?;
-
-            let function: Function = function
-                .into_function()
-                .context("failed to convert the value to a function")?;
+            let function: Function = ctx
+                .eval("transform")
+                .context("failed to get the transform function")?;
 
             let mut args = Args::new(ctx.clone(), 1);
             args.push_arg(input)?;

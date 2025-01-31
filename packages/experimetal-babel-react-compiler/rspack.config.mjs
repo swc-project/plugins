@@ -6,9 +6,10 @@ export default defineConfig({
   },
   output: {
     library: {
-      type: 'module',
+      type: 'var',
+      name: 'transform'
     },
-    module: true,
+    module: false,
   },
   devtool: false,
   optimization: {
