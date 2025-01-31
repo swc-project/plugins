@@ -54,6 +54,7 @@ jobs:
 
       - name: Run cargo test
         run: |
+          corepack enable
           cargo test --all --color always
 
   publish:
