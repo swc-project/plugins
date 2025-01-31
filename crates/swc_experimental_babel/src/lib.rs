@@ -1,5 +1,8 @@
 use anyhow::{Context as _, Result};
-use rquickjs::{function::Args, FromJs, Function, IntoJs, Module};
+use rquickjs::{
+    function::{self, Args},
+    FromJs, Function, IntoJs, Module, Value,
+};
 use serde::{Deserialize, Serialize};
 use swc_common::{sync::Lrc, FileName, SourceMap, SourceMapper};
 use swc_ecma_ast::{EsVersion, Pass, Program, SourceMapperExt};
@@ -88,9 +91,13 @@ where
                 .context("failed to evaluate the module")?
                 .0;
 
-            let function: Function = module
+            let function: Value = module
                 .get("transform")
                 .context("failed to get the export named 'transform'")?;
+
+            let function: Function = function
+                .into_function()
+                .context("failed to convert the value to a function")?;
 
             let mut args = Args::new(ctx.clone(), 1);
             args.push_arg(input)?;
