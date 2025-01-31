@@ -8,6 +8,12 @@
 
 # @swc/plugin-experimental-babel
 
+## 0.2.1
+
+### Patch Changes
+
+- 5edb8f5: Remove dbg!() calls
+
 ## 0.2.0
 
 ### Minor Changes
