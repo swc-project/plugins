@@ -3346,17 +3346,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "swc_plugin_experimental_babel"
-version = "0.1.0"
-dependencies = [
- "serde",
- "serde_json",
- "swc_common",
- "swc_core",
- "swc_experimental_babel",
-]
-
-[[package]]
 name = "swc_plugin_formatjs"
 version = "1.0.0"
 dependencies = [
