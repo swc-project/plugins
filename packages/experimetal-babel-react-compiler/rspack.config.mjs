@@ -1,5 +1,5 @@
 import { defineConfig } from "@rspack/cli";
-import nodePolyfillPlugin from 'node-polyfill-webpack-plugin';
+import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
 export default defineConfig({
   entry: {
     main: "./src/index.ts",
@@ -13,7 +13,7 @@ export default defineConfig({
   optimization: {
     minimize: false,
   },
-  plugins: [new nodePolyfillPlugin()],
+  plugins: [new NodePolyfillPlugin()],
   module: {
     rules: [
       {
@@ -25,6 +25,7 @@ export default defineConfig({
               parser: {
                 syntax: 'typescript',
               },
+              target: 'es2019'
             },
           }
         }
