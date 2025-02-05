@@ -1,16 +1,16 @@
+use rustc_hash::{FxHashMap, FxHashSet};
 use swc_atoms::JsWord;
-use swc_common::collections::{AHashMap, AHashSet};
 use swc_ecma_ast::*;
 use swc_ecma_visit::{noop_visit_type, Visit, VisitWith};
 
 #[derive(Debug, Default)]
 pub(crate) struct ImportMap {
     /// Map from module name to (module path, exported symbol)
-    imports: AHashMap<Id, (JsWord, JsWord)>,
+    imports: FxHashMap<Id, (JsWord, JsWord)>,
 
-    namespace_imports: AHashMap<Id, JsWord>,
+    namespace_imports: FxHashMap<Id, JsWord>,
 
-    imported_modules: AHashSet<JsWord>,
+    imported_modules: FxHashSet<JsWord>,
 }
 
 impl ImportMap {

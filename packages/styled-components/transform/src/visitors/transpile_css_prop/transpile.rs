@@ -5,12 +5,9 @@ use std::{borrow::Cow, collections::HashMap};
 use inflector::Inflector;
 use once_cell::sync::Lazy;
 use regex::Regex;
+use rustc_hash::{FxHashMap, FxHashSet};
 use swc_atoms::JsWord;
-use swc_common::{
-    collections::{AHashMap, AHashSet},
-    util::take::Take,
-    Spanned, SyntaxContext, DUMMY_SP,
-};
+use swc_common::{util::take::Take, Spanned, SyntaxContext, DUMMY_SP};
 use swc_ecma_ast::*;
 use swc_ecma_utils::{prepend_stmt, private_ident, quote_ident, ExprFactory};
 use swc_ecma_visit::{noop_visit_mut_type, visit_mut_pass, VisitMut, VisitMutWith};
@@ -41,11 +38,11 @@ struct TranspileCssProp<'a> {
 
     import_name: Option<Ident>,
     injected_nodes: Vec<Stmt>,
-    interleaved_injections: AHashMap<Id, Vec<Stmt>>,
+    interleaved_injections: FxHashMap<Id, Vec<Stmt>>,
 
     identifier_idx: usize,
     styled_idx: HashMap<JsWord, usize>,
-    top_level_decls: Option<AHashSet<Id>>,
+    top_level_decls: Option<FxHashSet<Id>>,
 }
 
 impl TranspileCssProp<'_> {

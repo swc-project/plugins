@@ -1,8 +1,6 @@
+use rustc_hash::{FxHashMap, FxHashSet};
 use swc_atoms::Atom;
-use swc_common::{
-    collections::{AHashMap, AHashSet},
-    Span,
-};
+use swc_common::Span;
 use swc_ecma_ast::*;
 use swc_ecma_visit::{noop_visit_type, Visit, VisitWith};
 
@@ -11,11 +9,11 @@ use crate::config::ImportItem;
 #[derive(Debug, Default)]
 pub(crate) struct ImportMap {
     /// Map from module name to (module path, exported symbol, span)
-    imports: AHashMap<Id, (Atom, Atom, Span)>,
+    imports: FxHashMap<Id, (Atom, Atom, Span)>,
 
-    namespace_imports: AHashMap<Id, (Atom, Span)>,
+    namespace_imports: FxHashMap<Id, (Atom, Span)>,
 
-    imported_modules: AHashSet<Atom>,
+    imported_modules: FxHashSet<Atom>,
 }
 
 impl ImportMap {
