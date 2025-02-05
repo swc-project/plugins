@@ -2558,6 +2558,7 @@ dependencies = [
  "lightningcss",
  "parcel_selectors",
  "preset_env_base",
+ "rustc-hash 2.1.0",
  "serde",
  "swc_atoms",
  "swc_common",
@@ -3310,6 +3311,7 @@ dependencies = [
 name = "swc_magic"
 version = "0.24.0"
 dependencies = [
+ "rustc-hash 2.1.0",
  "serde",
  "swc_atoms",
  "swc_common",
