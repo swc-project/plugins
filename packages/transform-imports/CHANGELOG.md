@@ -1,5 +1,11 @@
 # @swc/plugin-transform-imports
 
+## 6.5.0
+
+### Minor Changes
+
+- bfa0a51: Update swc_core to v13
+
 ## 6.4.0
 
 ### Minor Changes

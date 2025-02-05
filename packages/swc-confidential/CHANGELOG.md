@@ -1,5 +1,11 @@
 # @swc/plugin-swc-confidential
 
+## 5.3.0
+
+### Minor Changes
+
+- bfa0a51: Update swc_core to v13
+
 ## 5.2.0
 
 ### Minor Changes
