@@ -10,7 +10,7 @@ license      = { workspace = true }
 name         = "styled_jsx"
 repository   = { workspace = true }
 rust-version = { workspace = true }
-version      = "0.78.0"
+version      = "0.79.0"
 
 
 [features]
@@ -20,6 +20,7 @@ custom_transform = ["swc_common/concurrent"]
 anyhow           = { workspace = true }
 lightningcss     = { workspace = true, features = ["visitor", "into_owned"] }
 parcel_selectors = { workspace = true }
+rustc-hash       = { workspace = true }
 serde            = { workspace = true, features = ["derive"] }
 tracing          = { workspace = true }
 

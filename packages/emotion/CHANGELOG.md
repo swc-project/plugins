@@ -1,5 +1,11 @@
 # @swc/plugin-emotion
 
+## 8.7.0
+
+### Minor Changes
+
+- bfa0a51: Update swc_core to v13
+
 ## 8.6.0
 
 ### Minor Changes

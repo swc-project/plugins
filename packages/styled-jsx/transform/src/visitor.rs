@@ -7,10 +7,9 @@ use std::{
 
 use anyhow::{bail, format_err, Error, Result};
 use preset_env_base::Versions;
+use rustc_hash::FxHashSet;
 use serde::Deserialize;
-use swc_common::{
-    collections::AHashSet, errors::HANDLER, util::take::Take, FileName, SourceMap, Span, DUMMY_SP,
-};
+use swc_common::{errors::HANDLER, util::take::Take, FileName, SourceMap, Span, DUMMY_SP};
 use swc_ecma_ast::*;
 use swc_ecma_minifier::{
     eval::{EvalResult, Evaluator},
@@ -111,8 +110,8 @@ struct StyledJSXTransformer<'a> {
     class_name: Option<Expr>,
     file_has_styled_jsx: bool,
     has_styled_jsx: bool,
-    bindings: AHashSet<Id>,
-    nearest_scope_bindings: AHashSet<Id>,
+    bindings: FxHashSet<Id>,
+    nearest_scope_bindings: FxHashSet<Id>,
     func_scope_level: u8,
     style_import_name: Option<String>,
     external_bindings: Vec<Id>,

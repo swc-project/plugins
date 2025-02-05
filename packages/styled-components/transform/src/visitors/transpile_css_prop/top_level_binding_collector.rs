@@ -1,10 +1,10 @@
-use swc_common::collections::AHashSet;
+use rustc_hash::FxHashSet;
 use swc_ecma_ast::*;
 use swc_ecma_visit::{noop_visit_type, Visit, VisitWith};
 
 // Modified from swc_ecma_utils/src/lib.rs:BindingCollector.
 pub struct TopLevelBindingCollector {
-    bindings: AHashSet<Id>,
+    bindings: FxHashSet<Id>,
     in_pat_decl: bool,
 }
 
@@ -76,7 +76,7 @@ impl Visit for TopLevelBindingCollector {
     }
 }
 
-pub fn collect_top_level_decls<N>(n: &N) -> AHashSet<Id>
+pub fn collect_top_level_decls<N>(n: &N) -> FxHashSet<Id>
 where
     N: VisitWith<TopLevelBindingCollector>,
 {

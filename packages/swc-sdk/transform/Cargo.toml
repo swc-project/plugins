@@ -15,6 +15,7 @@ version      = "0.2.0"
 
 [dependencies]
 default-from-serde = { workspace = true }
+rustc-hash         = { workspace = true }
 serde              = { workspace = true, features = ["derive"] }
 swc_atoms          = { workspace = true }
 swc_common         = { workspace = true }
