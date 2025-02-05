@@ -21,6 +21,7 @@ version      = "0.103.0"
 Inflector      = { workspace = true }
 once_cell      = { workspace = true }
 regex          = { workspace = true, features = ["std", "perf"] }
+rustc-hash     = { workspace = true }
 serde          = { workspace = true, features = ["derive"] }
 swc_atoms      = { workspace = true }
 swc_common     = { workspace = true }
