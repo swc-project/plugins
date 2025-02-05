@@ -20,6 +20,7 @@ custom_transform = ["swc_common/concurrent"]
 anyhow           = { workspace = true }
 lightningcss     = { workspace = true, features = ["visitor", "into_owned"] }
 parcel_selectors = { workspace = true }
+rustc-hash       = { workspace = true }
 serde            = { workspace = true, features = ["derive"] }
 tracing          = { workspace = true }
 
