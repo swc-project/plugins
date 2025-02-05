@@ -3624,6 +3624,7 @@ name = "swc_sdk"
 version = "0.2.0"
 dependencies = [
  "default-from-serde",
+ "rustc-hash 2.1.0",
  "serde",
  "swc_atoms",
  "swc_common",
