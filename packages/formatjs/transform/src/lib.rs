@@ -34,7 +34,7 @@ pub static WHITESPACE_REGEX: Lazy<Regexp> = Lazy::new(|| Regexp::new(r"\s+").unw
 pub struct FormatJSPluginOptions {
     pub pragma: Option<String>,
     pub remove_default_message: bool,
-    pub id_interpolate_pattern: Option<String>,
+    pub id_interpolation_pattern: Option<String>,
     pub ast: bool,
     pub extract_source_location: bool,
     pub preserve_whitespace: bool,
@@ -554,7 +554,7 @@ fn evaluate_jsx_message_descriptor(
 
     // Note: do not support override fn
     let id = if id.is_none() && !default_message.is_empty() {
-        let interpolate_pattern = if let Some(interpolate_pattern) = &options.id_interpolate_pattern
+        let interpolate_pattern = if let Some(interpolate_pattern) = &options.id_interpolation_pattern
         {
             interpolate_pattern.as_str()
         } else {
@@ -594,7 +594,7 @@ fn evaluate_call_expr_message_descriptor(
         get_call_expr_message_descriptor_value_maybe_object(&descriptor_path.description, None);
 
     let id = if id.is_none() && !default_message.is_empty() {
-        let interpolate_pattern = if let Some(interpolate_pattern) = &options.id_interpolate_pattern
+        let interpolate_pattern = if let Some(interpolate_pattern) = &options.id_interpolation_pattern
         {
             interpolate_pattern.as_str()
         } else {
