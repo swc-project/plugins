@@ -1,4 +1,8 @@
-use std::collections::{HashMap, HashSet};
+use std::{
+    collections::{HashMap, HashSet},
+    ffi::OsStr,
+    path::Path,
+};
 
 use base64ct::{Base64, Encoding};
 use once_cell::sync::Lazy;
@@ -30,7 +34,7 @@ pub static WHITESPACE_REGEX: Lazy<Regexp> = Lazy::new(|| Regexp::new(r"\s+").unw
 pub struct FormatJSPluginOptions {
     pub pragma: Option<String>,
     pub remove_default_message: bool,
-    pub id_interpolate_pattern: Option<String>,
+    pub id_interpolation_pattern: Option<String>,
     pub ast: bool,
     pub extract_source_location: bool,
     pub preserve_whitespace: bool,
@@ -452,48 +456,38 @@ fn get_call_expr_icu_message_value(
     message
 }
 
-fn interpolate_name(_resource_path: &str, name: &str, content: &str) -> Option<String> {
-    let filename = name;
+fn interpolate_name(filename: &str, interpolate_pattern: &str, content: &str) -> Option<String> {
+    let mut resource_path = filename.to_string();
+    let mut basename = "file";
 
-    // let ext = "bin";
-    // let basename = "file";
-    // let directory = "";
-    // let folder = "";
-    // let query = "";
-
-    /*
-      if (resource_path) {
-      const parsed = path.parse(loaderContext.resourcePath)
-      let resourcePath = loaderContext.resourcePath
-
-      if (parsed.ext) {
-        ext = parsed.ext.slice(1)
-      }
-
-      if (parsed.dir) {
-        basename = parsed.name
-        resourcePath = parsed.dir + path.sep
-      }
-
-      if (typeof context !== 'undefined') {
-        directory = path
-          .relative(context, resourcePath + '_')
-          .replace(/\\/g, '/')
-          .replace(/\.\.(\/)?/g, '_$1')
-        directory = directory.slice(0, -1)
-      } else {
-        directory = resourcePath.replace(/\\/g, '/').replace(/\.\.(\/)?/g, '_$1')
-      }
-
-      if (directory.length === 1) {
-        directory = ''
-      } else if (directory.length > 1) {
-        folder = path.basename(directory)
-      }
+    let path = Path::new(filename);
+    let parent = path.parent();
+    if let Some(parent) = parent {
+        let parent_str = parent.to_str().unwrap();
+        if !parent_str.is_empty() {
+            basename = path.file_stem()?.to_str().unwrap();
+            resource_path = format!("{}/", parent_str);
+        }
     }
-      */
 
-    let mut url = filename.to_string();
+    let mut directory: String;
+    directory = resource_path.replace("\\", "/").to_owned();
+    directory = Regexp::new(r#"\.\.(/)?"#)
+        .unwrap()
+        .replace(directory.as_str(), "_$1")
+        .to_string();
+
+    let folder = match directory.len() {
+        0 | 1 => {
+            directory = "".to_string();
+            ""
+        },
+        _ => {
+            Path::new(&directory).file_name().and_then(OsStr::to_str).unwrap_or("")
+        }
+    };
+
+    let mut url = interpolate_pattern.to_string();
     let r = Regexp::new(r#"\[(?:([^:\]]+):)?(?:hash|contenthash)(?::([a-z]+\d*))?(?::(\d+))?\]"#)
         .unwrap();
 
@@ -517,16 +511,30 @@ fn interpolate_name(_resource_path: &str, name: &str, content: &str) -> Option<S
         })
         .to_string();
 
-    /*
-    url = url
-      .replace(/\[ext\]/gi, () => ext)
-      .replace(/\[name\]/gi, () => basename)
-      .replace(/\[path\]/gi, () => directory)
-      .replace(/\[folder\]/gi, () => folder)
-      .replace(/\[query\]/gi, () => query)
-    */
+    url = Regexp::new(r#"\[(ext|name|path|folder|query)\]"#).unwrap()
+        .replace_all(url.as_str(), |cap: &Captures| {
+            if let Some(placeholder) = cap.get(1) {
+                match placeholder.as_str() {
+                    "ext" => {
+                        if let Some(extension) = path.extension() {
+                            extension.to_str().unwrap()
+                        } else {
+                            "bin"
+                        }
+                    }
+                    "name" => basename,
+                    "path" => directory.as_str(),
+                    "folder" => folder,
+                    "query" => "",
+                    _ => panic!("unreachable"),
+                }
+            } else {
+                ""
+            }
+        })
+        .to_string();
 
-    Some(url.to_string())
+    Some(url)
 }
 
 // TODO: Consolidate with evaluate_call_expr_message_descriptor
@@ -546,7 +554,7 @@ fn evaluate_jsx_message_descriptor(
 
     // Note: do not support override fn
     let id = if id.is_none() && !default_message.is_empty() {
-        let interpolate_pattern = if let Some(interpolate_pattern) = &options.id_interpolate_pattern
+        let interpolate_pattern = if let Some(interpolate_pattern) = &options.id_interpolation_pattern
         {
             interpolate_pattern.as_str()
         } else {
@@ -586,7 +594,7 @@ fn evaluate_call_expr_message_descriptor(
         get_call_expr_message_descriptor_value_maybe_object(&descriptor_path.description, None);
 
     let id = if id.is_none() && !default_message.is_empty() {
-        let interpolate_pattern = if let Some(interpolate_pattern) = &options.id_interpolate_pattern
+        let interpolate_pattern = if let Some(interpolate_pattern) = &options.id_interpolation_pattern
         {
             interpolate_pattern.as_str()
         } else {
