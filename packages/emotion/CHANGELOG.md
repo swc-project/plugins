@@ -1,5 +1,11 @@
 # @swc/plugin-emotion
 
+## 8.7.1
+
+### Patch Changes
+
+- ce8d317: Update swc_core to v14.0.0
+
 ## 8.7.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-remove-console",
-  "version": "6.3.0",
+  "version": "6.3.1",
   "description": "SWC plugin for https://www.npmjs.com/package/babel-plugin-remove-console",
   "main": "swc_plugin_remove_console.wasm",
   "scripts": {

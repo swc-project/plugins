@@ -18,6 +18,12 @@
 
 # @swc/plugin-transform-imports
 
+## 6.5.1
+
+### Patch Changes
+
+- ce8d317: Update swc_core to v14.0.0
+
 ## 6.5.0
 
 ### Minor Changes

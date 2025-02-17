@@ -1,5 +1,11 @@
 # @swc/plugin-styled-jsx
 
+## 6.6.1
+
+### Patch Changes
+
+- ce8d317: Update swc_core to v14.0.0
+
 ## 6.6.0
 
 ### Minor Changes
