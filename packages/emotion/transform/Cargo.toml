@@ -20,6 +20,7 @@ radix_fmt           = { workspace = true }
 regex               = { workspace = true }
 rustc-hash          = { workspace = true }
 serde               = { workspace = true }
+smallvec            = { workspace = true }
 sourcemap           = { workspace = true }
 swc_atoms           = { workspace = true }
 swc_common          = { workspace = true }
