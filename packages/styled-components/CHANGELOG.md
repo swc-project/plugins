@@ -1,5 +1,11 @@
 # @swc/plugin-styled-components
 
+## 6.8.1
+
+### Patch Changes
+
+- ce8d317: Update swc_core to v14.0.0
+
 ## 6.8.0
 
 ### Minor Changes
