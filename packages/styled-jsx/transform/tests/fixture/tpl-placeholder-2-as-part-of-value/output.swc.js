@@ -3,7 +3,7 @@ export default class {
     render() {
         return <div className={_JSXStyle.dynamic([
             [
-                "afb53d92c5119844",
+                "f3a7c5a0b4439746",
                 [
                     a[b],
                     -1 * (c || 0),
@@ -13,7 +13,7 @@ export default class {
         ])}>
         <p className={_JSXStyle.dynamic([
             [
-                "afb53d92c5119844",
+                "f3a7c5a0b4439746",
                 [
                     a[b],
                     -1 * (c || 0),
@@ -21,7 +21,7 @@ export default class {
                 ]
             ]
         ])}>test</p>
-        <_JSXStyle id={"afb53d92c5119844"} dynamic={[
+        <_JSXStyle id={"f3a7c5a0b4439746"} dynamic={[
             a[b],
             -1 * (c || 0),
             d
