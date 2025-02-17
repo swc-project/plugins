@@ -1,5 +1,11 @@
 # @swc/plugin-noop
 
+## 6.3.1
+
+### Patch Changes
+
+- 04465bc: Update swc_core to v14.0.0, really
+
 ## 6.3.0
 
 ### Minor Changes
