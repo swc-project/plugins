@@ -9,6 +9,7 @@ use anyhow::{bail, format_err, Error, Result};
 use preset_env_base::Versions;
 use rustc_hash::FxHashSet;
 use serde::Deserialize;
+use smallvec::smallvec;
 use swc_common::{errors::HANDLER, util::take::Take, FileName, SourceMap, Span, DUMMY_SP};
 use swc_ecma_ast::*;
 use swc_ecma_minifier::{
@@ -498,7 +499,7 @@ impl StyledJSXTransformer<'_> {
         let css: String;
         let css_span: Span;
         let is_dynamic;
-        let mut expressions = vec![];
+        let mut expressions = smallvec![];
         let mut is_expr_property = vec![];
         match style_expr {
             StyleExpr::Str(Str { value, span, .. }) => {
@@ -727,7 +728,7 @@ impl StyledJSXTransformer<'_> {
                 sym: "String".into(),
                 ..Default::default()
             })),
-            args: Some(vec![ExprOrSpread {
+            args: Some(smallvec![ExprOrSpread {
                 expr: Box::new(css),
                 spread: None,
             }]),

@@ -1,5 +1,6 @@
 use std::{collections::hash_map::DefaultHasher, hash::Hasher};
 
+use smallvec::smallvec;
 use swc_common::DUMMY_SP;
 use swc_ecma_ast::*;
 
@@ -74,7 +75,7 @@ pub fn compute_class_names(
                 }),
                 span: DUMMY_SP,
             }))),
-            args: vec![ExprOrSpread {
+            args: smallvec![ExprOrSpread {
                 expr: Box::new(Expr::Array(ArrayLit {
                     elems: dynamic_styles
                         .iter()
@@ -85,7 +86,7 @@ pub fn compute_class_names(
                             };
                             Some(ExprOrSpread {
                                 expr: Box::new(Expr::Array(ArrayLit {
-                                    elems: vec![
+                                    elems: smallvec![
                                         Some(ExprOrSpread {
                                             expr: Box::new(string_literal_expr(&hash_string(
                                                 &hash_input,

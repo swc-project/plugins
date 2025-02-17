@@ -6,6 +6,7 @@ use inflector::Inflector;
 use once_cell::sync::Lazy;
 use regex::Regex;
 use rustc_hash::{FxHashMap, FxHashSet};
+use smallvec::smallvec;
 use swc_atoms::JsWord;
 use swc_common::{util::take::Take, Spanned, SyntaxContext, DUMMY_SP};
 use swc_ecma_ast::*;
@@ -107,7 +108,7 @@ impl VisitMut for TranspileCssProp<'_> {
                             (Expr::Call(CallExpr {
                                 span: DUMMY_SP,
                                 callee: import_name.as_callee(),
-                                args: vec![Lit::Str(Str {
+                                args: smallvec![Lit::Str(Str {
                                     span: DUMMY_SP,
                                     value: name.sym,
                                     raw: None,
@@ -124,7 +125,7 @@ impl VisitMut for TranspileCssProp<'_> {
                             Expr::Call(CallExpr {
                                 span: DUMMY_SP,
                                 callee: import_name.as_callee(),
-                                args: vec![name_expr.as_arg()],
+                                args: smallvec![name_expr.as_arg()],
                                 ..Default::default()
                             }),
                             if self.is_top_level_ident(&name) {
@@ -166,7 +167,7 @@ impl VisitMut for TranspileCssProp<'_> {
                                     Expr::Object(..) => *v.take(),
                                     _ => Expr::Tpl(Tpl {
                                         span: DUMMY_SP,
-                                        exprs: vec![v.take()],
+                                        exprs: smallvec![v.take()],
                                         quasis: vec![
                                             TplElement {
                                                 span: DUMMY_SP,
@@ -240,47 +241,42 @@ impl VisitMut for TranspileCssProp<'_> {
                         // tagged template literal
                         let mut tpl = css.expect_tpl();
 
-                        tpl.exprs =
-                            tpl.exprs
-                                .take()
-                                .into_iter()
-                                .fold(vec![], |mut acc, mut expr| {
-                                    if expr.is_fn_expr()
-                                        || expr.is_arrow()
-                                        || is_direct_access(&expr, &|id| {
-                                            self.is_top_level_ident(id)
-                                        })
-                                    {
-                                        acc.push(expr);
-                                        return acc;
-                                    }
+                        tpl.exprs = tpl.exprs.take().into_iter().fold(
+                            Default::default(),
+                            |mut acc, mut expr| {
+                                if expr.is_fn_expr()
+                                    || expr.is_arrow()
+                                    || is_direct_access(&expr, &|id| self.is_top_level_ident(id))
+                                {
+                                    acc.push(expr);
+                                    return acc;
+                                }
 
-                                    let identifier =
-                                        get_local_identifier(&mut self.identifier_idx, &expr);
-                                    let p = quote_ident!("p");
-                                    extra_attrs.push(JSXAttrOrSpread::JSXAttr(JSXAttr {
+                                let identifier =
+                                    get_local_identifier(&mut self.identifier_idx, &expr);
+                                let p = quote_ident!("p");
+                                extra_attrs.push(JSXAttrOrSpread::JSXAttr(JSXAttr {
+                                    span: DUMMY_SP,
+                                    name: JSXAttrName::Ident(identifier.clone()),
+                                    value: Some(JSXAttrValue::JSXExprContainer(JSXExprContainer {
                                         span: DUMMY_SP,
-                                        name: JSXAttrName::Ident(identifier.clone()),
-                                        value: Some(JSXAttrValue::JSXExprContainer(
-                                            JSXExprContainer {
-                                                span: DUMMY_SP,
-                                                expr: JSXExpr::Expr(expr.take()),
-                                            },
-                                        )),
-                                    }));
+                                        expr: JSXExpr::Expr(expr.take()),
+                                    })),
+                                }));
 
-                                    acc.push(Box::new(Expr::Arrow(ArrowExpr {
-                                        params: vec![Pat::Ident(p.clone().into())],
-                                        body: Box::new(BlockStmtOrExpr::Expr(
-                                            p.make_member(identifier).into(),
-                                        )),
-                                        is_async: false,
-                                        is_generator: false,
-                                        ..Default::default()
-                                    })));
+                                acc.push(Box::new(Expr::Arrow(ArrowExpr {
+                                    params: vec![Pat::Ident(p.clone().into())],
+                                    body: Box::new(BlockStmtOrExpr::Expr(
+                                        p.make_member(identifier).into(),
+                                    )),
+                                    is_async: false,
+                                    is_generator: false,
+                                    ..Default::default()
+                                })));
 
-                                    acc
-                                });
+                                acc
+                            },
+                        );
 
                         css = Expr::Tpl(tpl);
                     }
@@ -292,7 +288,7 @@ impl VisitMut for TranspileCssProp<'_> {
                             Expr::Object(..) | Expr::Arrow(..) => Box::new(Expr::Call(CallExpr {
                                 span: DUMMY_SP,
                                 callee: styled.as_callee(),
-                                args: vec![css.as_arg()],
+                                args: smallvec![css.as_arg()],
                                 ..Default::default()
                             })),
                             _ => Box::new(Expr::TaggedTpl(TaggedTpl {

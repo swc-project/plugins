@@ -5,6 +5,7 @@ use once_cell::sync::Lazy;
 use regex::{Regex, RegexBuilder};
 use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
+use smallvec::{smallvec, SmallVec};
 use sourcemap::{RawToken, SourceMap as RawSourcemap};
 use swc_atoms::{atom, Atom};
 use swc_common::{comments::Comments, util::take::Take, BytePos, SourceMapperDyn, DUMMY_SP};
@@ -328,10 +329,10 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
         })))
     }
 
-    fn create_args_from_tagged_tpl(&self, tagged_tpl: &mut Tpl) -> Vec<ExprOrSpread> {
+    fn create_args_from_tagged_tpl(&self, tagged_tpl: &mut Tpl) -> SmallVec<[ExprOrSpread; 1]> {
         let args_len = tagged_tpl.exprs.len() + tagged_tpl.quasis.len();
         // 2 more capacity is for `label` and `sourceMap`
-        let mut args = Vec::with_capacity(args_len + 2);
+        let mut args = SmallVec::with_capacity(args_len + 2);
         for index in 0..args_len {
             let i = index / 2;
             if index % 2 == 0 {
@@ -409,7 +410,7 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
                 expr: JSXExpr::Expr(Box::new(Expr::Array(ArrayLit {
                     span: DUMMY_SP,
                     elems: {
-                        let mut elements = Vec::with_capacity(2);
+                        let mut elements = SmallVec::with_capacity(2);
                         elements.push(Some(raw_attr.as_arg()));
                         if let Some(cm) = self.create_sourcemap(pos) {
                             elements.push(Some(cm.as_arg()));
@@ -486,7 +487,7 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                                             Expr::Call(_) => {
                                                 args_props.push(PropOrSpread::Spread(
                                                     SpreadElement {
-                                                        dot3_token: DUMMY_SP,
+                                                        dot3_token: BytePos::DUMMY,
                                                         expr: expr.take(),
                                                     },
                                                 ));
@@ -530,7 +531,7 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                                     if let MemberProp::Ident(prop) = &m.prop {
                                         let mut args_props = Vec::with_capacity(2);
                                         args_props.push(self.create_label_prop_node("target"));
-                                        let mut args = vec![prop.sym.as_ref().as_arg()];
+                                        let mut args = smallvec![prop.sym.as_ref().as_arg()];
                                         if !self.in_jsx_element {
                                             self.comments.add_pure_comment(expr.span.lo());
                                             if self.options.auto_label.unwrap_or(false) {
@@ -660,7 +661,7 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                                         Expr::Call(_) => {
                                             object_props.push(PropOrSpread::Spread(
                                                 SpreadElement {
-                                                    dot3_token: DUMMY_SP,
+                                                    dot3_token: BytePos::DUMMY,
                                                     expr: expr.take(),
                                                 },
                                             ));
@@ -693,7 +694,7 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                                     span: DUMMY_SP,
                                     callee: callee.as_callee(),
                                     args: {
-                                        let mut args: Vec<ExprOrSpread> = self
+                                        let mut args: SmallVec<[ExprOrSpread; 1]> = self
                                             .create_args_from_tagged_tpl(&mut tagged_tpl.tpl)
                                             .into_iter()
                                             .map(|exp| exp.fold_children_with(self))
@@ -767,7 +768,7 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                                         return Expr::Call(CallExpr {
                                             callee: CallExpr {
                                                 callee: i.take().as_callee(),
-                                                args: vec![
+                                                args: smallvec![
                                                     prop.take().sym.as_arg(),
                                                     Expr::Object(ObjectLit {
                                                         span: DUMMY_SP,

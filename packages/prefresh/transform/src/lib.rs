@@ -4,6 +4,7 @@ use std::{
 };
 
 use serde::Deserialize;
+use smallvec::SmallVec;
 use swc_atoms::Atom;
 use swc_common::DUMMY_SP;
 use swc_core::quote;
@@ -159,7 +160,7 @@ impl VisitMut for PrefreshPlugin {
                     ..Default::default()
                 }))
             })
-            .collect::<Vec<_>>();
+            .collect::<SmallVec<[Box<Expr>; 2]>>();
 
         let mut quasis = vec![TplElement {
             span: DUMMY_SP,

@@ -1,6 +1,7 @@
 use std::{panic, sync::Arc};
 
 use anyhow::{bail, Error};
+use smallvec::smallvec;
 use swc_common::{
     errors::HANDLER, source_map::SmallPos, util::take::Take, BytePos, SourceMap, Span, Spanned,
     DUMMY_SP,
@@ -111,7 +112,7 @@ pub fn transform_css(
     }
 
     let mut parts: Vec<&str> = s.split("--styled-jsx-placeholder-").collect();
-    let mut final_expressions = vec![];
+    let mut final_expressions = smallvec![];
     for i in parts.iter_mut().skip(1) {
         let (num_len, expression_index) = read_number(i, &style_info.is_expr_property);
         final_expressions.push(style_info.expressions[expression_index].clone());

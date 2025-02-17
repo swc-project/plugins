@@ -20,6 +20,7 @@ use lightningcss::{
 };
 use parcel_selectors::{parser::SelectorIter, SelectorImpl};
 use preset_env_base::{version::Version, Versions};
+use smallvec::smallvec;
 use swc_common::{
     errors::{DiagnosticBuilder, Level, HANDLER},
     BytePos, Loc, SourceMap, Span, DUMMY_SP,
@@ -166,7 +167,7 @@ pub fn transform_css(
     }
 
     let mut parts: Vec<&str> = res.code.split("--styled-jsx-placeholder-").collect();
-    let mut final_expressions = vec![];
+    let mut final_expressions = smallvec![];
     for i in parts.iter_mut().skip(1) {
         let (num_len, expression_index) = read_number(i, &style_info.is_expr_property);
         final_expressions.push(style_info.expressions[expression_index].clone());

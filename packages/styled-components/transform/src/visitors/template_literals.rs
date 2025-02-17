@@ -2,6 +2,7 @@
 
 use std::iter;
 
+use smallvec::smallvec;
 use swc_common::{util::take::Take, DUMMY_SP};
 use swc_ecma_ast::*;
 use swc_ecma_visit::{noop_visit_mut_type, visit_mut_pass, VisitMut, VisitMutWith};
@@ -40,7 +41,7 @@ impl VisitMut for TemplateLiterals<'_> {
                 .map(|q| {
                     Expr::Tpl(Tpl {
                         span: q.span,
-                        exprs: vec![],
+                        exprs: smallvec![],
                         quasis: vec![q],
                     })
                 })

@@ -5,6 +5,7 @@ use std::collections::HashSet;
 
 use once_cell::sync::Lazy;
 use serde::Deserialize;
+use smallvec::smallvec;
 use swc_common::{
     comments::{Comment, CommentKind, Comments},
     util::take::Take,
@@ -541,7 +542,7 @@ where
         Expr::Call(CallExpr {
             span: DUMMY_SP,
             callee: node.make_member(quote_ident!("replace")).as_callee(),
-            args: vec![
+            args: smallvec![
                 Lit::Regex(Regex {
                     span: DUMMY_SP,
                     exp: "[^a-zA-Z0-9_!§$()=\\\\-^°]+".into(),

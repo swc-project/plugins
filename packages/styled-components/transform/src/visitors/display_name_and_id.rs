@@ -2,6 +2,7 @@ use std::{convert::TryInto, path::Path};
 
 use once_cell::sync::Lazy;
 use regex::Regex;
+use smallvec::smallvec;
 use swc_atoms::{js_word, JsWord};
 use swc_common::{util::take::Take, DUMMY_SP};
 use swc_ecma_ast::*;
@@ -195,7 +196,7 @@ impl DisplayNameAndId<'_> {
                     .take()
                     .make_member(quote_ident!("withConfig"))
                     .as_callee(),
-                args: vec![ObjectLit {
+                args: smallvec![ObjectLit {
                     span: DUMMY_SP,
                     props: with_config_props,
                 }
@@ -216,7 +217,7 @@ impl DisplayNameAndId<'_> {
                     .take()
                     .make_member(quote_ident!("withConfig"))
                     .as_callee(),
-                args: vec![ObjectLit {
+                args: smallvec![ObjectLit {
                     span: DUMMY_SP,
                     props: with_config_props,
                 }

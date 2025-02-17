@@ -11,6 +11,7 @@ use std::{
 use once_cell::sync::Lazy;
 use regex::Regex;
 use serde::Deserialize;
+use smallvec::smallvec;
 use swc_atoms::JsWord;
 use swc_common::{FileName, Mark, SyntaxContext, DUMMY_SP};
 use swc_ecma_ast::*;
@@ -178,7 +179,7 @@ fn build_require_expr_from_path(path: &str, mark: Option<Mark>) -> Expr {
             "require"
         )
         .as_callee(),
-        args: vec![Lit::Str(Str {
+        args: smallvec![Lit::Str(Str {
             span: Default::default(),
             value: JsWord::from(path),
             raw: None,
