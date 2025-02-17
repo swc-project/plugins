@@ -22,6 +22,7 @@ lightningcss     = { workspace = true, features = ["visitor", "into_owned"] }
 parcel_selectors = { workspace = true }
 rustc-hash       = { workspace = true }
 serde            = { workspace = true, features = ["derive"] }
+smallvec         = { workspace = true }
 tracing          = { workspace = true }
 
 preset_env_base          = { workspace = true }

@@ -21,6 +21,7 @@ once_cell      = { workspace = true }
 regex          = { workspace = true }
 serde          = { workspace = true }
 serde_json     = { workspace = true }
+smallvec       = { workspace = true }
 swc_atoms      = { workspace = true }
 swc_common     = { workspace = true, features = ["concurrent"] }
 swc_ecma_ast   = { workspace = true }

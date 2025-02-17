@@ -14,6 +14,7 @@ version      = "0.7.0"
 
 [dependencies]
 serde          = { workspace = true, features = ["derive"] }
+smallvec       = { workspace = true }
 swc_atoms      = { workspace = true }
 swc_common     = { workspace = true }
 swc_core       = { workspace = true, features = ["ecma_quote"] }
