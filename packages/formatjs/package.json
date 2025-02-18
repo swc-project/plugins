@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-formatjs",
-  "version": "2.3.1",
+  "version": "2.4.0",
   "description": "FormatJS SWC plugin",
   "main": "swc_plugin_formatjs.wasm",
   "scripts": {

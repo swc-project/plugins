@@ -1,5 +1,11 @@
 # @swc/plugin-formatjs
 
+## 2.4.0
+
+### Minor Changes
+
+- 72385e1: add support for idInterpolationPattern placeholders
+
 ## 2.3.1
 
 ### Patch Changes
