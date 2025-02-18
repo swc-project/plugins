@@ -1,6 +1,6 @@
 {
   "name": "swc-plugins",
-  "packageManager": "pnpm@8.6.3",
+  "packageManager": "pnpm@10.4.1",
   "private": true,
   "scripts": {
     "prepare": "husky install"
