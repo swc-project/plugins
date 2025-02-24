@@ -1,5 +1,11 @@
 # @swc/plugin-formatjs
 
+## 3.0.0
+
+### Major Changes
+
+- f0fee1d: Update swc_core to v15.0.1
+
 ## 2.4.0
 
 ### Minor Changes
