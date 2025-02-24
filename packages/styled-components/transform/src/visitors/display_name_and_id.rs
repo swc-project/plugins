@@ -2,7 +2,7 @@ use std::{convert::TryInto, path::Path};
 
 use once_cell::sync::Lazy;
 use regex::Regex;
-use swc_atoms::{js_word, JsWord};
+use swc_atoms::{atom, Atom};
 use swc_common::{util::take::Take, DUMMY_SP};
 use swc_ecma_ast::*;
 use swc_ecma_utils::{quote_ident, ExprFactory};
@@ -42,7 +42,7 @@ struct DisplayNameAndId<'a> {
     config: &'a Config,
     state: &'a State,
 
-    cur_display_name: Option<JsWord>,
+    cur_display_name: Option<Atom>,
 
     component_id: usize,
 }
@@ -66,8 +66,8 @@ impl DisplayNameAndId<'_> {
         }
     }
 
-    fn get_display_name(&mut self, _: &Expr) -> JsWord {
-        let component_name = self.cur_display_name.clone().unwrap_or(js_word!(""));
+    fn get_display_name(&mut self, _: &Expr) -> Atom {
+        let component_name = self.cur_display_name.clone().unwrap_or(atom!(""));
 
         if self.config.file_name {
             if let Some(file_name) = self.file_name {
@@ -114,12 +114,7 @@ impl DisplayNameAndId<'_> {
         format!("{}sc-{:x}-{}", self.config.use_namespace(), hash, next_id)
     }
 
-    fn add_config(
-        &mut self,
-        e: &mut Expr,
-        display_name: Option<JsWord>,
-        component_id: Option<JsWord>,
-    ) {
+    fn add_config(&mut self, e: &mut Expr, display_name: Option<Atom>, component_id: Option<Atom>) {
         if display_name.is_none() && component_id.is_none() {
             return;
         }
@@ -368,7 +363,7 @@ fn get_callee(e: &Expr) -> Option<&Expr> {
     }
 }
 
-fn get_property_as_ident(e: &Expr) -> Option<&JsWord> {
+fn get_property_as_ident(e: &Expr) -> Option<&Atom> {
     if let Expr::Member(MemberExpr {
         prop: MemberProp::Ident(p),
         ..

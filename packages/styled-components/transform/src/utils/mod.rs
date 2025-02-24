@@ -1,6 +1,6 @@
 use std::{borrow::Cow, collections::HashMap};
 
-use swc_atoms::js_word;
+use swc_atoms::atom;
 use swc_common::SyntaxContext;
 use swc_ecma_ast::*;
 
@@ -86,7 +86,7 @@ impl State {
                 ..
             }) = &**callee
             {
-                if prop.sym != js_word!("default") {
+                if prop.sym != atom!("default") {
                     return self.is_styled(obj);
                 }
             }
@@ -136,8 +136,7 @@ impl State {
                     }) = &**obj
                     {
                         if let Expr::Ident(obj_of_obj) = &**obj_of_obj {
-                            if prop.sym == js_word!("default")
-                                && obj_of_obj.to_id() == style_required
+                            if prop.sym == atom!("default") && obj_of_obj.to_id() == style_required
                             {
                                 return true;
                             }
@@ -156,7 +155,7 @@ impl State {
                     }) = &**callee
                     {
                         if let Expr::Ident(tag_callee_object) = &**tag_callee_object {
-                            if tag_callee_property.sym == js_word!("default")
+                            if tag_callee_property.sym == atom!("default")
                                 && tag_callee_object.to_id() == style_required
                             {
                                 return true;
@@ -183,7 +182,7 @@ impl State {
                     }) = &**obj
                     {
                         if let Expr::Ident(obj_of_obj) = &**obj_of_obj {
-                            if prop.sym == js_word!("default")
+                            if prop.sym == atom!("default")
                                 && obj_of_obj.to_id() == import_local_name
                             {
                                 return true;
@@ -203,7 +202,7 @@ impl State {
                     }) = &**callee
                     {
                         if let Expr::Ident(tag_callee_object) = &**tag_callee_object {
-                            if tag_callee_property.sym == js_word!("default")
+                            if tag_callee_property.sym == atom!("default")
                                 && tag_callee_object.to_id() == import_local_name
                             {
                                 return true;

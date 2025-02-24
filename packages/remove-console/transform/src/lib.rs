@@ -1,5 +1,5 @@
 use serde::Deserialize;
-use swc_atoms::JsWord;
+use swc_atoms::Atom;
 use swc_common::{SyntaxContext, DUMMY_SP};
 use swc_ecma_ast::*;
 use swc_ecma_visit::{fold_pass, noop_fold_type, Fold, FoldWith};
@@ -23,11 +23,11 @@ impl Config {
 #[derive(Clone, Debug, Deserialize)]
 pub struct Options {
     #[serde(default)]
-    pub exclude: Vec<JsWord>,
+    pub exclude: Vec<Atom>,
 }
 
 struct RemoveConsole {
-    exclude: Vec<JsWord>,
+    exclude: Vec<Atom>,
     unresolved_ctxt: SyntaxContext,
 }
 

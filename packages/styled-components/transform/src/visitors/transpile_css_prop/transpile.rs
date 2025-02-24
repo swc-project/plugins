@@ -6,7 +6,7 @@ use inflector::Inflector;
 use once_cell::sync::Lazy;
 use regex::Regex;
 use rustc_hash::{FxHashMap, FxHashSet};
-use swc_atoms::JsWord;
+use swc_atoms::Atom;
 use swc_common::{util::take::Take, Spanned, SyntaxContext, DUMMY_SP};
 use swc_ecma_ast::*;
 use swc_ecma_utils::{prepend_stmt, private_ident, quote_ident, ExprFactory};
@@ -41,12 +41,12 @@ struct TranspileCssProp<'a> {
     interleaved_injections: FxHashMap<Id, Vec<Stmt>>,
 
     identifier_idx: usize,
-    styled_idx: HashMap<JsWord, usize>,
+    styled_idx: HashMap<Atom, usize>,
     top_level_decls: Option<FxHashSet<Id>>,
 }
 
 impl TranspileCssProp<'_> {
-    fn next_styled_idx(&mut self, key: JsWord) -> usize {
+    fn next_styled_idx(&mut self, key: Atom) -> usize {
         let idx = self.styled_idx.entry(key).or_insert(0);
         *idx += 1;
         *idx
@@ -94,7 +94,7 @@ impl VisitMut for TranspileCssProp<'_> {
                     // Match the original plugin's behavior.
                     let id_sym = id_sym.trim_end_matches(char::is_numeric);
 
-                    let id_sym = JsWord::from(id_sym);
+                    let id_sym = Atom::from(id_sym);
                     let styled_idx = self.next_styled_idx(id_sym.clone());
                     let id = quote_ident!(
                         SyntaxContext::empty(),
@@ -622,7 +622,7 @@ fn get_name_ident(el: &JSXElementName) -> Ident {
     }
 }
 
-fn get_name_of_jsx_obj(el: &JSXObject) -> JsWord {
+fn get_name_of_jsx_obj(el: &JSXObject) -> Atom {
     match el {
         JSXObject::Ident(v) => v.sym.clone(),
         JSXObject::JSXMemberExpr(e) => {
