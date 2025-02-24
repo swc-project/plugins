@@ -481,10 +481,11 @@ fn interpolate_name(filename: &str, interpolate_pattern: &str, content: &str) ->
         0 | 1 => {
             directory = "".to_string();
             ""
-        },
-        _ => {
-            Path::new(&directory).file_name().and_then(OsStr::to_str).unwrap_or("")
         }
+        _ => Path::new(&directory)
+            .file_name()
+            .and_then(OsStr::to_str)
+            .unwrap_or(""),
     };
 
     let mut url = interpolate_pattern.to_string();
@@ -511,7 +512,8 @@ fn interpolate_name(filename: &str, interpolate_pattern: &str, content: &str) ->
         })
         .to_string();
 
-    url = Regexp::new(r#"\[(ext|name|path|folder|query)\]"#).unwrap()
+    url = Regexp::new(r#"\[(ext|name|path|folder|query)\]"#)
+        .unwrap()
         .replace_all(url.as_str(), |cap: &Captures| {
             if let Some(placeholder) = cap.get(1) {
                 match placeholder.as_str() {
@@ -554,12 +556,12 @@ fn evaluate_jsx_message_descriptor(
 
     // Note: do not support override fn
     let id = if id.is_none() && !default_message.is_empty() {
-        let interpolate_pattern = if let Some(interpolate_pattern) = &options.id_interpolation_pattern
-        {
-            interpolate_pattern.as_str()
-        } else {
-            "[sha512:contenthash:base64:6]"
-        };
+        let interpolate_pattern =
+            if let Some(interpolate_pattern) = &options.id_interpolation_pattern {
+                interpolate_pattern.as_str()
+            } else {
+                "[sha512:contenthash:base64:6]"
+            };
 
         let content = if let Some(MessageDescriptionValue::Str(description)) = &description {
             format!("{}#{}", default_message, description)
@@ -594,12 +596,12 @@ fn evaluate_call_expr_message_descriptor(
         get_call_expr_message_descriptor_value_maybe_object(&descriptor_path.description, None);
 
     let id = if id.is_none() && !default_message.is_empty() {
-        let interpolate_pattern = if let Some(interpolate_pattern) = &options.id_interpolation_pattern
-        {
-            interpolate_pattern.as_str()
-        } else {
-            "[sha512:contenthash:base64:6]"
-        };
+        let interpolate_pattern =
+            if let Some(interpolate_pattern) = &options.id_interpolation_pattern {
+                interpolate_pattern.as_str()
+            } else {
+                "[sha512:contenthash:base64:6]"
+            };
 
         let content = if let Some(MessageDescriptionValue::Str(description)) = &description {
             format!("{}#{}", default_message, description)

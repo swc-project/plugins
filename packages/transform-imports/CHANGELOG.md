@@ -1,5 +1,11 @@
 # @swc/plugin-transform-imports
 
+## 7.0.0
+
+### Major Changes
+
+- f0fee1d: Update swc_core to v15.0.1
+
 ## 6.5.2
 
 ### Patch Changes

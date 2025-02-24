@@ -1,7 +1,7 @@
 #![deny(unused)]
 
 use serde::Deserialize;
-use swc_atoms::JsWord;
+use swc_atoms::Atom;
 use swc_common::{comments::Comments, pass::Optional};
 use swc_ecma_ast::{fn_pass, Pass};
 
@@ -37,7 +37,7 @@ pub struct Config {
     pub namespace: String,
 
     #[serde(default)]
-    pub top_level_import_paths: Vec<JsWord>,
+    pub top_level_import_paths: Vec<Atom>,
 
     #[serde(default = "true_by_default")]
     pub transpile_template_literals: bool,

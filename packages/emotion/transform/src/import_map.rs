@@ -3,15 +3,15 @@ use std::sync::Arc;
 use once_cell::sync::Lazy;
 use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
-use swc_atoms::JsWord;
+use swc_atoms::Atom;
 
 use crate::{EmotionModuleConfig, ExportItem, ExprKind};
 
 /// key: `importSource`
-pub type ImportMap = FxHashMap<JsWord, ImportMapValue>;
+pub type ImportMap = FxHashMap<Atom, ImportMapValue>;
 
 /// key: `localExportName`
-pub type ImportMapValue = FxHashMap<JsWord, ImportItemConfig>;
+pub type ImportMapValue = FxHashMap<Atom, ImportItemConfig>;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
@@ -22,7 +22,7 @@ pub struct ImportItemConfig {
 
 /// `(packageName, exportName)`
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ItemSpecifier(pub JsWord, pub JsWord);
+pub struct ItemSpecifier(pub Atom, pub Atom);
 
 static EMOTION_OFFICIAL_LIBRARIES: Lazy<Arc<Vec<EmotionModuleConfig>>> = Lazy::new(|| {
     Arc::new(vec![

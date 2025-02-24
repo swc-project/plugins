@@ -1,5 +1,11 @@
 # @swc/plugin-emotion
 
+## 9.0.0
+
+### Major Changes
+
+- f0fee1d: Update swc_core to v15.0.1
+
 ## 8.7.2
 
 ### Patch Changes

@@ -1,16 +1,16 @@
 use rustc_hash::{FxHashMap, FxHashSet};
-use swc_atoms::JsWord;
+use swc_atoms::Atom;
 use swc_ecma_ast::*;
 use swc_ecma_visit::{noop_visit_type, Visit, VisitWith};
 
 #[derive(Debug, Default)]
 pub(crate) struct ImportMap {
     /// Map from module name to (module path, exported symbol)
-    imports: FxHashMap<Id, (JsWord, JsWord)>,
+    imports: FxHashMap<Id, (Atom, Atom)>,
 
-    namespace_imports: FxHashMap<Id, JsWord>,
+    namespace_imports: FxHashMap<Id, Atom>,
 
-    imported_modules: FxHashSet<JsWord>,
+    imported_modules: FxHashSet<Atom>,
 }
 
 impl ImportMap {
@@ -84,7 +84,7 @@ impl Visit for Analyzer<'_> {
     }
 }
 
-fn orig_name(n: &ModuleExportName) -> JsWord {
+fn orig_name(n: &ModuleExportName) -> Atom {
     match n {
         ModuleExportName::Ident(v) => v.sym.clone(),
         ModuleExportName::Str(v) => v.value.clone(),

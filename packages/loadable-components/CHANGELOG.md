@@ -1,5 +1,11 @@
 # @swc/plugin-loadable-components
 
+## 6.0.0
+
+### Major Changes
+
+- f0fee1d: Update swc_core to v15.0.1
+
 ## 5.3.1
 
 ### Patch Changes

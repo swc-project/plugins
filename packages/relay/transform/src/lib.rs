@@ -11,7 +11,7 @@ use std::{
 use once_cell::sync::Lazy;
 use regex::Regex;
 use serde::Deserialize;
-use swc_atoms::JsWord;
+use swc_atoms::Atom;
 use swc_common::{FileName, Mark, SyntaxContext, DUMMY_SP};
 use swc_ecma_ast::*;
 use swc_ecma_utils::{prepend_stmts, quote_ident, ExprFactory};
@@ -74,8 +74,8 @@ impl Default for OutputFileExtension {
 
 #[derive(Debug, Clone)]
 struct RelayImport {
-    path: JsWord,
-    item: JsWord,
+    path: Atom,
+    item: Atom,
     unresolved_mark: Option<Mark>,
 }
 
@@ -180,7 +180,7 @@ fn build_require_expr_from_path(path: &str, mark: Option<Mark>) -> Expr {
         .as_callee(),
         args: vec![Lit::Str(Str {
             span: Default::default(),
-            value: JsWord::from(path),
+            value: Atom::from(path),
             raw: None,
         })
         .as_arg()],
@@ -311,7 +311,7 @@ impl Relay {
                     #[cfg(target_os = "windows")]
                     let final_path = final_path.replace("\\", "/");
 
-                    let ident_name: JsWord =
+                    let ident_name: Atom =
                         unique_ident_name_from_operation_name(&operation_name).into();
 
                     if self.config.eager_es_modules {

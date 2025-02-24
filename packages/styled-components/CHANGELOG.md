@@ -1,5 +1,11 @@
 # @swc/plugin-styled-components
 
+## 7.0.0
+
+### Major Changes
+
+- f0fee1d: Update swc_core to v15.0.1
+
 ## 6.8.2
 
 ### Patch Changes
