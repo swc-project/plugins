@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "prepare": "husky install",
-    "prepack": "pnpm --filter @swc/* run prepack",
-    "test": "vitest run"
+    "test": "pnpm --filter @swc/* run test"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",

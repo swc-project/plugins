@@ -4,7 +4,10 @@
   "description": "SWC plugin for swc-confidential",
   "main": "swc_plugin_swc_confidential.wasm",
   "scripts": {
-    "prepack": "cargo build --release -p swc_plugin_swc_confidential --target wasm32-wasi && cp ../../target/wasm32-wasi/release/swc_plugin_swc_confidential.wasm ."
+    "prepare": "npm run build && vitest run",
+    "build": "cargo build --release -p swc_plugin_swc_confidential --target wasm32-wasi && cp ../../target/wasm32-wasi/release/swc_plugin_swc_confidential.wasm .",
+    "build:debug": "cargo build -p swc_plugin_swc_confidential --target wasm32-wasi && cp ../../target/wasm32-wasi/release/swc_plugin_swc_confidential.wasm .",
+    "test": "npm run build:debug && vitest run"
   },
   "homepage": "https://swc.rs",
   "repository": {
