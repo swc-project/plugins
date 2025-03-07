@@ -1,0 +1,7 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Should load relay wasm plugin correctly 1`] = `
+"const myFragment = require("./__generated__/FooFragment.graphql.js");
+useQuery(require("./__generated__/FooQuery.graphql.js"));
+"
+`;

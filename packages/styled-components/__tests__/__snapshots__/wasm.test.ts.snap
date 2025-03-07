@@ -1,0 +1,1439 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Should load styled-components wasm plugin correctly > Should transform .transformed-imports-with-jsx-member-expressions correctly 1`] = `
+"import _styled from "styled-components";
+import React from "react";
+import { css } from "styled-components";
+import Icons from "./icons";
+const someCss = css([
+    \`background:purple;\`
+]);
+const App1 = ()=>{
+    return /*#__PURE__*/ React.createElement(_StyledIcon, null);
+};
+const App2 = ()=>{
+    return /*#__PURE__*/ React.createElement(_StyledIconsFoo, null);
+};
+const App3 = ()=>{
+    return /*#__PURE__*/ React.createElement(_StyledIconsFooBar, null);
+};
+var _StyledIcon = _styled(Icons).withConfig({
+    displayName: "test___StyledIcon",
+    componentId: "sc-d2582aa7-0"
+})([
+    \`\`,
+    \`\`
+], someCss);
+var _StyledIconsFoo = _styled(Icons.Foo).withConfig({
+    displayName: "test___StyledIconsFoo",
+    componentId: "sc-d2582aa7-1"
+})([
+    \`\`,
+    \`\`
+], someCss);
+var _StyledIconsFooBar = _styled(Icons.Foo.Bar).withConfig({
+    displayName: "test___StyledIconsFooBar",
+    componentId: "sc-d2582aa7-2"
+})([
+    \`\`,
+    \`\`
+], someCss);
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform add-display-names correctly 1`] = `
+"function _define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+import styled from "styled-components";
+const Test = styled.div.withConfig({
+    displayName: "Test"
+})\`width:100%;\`;
+const Test2 = styled("div").withConfig({
+    displayName: "Test2"
+})\`\`;
+const Test3 = true ? styled.div.withConfig({
+    displayName: "Test3"
+})\`\` : styled.div.withConfig({
+    displayName: "Test3"
+})\`\`;
+const styles = {
+    One: styled.div.withConfig({
+        displayName: "One"
+    })\`\`
+};
+let Component;
+Component = styled.div.withConfig({
+    displayName: "Component"
+})\`\`;
+const WrappedComponent = styled(Inner).withConfig({
+    displayName: "WrappedComponent"
+})\`\`;
+class ClassComponent {
+}
+_define_property(ClassComponent, "Child", styled.div.withConfig({
+    displayName: "Child"
+})\`\`);
+var GoodName = BadName = styled.div.withConfig({
+    displayName: "GoodName"
+})\`\`;
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform add-identifier correctly 1`] = `
+"import styled from "styled-components";
+const Test = styled.div.withConfig({
+    componentId: "sc-6f6ed417-0"
+})\`width:100%;\`;
+const Test2 = true ? styled.div.withConfig({
+    componentId: "sc-6f6ed417-1"
+})\`\` : styled.div.withConfig({
+    componentId: "sc-6f6ed417-2"
+})\`\`;
+const styles = {
+    One: styled.div.withConfig({
+        componentId: "sc-6f6ed417-3"
+    })\`\`
+};
+let Component;
+Component = styled.div.withConfig({
+    componentId: "sc-6f6ed417-4"
+})\`\`;
+const WrappedComponent = styled(Inner).withConfig({
+    componentId: "sc-6f6ed417-5"
+})\`\`;
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform add-identifier-and-display-name correctly 1`] = `
+"import styled from "styled-components";
+const Test = styled.div.withConfig({
+    displayName: "Test",
+    componentId: "sc-61e56601-0"
+})\`width:100%;\`;
+const Test2 = true ? styled.div.withConfig({
+    displayName: "Test2",
+    componentId: "sc-61e56601-1"
+})\`\` : styled.div.withConfig({
+    displayName: "Test2",
+    componentId: "sc-61e56601-2"
+})\`\`;
+const styles = {
+    One: styled.div.withConfig({
+        displayName: "One",
+        componentId: "sc-61e56601-3"
+    })\`\`
+};
+let Component;
+Component = styled.div.withConfig({
+    displayName: "Component",
+    componentId: "sc-61e56601-4"
+})\`\`;
+const WrappedComponent = styled(Inner).withConfig({
+    displayName: "WrappedComponent",
+    componentId: "sc-61e56601-5"
+})\`\`;
+const WrappedComponent2 = styled.div.withConfig({
+    displayName: "WrappedComponent2",
+    componentId: "sc-61e56601-6"
+})({});
+const WrappedComponent3 = styled(Inner).withConfig({
+    displayName: "WrappedComponent3",
+    componentId: "sc-61e56601-7"
+})({});
+const WrappedComponent4 = styled(Inner).attrs(()=>({
+        something: "else"
+    })).withConfig({
+    displayName: "WrappedComponent4",
+    componentId: "sc-61e56601-8"
+})({});
+const WrappedComponent5 = styled.div.attrs(()=>({
+        something: "else"
+    })).withConfig({
+    displayName: "WrappedComponent5",
+    componentId: "sc-61e56601-9"
+})({});
+const WrappedComponent6 = styled.div.attrs(()=>({
+        something: "else"
+    })).withConfig({
+    displayName: "WrappedComponent6",
+    componentId: "sc-61e56601-10"
+})\`\`;
+const WrappedComponent7 = styled.div.withConfig({
+    shouldForwardProp: ()=>{},
+    displayName: "WrappedComponent7",
+    componentId: "sc-61e56601-11"
+})({});
+const WrappedComponent8 = styled.div.withConfig({
+    shouldForwardProp: ()=>{},
+    displayName: "WrappedComponent8",
+    componentId: "sc-61e56601-12"
+}).attrs(()=>({
+        something: "else"
+    }))({});
+const WrappedComponent9 = styled.div.attrs(()=>({
+        something: "else"
+    })).withConfig({
+    shouldForwardProp: ()=>{},
+    displayName: "WrappedComponent9",
+    componentId: "sc-61e56601-13"
+})({});
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform add-identifier-with-top-level-import-paths correctly 1`] = `
+"import styled from "@xstyled/styled-components";
+const Test = styled.div.withConfig({
+    componentId: "sc-347ea48d-0"
+})\`width:100%;\`;
+const Test2 = true ? styled.div.withConfig({
+    componentId: "sc-347ea48d-1"
+})\`\` : styled.div.withConfig({
+    componentId: "sc-347ea48d-2"
+})\`\`;
+const styles = {
+    One: styled.div.withConfig({
+        componentId: "sc-347ea48d-3"
+    })\`\`
+};
+let Component;
+Component = styled.div.withConfig({
+    componentId: "sc-347ea48d-4"
+})\`\`;
+const WrappedComponent = styled(Inner).withConfig({
+    componentId: "sc-347ea48d-5"
+})\`\`;
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform add-identifier-with-top-level-import-paths-and-named-import correctly 1`] = `
+"import { styled } from "@example/example";
+const Test = styled.div.withConfig({
+    displayName: "Test",
+    componentId: "sc-7d0c827c-0"
+})\`width:100%;\`;
+const Test2 = true ? styled.div.withConfig({
+    displayName: "Test2",
+    componentId: "sc-7d0c827c-1"
+})\`\` : styled.div.withConfig({
+    displayName: "Test2",
+    componentId: "sc-7d0c827c-2"
+})\`\`;
+const styles = {
+    One: styled.div.withConfig({
+        displayName: "One",
+        componentId: "sc-7d0c827c-3"
+    })\`\`
+};
+let Component;
+Component = styled.div.withConfig({
+    displayName: "Component",
+    componentId: "sc-7d0c827c-4"
+})\`\`;
+const WrappedComponent = styled(Inner).withConfig({
+    displayName: "WrappedComponent",
+    componentId: "sc-7d0c827c-5"
+})\`\`;
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform allow-chains-of-member-calls correctly 1`] = `
+"import styled from "styled-components";
+const WithAttrs = styled.div.attrs({
+    some: "value"
+}).withConfig({
+    displayName: "WithAttrs"
+})\`\`;
+const WithAttrsWrapped = styled(Inner).attrs({
+    some: "value"
+}).withConfig({
+    displayName: "WithAttrsWrapped"
+})\`\`;
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform annotate-create-global-style-with-pure-comments correctly 1`] = `
+"import { createGlobalStyle } from "styled-components";
+const GlobalStyle = /*#__PURE__*/ createGlobalStyle([
+    \`body{color:red;}\`
+]);
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform annotate-css-with-pure-comments correctly 1`] = `
+"import styled, { css } from "styled-components";
+const partial = /*#__PURE__*/ css([
+    \`color:red;\`
+]);
+const Component = /*#__PURE__*/ styled.div.withConfig({
+    displayName: "test__Component",
+    componentId: "sc-1919be4f-0"
+})([
+    \`\`,
+    \`;background:blue;\`
+], partial);
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform annotate-keyframes-with-pure-comments correctly 1`] = `
+"import { keyframes } from "styled-components";
+const Animation = /*#__PURE__*/ keyframes([
+    \`0%{opacity:0;}100%{opacity:1;}\`
+]);
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform annotate-styled-calls-with-pure-comments correctly 1`] = `
+"import styled from "styled-components";
+const Test = /*#__PURE__*/ styled.div.withConfig({
+    displayName: "test__Test",
+    componentId: "sc-eb129dbe-0"
+})([
+    \`width:100%;\`
+]);
+const Test2 = /*#__PURE__*/ styled("div").withConfig({
+    displayName: "test__Test2",
+    componentId: "sc-eb129dbe-1"
+})([
+    \`\`
+]);
+const Test3 = true ? /*#__PURE__*/ styled.div.withConfig({
+    displayName: "test__Test3",
+    componentId: "sc-eb129dbe-2"
+})([
+    \`\`
+]) : /*#__PURE__*/ styled.div.withConfig({
+    displayName: "test__Test3",
+    componentId: "sc-eb129dbe-3"
+})([
+    \`\`
+]);
+const styles = {
+    One: /*#__PURE__*/ styled.div.withConfig({
+        displayName: "test__One",
+        componentId: "sc-eb129dbe-4"
+    })([
+        \`\`
+    ])
+};
+let Component;
+Component = /*#__PURE__*/ styled.div.withConfig({
+    displayName: "test__Component",
+    componentId: "sc-eb129dbe-5"
+})([
+    \`\`
+]);
+const WrappedComponent = /*#__PURE__*/ styled(Inner).withConfig({
+    displayName: "test__WrappedComponent",
+    componentId: "sc-eb129dbe-6"
+})([
+    \`\`
+]);
+const StyledObjectForm = /*#__PURE__*/ styled.div.withConfig({
+    displayName: "test__StyledObjectForm",
+    componentId: "sc-eb129dbe-7"
+})({
+    color: red
+});
+const StyledFunctionForm = /*#__PURE__*/ styled.div.withConfig({
+    displayName: "test__StyledFunctionForm",
+    componentId: "sc-eb129dbe-8"
+})((p)=>({
+        color: p.color || "red"
+    }));
+const normalFunc = add(5, 3);
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform annotate-withtheme-with-pure-comments correctly 1`] = `
+"import { withTheme } from "styled-components";
+const ThemedComponent = /*#__PURE__*/ withTheme(()=>null);
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform css-declared-after-component correctly 1`] = `
+"import _styled from "styled-components";
+import React from "react";
+import { css } from "styled-components";
+export default function Example() {
+    return /*#__PURE__*/ React.createElement(_StyledDiv, null, "oops");
+}
+const someCss = css([
+    \`color:red;\`
+]);
+var _StyledDiv = _styled("div").withConfig({
+    displayName: "test___StyledDiv",
+    componentId: "sc-ba25a50c-0"
+})([
+    \`\`,
+    \`\`
+], someCss);
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform does-not-desugar-styled-assignment correctly 1`] = `
+"const domElements = [
+    "div"
+];
+const styled = ()=>{};
+domElements.forEach((domElement)=>{
+    styled[domElement] = styled(domElement);
+});
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform does-not-replace-native-with-no-tags correctly 1`] = `
+"const styled_default = require("styled-components/native");
+const TestNormal = styled.div.withConfig({
+    displayName: "test__TestNormal",
+    componentId: "sc-b41ee071-0"
+})([
+    \`width:100%;\`
+]);
+const Test = styled_default.default.div.withConfig({
+    displayName: "test__Test",
+    componentId: "sc-b41ee071-1"
+})([
+    \`width:100%;\`
+]);
+const TestCallExpression = styled_default.default(Test).withConfig({
+    displayName: "test__TestCallExpression",
+    componentId: "sc-b41ee071-2"
+})([
+    \`height:20px;\`
+]);
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform ignore-external-styled-import correctly 1`] = `
+"import { styled } from "@material/ui";
+import s from "styled-components";
+const Paragraph = s.p.withConfig({
+    displayName: "test__Paragraph",
+    componentId: "sc-ea5187b3-0"
+})([
+    \`color:green;\`
+]);
+const Foo = (p)=>/*#__PURE__*/ React.createElement(Paragraph, p);
+const TestNormal = styled(Foo)({
+    color: red
+});
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform issue-224 correctly 1`] = `
+"import { styled } from "styled-components";
+const Test = styled.div.withConfig({
+    displayName: "test__Test",
+    componentId: "sc-d7113d7e-0"
+})([
+    \`width:100%;\`
+]);
+const Test2 = true ? styled.div.withConfig({
+    displayName: "test__Test2",
+    componentId: "sc-d7113d7e-1"
+})([
+    \`\`
+]) : styled.div.withConfig({
+    displayName: "test__Test2",
+    componentId: "sc-d7113d7e-2"
+})([
+    \`\`
+]);
+const styles = {
+    One: styled.div.withConfig({
+        displayName: "test__One",
+        componentId: "sc-d7113d7e-3"
+    })([
+        \`\`
+    ])
+};
+let Component;
+Component = styled.div.withConfig({
+    displayName: "test__Component",
+    componentId: "sc-d7113d7e-4"
+})([
+    \`\`
+]);
+const WrappedComponent = styled(Inner).withConfig({
+    displayName: "test__WrappedComponent",
+    componentId: "sc-d7113d7e-5"
+})([
+    \`\`
+]);
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform issue-289 correctly 1`] = `
+"import { styled } from "styled-components";
+const Div = styled.div.withConfig({
+    displayName: "test__Div",
+    componentId: "sc-155d9cad-0"
+})([
+    \`&::after{content:"Hello\\u0020World!\\u{1f64f}";}\`
+]);
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform minify-css-in-helpers correctly 1`] = `
+"import { createGlobalStyle, css, keyframes } from "styled-components";
+const key = keyframes\`to{transform:rotate(360deg);}\`;
+const color = css\`color:\${theColor};\`;
+const GlobalStyles = createGlobalStyle\`html{color:red;}\`;
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform minify-css-to-use-with-transpilation correctly 1`] = `
+"import styled from "styled-components";
+const Simple = styled.div([
+    \`width:100%;\`
+]);
+const Interpolation = styled.div([
+    \`content:"  \`,
+    \`  ";\`
+], (props)=>props.text);
+const SpecialCharacters = styled.div([
+    \`content:"  \`,
+    \`  ";color:red;\`
+], (props)=>props.text);
+const Comment = styled.div([
+    \`color:red;\`
+]);
+const Parens = styled.div([
+    \`&:hover{color:blue;}\`
+]);
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform minify-css-to-use-without-transpilation correctly 1`] = `
+"import styled from "styled-components";
+const Simple = styled.div([
+    \`width:100%;\`
+]);
+const Interpolation = styled.div([
+    \`content:"https://test.com/\`,
+    \`";\`
+], (props)=>props.endpoint);
+const SpecialCharacters = styled.div([
+    \`content:"  \`,
+    \`  ";color:red;\`
+], (props)=>props.text);
+const Comment = styled.div([
+    \`width:100%;color:red;\`
+]);
+const Parens = styled.div([
+    \`&:hover{color:blue;}color:red;\`
+]);
+const UrlComments = styled.div([
+    \`color:red;background:red;border:1px solid green;\`
+]);
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform minify-single-line-comments-with-interpolations correctly 1`] = `
+"import styled from "styled-components";
+const Test1 = styled.div.withConfig({
+    displayName: "test__Test1",
+    componentId: "sc-580ca9e6-0"
+})([
+    \`width:100%;\`
+]);
+const Test2 = styled.div.withConfig({
+    displayName: "test__Test2",
+    componentId: "sc-580ca9e6-1"
+})([
+    \`width:100%;\`
+]);
+const Test3 = styled.div.withConfig({
+    displayName: "test__Test3",
+    componentId: "sc-580ca9e6-2"
+})([
+    \`width:100%;\`,
+    \`;\`
+], "red");
+const Test4 = styled.div.withConfig({
+    displayName: "test__Test4",
+    componentId: "sc-580ca9e6-3"
+})([
+    \`width:100%;\`
+]);
+const Test5 = styled.div.withConfig({
+    displayName: "test__Test5",
+    componentId: "sc-580ca9e6-4"
+})([
+    \`width:100%;\`
+]);
+const Test6 = styled.div.withConfig({
+    displayName: "test__Test6",
+    componentId: "sc-580ca9e6-5"
+})([
+    \`background:url("https://google.com");width:100%;\`,
+    \`\`
+], "green");
+const Test7 = styled.div.withConfig({
+    displayName: "test__Test7",
+    componentId: "sc-580ca9e6-6"
+})([
+    \`background:url("https://google.com");width:\`,
+    \`;\`,
+    \`  height:\`,
+    \`;\`
+], (p)=>p.props.width, "green", (p)=>p.props.height);
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform next-59805 correctly 1`] = `
+""use client";
+import styled from "styled-components";
+const ReproElement = styled.p.withConfig({
+    displayName: "test__ReproElement",
+    componentId: "sc-d5fbeba3-0"
+})([
+    \`&::before{content:"\\\\a9";}\`
+]);
+export function ReproComponent(props) {
+    return /*#__PURE__*/ React.createElement(ReproElement, null, "This should be preceded by a copyright symbol and ", /*#__PURE__*/ React.createElement("i", null, "not"), " backslash, letter A, digit nine");
+}
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform not-use-private-api-if-not-required correctly 1`] = `
+"import styled from "styled-components";
+const Test = styled.div\`width:100%;\`;
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform track-the-imported-variable correctly 1`] = `
+"import s from "styled-components";
+const Test = s.div.withConfig({
+    displayName: "Test",
+    componentId: "sc-e3f2753-0"
+})\`width:100%;\`;
+const Test2 = true ? s.div.withConfig({
+    displayName: "Test2",
+    componentId: "sc-e3f2753-1"
+})\`\` : s.div.withConfig({
+    displayName: "Test2",
+    componentId: "sc-e3f2753-2"
+})\`\`;
+const styles = {
+    One: s.div.withConfig({
+        displayName: "One",
+        componentId: "sc-e3f2753-3"
+    })\`\`
+};
+let Component;
+Component = s.div.withConfig({
+    displayName: "Component",
+    componentId: "sc-e3f2753-4"
+})\`\`;
+const WrappedComponent = s(Inner).withConfig({
+    displayName: "WrappedComponent",
+    componentId: "sc-e3f2753-5"
+})\`\`;
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform transpile-css-prop correctly 1`] = `
+"/*
+ * Basic fixtures
+ */ import _styled from "styled-components";
+const StaticString = (p)=>/*#__PURE__*/ React.createElement(_StyledP, null, "A");
+const StaticTemplate = (p)=>/*#__PURE__*/ React.createElement(_StyledP2, null, "A");
+const ObjectProp = (p)=>/*#__PURE__*/ React.createElement(_StyledP3, null, "A");
+const NoChildren = (p)=>/*#__PURE__*/ React.createElement(_StyledP4, null);
+const CssHelperProp = (p)=>/*#__PURE__*/ React.createElement(_StyledP5, null, "A");
+/*
+ * Dynamic prop
+ */ const CustomComp = (p)=>/*#__PURE__*/ React.createElement(_StyledParagraph, null, "H");
+const DynamicProp = (p)=>/*#__PURE__*/ React.createElement(_StyledP6, {
+        $_css: props.cssText
+    }, "H");
+const LocalInterpolation = (p)=>/*#__PURE__*/ React.createElement(_StyledP7, {
+        $_css2: props.bg
+    }, "H");
+const FuncInterpolation = (p)=>/*#__PURE__*/ React.createElement(_StyledP8, null, "H");
+const radius = 10;
+const GlobalInterpolation = (p)=>/*#__PURE__*/ React.createElement(_StyledP9, null, "H");
+const LocalCssHelperProp = (p)=>/*#__PURE__*/ React.createElement(_StyledP10, {
+        $_css3: p.color
+    }, "A");
+const DynamicCssHelperProp = (p)=>/*#__PURE__*/ React.createElement(_StyledP11, null, "A");
+const CustomCompWithDot = (p)=>/*#__PURE__*/ React.createElement(_StyledButtonGhost, null, "H");
+const NestedCompWithDot = (p)=>/*#__PURE__*/ React.createElement(_StyledButtonGhostNew, null, "H");
+const CustomCompWithDotLowerCase = (p)=>/*#__PURE__*/ React.createElement(_StyledButtonGhost2, null, "H");
+const CustomElement = (p)=>/*#__PURE__*/ React.createElement(_StyledButtonGhost3, null, "H");
+/* styled component defined after function it's used in */ const EarlyUsageComponent = (p)=>/*#__PURE__*/ React.createElement(_StyledThing, null);
+const Thing3 = styled.div\`
+  color: blue;
+\`;
+var _StyledThing5 = _styled(Thing3)((p)=>({
+        [p.$_css8]: {
+            color: "red"
+        }
+    }));
+var _StyledThing4 = _styled(Thing3)((p)=>({
+        [p.$_css7]: {
+            color: "red"
+        }
+    }));
+var _StyledThing3 = _styled(Thing3)((p)=>({
+        [p.$_css6]: {
+            color: "red"
+        }
+    }));
+var _StyledThing2 = _styled(Thing3)((p)=>({
+        color: p.$_css5
+    }));
+var _StyledThing = _styled(Thing3)\`color: red;\`;
+const ObjectInterpolation = (p)=>{
+    const theme = useTheme();
+    return /*#__PURE__*/ React.createElement(_StyledP12, {
+        $_css4: theme.colors.red
+    }, "H");
+};
+const ObjectInterpolationCustomComponent = (p)=>{
+    const theme = useTheme();
+    return /*#__PURE__*/ React.createElement(_StyledThing2, {
+        $_css5: theme.colors.red
+    }, "H");
+};
+const ObjectInterpolationInKey = (p)=>{
+    const theme = useTheme();
+    return /*#__PURE__*/ React.createElement(_StyledThing3, {
+        $_css6: theme.breakpoints.md
+    }, "H");
+};
+const ObjectFnInterpolationInKey = (p)=>{
+    const theme = useTheme();
+    return /*#__PURE__*/ React.createElement(_StyledThing4, {
+        $_css7: theme.breakpoints.md()
+    }, "H");
+};
+const ObjectFnSimpleInterpolationInKey = (p)=>{
+    const foo = "@media screen and (max-width: 600px)";
+    return /*#__PURE__*/ React.createElement(_StyledThing5, {
+        $_css8: foo
+    }, "H");
+};
+const ObjectPropMixedInputs = (p)=>{
+    const color = "red";
+    return /*#__PURE__*/ React.createElement(_StyledP13, {
+        $_css9: p.background,
+        $_css10: color,
+        $_css11: globalVar,
+        $_css12: getAfterValue()
+    }, "A");
+};
+const ObjectPropWithSpread = ()=>{
+    const css1 = {
+        color: "red"
+    };
+    const playing = true;
+    return /*#__PURE__*/ React.createElement(_StyledDiv, {
+        $_css13: css1,
+        $_css14: playing ? {
+            opacity: 0,
+            bottom: "-100px"
+        } : {}
+    });
+};
+const id = (x)=>x;
+const LocalCallInterpolation = (p)=>{
+    const color = "red";
+    return /*#__PURE__*/ React.createElement(_StyledP14, {
+        $_css15: id(color)
+    }, "H");
+};
+const LocalCallInterpolation2 = ()=>{
+    return /*#__PURE__*/ React.createElement(_StyledP15, null, "H");
+};
+const LocalCallCssHelperProp = (p)=>{
+    const color = "red";
+    return /*#__PURE__*/ React.createElement(_StyledP16, {
+        $_css16: id(color)
+    }, "H");
+};
+// https://github.com/vercel/next.js/issues/38914
+function Home() {
+    const { x } = {
+        x: 4
+    };
+    return /*#__PURE__*/ React.createElement(_StyledDiv2, {
+        $_css17: myCss(x)
+    });
+}
+const myCss = (x)=>css\`
+  margin: \${x}px;
+\`;
+const colorMap = {
+    orange: "#E3750E",
+    blue: "#38699F",
+    green: "#3F9348"
+};
+const colorMap2 = {
+    red: "orange",
+    cyan: "blue",
+    lime: "green"
+};
+const LocalMemberInterpolation = (p)=>{
+    const color = "red";
+    return /*#__PURE__*/ React.createElement(_StyledP17, {
+        $_css18: colorMap[color]
+    }, "H");
+};
+const LocalMemberInterpolation2 = (p)=>{
+    const color = "red";
+    return /*#__PURE__*/ React.createElement(_StyledP18, {
+        $_css19: colorMap[colorMap2[color]]
+    }, "H");
+};
+const LocalMemberInterpolation3 = (p)=>{
+    const color = "red";
+    return /*#__PURE__*/ React.createElement(_StyledP19, {
+        $_css20: colorMap[id(color)]
+    }, "H");
+};
+const LocalMemberInterpolation4 = ()=>{
+    return /*#__PURE__*/ React.createElement(_StyledP20, null, "H");
+};
+const LocalMemberCssHelperProp = (p)=>{
+    const color = "red";
+    return /*#__PURE__*/ React.createElement(_StyledP21, {
+        $_css21: colorMap[color]
+    }, "H");
+};
+var _StyledP = _styled("p")\`flex: 1;\`;
+var _StyledP2 = _styled("p")\`
+      flex: 1;
+    \`;
+var _StyledP3 = _styled("p")({
+    color: "blue"
+});
+var _StyledP4 = _styled("p")\`flex: 1;\`;
+var _StyledP5 = _styled("p")\`
+      color: blue;
+    \`;
+var _StyledParagraph = _styled(Paragraph)\`flex: 1\`;
+var _StyledP6 = _styled("p")\`\${(p)=>p.$_css}\`;
+var _StyledP7 = _styled("p")\`
+      background: \${(p)=>p.$_css2};
+    \`;
+var _StyledP8 = _styled("p")\`
+      color: \${(props1)=>props1.theme.a};
+    \`;
+var _StyledP9 = _styled("p")\`
+      border-radius: \${radius}px;
+    \`;
+var _StyledP10 = _styled("p")\`
+      color: \${(p)=>p.$_css3};
+    \`;
+var _StyledP11 = _styled("p")\`
+      color: \${(props1)=>props1.theme.color};
+    \`;
+var _StyledButtonGhost = _styled(Button.Ghost)\`flex: 1\`;
+var _StyledButtonGhostNew = _styled(Button.Ghost.New)\`flex: 1\`;
+var _StyledButtonGhost2 = _styled(button.ghost)\`flex: 1\`;
+var _StyledButtonGhost3 = _styled("button-ghost")\`flex: 1\`;
+var _StyledP12 = _styled("p")((p)=>({
+        color: p.$_css4
+    }));
+var _StyledP13 = _styled("p")((p)=>({
+        background: p.$_css9,
+        color: p.$_css10,
+        textAlign: "left",
+        "::before": {
+            content: p.$_css11
+        },
+        "::after": {
+            content: p.$_css12
+        }
+    }));
+var _StyledDiv = _styled("div")((p)=>({
+        ...p.$_css13,
+        ...p.$_css14
+    }));
+var _StyledP14 = _styled("p")\`
+        color: \${(p)=>p.$_css15};
+      \`;
+var _StyledP15 = _styled("p")\`
+        /* direct call */
+        color: \${id("red")};
+      \`;
+var _StyledP16 = _styled("p")\`
+        color: \${(p)=>p.$_css16};
+      \`;
+var _StyledDiv2 = _styled("div")\`
+        /* direct */
+        \${myCss(2)}
+        /* indirect */
+      \${(p)=>p.$_css17}
+      \`;
+var _StyledP17 = _styled("p")\`
+        color: \${(p)=>p.$_css18};
+      \`;
+var _StyledP18 = _styled("p")\`
+        color: \${(p)=>p.$_css19};
+      \`;
+var _StyledP19 = _styled("p")\`
+        color: \${(p)=>p.$_css20};
+      \`;
+var _StyledP20 = _styled("p")\`
+        color: \${colorMap["red"]};
+      \`;
+var _StyledP21 = _styled("p")\`
+        color: \${(p)=>p.$_css21};
+      \`;
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform transpile-css-prop-add-import correctly 1`] = `
+"// @flow
+import _styled from "styled-components";
+import React from "react";
+import Card from "../../shared/components/Card";
+import config from "../../../config";
+export default (()=>/*#__PURE__*/ React.createElement(_StyledDiv, null, /*#__PURE__*/ React.createElement(Card, null, /*#__PURE__*/ React.createElement("h1", null, "Login or Sign Up"), /*#__PURE__*/ React.createElement("p", null, /*#__PURE__*/ React.createElement("a", {
+        href: config.API_URI + "/auth/google"
+    }, "Sign up or login with Google")))));
+var _StyledDiv = _styled("div")\`
+      width: 35em;
+    \`;
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform transpile-css-prop-add-require correctly 1`] = `
+"// @flow
+import _styled from "styled-components";
+import React from "react";
+export default (()=>/*#__PURE__*/ React.createElement(_StyledDiv, null));
+var _StyledDiv = _styled("div")\`
+      width: 35em;
+    \`;
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform transpile-css-prop-all-options-on correctly 1`] = `
+"import styled from "styled-components";
+import SomeComponent from "../SomeComponentPath";
+const { SomeOtherComponent } = require("../SomeOtherComponentPath");
+/**
+ * control
+ */ const Thing = styled.div.withConfig({
+    displayName: "test__Thing",
+    componentId: "sc-35b1796-0"
+})([
+    \`color:red;\`
+]);
+const Thing2 = styled(Thing).withConfig({
+    displayName: "test__Thing2",
+    componentId: "sc-35b1796-1"
+})([
+    \`background:blue;\`
+]);
+/*
+ * Basic fixtures
+ */ const StaticString = (p)=>/*#__PURE__*/ React.createElement(_StyledP, null, "A");
+const StaticTemplate = (p)=>/*#__PURE__*/ React.createElement(_StyledP2, null, "A");
+const ObjectProp = (p)=>/*#__PURE__*/ React.createElement(_StyledP3, null, "A");
+const NoChildren = (p)=>/*#__PURE__*/ React.createElement(_StyledP4, null);
+const CssHelperProp = (p)=>/*#__PURE__*/ React.createElement(_StyledP5, null, "A");
+/*
+ * Dynamic prop
+ */ const CustomComp = (p)=>/*#__PURE__*/ React.createElement(_StyledParagraph, null, "H");
+const DynamicProp = (p)=>/*#__PURE__*/ React.createElement(_StyledP6, {
+        $_css: props.cssText
+    }, "H");
+const LocalInterpolation = (p)=>/*#__PURE__*/ React.createElement(_StyledP7, {
+        $_css2: props.bg
+    }, "H");
+const FuncInterpolation = (p)=>/*#__PURE__*/ React.createElement(_StyledP8, null, "H");
+const radius = 10;
+const GlobalInterpolation = (p)=>/*#__PURE__*/ React.createElement(_StyledP9, null, "H");
+const LocalCssHelperProp = (p)=>/*#__PURE__*/ React.createElement(_StyledP10, {
+        $_css3: p.color
+    }, "A");
+const DynamicCssHelperProp = (p)=>/*#__PURE__*/ React.createElement(_StyledP11, null, "A");
+const CustomCompWithDot = (p)=>/*#__PURE__*/ React.createElement(_StyledButtonGhost, null, "H");
+const NestedCompWithDot = (p)=>/*#__PURE__*/ React.createElement(_StyledButtonGhostNew, null, "H");
+const CustomCompWithDotLowerCase = (p)=>/*#__PURE__*/ React.createElement(_StyledButtonGhost2, null, "H");
+const CustomElement = (p)=>/*#__PURE__*/ React.createElement(_StyledButtonGhost3, null, "H");
+const globalVar = '"foo"';
+const getAfterValue = ()=>'"bar"';
+const ObjectPropMixedInputs = (p)=>{
+    const color = "red";
+    return /*#__PURE__*/ React.createElement(_StyledP12, {
+        $_css4: p.background,
+        $_css5: color,
+        $_css6: globalVar,
+        $_css7: getAfterValue()
+    }, "A");
+};
+const SpreadObjectPropMixedInputs = (p)=>{
+    const color = "red";
+    return /*#__PURE__*/ React.createElement(_StyledP13, {
+        $_css8: globalVar,
+        $_css9: getAfterValue(),
+        $_css10: globalVar,
+        $_css11: getAfterValue(),
+        $_css12: p.background,
+        $_css13: globalVar,
+        $_css14: getAfterValue()
+    }, "A");
+};
+/* styled component defined after function it's used in */ const EarlyUsageComponent = (p)=>/*#__PURE__*/ React.createElement(_StyledThing, null);
+const Thing3 = styled.div.withConfig({
+    displayName: "test__Thing3",
+    componentId: "sc-35b1796-2"
+})([
+    \`color:blue;\`
+]);
+var _StyledThing6 = styled(Thing3).withConfig({
+    displayName: "test___StyledThing6",
+    componentId: "sc-35b1796-3"
+})((p)=>({
+        [p.$_css19]: {
+            color: "red"
+        }
+    }));
+var _StyledThing5 = styled(Thing3).withConfig({
+    displayName: "test___StyledThing5",
+    componentId: "sc-35b1796-4"
+})((p)=>({
+        [p.$_css18]: {
+            color: "red"
+        }
+    }));
+var _StyledThing4 = styled(Thing3).withConfig({
+    displayName: "test___StyledThing4",
+    componentId: "sc-35b1796-5"
+})((p)=>({
+        [p.$_css17]: {
+            color: "red"
+        }
+    }));
+var _StyledThing3 = styled(Thing3).withConfig({
+    displayName: "test___StyledThing3",
+    componentId: "sc-35b1796-6"
+})((p)=>({
+        color: p.$_css16
+    }));
+var _StyledThing = styled(Thing3).withConfig({
+    displayName: "test___StyledThing",
+    componentId: "sc-35b1796-7"
+})([
+    \`color:red;\`
+]);
+const EarlyUsageComponent2 = (p)=>/*#__PURE__*/ React.createElement(_StyledThing2, null);
+function Thing4(props1) {
+    return /*#__PURE__*/ React.createElement("div", props1);
+}
+/* insert before usage for non-local scope styled HOC targets */ const ImportedComponentUsage = (p)=>/*#__PURE__*/ React.createElement(_StyledSomeComponent, null);
+const RequiredComponentUsage = (p)=>/*#__PURE__*/ React.createElement(_StyledSomeOtherComponent, null);
+const ObjectInterpolation = (p)=>{
+    const theme = useTheme();
+    return /*#__PURE__*/ React.createElement(_StyledP14, {
+        $_css15: theme.colors.red
+    }, "H");
+};
+const ObjectInterpolationCustomComponent = (p)=>{
+    const theme = useTheme();
+    return /*#__PURE__*/ React.createElement(_StyledThing3, {
+        $_css16: theme.colors.red
+    }, "H");
+};
+const ObjectInterpolationInKey = (p)=>{
+    const theme = useTheme();
+    return /*#__PURE__*/ React.createElement(_StyledThing4, {
+        $_css17: theme.breakpoints.md
+    }, "H");
+};
+const ObjectFnInterpolationInKey = (p)=>{
+    const theme = useTheme();
+    return /*#__PURE__*/ React.createElement(_StyledThing5, {
+        $_css18: theme.breakpoints.md()
+    }, "H");
+};
+const ObjectFnSimpleInterpolationInKey = (p)=>{
+    const foo = "@media screen and (max-width: 600px)";
+    return /*#__PURE__*/ React.createElement(_StyledThing6, {
+        $_css19: foo
+    }, "H");
+};
+const ObjectPropWithSpread = ()=>{
+    const css = {
+        color: "red"
+    };
+    const playing = true;
+    return /*#__PURE__*/ React.createElement(_StyledDiv, {
+        $_css20: css,
+        $_css21: playing ? {
+            opacity: 0,
+            bottom: "-100px"
+        } : {}
+    });
+};
+var _StyledSomeComponent = styled(SomeComponent).withConfig({
+    displayName: "test___StyledSomeComponent",
+    componentId: "sc-35b1796-8"
+})([
+    \`color:red;\`
+]);
+var _StyledSomeOtherComponent = styled(SomeOtherComponent).withConfig({
+    displayName: "test___StyledSomeOtherComponent",
+    componentId: "sc-35b1796-9"
+})([
+    \`color:red;\`
+]);
+var _StyledThing2 = styled(Thing4).withConfig({
+    displayName: "test___StyledThing2",
+    componentId: "sc-35b1796-10"
+})([
+    \`color:red;\`
+]);
+var _StyledP = styled("p").withConfig({
+    displayName: "test___StyledP",
+    componentId: "sc-35b1796-11"
+})([
+    \`flex:1;\`
+]);
+var _StyledP2 = styled("p").withConfig({
+    displayName: "test___StyledP2",
+    componentId: "sc-35b1796-12"
+})([
+    \`flex:1;\`
+]);
+var _StyledP3 = styled("p").withConfig({
+    displayName: "test___StyledP3",
+    componentId: "sc-35b1796-13"
+})({
+    color: "blue"
+});
+var _StyledP4 = styled("p").withConfig({
+    displayName: "test___StyledP4",
+    componentId: "sc-35b1796-14"
+})([
+    \`flex:1;\`
+]);
+var _StyledP5 = styled("p").withConfig({
+    displayName: "test___StyledP5",
+    componentId: "sc-35b1796-15"
+})([
+    \`color:blue;\`
+]);
+var _StyledParagraph = styled(Paragraph).withConfig({
+    displayName: "test___StyledParagraph",
+    componentId: "sc-35b1796-16"
+})([
+    \`flex:1\`
+]);
+var _StyledP6 = styled("p").withConfig({
+    displayName: "test___StyledP6",
+    componentId: "sc-35b1796-17"
+})([
+    \`\`,
+    \`\`
+], (p)=>p.$_css);
+var _StyledP7 = styled("p").withConfig({
+    displayName: "test___StyledP7",
+    componentId: "sc-35b1796-18"
+})([
+    \`background:\`,
+    \`;\`
+], (p)=>p.$_css2);
+var _StyledP8 = styled("p").withConfig({
+    displayName: "test___StyledP8",
+    componentId: "sc-35b1796-19"
+})([
+    \`color:\`,
+    \`;\`
+], (props1)=>props1.theme.a);
+var _StyledP9 = styled("p").withConfig({
+    displayName: "test___StyledP9",
+    componentId: "sc-35b1796-20"
+})([
+    \`border-radius:\`,
+    \`px;\`
+], radius);
+var _StyledP10 = styled("p").withConfig({
+    displayName: "test___StyledP10",
+    componentId: "sc-35b1796-21"
+})([
+    \`color:\`,
+    \`;\`
+], (p)=>p.$_css3);
+var _StyledP11 = styled("p").withConfig({
+    displayName: "test___StyledP11",
+    componentId: "sc-35b1796-22"
+})([
+    \`color:\`,
+    \`;\`
+], (props1)=>props1.theme.color);
+var _StyledButtonGhost = styled(Button.Ghost).withConfig({
+    displayName: "test___StyledButtonGhost",
+    componentId: "sc-35b1796-23"
+})([
+    \`flex:1\`
+]);
+var _StyledButtonGhostNew = styled(Button.Ghost.New).withConfig({
+    displayName: "test___StyledButtonGhostNew",
+    componentId: "sc-35b1796-24"
+})([
+    \`flex:1\`
+]);
+var _StyledButtonGhost2 = styled(button.ghost).withConfig({
+    displayName: "test___StyledButtonGhost2",
+    componentId: "sc-35b1796-25"
+})([
+    \`flex:1\`
+]);
+var _StyledButtonGhost3 = styled("button-ghost").withConfig({
+    displayName: "test___StyledButtonGhost3",
+    componentId: "sc-35b1796-26"
+})([
+    \`flex:1\`
+]);
+var _StyledP12 = styled("p").withConfig({
+    displayName: "test___StyledP12",
+    componentId: "sc-35b1796-27"
+})((p)=>({
+        background: p.$_css4,
+        color: p.$_css5,
+        textAlign: "left",
+        "::before": {
+            content: p.$_css6
+        },
+        "::after": {
+            content: p.$_css7
+        }
+    }));
+var _StyledP13 = styled("p").withConfig({
+    displayName: "test___StyledP13",
+    componentId: "sc-35b1796-28"
+})((p)=>({
+        ...{
+            "::before": {
+                content: p.$_css8
+            },
+            "::after": {
+                content: p.$_css9
+            },
+            ...{
+                "::before": {
+                    content: p.$_css10
+                },
+                "::after": {
+                    content: p.$_css11
+                }
+            }
+        },
+        background: p.$_css12,
+        textAlign: "left",
+        "::before": {
+            content: p.$_css13
+        },
+        "::after": {
+            content: p.$_css14
+        }
+    }));
+var _StyledP14 = styled("p").withConfig({
+    displayName: "test___StyledP14",
+    componentId: "sc-35b1796-29"
+})((p)=>({
+        color: p.$_css15
+    }));
+var _StyledDiv = styled("div").withConfig({
+    displayName: "test___StyledDiv",
+    componentId: "sc-35b1796-30"
+})((p)=>({
+        ...p.$_css20,
+        ...p.$_css21
+    }));
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform transpile-require-default correctly 1`] = `
+"const styled_default = require("styled-components");
+const TestNormal = styled.div.withConfig({
+    displayName: "test__TestNormal",
+    componentId: "sc-26a007a7-0"
+})([
+    \`width:100%;\`
+]);
+const Test = styled_default.default.div.withConfig({
+    displayName: "test__Test",
+    componentId: "sc-26a007a7-1"
+})([
+    \`width:100%;\`
+]);
+const TestCallExpression = styled_default.default(Test).withConfig({
+    displayName: "test__TestCallExpression",
+    componentId: "sc-26a007a7-2"
+})([
+    \`height:20px;\`
+]);
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform transpile-template-literals-with-config correctly 1`] = `
+"import styled, { css, createGlobalStyle } from "styled-components";
+const Named = styled.div.withConfig({
+    displayName: "test__Named"
+})([
+    \`
+  width: 100%;
+\`
+]);
+const NamedWithInterpolation = styled.div.withConfig({
+    displayName: "test__NamedWithInterpolation"
+})([
+    \`
+  color: \`,
+    \`;
+\`
+], (color)=>props.color);
+const Wrapped = styled(Inner).withConfig({
+    displayName: "test__Wrapped"
+})([
+    \`
+  color: red;
+\`
+]);
+const Foo = styled.div.withConfig({
+    displayName: "test__Foo"
+})({
+    color: "green"
+});
+const style = css([
+    \`
+  background: green;
+\`
+]);
+const GlobalStyle = createGlobalStyle([
+    \`
+  html {
+    background: silver;
+  }
+\`
+]);
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform transpile-template-literals-without-config correctly 1`] = `
+"import styled from "styled-components";
+const Named = styled.div([
+    \`
+  width: 100%;
+\`
+]);
+const NamedWithInterpolation = styled.div([
+    \`
+  color: \`,
+    \`;
+\`
+], (color)=>props.color);
+const Wrapped = styled(Inner)([
+    \`
+  color: red;
+\`
+]);
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform use-directory-name correctly 1`] = `
+"import styled from "styled-components";
+const Test = styled.div.withConfig({
+    displayName: "test__Test",
+    componentId: "sc-da71f793-0"
+})\`color:red;\`;
+const before = styled.div.withConfig({
+    displayName: "test__before",
+    componentId: "sc-da71f793-1"
+})\`color:blue;\`;
+styled.div.withConfig({
+    displayName: "test",
+    componentId: "sc-da71f793-2"
+})\`\`;
+export default styled.button.withConfig({
+    displayName: "test",
+    componentId: "sc-da71f793-3"
+})\`\`;
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform use-file-name correctly 1`] = `
+"import styled from "styled-components";
+const Test = styled.div.withConfig({
+    displayName: "test__Test",
+    componentId: "sc-da71f793-0"
+})\`color:red;\`;
+const before = styled.div.withConfig({
+    displayName: "test__before",
+    componentId: "sc-da71f793-1"
+})\`color:blue;\`;
+styled.div.withConfig({
+    displayName: "test",
+    componentId: "sc-da71f793-2"
+})\`\`;
+export default styled.button.withConfig({
+    displayName: "test",
+    componentId: "sc-da71f793-3"
+})\`\`;
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform use-namespace correctly 1`] = `
+"import * as styled from "styled-components";
+const css = styled.css\`
+  background: black;
+\`;
+const GlobalStyle = styled.createGlobalStyle\`
+  html {
+    background: black;
+  }
+\`;
+const Test = styled.default.div.withConfig({
+    displayName: "test__Test",
+    componentId: "test-namespace__sc-a8e1e802-0"
+})([
+    \`color:red;\`
+]);
+const before = styled.default.div.withConfig({
+    displayName: "test__before",
+    componentId: "test-namespace__sc-a8e1e802-1"
+})([
+    \`color:blue;\`
+]);
+styled.default.div.withConfig({
+    displayName: "test",
+    componentId: "test-namespace__sc-a8e1e802-2"
+})([
+    \`\`
+]);
+export default styled.default.button.withConfig({
+    displayName: "test",
+    componentId: "test-namespace__sc-a8e1e802-3"
+})([
+    \`\`
+]);
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform work-with-hoisted-default-as-import correctly 1`] = `
+"const Test = s.div.withConfig({
+    displayName: "test__Test",
+    componentId: "sc-b4de691d-0"
+})\`width:100%;\`;
+import { default as s, css } from "styled-components";
+"
+`;

@@ -1,0 +1,38 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Should transform emotion css correctly 1`] = `
+"function _tagged_template_literal(strings, raw) {
+    if (!raw) {
+        raw = strings.slice(0);
+    }
+    return Object.freeze(Object.defineProperties(strings, {
+        raw: {
+            value: Object.freeze(raw)
+        }
+    }));
+}
+function _templateObject() {
+    var data = _tagged_template_literal([
+        "\\n      width: 96px;\\n      height: 96px;\\n    "
+    ]);
+    _templateObject = function _templateObject() {
+        return data;
+    };
+    return data;
+}
+function _templateObject1() {
+    var data = _tagged_template_literal([
+        "\\n  font-size: 20px;\\n  @media (min-width: 420px) {\\n    color: blue;\\n    ",
+        ";\\n    line-height: 26px;\\n  }\\n  background: green;\\n  ",
+        ";\\n"
+    ]);
+    _templateObject1 = function _templateObject() {
+        return data;
+    };
+    return data;
+}
+var myStyles = css(_templateObject1(), css(_templateObject()), {
+    backgroundColor: "hotpink"
+});
+"
+`;

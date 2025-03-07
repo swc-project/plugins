@@ -1,0 +1,89 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Should load transform-imports wasm plugin correctly > Should transform default correctly 1`] = `
+"import defaultExport from "my-default";
+"
+`;
+
+exports[`Should load transform-imports wasm plugin correctly > Should transform dynamic-imports correctly 1`] = `
+"await import("./stringLiteral.js");
+await import("./templateLiteral.js");
+"
+`;
+
+exports[`Should load transform-imports wasm plugin correctly > Should transform mapping correctly 1`] = `
+"import foo from "my-library-4/this_is_foo";
+import bar from "my-library-4/this_is_bar";
+import otherImport from "my-library-4/other-import";
+import useSomeAPI from "my-library-4/use-some-api/some-api";
+import ArrowUpIcon from "my-library-4/arrow-up";
+"
+`;
+
+exports[`Should load transform-imports wasm plugin correctly > Should transform mapping-export correctly 1`] = `
+"export { default as foo } from "my-library-4/this_is_foo";
+export { default as bar } from "my-library-4/this_is_bar";
+export { default as otherImport } from "my-library-4/other-import";
+export { default as useSomeAPI } from "my-library-4/use-some-api/some-api";
+export { default as ArrowUpIcon } from "my-library-4/arrow-up";
+"
+`;
+
+exports[`Should load transform-imports wasm plugin correctly > Should transform mixed-default correctly 1`] = `
+"import defaultExport, { someNamedExport } from "my-mixed-named";
+import otherDefaultExport, * as starExport from "my-mixed-star";
+"
+`;
+
+exports[`Should load transform-imports wasm plugin correctly > Should transform namespace correctly 1`] = `
+"import * as someModule from "my-module-namespace";
+"
+`;
+
+exports[`Should load transform-imports wasm plugin correctly > Should transform namespace-export correctly 1`] = `
+"import * as _someModule from "my-module-namespace";
+export { _someModule as someModule };
+"
+`;
+
+exports[`Should load transform-imports wasm plugin correctly > Should transform regex correctly 1`] = `
+"import MyModule from "my-library/MyModule";
+import App from "my-library/components/App";
+import Header from "my-library/components/App/Header";
+import Footer from "my-library/components/App/Footer";
+"
+`;
+
+exports[`Should load transform-imports wasm plugin correctly > Should transform regex-export correctly 1`] = `
+"export { default as MyModule } from "my-library/MyModule";
+export { default as App } from "my-library/components/App";
+export { default as Header } from "my-library/components/App/Header";
+export { default as Footer } from "my-library/components/App/Footer";
+"
+`;
+
+exports[`Should load transform-imports wasm plugin correctly > Should transform side-effect-imports correctly 1`] = `
+"import './upload/upload.ts';
+import './scripts/scripts.model.js';
+"
+`;
+
+exports[`Should load transform-imports wasm plugin correctly > Should transform simple correctly 1`] = `
+"import Grid from "react-bootstrap/lib/Grid";
+import Row from "react-bootstrap/lib/Row";
+import Col1 from "react-bootstrap/lib/Col";
+import { MyModule } from "my-library-2/myModule";
+import { Widget } from "my-library-2/widget";
+import { MyModule } from "my-library-3/my-module";
+"
+`;
+
+exports[`Should load transform-imports wasm plugin correctly > Should transform simple-export correctly 1`] = `
+"export { default as Grid } from "react-bootstrap/lib/Grid";
+export { default as Row } from "react-bootstrap/lib/Row";
+export { default as Col1 } from "react-bootstrap/lib/Col1";
+export { MyModule } from "my-library-2/myModule";
+export { Widget } from "my-library-2/widget";
+export { MyModule } from "my-library-3/my-module";
+"
+`;

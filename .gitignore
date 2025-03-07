@@ -6,3 +6,4 @@
 node_modules
 *.wasm
 .yarn/
+.swc

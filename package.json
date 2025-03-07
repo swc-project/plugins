@@ -3,14 +3,19 @@
   "packageManager": "pnpm@10.4.1",
   "private": true,
   "scripts": {
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "prepack": "pnpm --filter @swc/* run prepack",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
+    "@swc/core": "^1.11.7",
     "@taplo/cli": "^0.7.0",
+    "@types/node": "^22.13.9",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.2",
-    "prettier": "^3.2.5"
+    "prettier": "^3.2.5",
+    "vitest": "^3.0.7"
   },
   "lint-staged": {
     "*.toml": [
