@@ -1,29 +1,28 @@
 {
-  "name": "@swc/plugin-react-remove-properties",
-  "version": "7.0.0",
-  "description": "SWC plugin for https://www.npmjs.com/package/babel-plugin-react-remove-properties",
-  "main": "swc_plugin_react_remove_properties.wasm",
-  "scripts": {
-    "prepare": "npm run build && vitest run",
-    "build": "cargo build --release -p swc_plugin_react_remove_properties --target wasm32-wasi && cp ../../target/wasm32-wasi/release/swc_plugin_react_remove_properties.wasm .",
-    "build:debug": "cargo build -p swc_plugin_react_remove_properties --target wasm32-wasi && cp ../../target/wasm32-wasi/release/swc_plugin_react_remove_properties.wasm .",
-    "test": "npm run build:debug && vitest run"
-
-  },
-  "homepage": "https://swc.rs",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/swc-project/plugins.git",
-    "directory": "packages/react-remove-properties"
-  },
-  "bugs": {
-    "url": "https://github.com/swc-project/plugins/issues"
-  },
-  "author": "강동윤 <kdy1997.dev@gmail.com>",
-  "keywords": [],
-  "license": "Apache-2.0",
-  "preferUnplugged": true,
-  "dependencies": {
-    "@swc/counter": "^0.1.3"
-  }
+	"name": "@swc/plugin-react-remove-properties",
+	"version": "7.0.0",
+	"description": "SWC plugin for https://www.npmjs.com/package/babel-plugin-react-remove-properties",
+	"main": "swc_plugin_react_remove_properties.wasm",
+	"scripts": {
+		"prepare": "npm run build && vitest run",
+		"build": "cargo build --release -p swc_plugin_react_remove_properties --target wasm32-wasi && cp ../../target/wasm32-wasi/release/swc_plugin_react_remove_properties.wasm .",
+		"build:debug": "cargo build -p swc_plugin_react_remove_properties --target wasm32-wasi && cp ../../target/wasm32-wasi/debug/swc_plugin_react_remove_properties.wasm .",
+		"test": "npm run build:debug && vitest run"
+	},
+	"homepage": "https://swc.rs",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/swc-project/plugins.git",
+		"directory": "packages/react-remove-properties"
+	},
+	"bugs": {
+		"url": "https://github.com/swc-project/plugins/issues"
+	},
+	"author": "강동윤 <kdy1997.dev@gmail.com>",
+	"keywords": [],
+	"license": "Apache-2.0",
+	"preferUnplugged": true,
+	"dependencies": {
+		"@swc/counter": "^0.1.3"
+	}
 }
