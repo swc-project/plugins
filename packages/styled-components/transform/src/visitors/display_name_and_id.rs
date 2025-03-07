@@ -232,7 +232,19 @@ impl VisitMut for DisplayNameAndId<'_> {
         let old = self.cur_display_name.clone();
 
         if old.is_none() {
-            self.cur_display_name = e.left.as_ident().map(|v| v.sym.clone());
+            match e.left.as_simple() {
+                Some(SimpleAssignTarget::Ident(v)) => {
+                    self.cur_display_name = Some(v.sym.clone());
+                }
+                // Because we visit nodes recursively, this picks the rightmost item in the path,
+                // just like babel-plugin-styled-components
+                Some(SimpleAssignTarget::Member(MemberExpr { prop, .. })) => {
+                    self.cur_display_name = prop.as_ident().map(|v| v.sym.clone());
+                }
+                _ => {
+                    self.cur_display_name = None;
+                }
+            }
         }
 
         e.visit_mut_children_with(self);
