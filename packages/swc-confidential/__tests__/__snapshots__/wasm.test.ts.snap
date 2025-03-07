@@ -1,0 +1,6 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Should load swc-confidential wasm plugin correctly > Should transform simple correctly 1`] = `
+"console.log("secure:de454774988d624b8f317bbe9dadfe1f");
+"
+`;

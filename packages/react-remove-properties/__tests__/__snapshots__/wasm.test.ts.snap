@@ -1,0 +1,12 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Should load react-remove-properties wasm plugin correctly 1`] = `
+"export default function Home() {
+    return /*#__PURE__*/ React.createElement("div", {
+        "data-custom": "1a"
+    }, /*#__PURE__*/ React.createElement("div", {
+        "data-custom": "2"
+    }, /*#__PURE__*/ React.createElement("h1", null, "Hello World!")));
+}
+"
+`;
