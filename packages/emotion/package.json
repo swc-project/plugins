@@ -1,25 +1,28 @@
 {
-	"name": "@swc/plugin-emotion",
-	"version": "9.0.0",
-	"description": "SWC plugin for emotion css-in-js library",
-	"main": "swc_plugin_emotion.wasm",
-	"scripts": {
-		"prepack": "cargo build --release -p swc_plugin_emotion --target wasm32-wasi && cp ../../target/wasm32-wasi/release/swc_plugin_emotion.wasm ."
-	},
-	"homepage": "https://swc.rs",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/swc-project/plugins.git",
-		"directory": "packages/emotion"
-	},
-	"bugs": {
-		"url": "https://github.com/swc-project/plugins/issues"
-	},
-	"author": "강동윤 <kdy1997.dev@gmail.com>",
-	"keywords": [],
-	"license": "Apache-2.0",
-	"preferUnplugged": true,
-	"dependencies": {
-		"@swc/counter": "^0.1.3"
-	}
+  "name": "@swc/plugin-emotion",
+  "version": "9.0.0",
+  "description": "SWC plugin for emotion css-in-js library",
+  "main": "swc_plugin_emotion.wasm",
+  "scripts": {
+    "prepack": "npm run build && vitest run",
+    "build": "cargo build --release -p swc_plugin_emotion --target wasm32-wasi && cp ../../target/wasm32-wasi/release/swc_plugin_emotion.wasm .",
+    "build:debug": "cargo build -p swc_plugin_emotion --target wasm32-wasi && cp ../../target/wasm32-wasi/debug/swc_plugin_emotion.wasm .",
+    "test": "npm run build:debug && vitest run"
+  },
+  "homepage": "https://swc.rs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/swc-project/plugins.git",
+    "directory": "packages/emotion"
+  },
+  "bugs": {
+    "url": "https://github.com/swc-project/plugins/issues"
+  },
+  "author": "강동윤 <kdy1997.dev@gmail.com>",
+  "keywords": [],
+  "license": "Apache-2.0",
+  "preferUnplugged": true,
+  "dependencies": {
+    "@swc/counter": "^0.1.3"
+  }
 }
