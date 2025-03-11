@@ -51,6 +51,7 @@ pub fn transform_css(
     let config = ParserConfig {
         allow_wrong_line_comments: true,
         css_modules: false,
+        legacy_nesting: true,
         ..Default::default()
     };
     let lexer = Lexer::new(
@@ -264,6 +265,7 @@ impl Namespacer {
                         ParserConfig {
                             allow_wrong_line_comments: true,
                             css_modules: true,
+                            legacy_nesting: true,
                             ..Default::default()
                         },
                         // TODO(kdy1): We might be able to report syntax errors.
