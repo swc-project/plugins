@@ -2,6 +2,12 @@
 
 # @swc/plugin-styled-jsx
 
+## 7.0.1
+
+### Patch Changes
+
+- 95aecbc: Allow legacy nesting syntax
+
 ## 7.0.0
 
 ### Major Changes
