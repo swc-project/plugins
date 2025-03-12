@@ -89,7 +89,7 @@ impl VisitMut for TranspileCssProp<'_> {
                     };
 
                     let name = get_name_ident(&elem.opening.name);
-                    let id_sym = name.sym.to_class_case();
+                    let id_sym = name.sym.to_pascal_case();
 
                     // Match the original plugin's behavior.
                     let id_sym = id_sym.trim_end_matches(char::is_numeric);
