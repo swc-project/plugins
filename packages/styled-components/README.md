@@ -28,6 +28,12 @@ Then update your `.swcrc` file like below:
 
 # @swc/plugin-styled-components
 
+## 7.1.0
+
+### Minor Changes
+
+- bb6ba9b: Matches babel plugin in naming
+
 ## 7.0.0
 
 ### Major Changes
