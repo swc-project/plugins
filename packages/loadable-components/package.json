@@ -4,7 +4,7 @@
   "description": "SWC plugin for `@loadable/components`",
   "main": "swc_plugin_loadable_components.wasm",
   "scripts": {
-    "prepare": "npm run build && vitest run",
+    "prepack": "npm run build && vitest run",
     "build": "cargo build --release -p swc_plugin_loadable_components --target wasm32-wasi && cp ../../target/wasm32-wasi/release/swc_plugin_loadable_components.wasm .",
     "build:debug": "cargo build -p swc_plugin_loadable_components --target wasm32-wasi && cp ../../target/wasm32-wasi/debug/swc_plugin_loadable_components.wasm .",
     "test": "npm run build:debug && vitest run"
