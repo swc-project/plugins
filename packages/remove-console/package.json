@@ -4,7 +4,10 @@
   "description": "SWC plugin for https://www.npmjs.com/package/babel-plugin-remove-console",
   "main": "swc_plugin_remove_console.wasm",
   "scripts": {
-    "prepack": "cargo build --release -p swc_plugin_remove_console --target wasm32-wasi && cp ../../target/wasm32-wasi/release/swc_plugin_remove_console.wasm ."
+    "prepack": "npm run build && vitest run",
+    "build": "cargo build --release -p swc_plugin_remove_console --target wasm32-wasi && cp ../../target/wasm32-wasi/release/swc_plugin_remove_console.wasm .",
+    "build:debug": "cargo build -p swc_plugin_remove_console --target wasm32-wasi && cp ../../target/wasm32-wasi/debug/swc_plugin_remove_console.wasm .",
+    "test": "npm run build:debug && vitest run"
   },
   "homepage": "https://swc.rs",
   "repository": {
