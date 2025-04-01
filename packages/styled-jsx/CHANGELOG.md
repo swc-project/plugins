@@ -1,5 +1,11 @@
 # @swc/plugin-styled-jsx
 
+## 7.0.2
+
+### Patch Changes
+
+- 31e3254: build: Update `swc_core` to `v19.0.0`
+
 ## 7.0.1
 
 ### Patch Changes
