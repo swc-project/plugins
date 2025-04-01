@@ -1,5 +1,11 @@
 # @swc/plugin-styled-components
 
+## 7.1.1
+
+### Patch Changes
+
+- 31e3254: build: Update `swc_core` to `v19.0.0`
+
 ## 7.1.0
 
 ### Minor Changes

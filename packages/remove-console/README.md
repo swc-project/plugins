@@ -21,6 +21,12 @@ or
 
 # @swc/plugin-remove-console
 
+## 7.0.1
+
+### Patch Changes
+
+- 31e3254: build: Update `swc_core` to `v19.0.0`
+
 ## 7.0.0
 
 ### Major Changes
