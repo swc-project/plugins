@@ -5,9 +5,11 @@ use std::{
 };
 
 use base64ct::{Base64, Encoding};
+use digest::DynDigest;
 use once_cell::sync::Lazy;
 use regex::{Captures, Regex as Regexp};
 use serde::{ser::SerializeMap, Deserialize, Serialize};
+use sha1::Sha1;
 use sha2::{Digest, Sha512};
 use swc_core::{
     common::{
@@ -494,12 +496,15 @@ fn interpolate_name(filename: &str, interpolate_pattern: &str, content: &str) ->
 
     url = r
         .replace(url.as_str(), |cap: &Captures| {
-            // let hash_type = cap.get(1);
+            let hash_type = cap.get(1);
             // let digest_type = cap.get(2);
             let max_length = cap.get(3);
 
-            // TODO: support hashtype
-            let mut hasher = Sha512::new();
+            // TODO: support more hash_types than sha1 and sha512
+            let mut hasher: Box<dyn DynDigest> = match hash_type {
+                Some(hash_type) if hash_type.as_str() == "sha1" => Box::new(Sha1::new()),
+                _ => Box::new(Sha512::new()),
+            };
             hasher.update(content.as_bytes());
             let hash = hasher.finalize();
             let base64_hash = Base64::encode_string(&hash);
