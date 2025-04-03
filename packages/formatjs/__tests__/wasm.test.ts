@@ -178,4 +178,30 @@ describe("formatjs swc plugin", () => {
     expect(output).toMatch(/defaultMessage: "Hello, \{name\}!"/);
     expect(output).not.toMatch(/description/);
   });
+
+  it("should be able to use sha1 and sha512 hashing in interpolation", async () => {
+    const input = `
+      import { FormattedMessage } from 'react-intl';
+
+      export function Greeting() {
+        return (
+          <FormattedMessage
+            defaultMessage="Hello!"
+            description="Greeting message"
+          />
+        );
+      }
+    `;
+
+    const sha1output = await transformCode(input, {
+      idInterpolationPattern: "[sha1:contenthash:base64:6]",
+    });
+    const sha512output = await transformCode(input, {
+      idInterpolationPattern: "[sha512:contenthash:base64:6]",
+    });
+
+    expect(sha1output).toMatch(/id: "[a-zA-Z0-9]{6}"/);
+    expect(sha512output).toMatch(/id: "[a-zA-Z0-9]{6}"/);
+    expect(sha1output).not.toMatch(sha512output);
+  });
 });

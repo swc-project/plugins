@@ -3309,11 +3309,13 @@ name = "swc_formatjs_transform"
 version = "4.0.0"
 dependencies = [
  "base64ct",
+ "digest 0.10.7",
  "once_cell",
  "pretty_assertions",
  "regex",
  "serde",
  "serde_json",
+ "sha1",
  "sha2 0.10.8",
  "swc_core",
  "swc_icu_messageformat_parser",
