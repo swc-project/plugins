@@ -4,10 +4,10 @@
   "description": "SWC plugin for preact refresh",
   "main": "swc_plugin_prefresh.wasm",
   "scripts": {
-    "prepack": "npm run build && vitest run",
+    "prepack": "pnpm run build && vitest run",
     "build": "cargo build --release -p swc_plugin_prefresh --target wasm32-wasi && cp ../../target/wasm32-wasi/release/swc_plugin_prefresh.wasm .",
     "build:debug": "cargo build -p swc_plugin_prefresh --target wasm32-wasi && cp ../../target/wasm32-wasi/debug/swc_plugin_prefresh.wasm .",
-    "test": "npm run build:debug && vitest run"
+    "test": "pnpm run build:debug && vitest run"
   },
   "homepage": "https://swc.rs",
   "repository": {

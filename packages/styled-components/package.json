@@ -4,10 +4,10 @@
   "description": "SWC plugin for styled-components",
   "main": "swc_plugin_styled_components.wasm",
   "scripts": {
-    "prepack": "npm run build && vitest run",
+    "prepack": "pnpm run build && vitest run",
     "build": "cargo build --release -p swc_plugin_styled_components --target wasm32-wasi && cp ../../target/wasm32-wasi/release/swc_plugin_styled_components.wasm .",
     "build:debug": "cargo build -p swc_plugin_styled_components --target wasm32-wasi && cp ../../target/wasm32-wasi/release/swc_plugin_styled_components.wasm .",
-    "test": "npm run build:debug && vitest run"
+    "test": "pnpm run build:debug && vitest run"
   },
   "homepage": "https://swc.rs",
   "repository": {
