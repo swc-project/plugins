@@ -2,13 +2,13 @@ import _JSXStyle from "styled-jsx/style";
 export default function Home({ fontFamily }) {
     return <div className={_JSXStyle.dynamic([
         [
-            "6f6d85ba8e0df71f",
+            "c408281f85373819",
             [
                 fontFamily
             ]
         ]
     ])}>
-      <_JSXStyle id={"6f6d85ba8e0df71f"} dynamic={[
+      <_JSXStyle id={"c408281f85373819"} dynamic={[
         fontFamily
     ]}>{`body{font-family:${fontFamily}}code:before,code:after{content:"\`"}`}</_JSXStyle>
     </div>;
