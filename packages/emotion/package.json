@@ -4,10 +4,10 @@
   "description": "SWC plugin for emotion css-in-js library",
   "main": "swc_plugin_emotion.wasm",
   "scripts": {
-    "prepack": "npm run build && vitest run",
-    "build": "cargo build --release -p swc_plugin_emotion --target wasm32-wasi && cp ../../target/wasm32-wasi/release/swc_plugin_emotion.wasm .",
-    "build:debug": "cargo build -p swc_plugin_emotion --target wasm32-wasi && cp ../../target/wasm32-wasi/debug/swc_plugin_emotion.wasm .",
-    "test": "npm run build:debug && vitest run"
+    "prepack": "pnpm run build && vitest run",
+    "build": "cargo build --release -p swc_plugin_emotion --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/release/swc_plugin_emotion.wasm .",
+    "build:debug": "cargo build -p swc_plugin_emotion --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/debug/swc_plugin_emotion.wasm .",
+    "test": "pnpm run build:debug && vitest run"
   },
   "homepage": "https://swc.rs",
   "repository": {
