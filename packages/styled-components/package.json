@@ -6,7 +6,7 @@
   "scripts": {
     "prepack": "pnpm run build && vitest run",
     "build": "cargo build --release -p swc_plugin_styled_components --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/release/swc_plugin_styled_components.wasm .",
-    "build:debug": "cargo build -p swc_plugin_styled_components --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/release/swc_plugin_styled_components.wasm .",
+    "build:debug": "cargo build -p swc_plugin_styled_components --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/debug/swc_plugin_styled_components.wasm .",
     "test": "pnpm run build:debug && vitest run"
   },
   "homepage": "https://swc.rs",
