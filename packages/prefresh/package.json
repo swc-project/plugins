@@ -5,8 +5,8 @@
   "main": "swc_plugin_prefresh.wasm",
   "scripts": {
     "prepack": "pnpm run build && vitest run",
-    "build": "cargo build --release -p swc_plugin_prefresh --target wasm32-wasi && cp ../../target/wasm32-wasi/release/swc_plugin_prefresh.wasm .",
-    "build:debug": "cargo build -p swc_plugin_prefresh --target wasm32-wasi && cp ../../target/wasm32-wasi/debug/swc_plugin_prefresh.wasm .",
+    "build": "cargo build --release -p swc_plugin_prefresh --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/release/swc_plugin_prefresh.wasm .",
+    "build:debug": "cargo build -p swc_plugin_prefresh --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/debug/swc_plugin_prefresh.wasm .",
     "test": "pnpm run build:debug && vitest run"
   },
   "homepage": "https://swc.rs",
