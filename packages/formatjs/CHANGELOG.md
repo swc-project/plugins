@@ -1,5 +1,11 @@
 # @swc/plugin-formatjs
 
+## 3.1.0
+
+### Minor Changes
+
+- af2e35d: Add support for sha1 hash_type in idInterpolationPattern
+
 ## 3.0.1
 
 ### Patch Changes
