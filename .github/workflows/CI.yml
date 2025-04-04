@@ -19,7 +19,10 @@ env:
 jobs:
   npm-test:
     name: "Integration Test"
-    runs-on: ubuntu-latest
+    runs-on:
+      - ubuntu-latest
+      - windows-latest
+      - macos-latest
     steps:
       - uses: actions/checkout@v4
 
