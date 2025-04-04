@@ -52,14 +52,19 @@ jobs:
           shared-key: "npm-test"
           cache-on-failure: true
 
-      - run: |
+      - name: Update corepack
+        if: runner.os != 'Windows'
+        run: |
           echo "Before: corepack version => $(corepack --version || echo 'not installed')"
           npm install -g corepack@latest
           echo "After : corepack version => $(corepack --version)"
+          echo "Before: corepack version => $(corepack --version || echo 'not installed')"
+
+      - name: Install corepack, pnpm, and dependencies
+        run: |
           corepack enable
           pnpm --version
           pnpm i
-        if: runner.os != 'Windows'
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
