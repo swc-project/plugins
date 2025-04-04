@@ -1,8 +1,11 @@
 name: CI
 
 on:
-  - push
-  - pull_request
+  pull_request:
+    types: ["opened", "reopened", "synchronize"]
+  push:
+    branches:
+      - main
 
 env:
   RUST_LOG: debug
@@ -11,6 +14,7 @@ env:
 
 jobs:
   npm-test:
+    name: "Integration Test"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
