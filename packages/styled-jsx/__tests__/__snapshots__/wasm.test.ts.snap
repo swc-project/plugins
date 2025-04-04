@@ -982,6 +982,22 @@ export { _class as default };
 "
 `;
 
+exports[`Should load swc-confidential wasm plugin correctly > Should transform legacy-nesting correctly 1`] = `
+"import _JSXStyle from "styled-jsx/style";
+export default (()=>/*#__PURE__*/ React.createElement("div", {
+        className: "jsx-3b0234e9651851cb"
+    }, /*#__PURE__*/ React.createElement("p", {
+        className: "jsx-3b0234e9651851cb"
+    }, "test"), /*#__PURE__*/ React.createElement("p", {
+        className: "jsx-3b0234e9651851cb"
+    }, "woot"), /*#__PURE__*/ React.createElement("p", {
+        className: "jsx-3b0234e9651851cb"
+    }, "woot"), /*#__PURE__*/ React.createElement(_JSXStyle, {
+        id: "3b0234e9651851cb"
+    }, ".container.jsx-3b0234e9651851cb{color:blue;padding:3rem}.container.jsx-3b0234e9651851cb .inner.jsx-3b0234e9651851cb{color:yellow}")));
+"
+`;
+
 exports[`Should load swc-confidential wasm plugin correctly > Should transform mixed-global-scoped correctly 1`] = `
 "import _JSXStyle from "styled-jsx/style";
 const Test = ()=>/*#__PURE__*/ React.createElement(_JSXStyle, {
