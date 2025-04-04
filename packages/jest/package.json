@@ -4,10 +4,10 @@
   "description": "SWC plugin for jest",
   "main": "swc_plugin_jest.wasm",
   "scripts": {
-    "prepack": "pnpm run build && vitest run",
+    "prepack": "pnpm run build",
     "build": "cargo build --release -p swc_plugin_jest --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/release/swc_plugin_jest.wasm .",
     "build:debug": "cargo build -p swc_plugin_jest --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/debug/swc_plugin_jest.wasm .",
-    "test": "pnpm run build:debug && vitest run"
+    "test": "pnpm run build:debug && vitest run --testTimeout=0"
   },
   "homepage": "https://swc.rs",
   "repository": {

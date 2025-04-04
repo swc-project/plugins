@@ -9,7 +9,7 @@ const someCss = css([
     \`background:purple;\`
 ]);
 const App1 = ()=>{
-    return /*#__PURE__*/ React.createElement(_StyledIcon, null);
+    return /*#__PURE__*/ React.createElement(_StyledIcons, null);
 };
 const App2 = ()=>{
     return /*#__PURE__*/ React.createElement(_StyledIconsFoo, null);
@@ -17,8 +17,8 @@ const App2 = ()=>{
 const App3 = ()=>{
     return /*#__PURE__*/ React.createElement(_StyledIconsFooBar, null);
 };
-var _StyledIcon = _styled(Icons).withConfig({
-    displayName: "test___StyledIcon",
+var _StyledIcons = _styled(Icons).withConfig({
+    displayName: "test___StyledIcons",
     componentId: "sc-d2582aa7-0"
 })([
     \`\`,
@@ -87,6 +87,24 @@ _define_property(ClassComponent, "Child", styled.div.withConfig({
 var GoodName = BadName = styled.div.withConfig({
     displayName: "GoodName"
 })\`\`;
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform add-display-names-with-member-expressions correctly 1`] = `
+"import styled from 'styled-components';
+const App = {};
+App.Foo = styled.div.withConfig({
+    displayName: "test__Foo",
+    componentId: "sc-11752c5e-0"
+})([
+    \`\`
+]);
+App.Foo.Bar = styled.div.withConfig({
+    displayName: "test__Bar",
+    componentId: "sc-11752c5e-1"
+})([
+    \`\`
+]);
 "
 `;
 
