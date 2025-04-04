@@ -28,6 +28,23 @@ jobs:
         with:
           node-version: 20
 
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          override: true
+
+      - name: Configure path (windows)
+        shell: bash
+        if: runner.os == 'Windows'
+        run: |
+          echo 'C:\\npm\\prefix' >> $GITHUB_PATH
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: "npm-test"
+          cache-on-failure: true
+
       - run: |
           echo "Before: corepack version => $(corepack --version || echo 'not installed')"
           npm install -g corepack@latest
