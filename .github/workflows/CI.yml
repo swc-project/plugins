@@ -59,6 +59,7 @@ jobs:
           corepack enable
           pnpm --version
           pnpm i
+        if: runner.os == 'Windows'
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
