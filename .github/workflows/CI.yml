@@ -53,7 +53,6 @@ jobs:
           cache-on-failure: true
 
       - name: Update corepack
-        if: runner.os != 'Windows'
         run: |
           echo "Before: corepack version => $(corepack --version || echo 'not installed')"
           npm install -g corepack@latest
