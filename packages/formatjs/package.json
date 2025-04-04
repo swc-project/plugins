@@ -4,7 +4,7 @@
   "description": "FormatJS SWC plugin",
   "main": "swc_plugin_formatjs.wasm",
   "scripts": {
-    "prepack": "pnpm run build && vitest run",
+    "prepack": "pnpm run build",
     "build": "cargo build --release -p swc_plugin_formatjs --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/release/swc_plugin_formatjs.wasm .",
     "build:debug": "cargo build -p swc_plugin_formatjs --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/debug/swc_plugin_formatjs.wasm .",
     "test": "pnpm run build:debug && vitest run"

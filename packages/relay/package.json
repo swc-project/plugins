@@ -5,7 +5,7 @@
   "main": "swc_plugin_relay.wasm",
   "types": "./types.d.ts",
   "scripts": {
-    "prepack": "pnpm run build && vitest run",
+    "prepack": "pnpm run build",
     "build": "cargo build --release -p swc_plugin_relay --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/release/swc_plugin_relay.wasm .",
     "build:debug": "cargo build -p swc_plugin_relay --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/debug/swc_plugin_relay.wasm .",
     "test": "pnpm run build:debug && vitest run"

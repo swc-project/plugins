@@ -4,7 +4,7 @@
   "description": "SWC plugin for preact refresh",
   "main": "swc_plugin_prefresh.wasm",
   "scripts": {
-    "prepack": "pnpm run build && vitest run",
+    "prepack": "pnpm run build",
     "build": "cargo build --release -p swc_plugin_prefresh --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/release/swc_plugin_prefresh.wasm .",
     "build:debug": "cargo build -p swc_plugin_prefresh --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/debug/swc_plugin_prefresh.wasm .",
     "test": "pnpm run build:debug && vitest run"
