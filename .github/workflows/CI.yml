@@ -1,4 +1,4 @@
-name: Cargo
+name: CI
 
 on:
   - push
@@ -10,7 +10,7 @@ env:
   CI: "1"
 
 jobs:
-  test:
+  cargo-test:
     strategy:
       fail-fast: false
       matrix:
@@ -56,12 +56,12 @@ jobs:
         run: |
           cargo test --all --color always
 
-  publish:
+  cargo-publish:
     name: "Publish"
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs:
-      - test
+      - cargo-test
 
     steps:
       - uses: actions/checkout@v2
