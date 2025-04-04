@@ -15,9 +15,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: true
+      - uses: actions/checkout@v4
 
       - name: Setup node
         uses: actions/setup-node@v2

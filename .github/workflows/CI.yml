@@ -10,6 +10,38 @@ env:
   CI: "1"
 
 jobs:
+  npm-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20
+
+      - run: |
+          echo "Before: corepack version => $(corepack --version || echo 'not installed')"
+          npm install -g corepack@latest
+          echo "After : corepack version => $(corepack --version)"
+          corepack enable
+          pnpm --version
+          pnpm i
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+
+      - name: Install wasm target
+        shell: bash
+        run: |
+          rustup target add wasm32-wasip1
+
+      - name: Test
+        run: |
+          pnpm test
+
   cargo-test:
     strategy:
       fail-fast: false
