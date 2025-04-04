@@ -126,3 +126,15 @@ jobs:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
         run: |
           cargo mono publish --no-verify
+
+  done:
+    needs:
+      - npm-test
+      - cargo-test
+    if: >-
+      ${{ always() }}
+    runs-on: ubuntu-latest
+    name: Done
+    steps:
+      - run: exit 1
+        if: ${{ always() && (contains(needs.*.result, 'failure') || contains(needs.*.result, 'skipped') || contains(needs.*.result, 'cancelled')) }}
