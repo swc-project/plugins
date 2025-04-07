@@ -1,0 +1,25 @@
+{
+  "name": "@swc/plugin-swc-ast-grep",
+  "version": "1.0.0",
+  "description": "SWC plugin for ast-grep",
+  "main": "swc_plugin_ast_grep.wasm",
+  "scripts": {
+    "prepack": "cargo build --release -p swc_plugin_ast_grep --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/release/swc_plugin_ast_grep.wasm ."
+  },
+  "homepage": "https://swc.rs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/swc-project/plugins.git",
+    "directory": "packages/swc-ast-grep"
+  },
+  "bugs": {
+    "url": "https://github.com/swc-project/plugins/issues"
+  },
+  "author": "강동윤 <kdy1997.dev@gmail.com>",
+  "keywords": [],
+  "license": "Apache-2.0",
+  "preferUnplugged": true,
+  "dependencies": {
+    "@swc/counter": "^0.1.3"
+  }
+}
