@@ -1,5 +1,5 @@
 {
-  "name": "@swc/plugin-swc-ast-grep",
+  "name": "@swc/plugin-ast-grep",
   "version": "1.0.0",
   "description": "SWC plugin for ast-grep",
   "main": "swc_plugin_ast_grep.wasm",
