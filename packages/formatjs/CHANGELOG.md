@@ -1,5 +1,11 @@
 # @swc/plugin-formatjs
 
+## 3.1.1
+
+### Patch Changes
+
+- cb94b92: Update swc_core to v21.0.1
+
 ## 3.1.0
 
 ### Minor Changes
