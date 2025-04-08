@@ -2,6 +2,12 @@
 
 # @swc/plugin-styled-jsx
 
+## 7.0.3
+
+### Patch Changes
+
+- cb94b92: Update swc_core to v21.0.1
+
 ## 7.0.2
 
 ### Patch Changes

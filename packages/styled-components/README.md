@@ -28,6 +28,12 @@ Then update your `.swcrc` file like below:
 
 # @swc/plugin-styled-components
 
+## 7.1.2
+
+### Patch Changes
+
+- cb94b92: Update swc_core to v21.0.1
+
 ## 7.1.1
 
 ### Patch Changes
