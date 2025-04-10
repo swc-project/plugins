@@ -1,5 +1,11 @@
 # @swc/plugin-styled-components
 
+## 7.1.3
+
+### Patch Changes
+
+- d51d525: Update swc_core to v22.0.0
+
 ## 7.1.2
 
 ### Patch Changes

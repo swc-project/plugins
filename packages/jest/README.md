@@ -2,6 +2,12 @@
 
 # @swc/plugin-jest
 
+## 7.0.3
+
+### Patch Changes
+
+- d51d525: Update swc_core to v22.0.0
+
 ## 7.0.2
 
 ### Patch Changes
