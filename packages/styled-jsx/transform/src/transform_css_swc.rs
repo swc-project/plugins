@@ -83,7 +83,9 @@ pub fn transform_css(
         }
     };
     // ? Do we need to support optionally prefixing?
-    ss.visit_mut_with(&mut prefixer(Default::default()));
+    ss.visit_mut_with(&mut prefixer(swc_css_prefixer::options::Options {
+        env: None,
+    }));
     ss.visit_mut_with(&mut Namespacer {
         class_name: match class_name {
             Some(s) => s.clone(),
