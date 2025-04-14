@@ -1,5 +1,11 @@
 # @swc/plugin-swc-confidential
 
+## 6.0.3
+
+### Patch Changes
+
+- d51d525: Update swc_core to v22.0.0
+
 ## 6.0.2
 
 ### Patch Changes
