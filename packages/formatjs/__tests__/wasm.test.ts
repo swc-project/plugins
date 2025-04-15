@@ -224,4 +224,30 @@ describe("formatjs swc plugin", () => {
 
     expect(output).toMatch(/id: "zL\/jyT\"/);
   });
+
+  it("should be able to use different encodings in interpolation", async () => {
+    const input = `
+      import { FormattedMessage } from 'react-intl';
+
+      export function Greeting() {
+        return (
+          <FormattedMessage
+            defaultMessage="Hello, World!"
+            description="Greeting message"
+          />
+        );
+      }
+    `;
+
+    const hexOutput = await transformCode(input, {
+      idInterpolationPattern: "[sha512:contenthash:hex:9]",
+    });
+
+    const base64UrlOutput = await transformCode(input, {
+      idInterpolationPattern: "[sha512:contenthash:base64url:12]",
+    });
+
+    expect(hexOutput).toMatch(/id: "[0-9a-f]{9}"/);
+    expect(base64UrlOutput).toMatch(/id: "[a-zA-Z0-9-_]{12}"/);
+  });
 });

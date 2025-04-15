@@ -16,6 +16,7 @@ custom_transform = []
 [dependencies]
 base64ct   = { workspace = true, features = ["alloc"] }
 digest     = { workspace = true }
+hex        = { workspace = true }
 once_cell  = { workspace = true }
 regex      = { workspace = true }
 serde      = { workspace = true, features = ["derive"] }

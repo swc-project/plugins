@@ -3312,6 +3312,7 @@ version = "4.0.0"
 dependencies = [
  "base64ct",
  "digest 0.10.7",
+ "hex",
  "once_cell",
  "pretty_assertions",
  "regex",

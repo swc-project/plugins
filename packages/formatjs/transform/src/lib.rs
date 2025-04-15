@@ -4,7 +4,7 @@ use std::{
     path::Path,
 };
 
-use base64ct::{Base64, Encoding};
+use base64ct::{Base64, Base64UrlUnpadded, Encoding};
 use digest::DynDigest;
 use once_cell::sync::Lazy;
 use regex::{Captures, Regex as Regexp};
@@ -491,13 +491,14 @@ fn interpolate_name(filename: &str, interpolate_pattern: &str, content: &str) ->
     };
 
     let mut url = interpolate_pattern.to_string();
-    let r = Regexp::new(r#"\[(?:([^:\]]+):)?(?:hash|contenthash)(?::([a-z]+\d*))?(?::(\d+))?\]"#)
-        .unwrap();
+    let r =
+        Regexp::new(r#"\[(?:([^:\]]+):)?(?:hash|contenthash)(?::([a-z][a-z0-9]*))?(?::(\d+))?\]"#)
+            .unwrap();
 
     url = r
         .replace(url.as_str(), |cap: &Captures| {
             let hash_type = cap.get(1);
-            // let digest_type = cap.get(2);
+            let digest_encoding_type = cap.get(2);
             let max_length = cap.get(3);
 
             // TODO: support more hash_types than sha1 and sha512
@@ -507,12 +508,28 @@ fn interpolate_name(filename: &str, interpolate_pattern: &str, content: &str) ->
             };
             hasher.update(content.as_bytes());
             let hash = hasher.finalize();
-            let base64_hash = Base64::encode_string(&hash);
+            let encoded_hash = match digest_encoding_type.map(|m| m.as_str()) {
+                Some("base64") => Base64::encode_string(&hash),
+                Some("base64url") => Base64UrlUnpadded::encode_string(&hash),
+                Some("hex") | None => hex::encode(&hash),
+                Some(other) => {
+                    swc_core::plugin::errors::HANDLER.with(|handler| {
+                        handler.warn(&format!(
+                            "[React Intl] Unsupported encoding type `{}` in \
+                             `idInterpolationPattern`, must be one of `hex`, `base64`, or \
+                             `base64url`.",
+                            other
+                        ))
+                    });
+
+                    hex::encode(&hash)
+                }
+            };
 
             if let Some(max_length) = max_length {
-                base64_hash[0..max_length.as_str().parse::<usize>().unwrap()].to_string()
+                encoded_hash[0..max_length.as_str().parse::<usize>().unwrap()].to_string()
             } else {
-                base64_hash
+                encoded_hash
             }
         })
         .to_string();
