@@ -587,9 +587,41 @@ fn evaluate_jsx_message_descriptor(
 
         let content = if let Some(MessageDescriptionValue::Str(description)) = &description {
             format!("{}#{}", default_message, description)
-        } else if let Some(MessageDescriptionValue::Obj(_)) = &description {
+        } else if let Some(MessageDescriptionValue::Obj(obj)) = &description {
             // When description is an object, stringify it for the hash calculation
-            let desc_json = serde_json::to_string(&description).unwrap_or_default();
+            let mut map = std::collections::BTreeMap::new();
+            // Extract and convert properties in one pass
+            for prop in &obj.props {
+                if let PropOrSpread::Prop(prop) = prop {
+                    if let Prop::KeyValue(key_value) = &**prop {
+                        let key_str = match &key_value.key {
+                            PropName::Ident(ident) => ident.sym.to_string(),
+                            PropName::Str(s) => s.value.to_string(),
+                            _ => continue,
+                        };
+
+                        let value = match &*key_value.value {
+                            Expr::Lit(Lit::Str(s)) => {
+                                serde_json::Value::String(s.value.to_string())
+                            }
+                            Expr::Lit(Lit::Num(n)) => serde_json::Number::from_f64(n.value)
+                                .map(serde_json::Value::Number)
+                                .unwrap_or(serde_json::Value::Null),
+                            Expr::Lit(Lit::Bool(b)) => serde_json::Value::Bool(b.value),
+                            _ => continue,
+                        };
+
+                        map.insert(key_str, value);
+                    }
+                }
+            }
+
+            // Convert BTreeMap to JSON object with keys already sorted
+            let json_obj = map
+                .into_iter()
+                .collect::<serde_json::Map<String, serde_json::Value>>();
+            let obj_value = serde_json::Value::Object(json_obj);
+            let desc_json = serde_json::to_string(&obj_value).unwrap_or_default();
             format!("{}#{}", default_message, desc_json)
         } else {
             default_message.clone()
@@ -631,9 +663,41 @@ fn evaluate_call_expr_message_descriptor(
 
         let content = if let Some(MessageDescriptionValue::Str(description)) = &description {
             format!("{}#{}", default_message, description)
-        } else if let Some(MessageDescriptionValue::Obj(_)) = &description {
+        } else if let Some(MessageDescriptionValue::Obj(obj)) = &description {
             // When description is an object, stringify it for the hash calculation
-            let desc_json = serde_json::to_string(&description).unwrap_or_default();
+            let mut map = std::collections::BTreeMap::new();
+            // Extract and convert properties in one pass
+            for prop in &obj.props {
+                if let PropOrSpread::Prop(prop) = prop {
+                    if let Prop::KeyValue(key_value) = &**prop {
+                        let key_str = match &key_value.key {
+                            PropName::Ident(ident) => ident.sym.to_string(),
+                            PropName::Str(s) => s.value.to_string(),
+                            _ => continue,
+                        };
+
+                        let value = match &*key_value.value {
+                            Expr::Lit(Lit::Str(s)) => {
+                                serde_json::Value::String(s.value.to_string())
+                            }
+                            Expr::Lit(Lit::Num(n)) => serde_json::Number::from_f64(n.value)
+                                .map(serde_json::Value::Number)
+                                .unwrap_or(serde_json::Value::Null),
+                            Expr::Lit(Lit::Bool(b)) => serde_json::Value::Bool(b.value),
+                            _ => continue,
+                        };
+
+                        map.insert(key_str, value);
+                    }
+                }
+            }
+
+            // Convert BTreeMap to JSON object with keys already sorted
+            let json_obj = map
+                .into_iter()
+                .collect::<serde_json::Map<String, serde_json::Value>>();
+            let obj_value = serde_json::Value::Object(json_obj);
+            let desc_json = serde_json::to_string(&obj_value).unwrap_or_default();
             format!("{}#{}", default_message, desc_json)
         } else {
             default_message.clone()
