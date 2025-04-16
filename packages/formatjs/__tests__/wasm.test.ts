@@ -225,6 +225,39 @@ describe("formatjs swc plugin", () => {
     expect(output).toMatch(/id: "zL\/jyT\"/);
   });
 
+  it("should generate same id even if order of keys is different in two description objects with same keys", async () => {
+    const input = `
+      import { FormattedMessage } from 'react-intl';
+
+      export function Greeting() {
+        return (
+          <FormattedMessage
+            defaultMessage="Hello!"
+            description={{ text: "Greeting message", image: "https://example.com/image.png" }}
+          />
+        );
+      }
+    `;
+
+    const input2 = `
+      import { FormattedMessage } from 'react-intl';
+
+      export function Greeting() {
+        return (
+          <FormattedMessage
+            defaultMessage="Hello!"
+            description={{ image: "https://example.com/image.png", text: "Greeting message" }}
+          />
+        );
+      }
+    `;
+
+    const output = await transformCode(input);
+    const output2 = await transformCode(input2);
+
+    expect(output).toMatch(output2);
+  });
+
   it("should be able to use different encodings in interpolation", async () => {
     const input = `
       import { FormattedMessage } from 'react-intl';
