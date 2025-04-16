@@ -204,4 +204,24 @@ describe("formatjs swc plugin", () => {
     expect(sha512output).toMatch(/id: "[a-zA-Z0-9]{6}"/);
     expect(sha1output).not.toMatch(sha512output);
   });
+
+  it("should be able to use object description", async () => {
+    const input = `
+      import { FormattedMessage } from 'react-intl';
+
+      export function Greeting() {
+        return (
+          <FormattedMessage
+            defaultMessage="Hello!"
+            description={{ text: "Greeting message" }}
+          />
+        );
+      }
+    `;
+
+    console.log(input);
+    const output = await transformCode(input);
+
+    expect(output).toMatch(/id: "zL\/jyT\"/);
+  });
 });

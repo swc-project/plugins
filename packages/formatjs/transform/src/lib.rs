@@ -570,6 +570,10 @@ fn evaluate_jsx_message_descriptor(
 
         let content = if let Some(MessageDescriptionValue::Str(description)) = &description {
             format!("{}#{}", default_message, description)
+        } else if let Some(MessageDescriptionValue::Obj(_)) = &description {
+            // When description is an object, stringify it for the hash calculation
+            let desc_json = serde_json::to_string(&description).unwrap_or_default();
+            format!("{}#{}", default_message, desc_json)
         } else {
             default_message.clone()
         };
@@ -610,6 +614,10 @@ fn evaluate_call_expr_message_descriptor(
 
         let content = if let Some(MessageDescriptionValue::Str(description)) = &description {
             format!("{}#{}", default_message, description)
+        } else if let Some(MessageDescriptionValue::Obj(_)) = &description {
+            // When description is an object, stringify it for the hash calculation
+            let desc_json = serde_json::to_string(&description).unwrap_or_default();
+            format!("{}#{}", default_message, desc_json)
         } else {
             default_message.clone()
         };
