@@ -4,6 +4,12 @@ FormatJS SWC plugin, maintained by SWC team.
 
 # @swc/plugin-formatjs
 
+## 3.2.0
+
+### Minor Changes
+
+- 648faf7: add support for hex and base64url digest encodings in idInterpolationPattern placeholders
+
 ## 3.1.2
 
 ### Patch Changes
