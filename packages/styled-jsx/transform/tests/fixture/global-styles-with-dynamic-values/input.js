@@ -18,7 +18,7 @@ export default function Component() {
       <div>Styled Div</div>
       <style jsx global>{`
         .scope-${id} {
-          ${stringifyCssVariablesObject(cssVariables)}
+          ${stringifyCssVariablesObject(cssVariables)};
 
           button {
             color: ${buttonColor};
