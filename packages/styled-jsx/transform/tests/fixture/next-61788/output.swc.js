@@ -19,6 +19,6 @@ export default function Home() {
     ]) + " " + "header"}>Hello</h1>
       <_JSXStyle id={"3810e41582e1fb4f"} dynamic={[
         MOBILE_MAX
-    ]}>{`.header.__jsx-style-dynamic-selector{font-size:48px}@media screen and (width<=${MOBILE_MAX}px){.header.__jsx-style-dynamic-selector{font-size:12px}}`}</_JSXStyle>
+    ]}>{`.header.__jsx-style-dynamic-selector{font-size:48px}`}</_JSXStyle>
     </div>;
 }
