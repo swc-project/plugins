@@ -9,22 +9,21 @@ export default function Component() {
     <div className="wrapper">
       <div className="animated">Animated Element</div>
       <style jsx>{`
-        .wrapper {
-          @keyframes customAnimation {
-            0% {
-              opacity: 0;
-              transform: scale(0);
-            }
-            50% {
-              opacity: ${middleOpacity};
-              transform: rotate(${rotation}deg);
-            }
-            100% {
-              opacity: 1;
-              transform: scale(1);
-            }
+        @keyframes customAnimation {
+          0% {
+            opacity: 0;
+            transform: scale(0);
           }
-
+          50% {
+            opacity: ${middleOpacity};
+            transform: rotate(${rotation}deg);
+          }
+          100% {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+        .wrapper {
           .animated {
             animation: customAnimation ${duration}ms ${easing} forwards;
             animation-delay: ${delay}ms;
