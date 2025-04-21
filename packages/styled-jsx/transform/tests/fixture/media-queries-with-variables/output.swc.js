@@ -28,6 +28,6 @@ export default function Component() {
       <_JSXStyle id={"f27916106b885486"} dynamic={[
         ResponsiveBreakpoint[breakpoint],
         mobileWidth
-    ]}>{`.component.__jsx-style-dynamic-selector{width:100%}`}</_JSXStyle>
+    ]}>{`.component.__jsx-style-dynamic-selector{width:100%}@media (width<=${ResponsiveBreakpoint[breakpoint]}){.component.__jsx-style-dynamic-selector{width:${mobileWidth}px}.component.__jsx-style-dynamic-selector.active.__jsx-style-dynamic-selector{color:#00f}.component.__jsx-style-dynamic-selector div.__jsx-style-dynamic-selector{display:block}}`}</_JSXStyle>
     </div>;
 }
