@@ -3,7 +3,7 @@ export default class {
     render() {
         return <div className={_JSXStyle.dynamic([
             [
-                "50430b2c5d705539",
+                "2e8e3ade7c669e3f",
                 [
                     a || "var(--c)",
                     b || "inherit"
@@ -12,14 +12,14 @@ export default class {
         ])}>
         <p className={_JSXStyle.dynamic([
             [
-                "50430b2c5d705539",
+                "2e8e3ade7c669e3f",
                 [
                     a || "var(--c)",
                     b || "inherit"
                 ]
             ]
         ])}>test</p>
-        <_JSXStyle id={"50430b2c5d705539"} dynamic={[
+        <_JSXStyle id={"2e8e3ade7c669e3f"} dynamic={[
             a || "var(--c)",
             b || "inherit"
         ]}>{`.a:hover .b.__jsx-style-dynamic-selector{display:inline-block;padding:0 ${a || "var(--c)"};color:${b || "inherit"}}`}</_JSXStyle>
