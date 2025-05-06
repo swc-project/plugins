@@ -1,5 +1,11 @@
 # @swc/plugin-formatjs
 
+## 3.2.2
+
+### Patch Changes
+
+- 5ddbaeb: Update swc_core to v23
+
 ## 3.2.1
 
 ### Patch Changes
