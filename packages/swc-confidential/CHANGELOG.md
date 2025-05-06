@@ -1,5 +1,11 @@
 # @swc/plugin-swc-confidential
 
+## 6.0.4
+
+### Patch Changes
+
+- 5ddbaeb: Update swc_core to v23
+
 ## 6.0.3
 
 ### Patch Changes
