@@ -4,6 +4,12 @@ FormatJS SWC plugin, maintained by SWC team.
 
 # @swc/plugin-formatjs
 
+## 3.2.1
+
+### Patch Changes
+
+- 1abaa28: fix(formatjs): Sort description objects before serialization
+
 ## 3.2.0
 
 ### Minor Changes
