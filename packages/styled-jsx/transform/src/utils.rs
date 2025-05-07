@@ -131,16 +131,16 @@ pub fn compute_class_names(
         (Some(static_class_name), Some(dynamic_class_name), Some(external_jsx_id)) => Some(add(
             add(
                 external_jsx_id,
-                string_literal_expr(&format!(" {} ", static_class_name)),
+                string_literal_expr(&format!(" {static_class_name} ")),
             ),
             dynamic_class_name,
         )),
         (Some(static_class_name), Some(dynamic_class_name), None) => Some(add(
-            string_literal_expr(&format!("{} ", static_class_name)),
+            string_literal_expr(&format!("{static_class_name} ")),
             dynamic_class_name,
         )),
         (Some(static_class_name), None, Some(external_jsx_id)) => Some(add(
-            string_literal_expr(&format!("{} ", static_class_name)),
+            string_literal_expr(&format!("{static_class_name} ")),
             external_jsx_id,
         )),
         (None, Some(dynamic_class_name), Some(external_jsx_id)) => Some(add(
@@ -311,7 +311,7 @@ pub fn hash_string(s: &str) -> String {
     let mut hasher = DefaultHasher::new();
     hasher.write(s.as_bytes());
     let hash_result = hasher.finish();
-    format!("{:x}", hash_result)
+    format!("{hash_result:x}")
 }
 
 pub fn string_literal_expr(s: &str) -> Expr {
