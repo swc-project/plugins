@@ -219,8 +219,7 @@ mod tests {
             assert_eq!(
                 minify(code, &LINEBREAK_REGEX_RAW),
                 expected,
-                "{}: minify",
-                description
+                "{description}: minify"
             );
 
             // test minify_values()
@@ -230,8 +229,7 @@ mod tests {
                     values: vec![expected.into()],
                     retained_expression_indices: HashSet::new(),
                 },
-                "{}: minify_css_quasis",
-                description
+                "{description}: minify_css_quasis"
             );
         }
 

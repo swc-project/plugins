@@ -103,8 +103,8 @@ pub(crate) fn expand_import_map(map: Option<&ImportMap>) -> Arc<Vec<EmotionModul
                         .find(|v| v.module_name == *package_name)
                         .unwrap_or_else(|| {
                             panic!(
-                                "There is no transformer for the export '{}' in '{}'",
-                                export_name, package_name
+                                "There is no transformer for the export '{export_name}' in \
+                                 '{package_name}'"
                             )
                         })
                         .clone();
@@ -123,8 +123,8 @@ pub(crate) fn expand_import_map(map: Option<&ImportMap>) -> Arc<Vec<EmotionModul
                         })
                         .unwrap_or_else(|| {
                             panic!(
-                                "failed to find export '{}' from package '{}'",
-                                export_name, package_name
+                                "failed to find export '{export_name}' from package \
+                                 '{package_name}'"
                             )
                         });
 

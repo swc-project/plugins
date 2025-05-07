@@ -16,7 +16,7 @@ pub fn process(mut program: Program, metadata: TransformPluginProgramMetadata) -
     let plugin_options: FormatJSPluginOptions = if let Some(plugin_config) = plugin_config {
         serde_json::from_str(&plugin_config).unwrap_or_else(|f| {
             println!("Could not deserialize instrumentation option");
-            println!("{:#?}", f);
+            println!("{f:#?}");
             Default::default()
         })
     } else {

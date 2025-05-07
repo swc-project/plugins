@@ -62,7 +62,7 @@ impl RemoveConsole {
         // Here we do an O(n) search on the list of excluded properties because the size
         // should be small.
         match &member_expr.prop {
-            MemberProp::Ident(i) if !self.exclude.iter().any(|x| *x == i.sym) => {}
+            MemberProp::Ident(i) if !self.exclude.contains(&i.sym) => {}
             _ => return false,
         }
 

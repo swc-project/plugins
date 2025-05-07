@@ -98,7 +98,7 @@ impl Rewriter<'_> {
                 v.iter().any(|(k, val)| {
                     let mut key = k.to_string();
                     if !key.starts_with('^') && !key.ends_with('$') {
-                        key = format!("^{}$", key);
+                        key = format!("^{key}$");
                     }
 
                     // Create a clone of the context, as we need to insert the
@@ -219,10 +219,7 @@ impl Rewriter<'_> {
                 }
                 _ => {
                     if self.config.prevent_full_import {
-                        panic!(
-                            "import {:?} causes the entire module to be imported",
-                            old_decl
-                        );
+                        panic!("import {old_decl:?} causes the entire module to be imported");
                     } else {
                         // Give up
                         return vec![old_decl.clone()];
@@ -298,10 +295,7 @@ impl Rewriter<'_> {
                 }
                 _ => {
                     if self.config.prevent_full_import {
-                        panic!(
-                            "import {:?} causes the entire module to be imported",
-                            old_decl
-                        );
+                        panic!("import {old_decl:?} causes the entire module to be imported");
                     } else {
                         // Give up
                         return vec![old_decl.clone()];
@@ -454,7 +448,7 @@ pub fn modularize_imports(config: &Config) -> impl '_ + Pass {
         let mut k = Cow::Borrowed(k);
         // XXX: Should we keep this hack?
         if !k.starts_with('^') && !k.ends_with('$') {
-            k = Cow::Owned(format!("^{}$", k));
+            k = Cow::Owned(format!("^{k}$"));
         }
         folder.packages.push((
             CachedRegex::new(&k).expect("transform-imports: invalid regex"),

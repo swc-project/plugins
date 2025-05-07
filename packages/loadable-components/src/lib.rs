@@ -247,7 +247,7 @@ where
                     return v1.to_string();
                 }
 
-                format!("{}[request]", v1)
+                format!("{v1}[request]")
             }
             _ => unreachable!(),
         }
@@ -479,7 +479,7 @@ where
             .as_object()
             .unwrap()
             .iter()
-            .map(|(k, v)| format!("{}: {}", k, v))
+            .map(|(k, v)| format!("{k}: {v}"))
             .collect::<Vec<_>>()
             .join(", ")
     }
