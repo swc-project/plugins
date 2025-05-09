@@ -7,9 +7,9 @@ use regex::{Captures, Regex};
 use serde::{Deserialize, Serialize};
 use swc_atoms::Atom;
 use swc_cached::regex::CachedRegex;
-use swc_common::DUMMY_SP;
+use swc_common::{util::take::Take, DUMMY_SP};
 use swc_ecma_ast::{ImportDecl, ImportSpecifier, ModuleExportName, *};
-use swc_ecma_visit::{fold_pass, noop_fold_type, Fold, FoldWith};
+use swc_ecma_visit::{noop_visit_mut_type, visit_mut_pass, VisitMut, VisitMutWith};
 
 static DUP_SLASH_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"//").unwrap());
 
@@ -361,24 +361,24 @@ impl TransformImports<'_> {
     }
 }
 
-impl Fold for TransformImports<'_> {
-    noop_fold_type!();
+impl VisitMut for TransformImports<'_> {
+    noop_visit_mut_type!();
 
-    fn fold_call_expr(&mut self, mut call: CallExpr) -> CallExpr {
-        call = call.fold_children_with(self);
+    fn visit_mut_call_expr(&mut self, call: &mut CallExpr) {
+        call.visit_mut_children_with(self);
 
         if call.callee.is_import() {
-            if let Some(new_module) = self.handle_dynamic_import(&call) {
+            if let Some(new_module) = self.handle_dynamic_import(call) {
                 call.args.first_mut().unwrap().expr = new_module.into();
             }
         }
-
-        call
     }
 
-    fn fold_module(&mut self, mut module: Module) -> Module {
-        let mut new_items: Vec<ModuleItem> = vec![];
-        for item in module.body {
+    fn visit_mut_module(&mut self, module: &mut Module) {
+        module.visit_mut_children_with(self);
+
+        let mut new_items: Vec<ModuleItem> = Vec::with_capacity(module.body.len());
+        for item in module.body.take() {
             match item {
                 ModuleItem::ModuleDecl(ModuleDecl::Import(decl)) => {
                     // Ignore side-effect only imports
@@ -440,9 +440,7 @@ impl Fold for TransformImports<'_> {
                 }
             }
         }
-        let new_items = new_items.fold_children_with(self);
         module.body = new_items;
-        module
     }
 }
 
@@ -460,7 +458,7 @@ pub fn modularize_imports(config: &Config) -> impl '_ + Pass {
             v,
         ));
     }
-    fold_pass(folder)
+    visit_mut_pass(folder)
 }
 
 fn helper_lower_case(
