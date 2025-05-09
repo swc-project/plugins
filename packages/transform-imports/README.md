@@ -18,6 +18,12 @@
 
 # @swc/plugin-transform-imports
 
+## 7.1.0
+
+### Minor Changes
+
+- ebdcbfa: Improve performance
+
 ## 7.0.4
 
 ### Patch Changes
