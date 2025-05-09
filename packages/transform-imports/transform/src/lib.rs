@@ -73,19 +73,25 @@ struct Rewriter<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(untagged)]
-enum CtxData<'a> {
-    Plain(&'a str),
-    Array(&'a [&'a str]),
+struct Ctx<'a> {
+    matches: &'a [&'a str],
+    member: Option<&'a str>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct CtxWithMember<'a> {
+    matches: &'a [&'a str],
+    member: Option<&'a str>,
+    member_matches: &'a [&'a str],
 }
 
 impl Rewriter<'_> {
     fn new_path(&self, name_str: Option<&str>) -> Atom {
-        let mut ctx: HashMap<&str, CtxData> = HashMap::new();
-        ctx.insert("matches", CtxData::Array(&self.group[..]));
-        if let Some(name_str) = name_str {
-            ctx.insert("member", CtxData::Plain(name_str));
-        }
+        let ctx: Ctx = Ctx {
+            matches: &self.group[..],
+            member: name_str,
+        };
 
         let new_path = match &self.config.transform {
             Transform::String(s) => HANDLEBARS.render_template(s, &ctx).unwrap_or_else(|e| {
@@ -103,12 +109,12 @@ impl Rewriter<'_> {
 
                     // Create a clone of the context, as we need to insert the
                     // `memberMatches` key for each key we try.
-                    let mut ctx_with_member_matches: HashMap<&str, CtxData> = HashMap::new();
-                    ctx_with_member_matches.insert("matches", CtxData::Array(&self.group[..]));
+                    let mut ctx_with_member_matches = CtxWithMember {
+                        matches: &self.group[..],
+                        member: name_str,
+                        member_matches: &[],
+                    };
 
-                    if let Some(name_str) = name_str {
-                        ctx_with_member_matches.insert("member", CtxData::Plain(name_str));
-                    }
                     let regex = CachedRegex::new(&key).expect("transform-imports: invalid regex");
                     if let Some(name_str) = name_str {
                         let group = regex.captures(name_str);
@@ -119,8 +125,7 @@ impl Rewriter<'_> {
                                 .map(|x| x.map(|x| x.as_str()).unwrap_or_default())
                                 .collect::<Vec<&str>>()
                                 .clone();
-                            ctx_with_member_matches
-                                .insert("memberMatches", CtxData::Array(&group[..]));
+                            ctx_with_member_matches.member_matches = &group[..];
 
                             result = Some(
                                 HANDLEBARS
