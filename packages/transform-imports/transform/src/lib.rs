@@ -51,7 +51,7 @@ impl From<Vec<(String, String)>> for Transform {
     }
 }
 
-struct FoldImports<'a> {
+struct TransformImports<'a> {
     packages: Vec<(CachedRegex, &'a PackageConfig)>,
 }
 
@@ -312,7 +312,7 @@ impl Rewriter<'_> {
     }
 }
 
-impl FoldImports<'_> {
+impl TransformImports<'_> {
     fn should_rewrite<'a>(&'a self, name: &'a str) -> Option<Rewriter<'a>> {
         for (regex, config) in &self.packages {
             let group = regex.captures(name);
@@ -361,7 +361,7 @@ impl FoldImports<'_> {
     }
 }
 
-impl Fold for FoldImports<'_> {
+impl Fold for TransformImports<'_> {
     noop_fold_type!();
 
     fn fold_call_expr(&mut self, mut call: CallExpr) -> CallExpr {
@@ -447,7 +447,7 @@ impl Fold for FoldImports<'_> {
 }
 
 pub fn modularize_imports(config: &Config) -> impl '_ + Pass {
-    let mut folder = FoldImports { packages: vec![] };
+    let mut folder = TransformImports { packages: vec![] };
 
     for (k, v) in &config.packages {
         let mut k = Cow::Borrowed(k);
