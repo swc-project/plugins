@@ -28,6 +28,12 @@ Then update your `.swcrc` file like below:
 
 # @swc/plugin-styled-components
 
+## 7.1.5
+
+### Patch Changes
+
+- 0d14c35: Use correct span hygiene
+
 ## 7.1.4
 
 ### Patch Changes
