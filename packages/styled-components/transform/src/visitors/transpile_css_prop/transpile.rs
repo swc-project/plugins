@@ -96,8 +96,7 @@ impl VisitMut for TranspileCssProp<'_> {
 
                     let id_sym = Atom::from(id_sym);
                     let styled_idx = self.next_styled_idx(id_sym.clone());
-                    let id = quote_ident!(
-                        SyntaxContext::empty(),
+                    let id = private_ident!(
                         elem.opening.name.span(),
                         append_if_gt_one(&format!("_Styled{id_sym}"), styled_idx)
                     );
