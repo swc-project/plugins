@@ -2,13 +2,13 @@ import _JSXStyle from "styled-jsx/style";
 export default function Home() {
     const breakpoint = "500px";
     return <>
-            <div className={"jsx-68a0fd5daa7deb8c" + " " + "container"}>
+            <div className={"jsx-f3f9c604d7103d8c" + " " + "container"}>
                 container (should be blue)
-                <div className={"jsx-68a0fd5daa7deb8c" + " " + "responsive"}>
+                <div className={"jsx-f3f9c604d7103d8c" + " " + "responsive"}>
                     responsive (purple on mobile, orange on desktop)
                 </div>
             </div>
 
-            <_JSXStyle id={"68a0fd5daa7deb8c"}>{`.container.jsx-68a0fd5daa7deb8c{color:#00f;padding:3rem}@media (max-width:${breakpoint}){.container.jsx-68a0fd5daa7deb8c.jsx-68a0fd5daa7deb8c .responsive.jsx-68a0fd5daa7deb8c{color:purple}}`}</_JSXStyle>
+            <_JSXStyle id={"f3f9c604d7103d8c"}>{`.container.jsx-f3f9c604d7103d8c{color:#00f;padding:3rem}@media (max-width:${breakpoint}){.container.jsx-f3f9c604d7103d8c.jsx-f3f9c604d7103d8c .responsive.jsx-f3f9c604d7103d8c{color:purple}}`}</_JSXStyle>
         </>;
 }
