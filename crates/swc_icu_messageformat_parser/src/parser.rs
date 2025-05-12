@@ -190,19 +190,19 @@ fn get_best_pattern(skeleton: &str, locale: &str) -> String {
                 }
 
                 while day_period_len > 0 {
-                    ret = format!("{}{}", ret, day_period_char);
+                    ret = format!("{ret}{day_period_char}");
                     day_period_len -= 1;
                 }
 
                 while hour_len > 0 {
-                    ret = format!("{}{}", hour_char, ret);
+                    ret = format!("{hour_char}{ret}");
                     hour_len -= 1;
                 }
             }
         } else if pattern_char == 'J' {
-            ret = format!("{}H", ret);
+            ret = format!("{ret}H");
         } else {
-            ret = format!("{}{}", ret, pattern_char);
+            ret = format!("{ret}{pattern_char}");
         }
     }
 
@@ -765,7 +765,7 @@ impl<'s> Parser<'s> {
         if self.bump_if("/>") {
             // Self closing tag
             Ok(AstElement::Literal {
-                value: format!("<{}/>", tag_name),
+                value: format!("<{tag_name}/>"),
                 span: if self.options.capture_location {
                     Some(Span::new(start_position, self.position()))
                 } else {
@@ -1625,7 +1625,7 @@ impl<'s> Parser<'s> {
         message
             .chars()
             .next()
-            .unwrap_or_else(|| panic!("expected char at offset {}", i))
+            .unwrap_or_else(|| panic!("expected char at offset {i}"))
     }
 
     /// Bump the parser to the next Unicode scalar value.
@@ -1682,8 +1682,7 @@ impl<'s> Parser<'s> {
             }
             assert!(
                 offset < target_offset,
-                "target_offset is at invalid unicode byte boundary: {}",
-                target_offset
+                "target_offset is at invalid unicode byte boundary: {target_offset}"
             );
 
             self.bump();

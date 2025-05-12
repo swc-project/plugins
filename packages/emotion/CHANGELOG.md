@@ -1,5 +1,11 @@
 # @swc/plugin-emotion
 
+## 9.0.4
+
+### Patch Changes
+
+- 5ddbaeb: Update swc_core to v23
+
 ## 9.0.3
 
 ### Patch Changes

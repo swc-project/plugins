@@ -52,10 +52,7 @@ impl<'a> TryFrom<&'a str> for OutputFileExtension {
         match value {
             "ts" => Ok(Self::TypeScript),
             "js" => Ok(Self::JavaScript),
-            _ => Err(format!(
-                "Unexpected output file extension value '{}'",
-                value
-            )),
+            _ => Err(format!("Unexpected output file extension value '{value}'")),
         }
     }
 }
@@ -221,7 +218,7 @@ impl Fold for Relay {
 
 // TODO: This is really hacky.
 fn unique_ident_name_from_operation_name(operation_name: &str) -> String {
-    format!("__{}", operation_name)
+    format!("__{operation_name}")
 }
 
 #[derive(Debug)]
@@ -240,12 +237,12 @@ impl Relay {
         definition_name: &str,
     ) -> Result<PathBuf, BuildRequirePathError> {
         let filename = match &self.config.output_file_extension {
-            OutputFileExtension::JavaScript => format!("{}.graphql.js", definition_name),
-            OutputFileExtension::TypeScript => format!("{}.graphql.ts", definition_name),
+            OutputFileExtension::JavaScript => format!("{definition_name}.graphql.js"),
+            OutputFileExtension::TypeScript => format!("{definition_name}.graphql.ts"),
             OutputFileExtension::Undefined => match &self.config.language {
-                RelayLanguageConfig::Flow => format!("{}.graphql.js", definition_name),
-                RelayLanguageConfig::TypeScript => format!("{}.graphql.ts", definition_name),
-                RelayLanguageConfig::JavaScript => format!("{}.graphql.js", definition_name),
+                RelayLanguageConfig::Flow => format!("{definition_name}.graphql.js"),
+                RelayLanguageConfig::TypeScript => format!("{definition_name}.graphql.ts"),
+                RelayLanguageConfig::JavaScript => format!("{definition_name}.graphql.js"),
             },
         };
 
@@ -267,7 +264,7 @@ impl Relay {
         } else if self
             .pages_dir
             .as_ref()
-            .map_or(false, |pages_dir| real_file_name.starts_with(pages_dir))
+            .is_some_and(|pages_dir| real_file_name.starts_with(pages_dir))
         {
             Err(BuildRequirePathError::ArtifactDirectoryExpected {
                 file_name: real_file_name.display().to_string(),

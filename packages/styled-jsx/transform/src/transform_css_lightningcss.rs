@@ -626,7 +626,7 @@ impl Debug for SafeDebug<'_> {
 
         match s {
             Ok(s) => {
-                write!(f, "{}", s)
+                write!(f, "{s}")
             }
             Err(_) => write!(f, "<panicked>"),
         }

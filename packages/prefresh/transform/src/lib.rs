@@ -31,7 +31,7 @@ pub fn hash_string(s: &str) -> String {
     let mut hasher = DefaultHasher::new();
     hasher.write(s.as_bytes());
     let hash_result = hasher.finish();
-    format!("{:x}", hash_result)
+    format!("{hash_result:x}")
 }
 
 #[derive(Debug)]

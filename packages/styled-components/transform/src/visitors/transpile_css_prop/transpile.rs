@@ -99,7 +99,7 @@ impl VisitMut for TranspileCssProp<'_> {
                     let id = quote_ident!(
                         SyntaxContext::empty(),
                         elem.opening.name.span(),
-                        append_if_gt_one(&format!("_Styled{}", id_sym), styled_idx)
+                        append_if_gt_one(&format!("_Styled{id_sym}"), styled_idx)
                     );
 
                     let (styled, inject_after) = if TAG_NAME_REGEX.is_match(&name.sym) {
@@ -602,7 +602,7 @@ fn get_local_identifier(idx: &mut usize, expr: &Expr) -> IdentName {
 
 fn append_if_gt_one(s: &str, suffix: usize) -> Cow<str> {
     if suffix > 1 {
-        Cow::Owned(format!("{}{}", s, suffix))
+        Cow::Owned(format!("{s}{suffix}"))
     } else {
         Cow::Borrowed(s)
     }

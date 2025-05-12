@@ -32,7 +32,7 @@ pub fn react_remove_properties(config: Config) -> impl Pass {
             .iter()
             .map(|pattern| {
                 CachedRegex::new(pattern).unwrap_or_else(|e| {
-                    panic!("error compiling property regex `{}`: {}", pattern, e);
+                    panic!("error compiling property regex `{pattern}`: {e}");
                 })
             })
             .collect(),

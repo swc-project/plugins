@@ -468,7 +468,7 @@ fn interpolate_name(filename: &str, interpolate_pattern: &str, content: &str) ->
         let parent_str = parent.to_str().unwrap();
         if !parent_str.is_empty() {
             basename = path.file_stem()?.to_str().unwrap();
-            resource_path = format!("{}/", parent_str);
+            resource_path = format!("{parent_str}/");
         }
     }
 
@@ -515,10 +515,9 @@ fn interpolate_name(filename: &str, interpolate_pattern: &str, content: &str) ->
                 Some(other) => {
                     swc_core::plugin::errors::HANDLER.with(|handler| {
                         handler.warn(&format!(
-                            "[React Intl] Unsupported encoding type `{}` in \
+                            "[React Intl] Unsupported encoding type `{other}` in \
                              `idInterpolationPattern`, must be one of `hex`, `base64`, or \
-                             `base64url`.",
-                            other
+                             `base64url`."
                         ))
                     });
 
@@ -586,7 +585,7 @@ fn evaluate_jsx_message_descriptor(
             };
 
         let content = if let Some(MessageDescriptionValue::Str(description)) = &description {
-            format!("{}#{}", default_message, description)
+            format!("{default_message}#{description}")
         } else if let Some(MessageDescriptionValue::Obj(obj)) = &description {
             // When description is an object, stringify it for the hash calculation
             let mut map = std::collections::BTreeMap::new();
@@ -622,7 +621,7 @@ fn evaluate_jsx_message_descriptor(
                 .collect::<serde_json::Map<String, serde_json::Value>>();
             let obj_value = serde_json::Value::Object(json_obj);
             let desc_json = serde_json::to_string(&obj_value).unwrap_or_default();
-            format!("{}#{}", default_message, desc_json)
+            format!("{default_message}#{desc_json}")
         } else {
             default_message.clone()
         };
@@ -662,7 +661,7 @@ fn evaluate_call_expr_message_descriptor(
             };
 
         let content = if let Some(MessageDescriptionValue::Str(description)) = &description {
-            format!("{}#{}", default_message, description)
+            format!("{default_message}#{description}")
         } else if let Some(MessageDescriptionValue::Obj(obj)) = &description {
             // When description is an object, stringify it for the hash calculation
             let mut map = std::collections::BTreeMap::new();
@@ -698,7 +697,7 @@ fn evaluate_call_expr_message_descriptor(
                 .collect::<serde_json::Map<String, serde_json::Value>>();
             let obj_value = serde_json::Value::Object(json_obj);
             let desc_json = serde_json::to_string(&obj_value).unwrap_or_default();
-            format!("{}#{}", default_message, desc_json)
+            format!("{default_message}#{desc_json}")
         } else {
             default_message.clone()
         };
@@ -1272,8 +1271,8 @@ impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
                     kind: CommentKind::Block,
                     span: Span::dummy_with_cmt(),
                     text: format!(
-                        "__formatjs__messages_extracted__::{{\"messages\":{}, \"meta\":{}}}",
-                        messages_json_str, meta_json_str
+                        "__formatjs__messages_extracted__::{{\"messages\":{messages_json_str}, \
+                         \"meta\":{meta_json_str}}}"
                     )
                     .into(),
                 },

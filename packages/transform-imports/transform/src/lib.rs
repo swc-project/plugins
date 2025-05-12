@@ -7,9 +7,9 @@ use regex::{Captures, Regex};
 use serde::{Deserialize, Serialize};
 use swc_atoms::Atom;
 use swc_cached::regex::CachedRegex;
-use swc_common::DUMMY_SP;
+use swc_common::{util::take::Take, DUMMY_SP};
 use swc_ecma_ast::{ImportDecl, ImportSpecifier, ModuleExportName, *};
-use swc_ecma_visit::{fold_pass, noop_fold_type, Fold, FoldWith};
+use swc_ecma_visit::{noop_visit_mut_type, visit_mut_pass, VisitMut, VisitMutWith};
 
 static DUP_SLASH_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"//").unwrap());
 
@@ -51,7 +51,7 @@ impl From<Vec<(String, String)>> for Transform {
     }
 }
 
-struct FoldImports<'a> {
+struct TransformImports<'a> {
     packages: Vec<(CachedRegex, &'a PackageConfig)>,
 }
 
@@ -73,19 +73,25 @@ struct Rewriter<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(untagged)]
-enum CtxData<'a> {
-    Plain(&'a str),
-    Array(&'a [&'a str]),
+struct Ctx<'a> {
+    matches: &'a [&'a str],
+    member: Option<&'a str>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct CtxWithMember<'a> {
+    matches: &'a [&'a str],
+    member: Option<&'a str>,
+    member_matches: &'a [&'a str],
 }
 
 impl Rewriter<'_> {
     fn new_path(&self, name_str: Option<&str>) -> Atom {
-        let mut ctx: HashMap<&str, CtxData> = HashMap::new();
-        ctx.insert("matches", CtxData::Array(&self.group[..]));
-        if let Some(name_str) = name_str {
-            ctx.insert("member", CtxData::Plain(name_str));
-        }
+        let ctx: Ctx = Ctx {
+            matches: &self.group[..],
+            member: name_str,
+        };
 
         let new_path = match &self.config.transform {
             Transform::String(s) => HANDLEBARS.render_template(s, &ctx).unwrap_or_else(|e| {
@@ -98,17 +104,17 @@ impl Rewriter<'_> {
                 v.iter().any(|(k, val)| {
                     let mut key = k.to_string();
                     if !key.starts_with('^') && !key.ends_with('$') {
-                        key = format!("^{}$", key);
+                        key = format!("^{key}$");
                     }
 
                     // Create a clone of the context, as we need to insert the
                     // `memberMatches` key for each key we try.
-                    let mut ctx_with_member_matches: HashMap<&str, CtxData> = HashMap::new();
-                    ctx_with_member_matches.insert("matches", CtxData::Array(&self.group[..]));
+                    let mut ctx_with_member_matches = CtxWithMember {
+                        matches: &self.group[..],
+                        member: name_str,
+                        member_matches: &[],
+                    };
 
-                    if let Some(name_str) = name_str {
-                        ctx_with_member_matches.insert("member", CtxData::Plain(name_str));
-                    }
                     let regex = CachedRegex::new(&key).expect("transform-imports: invalid regex");
                     if let Some(name_str) = name_str {
                         let group = regex.captures(name_str);
@@ -119,8 +125,7 @@ impl Rewriter<'_> {
                                 .map(|x| x.map(|x| x.as_str()).unwrap_or_default())
                                 .collect::<Vec<&str>>()
                                 .clone();
-                            ctx_with_member_matches
-                                .insert("memberMatches", CtxData::Array(&group[..]));
+                            ctx_with_member_matches.member_matches = &group[..];
 
                             result = Some(
                                 HANDLEBARS
@@ -219,10 +224,7 @@ impl Rewriter<'_> {
                 }
                 _ => {
                     if self.config.prevent_full_import {
-                        panic!(
-                            "import {:?} causes the entire module to be imported",
-                            old_decl
-                        );
+                        panic!("import {old_decl:?} causes the entire module to be imported");
                     } else {
                         // Give up
                         return vec![old_decl.clone()];
@@ -298,10 +300,7 @@ impl Rewriter<'_> {
                 }
                 _ => {
                     if self.config.prevent_full_import {
-                        panic!(
-                            "import {:?} causes the entire module to be imported",
-                            old_decl
-                        );
+                        panic!("import {old_decl:?} causes the entire module to be imported");
                     } else {
                         // Give up
                         return vec![old_decl.clone()];
@@ -313,7 +312,7 @@ impl Rewriter<'_> {
     }
 }
 
-impl FoldImports<'_> {
+impl TransformImports<'_> {
     fn should_rewrite<'a>(&'a self, name: &'a str) -> Option<Rewriter<'a>> {
         for (regex, config) in &self.packages {
             let group = regex.captures(name);
@@ -362,24 +361,24 @@ impl FoldImports<'_> {
     }
 }
 
-impl Fold for FoldImports<'_> {
-    noop_fold_type!();
+impl VisitMut for TransformImports<'_> {
+    noop_visit_mut_type!();
 
-    fn fold_call_expr(&mut self, mut call: CallExpr) -> CallExpr {
-        call = call.fold_children_with(self);
+    fn visit_mut_call_expr(&mut self, call: &mut CallExpr) {
+        call.visit_mut_children_with(self);
 
         if call.callee.is_import() {
-            if let Some(new_module) = self.handle_dynamic_import(&call) {
+            if let Some(new_module) = self.handle_dynamic_import(call) {
                 call.args.first_mut().unwrap().expr = new_module.into();
             }
         }
-
-        call
     }
 
-    fn fold_module(&mut self, mut module: Module) -> Module {
-        let mut new_items: Vec<ModuleItem> = vec![];
-        for item in module.body {
+    fn visit_mut_module(&mut self, module: &mut Module) {
+        module.visit_mut_children_with(self);
+
+        let mut new_items: Vec<ModuleItem> = Vec::with_capacity(module.body.len());
+        for item in module.body.take() {
             match item {
                 ModuleItem::ModuleDecl(ModuleDecl::Import(decl)) => {
                     // Ignore side-effect only imports
@@ -441,27 +440,25 @@ impl Fold for FoldImports<'_> {
                 }
             }
         }
-        let new_items = new_items.fold_children_with(self);
         module.body = new_items;
-        module
     }
 }
 
 pub fn modularize_imports(config: &Config) -> impl '_ + Pass {
-    let mut folder = FoldImports { packages: vec![] };
+    let mut folder = TransformImports { packages: vec![] };
 
     for (k, v) in &config.packages {
         let mut k = Cow::Borrowed(k);
         // XXX: Should we keep this hack?
         if !k.starts_with('^') && !k.ends_with('$') {
-            k = Cow::Owned(format!("^{}$", k));
+            k = Cow::Owned(format!("^{k}$"));
         }
         folder.packages.push((
             CachedRegex::new(&k).expect("transform-imports: invalid regex"),
             v,
         ));
     }
-    fold_pass(folder)
+    visit_mut_pass(folder)
 }
 
 fn helper_lower_case(

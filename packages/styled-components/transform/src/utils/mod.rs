@@ -323,7 +323,7 @@ pub fn prefix_leading_digit(s: &str) -> Cow<str> {
         .map(|c| c.is_ascii_digit())
         .unwrap_or(false)
     {
-        Cow::Owned(format!("sc-{}", s))
+        Cow::Owned(format!("sc-{s}"))
     } else {
         Cow::Borrowed(s)
     }

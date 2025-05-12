@@ -1,5 +1,11 @@
 # @swc/plugin-styled-components
 
+## 7.1.4
+
+### Patch Changes
+
+- 5ddbaeb: Update swc_core to v23
+
 ## 7.1.3
 
 ### Patch Changes

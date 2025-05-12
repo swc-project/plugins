@@ -50,7 +50,7 @@ impl NativeConfig<'_> {
                 Err(err) => {
                     HANDLER.with(|handler| {
                         handler
-                            .struct_span_err(span, &format!("Error while processing css: {}.", err))
+                            .struct_span_err(span, &format!("Error while processing css: {err}."))
                             .emit()
                     });
                 }
@@ -443,9 +443,9 @@ impl Fold for StyledJSXTransformer<'_> {
             let file_name: &str = self.file_name.as_ref().unwrap();
             HANDLER.with(|handler| {
                 handler.err(&format!(
-                    "{} uses `css.resolve`, but ends with `.ts`. The file extension needs to be \
-                     `.tsx` so that the jsx injected by `css.resolve` will be transformed.",
-                    file_name
+                    "{file_name} uses `css.resolve`, but ends with `.ts`. The file extension \
+                     needs to be `.tsx` so that the jsx injected by `css.resolve` will be \
+                     transformed."
                 ));
             });
         }
@@ -541,10 +541,10 @@ impl StyledJSXTransformer<'_> {
                             }
                         {
                             is_expr_property.push(true);
-                            format!("--styled-jsx-placeholder-{}__: 0", i)
+                            format!("--styled-jsx-placeholder-{i}__: 0")
                         } else {
                             is_expr_property.push(false);
-                            format!("--styled-jsx-placeholder-{}__", i)
+                            format!("--styled-jsx-placeholder-{i}__")
                         };
                         s.push_str(&quasis[i].raw);
                         s.push_str(&placeholder);

@@ -12,7 +12,7 @@ use swc_ecma_transforms_testing::{test_fixture, FixtureTestConfig};
 fn fixture(input: PathBuf) {
     let dir = input.parent().unwrap();
     let config = read_to_string(dir.join("config.json")).expect("failed to read config.json");
-    println!("---- Config -----\n{}", config);
+    println!("---- Config -----\n{config}");
     let config: Config = serde_json::from_str(&config).unwrap();
 
     let file_name = input.clone().to_string_lossy().to_string();
