@@ -7,7 +7,7 @@ use once_cell::sync::Lazy;
 use regex::Regex;
 use rustc_hash::{FxHashMap, FxHashSet};
 use swc_atoms::Atom;
-use swc_common::{util::take::Take, Spanned, SyntaxContext, DUMMY_SP};
+use swc_common::{util::take::Take, Spanned, DUMMY_SP};
 use swc_ecma_ast::*;
 use swc_ecma_utils::{prepend_stmt, private_ident, quote_ident, ExprFactory};
 use swc_ecma_visit::{noop_visit_mut_type, visit_mut_pass, VisitMut, VisitMutWith};
@@ -96,8 +96,7 @@ impl VisitMut for TranspileCssProp<'_> {
 
                     let id_sym = Atom::from(id_sym);
                     let styled_idx = self.next_styled_idx(id_sym.clone());
-                    let id = quote_ident!(
-                        SyntaxContext::empty(),
+                    let id = private_ident!(
                         elem.opening.name.span(),
                         append_if_gt_one(&format!("_Styled{id_sym}"), styled_idx)
                     );

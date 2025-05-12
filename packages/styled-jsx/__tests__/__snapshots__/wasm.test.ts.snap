@@ -488,6 +488,46 @@ export const Test11 = ({ color })=>{
 "
 `;
 
+exports[`Should load swc-confidential wasm plugin correctly > Should transform basic-variables-in-css correctly 1`] = `
+"import _JSXStyle from "styled-jsx/style";
+export default function Component() {
+    const width = 100;
+    const height = 200;
+    const color = '#FF0000';
+    return /*#__PURE__*/ React.createElement("div", {
+        className: _JSXStyle.dynamic([
+            [
+                "dc595e2db5d50f19",
+                [
+                    width,
+                    height,
+                    color
+                ]
+            ]
+        ])
+    }, /*#__PURE__*/ React.createElement("h1", {
+        className: _JSXStyle.dynamic([
+            [
+                "dc595e2db5d50f19",
+                [
+                    width,
+                    height,
+                    color
+                ]
+            ]
+        ])
+    }, "Basic Variables Test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
+        id: "dc595e2db5d50f19",
+        dynamic: [
+            width,
+            height,
+            color
+        ]
+    }, \`.component.__jsx-style-dynamic-selector{width:\${width}px;height:\${height}px;color:\${color}}\`));
+}
+"
+`;
+
 exports[`Should load swc-confidential wasm plugin correctly > Should transform class correctly 1`] = `
 "import _JSXStyle from "styled-jsx/style";
 class _class {
@@ -502,6 +542,54 @@ class _class {
     }
 }
 export { _class as default };
+"
+`;
+
+exports[`Should load swc-confidential wasm plugin correctly > Should transform complex-animation-keyframes correctly 1`] = `
+"import _JSXStyle from "styled-jsx/style";
+export default function Component() {
+    const middleOpacity = 0.5;
+    const rotation = 180;
+    const duration = 1000;
+    const easing = 'ease-in-out';
+    const delay = 200;
+    return /*#__PURE__*/ React.createElement("div", {
+        className: _JSXStyle.dynamic([
+            [
+                "9a951a50ad92485b",
+                [
+                    middleOpacity,
+                    rotation,
+                    duration,
+                    easing,
+                    delay
+                ]
+            ]
+        ]) + " " + "wrapper"
+    }, /*#__PURE__*/ React.createElement("div", {
+        className: _JSXStyle.dynamic([
+            [
+                "9a951a50ad92485b",
+                [
+                    middleOpacity,
+                    rotation,
+                    duration,
+                    easing,
+                    delay
+                ]
+            ]
+        ]) + " " + "animated"
+    }, "Animated Element"), /*#__PURE__*/ React.createElement(_JSXStyle, {
+        id: "9a951a50ad92485b",
+        dynamic: [
+            middleOpacity,
+            rotation,
+            duration,
+            easing,
+            delay
+        ]
+    }, \`@-webkit-keyframes customAnimation{0%{opacity:0;-webkit-transform:scale(0);transform:scale(0)}50%{opacity:\${middleOpacity};-webkit-transform:rotate(\${rotation}deg);transform:rotate(\${rotation}deg)}100%{opacity:1;-webkit-transform:scale(1);transform:scale(1)}}@-moz-keyframes customAnimation{0%{opacity:0;-moz-transform:scale(0);transform:scale(0)}50%{opacity:\${middleOpacity};-moz-transform:rotate(\${rotation}deg);transform:rotate(\${rotation}deg)}100%{opacity:1;-moz-transform:scale(1);transform:scale(1)}}@-o-keyframes customAnimation{0%{opacity:0;-o-transform:scale(0);transform:scale(0)}50%{opacity:\${middleOpacity};-o-transform:rotate(\${rotation}deg);transform:rotate(\${rotation}deg)}100%{opacity:1;-o-transform:scale(1);transform:scale(1)}}@keyframes customAnimation{0%{opacity:0;-webkit-transform:scale(0);-moz-transform:scale(0);-o-transform:scale(0);transform:scale(0)}50%{opacity:\${middleOpacity};-webkit-transform:rotate(\${rotation}deg);-moz-transform:rotate(\${rotation}deg);-o-transform:rotate(\${rotation}deg);transform:rotate(\${rotation}deg)}100%{opacity:1;-webkit-transform:scale(1);-moz-transform:scale(1);-o-transform:scale(1);transform:scale(1)}}.wrapper.__jsx-style-dynamic-selector{}.wrapper.__jsx-style-dynamic-selector .animated.__jsx-style-dynamic-selector{-webkit-animation:customAnimation \${duration}ms \${easing} forwards;-moz-animation:customAnimation \${duration}ms \${easing} forwards;-o-animation:customAnimation \${duration}ms \${easing} forwards;animation:customAnimation \${duration}ms \${easing} forwards;-webkit-animation-delay:\${delay}ms;-moz-animation-delay:\${delay}ms;-o-animation-delay:\${delay}ms;animation-delay:\${delay}ms}\`));
+}
 "
 `;
 
@@ -571,6 +659,57 @@ class Test extends React.Component {
             id: styles.__hash
         }, styles));
     }
+}
+"
+`;
+
+exports[`Should load swc-confidential wasm plugin correctly > Should transform css-variables-and-functions correctly 1`] = `
+"import _JSXStyle from "styled-jsx/style";
+export default function Component() {
+    const dynamicValue = '"dynamic content"';
+    const color1 = '#FF0000';
+    const color2 = '#0000FF';
+    const offset = 5;
+    const spacing = 10;
+    return /*#__PURE__*/ React.createElement("div", {
+        className: _JSXStyle.dynamic([
+            [
+                "22c978f6faeec16f",
+                [
+                    dynamicValue,
+                    color1,
+                    color2,
+                    offset,
+                    offset,
+                    spacing
+                ]
+            ]
+        ]) + " " + "container"
+    }, /*#__PURE__*/ React.createElement("div", {
+        className: _JSXStyle.dynamic([
+            [
+                "22c978f6faeec16f",
+                [
+                    dynamicValue,
+                    color1,
+                    color2,
+                    offset,
+                    offset,
+                    spacing
+                ]
+            ]
+        ]) + " " + "item"
+    }, "CSS Variables and Functions"), /*#__PURE__*/ React.createElement(_JSXStyle, {
+        id: "22c978f6faeec16f",
+        dynamic: [
+            dynamicValue,
+            color1,
+            color2,
+            offset,
+            offset,
+            spacing
+        ]
+    }, \`.container.__jsx-style-dynamic-selector{--local-var:\${dynamicValue};color:var(--text-color);background:-webkit-linear-gradient(left,\${color1},\${color2});background:-moz-linear-gradient(left,\${color1},\${color2});background:-o-linear-gradient(left,\${color1},\${color2});background:linear-gradient(to right,\${color1},\${color2})}.container.__jsx-style-dynamic-selector .item.__jsx-style-dynamic-selector{-webkit-transform:translate(-webkit-calc(var(--x) + \${offset}px),-webkit-calc(var(--y) + \${offset}px));-moz-transform:translate(-moz-calc(var(--x) + \${offset}px),-moz-calc(var(--y) + \${offset}px));-ms-transform:translate(calc(var(--x) + \${offset}px),calc(var(--y) + \${offset}px));-o-transform:translate(calc(var(--x) + \${offset}px),calc(var(--y) + \${offset}px));transform:translate(-webkit-calc(var(--x) + \${offset}px),-webkit-calc(var(--y) + \${offset}px));transform:translate(-moz-calc(var(--x) + \${offset}px),-moz-calc(var(--y) + \${offset}px));transform:translate(calc(var(--x) + \${offset}px),calc(var(--y) + \${offset}px))}.container.__jsx-style-dynamic-selector div.__jsx-style-dynamic-selector{margin:-webkit-calc(10px + \${spacing}px);margin:-moz-calc(10px + \${spacing}px);margin:calc(10px + \${spacing}px)}\`));
 }
 "
 `;
@@ -889,6 +1028,68 @@ export default function IndexPage() {
 "
 `;
 
+exports[`Should load swc-confidential wasm plugin correctly > Should transform global-styles-with-dynamic-values correctly 1`] = `
+"import _JSXStyle from "styled-jsx/style";
+export default function Component() {
+    const id = 'theme-1';
+    const cssVariables = {
+        '--primary-color': '#0070f3',
+        '--secondary-color': '#ff0080'
+    };
+    const stringifyCssVariablesObject = (obj)=>{
+        return Object.entries(obj).map(([key, value])=>\`\${key}: \${value};\`).join('\\n');
+    };
+    const buttonColor = 'var(--primary-color)';
+    const backgroundColor = '#f0f0f0';
+    return /*#__PURE__*/ React.createElement("div", {
+        className: _JSXStyle.dynamic([
+            [
+                "f656cf9d5a360ff0",
+                [
+                    id,
+                    stringifyCssVariablesObject(cssVariables),
+                    buttonColor,
+                    backgroundColor
+                ]
+            ]
+        ]) + " " + \`scope-\${id}\`
+    }, /*#__PURE__*/ React.createElement("button", {
+        className: _JSXStyle.dynamic([
+            [
+                "f656cf9d5a360ff0",
+                [
+                    id,
+                    stringifyCssVariablesObject(cssVariables),
+                    buttonColor,
+                    backgroundColor
+                ]
+            ]
+        ])
+    }, "Global Styled Button"), /*#__PURE__*/ React.createElement("div", {
+        className: _JSXStyle.dynamic([
+            [
+                "f656cf9d5a360ff0",
+                [
+                    id,
+                    stringifyCssVariablesObject(cssVariables),
+                    buttonColor,
+                    backgroundColor
+                ]
+            ]
+        ])
+    }, "Styled Div"), /*#__PURE__*/ React.createElement(_JSXStyle, {
+        id: "f656cf9d5a360ff0",
+        dynamic: [
+            id,
+            stringifyCssVariablesObject(cssVariables),
+            buttonColor,
+            backgroundColor
+        ]
+    }, \`.scope-\${id}{\${stringifyCssVariablesObject(cssVariables)}}.scope-\${id} button{color:\${buttonColor}}.scope-\${id} div{background-color:\${backgroundColor}}\`));
+}
+"
+`;
+
 exports[`Should load swc-confidential wasm plugin correctly > Should transform issue--317 correctly 1`] = `
 "import _JSXStyle from "styled-jsx/style";
 export const MyComponent = ()=>/*#__PURE__*/ React.createElement(React.Fragment, null, /*#__PURE__*/ React.createElement("div", {
@@ -998,6 +1199,47 @@ export default (()=>/*#__PURE__*/ React.createElement("div", {
 "
 `;
 
+exports[`Should load swc-confidential wasm plugin correctly > Should transform media-queries-with-variables correctly 1`] = `
+"import _JSXStyle from "styled-jsx/style";
+export default function Component() {
+    const ResponsiveBreakpoint = {
+        mobile: '768px',
+        tablet: '1024px',
+        desktop: '1440px'
+    };
+    const breakpoint = 'mobile';
+    const mobileWidth = 320;
+    return /*#__PURE__*/ React.createElement("div", {
+        className: _JSXStyle.dynamic([
+            [
+                "3cd101c7fd762502",
+                [
+                    ResponsiveBreakpoint[breakpoint],
+                    mobileWidth
+                ]
+            ]
+        ]) + " " + "component"
+    }, /*#__PURE__*/ React.createElement("div", {
+        className: _JSXStyle.dynamic([
+            [
+                "3cd101c7fd762502",
+                [
+                    ResponsiveBreakpoint[breakpoint],
+                    mobileWidth
+                ]
+            ]
+        ]) + " " + "active"
+    }, "Responsive Element"), /*#__PURE__*/ React.createElement(_JSXStyle, {
+        id: "3cd101c7fd762502",
+        dynamic: [
+            ResponsiveBreakpoint[breakpoint],
+            mobileWidth
+        ]
+    }, \`.component.__jsx-style-dynamic-selector{width:100%}@media(max-width:\${ResponsiveBreakpoint[breakpoint]}){.component.__jsx-style-dynamic-selector{width:\${mobileWidth}px}.component.__jsx-style-dynamic-selector.active.__jsx-style-dynamic-selector{color:blue}.component.__jsx-style-dynamic-selector div.__jsx-style-dynamic-selector{display:block}}\`));
+}
+"
+`;
+
 exports[`Should load swc-confidential wasm plugin correctly > Should transform mixed-global-scoped correctly 1`] = `
 "import _JSXStyle from "styled-jsx/style";
 const Test = ()=>/*#__PURE__*/ React.createElement(_JSXStyle, {
@@ -1049,6 +1291,22 @@ class _class {
     }
 }
 export { _class as default };
+"
+`;
+
+exports[`Should load swc-confidential wasm plugin correctly > Should transform nested-selectors correctly 1`] = `
+"import _JSXStyle from "styled-jsx/style";
+export default function Component() {
+    return /*#__PURE__*/ React.createElement("div", {
+        className: "jsx-2552bb7cce0bcbcf" + " " + "parent"
+    }, /*#__PURE__*/ React.createElement("div", {
+        className: "jsx-2552bb7cce0bcbcf" + " " + "child"
+    }, "Nested Selectors Test"), /*#__PURE__*/ React.createElement("h1", {
+        className: "jsx-2552bb7cce0bcbcf"
+    }, "Heading"), /*#__PURE__*/ React.createElement(_JSXStyle, {
+        id: "2552bb7cce0bcbcf"
+    }, ".parent.jsx-2552bb7cce0bcbcf{position:relative}.parent.jsx-2552bb7cce0bcbcf.jsx-2552bb7cce0bcbcf:hover{background-color:red}.parent.jsx-2552bb7cce0bcbcf .child.jsx-2552bb7cce0bcbcf{margin-top:10px}.parent.jsx-2552bb7cce0bcbcf div.jsx-2552bb7cce0bcbcf{padding:15px}.parent.jsx-2552bb7cce0bcbcf h1.jsx-2552bb7cce0bcbcf{font-size:24px}"));
+}
 "
 `;
 
