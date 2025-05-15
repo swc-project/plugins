@@ -1,5 +1,11 @@
 # @swc/plugin-styled-jsx
 
+## 7.0.6
+
+### Patch Changes
+
+- fa19db4: Fix css handling in lightningcss mode
+
 ## 7.0.5
 
 ### Patch Changes
