@@ -439,7 +439,7 @@ impl CssNamespace {
             }
 
             // Look for :global
-            let children: Selector<'i> = match &component {
+            let complex_selectors: Vec<Component<'i>> = match &component {
                 Component::NonTSPseudoClass(PseudoClass::CustomFunction { name, arguments }) => {
                     if &**name != "global" {
                         if pseudo_index.is_none() {
@@ -477,31 +477,8 @@ impl CssNamespace {
                 }
             };
 
-            let mut complex_selectors =
-                children.iter_raw_match_order().cloned().collect::<Vec<_>>();
-
-            // Remove `a`
-            complex_selectors.pop();
-
-            if let Some(Component::Combinator(Combinator::Descendant)) = complex_selectors.last() {
-                complex_selectors.pop();
-            }
-
-            if let Component::Combinator(Combinator::Descendant) = complex_selectors[0] {
-                complex_selectors.remove(0);
-            }
-
-            if complex_selectors.is_empty() {
-                bail!("Failed to transform one off global selector");
-            }
-
-            trace!("Combinator: {:?}", combinator);
-            // trace!("node: {:?}", node);
-            // trace!("complex_selectors: {:?}", complex_selectors);
-
-            // result.push(Component::Combinator(Combinator::Descendant));
-
-            complex_selectors.reverse();
+            #[cfg(debug_assertions)]
+            debug!("Complex selectors: {:?}", complex_selectors);
 
             result.extend(complex_selectors);
             result.extend(node.into_iter().skip(i + 1));
@@ -561,7 +538,7 @@ impl CssNamespace {
 /// :global(.foo) {}`, so selector can be complex or relative (it violates the
 /// specification), but it is popular usage, so we just add `a ` at top and
 /// then remove it
-fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Selector<'i> {
+fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Vec<Component<'i>> {
     let mut buf = "a ".to_string();
 
     for t in tokens.0.iter() {
@@ -612,10 +589,137 @@ fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Selector<'i> {
         debug!("Parsing: {:?}", buf)
     }
 
-    let selector = Selector::parse_string_with_options(&buf, Default::default())
-        .expect("failed to parse selector list");
+    let mut result: Vec<Component<'i>> = vec![];
 
-    selector.into_owned()
+    let selector = Selector::parse_string_with_options(&buf, Default::default())
+        .expect("failed to parse selector list")
+        .into_owned();
+
+    // Compound selectors invert the order of their contents, so we need to
+    // undo that during serialization.
+    //
+    // This two-iterator strategy involves walking over the selector twice.
+    // We could do something more clever, but selector serialization probably
+    // isn't hot enough to justify it, and the stringification likely
+    // dominates anyway.
+    //
+    // NB: A parse-order iterator is a Rev<>, which doesn't expose as_slice(),
+    // which we need for |split|. So we split by combinators on a match-order
+    // sequence and then reverse.
+
+    let mut combinators = selector
+        .iter_raw_match_order()
+        .rev()
+        .filter_map(|x| x.as_combinator());
+    let compound_selectors = selector
+        .iter_raw_match_order()
+        .as_slice()
+        .split(|x| x.is_combinator())
+        .rev();
+
+    let mut combinators_exhausted = false;
+    for compound in compound_selectors {
+        debug_assert!(!combinators_exhausted);
+
+        // https://drafts.csswg.org/cssom/#serializing-selectors
+        if compound.is_empty() {
+            continue;
+        }
+
+        // 1. If there is only one simple selector in the compound selectors which is a
+        //    universal selector, append the result of serializing the universal
+        //    selector to s.
+        //
+        // Check if `!compound.empty()` first--this can happen if we have
+        // something like `... > ::before`, because we store `>` and `::`
+        // both as combinators internally.
+        //
+        // If we are in this case, after we have serialized the universal
+        // selector, we skip Step 2 and continue with the algorithm.
+        let (can_elide_namespace, first_non_namespace) = match compound[0] {
+            Component::ExplicitAnyNamespace
+            | Component::ExplicitNoNamespace
+            | Component::Namespace(..) => (false, 1),
+            Component::DefaultNamespace(..) => (true, 1),
+            _ => (true, 0),
+        };
+        let mut perform_step_2 = true;
+        let next_combinator = combinators.next();
+        if first_non_namespace == compound.len() - 1 {
+            match (next_combinator, &compound[first_non_namespace]) {
+                // We have to be careful here, because if there is a
+                // pseudo element "combinator" there isn't really just
+                // the one simple selector. Technically this compound
+                // selector contains the pseudo element selector as well
+                // -- Combinator::PseudoElement, just like
+                // Combinator::SlotAssignment, don't exist in the
+                // spec.
+                (Some(Combinator::PseudoElement), _) | (Some(Combinator::SlotAssignment), _) => (),
+                (_, &Component::ExplicitUniversalType) => {
+                    // Iterate over everything so we serialize the namespace
+                    // too.
+                    for simple in compound.iter() {
+                        result.push(simple.clone());
+                    }
+                    // Skip step 2, which is an "otherwise".
+                    perform_step_2 = false;
+                }
+                _ => (),
+            }
+        }
+
+        // 2. Otherwise, for each simple selector in the compound selectors that is not
+        //    a universal selector of which the namespace prefix maps to a namespace
+        //    that is not the default namespace serialize the simple selector and append
+        //    the result to s.
+        //
+        // See https://github.com/w3c/csswg-drafts/issues/1606, which is
+        // proposing to change this to match up with the behavior asserted
+        // in cssom/serialize-namespaced-type-selectors.html, which the
+        // following code tries to match.
+        if perform_step_2 {
+            for simple in compound.iter() {
+                if let Component::ExplicitUniversalType = *simple {
+                    // Can't have a namespace followed by a pseudo-element
+                    // selector followed by a universal selector in the same
+                    // compound selector, so we don't have to worry about the
+                    // real namespace being in a different `compound`.
+                    if can_elide_namespace {
+                        continue;
+                    }
+                }
+                result.push(simple.clone());
+            }
+        }
+
+        // 3. If this is not the last part of the chain of the selector append a single
+        //    SPACE (U+0020), followed by the combinator ">", "+", "~", ">>", "||", as
+        //    appropriate, followed by another single SPACE (U+0020) if the combinator
+        //    was not whitespace, to s.
+        match next_combinator {
+            Some(c) => result.push(Component::Combinator(c)),
+            None => combinators_exhausted = true,
+        };
+
+        // 4. If this is the last part of the chain of the selector and there is
+        //    a pseudo-element, append "::" followed by the name of the
+        //    pseudo-element, to s.
+        //
+        // (we handle this above)
+    }
+
+    // Remove `a`
+    result.remove(0);
+
+    if let Some(Component::Combinator(Combinator::Descendant)) = result.first() {
+        result.remove(0);
+    }
+
+    if let Some(Component::Combinator(Combinator::Descendant)) = result.last() {
+        result.pop();
+    }
+
+    result
 }
 
 struct SafeDebug<'a>(&'a dyn Debug);
