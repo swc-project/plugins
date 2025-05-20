@@ -1134,6 +1134,16 @@ export default function Home() {
 "
 `;
 
+exports[`Should load swc-confidential wasm plugin correctly > Should transform issue-460 correctly 1`] = `
+"import _JSXStyle from "styled-jsx/style";
+export default function Home() {
+    return /*#__PURE__*/ React.createElement(React.Fragment, null, /*#__PURE__*/ React.createElement(_JSXStyle, {
+        id: "44c2e59534385f9"
+    }, "div.jsx-44c2e59534385f9{-webkit-mask-image:-webkit-radial-gradient(white,black);mask-image:-webkit-radial-gradient(white,black)}"));
+}
+"
+`;
+
 exports[`Should load swc-confidential wasm plugin correctly > Should transform issue-30480 correctly 1`] = `
 "import _JSXStyle from "styled-jsx/style";
 export default (({ breakPoint })=>/*#__PURE__*/ React.createElement("div", {

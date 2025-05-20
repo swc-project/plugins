@@ -1,5 +1,11 @@
 # @swc/plugin-styled-jsx
 
+## 7.0.8
+
+### Patch Changes
+
+- 95a28d6: Fix url detection
+
 ## 7.0.7
 
 ### Patch Changes

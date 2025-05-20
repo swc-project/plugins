@@ -239,17 +239,19 @@ fn reduce_substr(
 }
 
 pub(crate) fn strip_comments(s: &str) -> String {
-    s.lines().map(strip_line_comment).collect()
+    s.lines()
+        .map(strip_line_comment)
+        .collect::<Vec<_>>()
+        .join("\n")
 }
 
 /// Joins at comment starts when it's inside a string or parentheses
 /// effectively removing line comments
 fn strip_line_comment(line: &str) -> String {
     reduce_substr(line.split("//"), "//", |s| {
-        !s.ends_with(':') // NOTE: This is another guard against urls, if they're not inside strings or parantheses.
+        !s.ends_with(':') // NOTE: This is another guard against urls, if they're not inside strings
             && count_occurrences(s, '\'') % 2 == 0
             && count_occurrences(s, '"') % 2 == 0
-            && count_occurrences(s, '(') == count_occurrences(s, ')')
     })
 }
 
