@@ -294,7 +294,7 @@ impl<'i> Visitor<'i> for CssNamespace {
         let _tracing = tracing::span!(
             tracing::Level::ERROR,
             "visit_selector",
-            len = selector.len()
+            selector = ?selector
         )
         .entered();
 
