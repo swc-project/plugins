@@ -124,18 +124,9 @@ pub fn transform_css(
         }
     };
 
-    ss.visit(&mut CssNamespace {
-        class_name: match class_name {
-            Some(s) => s.clone(),
-            None => format!("jsx-{}", &hash_string(&style_info.hash)),
-        },
-        is_global,
-        is_dynamic: style_info.is_dynamic,
-    })
-    .expect("failed to transform css");
-
     let targets = Targets {
         browsers: Some(convert_browsers(browsers)),
+        include: Features::Nesting,
         ..Default::default()
     };
 
@@ -148,6 +139,16 @@ pub fn transform_css(
         ..Default::default()
     })
     .expect("failed to minify/auto-prefix css");
+
+    ss.visit(&mut CssNamespace {
+        class_name: match class_name {
+            Some(s) => s.clone(),
+            None => format!("jsx-{}", &hash_string(&style_info.hash)),
+        },
+        is_global,
+        is_dynamic: style_info.is_dynamic,
+    })
+    .expect("failed to transform css");
 
     let mut res = ss
         .to_css(PrinterOptions {
