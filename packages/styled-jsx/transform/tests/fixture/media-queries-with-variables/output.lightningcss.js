@@ -9,7 +9,7 @@ export default function Component() {
     const mobileWidth = 320;
     return <div className={_JSXStyle.dynamic([
         [
-            "bb49d580647ef567",
+            "3ee1174a56442a12",
             [
                 ResponsiveBreakpoint[breakpoint],
                 mobileWidth
@@ -18,14 +18,14 @@ export default function Component() {
     ]) + " " + "component"}>
       <div className={_JSXStyle.dynamic([
         [
-            "bb49d580647ef567",
+            "3ee1174a56442a12",
             [
                 ResponsiveBreakpoint[breakpoint],
                 mobileWidth
             ]
         ]
     ]) + " " + "active"}>Responsive Element</div>
-      <_JSXStyle id={"bb49d580647ef567"} dynamic={[
+      <_JSXStyle id={"3ee1174a56442a12"} dynamic={[
         ResponsiveBreakpoint[breakpoint],
         mobileWidth
     ]}>{`.component.__jsx-style-dynamic-selector{width:100%}@media (max-width:${ResponsiveBreakpoint[breakpoint]}){.component.__jsx-style-dynamic-selector{width:${mobileWidth}px}.component.__jsx-style-dynamic-selector.active.__jsx-style-dynamic-selector{color:#00f}.component.__jsx-style-dynamic-selector div.__jsx-style-dynamic-selector{display:block}}`}</_JSXStyle>
