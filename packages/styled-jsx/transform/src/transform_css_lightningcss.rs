@@ -502,6 +502,11 @@ impl CssNamespace {
 
         let mut node: Vec<Component<'i>> = node.clone();
 
+        if result.is_empty() && node.len() == 1 && matches!(node[0], Component::Nesting) {
+            node.push(Component::Combinator(Combinator::Descendant));
+            return Ok(node);
+        }
+
         let subclass_selector = match self.is_dynamic {
             true => Cow::Borrowed("__jsx-style-dynamic-selector"),
             false => Cow::Owned(self.class_name.clone()),
