@@ -38,6 +38,6 @@ export default function Component() {
         offset,
         offset,
         spacing
-    ]}>{`.container.__jsx-style-dynamic-selector{--local-var:${dynamicValue};color:var(--text-color);background:linear-gradient(to right,${color1},${color2})}.container.__jsx-style-dynamic-selector.__jsx-style-dynamic-selector .item.__jsx-style-dynamic-selector{transform:translate(calc(var(--x) + ${offset}px),calc(var(--y) + ${offset}px))}.container.__jsx-style-dynamic-selector.__jsx-style-dynamic-selector div.__jsx-style-dynamic-selector{margin:calc(10px + ${spacing}px)}`}</_JSXStyle>
+    ]}>{`.container.__jsx-style-dynamic-selector{--local-var:${dynamicValue};color:var(--text-color);background:linear-gradient(to right,${color1},${color2})}.container.__jsx-style-dynamic-selector .item.__jsx-style-dynamic-selector{transform:translate(calc(var(--x) + ${offset}px),calc(var(--y) + ${offset}px))}.container.__jsx-style-dynamic-selector div.__jsx-style-dynamic-selector{margin:calc(10px + ${spacing}px)}`}</_JSXStyle>
     </div>;
 }

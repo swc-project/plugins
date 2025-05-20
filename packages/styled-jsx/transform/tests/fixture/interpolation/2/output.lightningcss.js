@@ -9,6 +9,6 @@ export default function Home() {
         </div>
       </div>
 
-      <_JSXStyle id={"f3f9c604d7103d8c"}>{`.container.jsx-f3f9c604d7103d8c{color:#00f;padding:3rem}@media (max-width:${breakpoint}){.container.jsx-f3f9c604d7103d8c.jsx-f3f9c604d7103d8c .responsive.jsx-f3f9c604d7103d8c{color:purple}}`}</_JSXStyle>
+      <_JSXStyle id={"f3f9c604d7103d8c"}>{`.container.jsx-f3f9c604d7103d8c{color:#00f;padding:3rem}@media (max-width:${breakpoint}){.container.jsx-f3f9c604d7103d8c .responsive.jsx-f3f9c604d7103d8c{color:purple}}`}</_JSXStyle>
     </div>;
 }
