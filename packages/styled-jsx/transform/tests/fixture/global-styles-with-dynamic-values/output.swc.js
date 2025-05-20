@@ -12,7 +12,7 @@ export default function Component() {
     const backgroundColor = '#f0f0f0';
     return <div className={_JSXStyle.dynamic([
         [
-            "625d9bbe8612989d",
+            "2cd3a5c432d83eed",
             [
                 id,
                 stringifyCssVariablesObject(cssVariables),
@@ -23,7 +23,7 @@ export default function Component() {
     ]) + " " + `scope-${id}`}>
       <button className={_JSXStyle.dynamic([
         [
-            "625d9bbe8612989d",
+            "2cd3a5c432d83eed",
             [
                 id,
                 stringifyCssVariablesObject(cssVariables),
@@ -34,7 +34,7 @@ export default function Component() {
     ])}>Global Styled Button</button>
       <div className={_JSXStyle.dynamic([
         [
-            "625d9bbe8612989d",
+            "2cd3a5c432d83eed",
             [
                 id,
                 stringifyCssVariablesObject(cssVariables),
@@ -43,7 +43,7 @@ export default function Component() {
             ]
         ]
     ])}>Styled Div</div>
-      <_JSXStyle id={"625d9bbe8612989d"} dynamic={[
+      <_JSXStyle id={"2cd3a5c432d83eed"} dynamic={[
         id,
         stringifyCssVariablesObject(cssVariables),
         buttonColor,

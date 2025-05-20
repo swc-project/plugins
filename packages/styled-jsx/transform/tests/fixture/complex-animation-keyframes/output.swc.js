@@ -7,7 +7,7 @@ export default function Component() {
     const delay = 200;
     return <div className={_JSXStyle.dynamic([
         [
-            "e4a36e7183ef0610",
+            "acbee37ecf491117",
             [
                 middleOpacity,
                 rotation,
@@ -19,7 +19,7 @@ export default function Component() {
     ]) + " " + "wrapper"}>
       <div className={_JSXStyle.dynamic([
         [
-            "e4a36e7183ef0610",
+            "acbee37ecf491117",
             [
                 middleOpacity,
                 rotation,
@@ -29,7 +29,7 @@ export default function Component() {
             ]
         ]
     ]) + " " + "animated"}>Animated Element</div>
-      <_JSXStyle id={"e4a36e7183ef0610"} dynamic={[
+      <_JSXStyle id={"acbee37ecf491117"} dynamic={[
         middleOpacity,
         rotation,
         duration,
