@@ -239,7 +239,10 @@ fn reduce_substr(
 }
 
 pub(crate) fn strip_comments(s: &str) -> String {
-    s.lines().map(strip_line_comment).collect()
+    s.lines()
+        .map(strip_line_comment)
+        .collect::<Vec<_>>()
+        .join("\n")
 }
 
 /// Joins at comment starts when it's inside a string or parentheses
