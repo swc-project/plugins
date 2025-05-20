@@ -1,5 +1,11 @@
 # @swc/plugin-styled-jsx
 
+## 7.0.7
+
+### Patch Changes
+
+- d8020c7: Fix lightningcss mode
+
 ## 7.0.6
 
 ### Patch Changes
