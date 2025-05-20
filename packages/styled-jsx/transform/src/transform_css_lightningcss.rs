@@ -124,18 +124,9 @@ pub fn transform_css(
         }
     };
 
-    ss.visit(&mut CssNamespace {
-        class_name: match class_name {
-            Some(s) => s.clone(),
-            None => format!("jsx-{}", &hash_string(&style_info.hash)),
-        },
-        is_global,
-        is_dynamic: style_info.is_dynamic,
-    })
-    .expect("failed to transform css");
-
     let targets = Targets {
         browsers: Some(convert_browsers(browsers)),
+        include: Features::Nesting,
         ..Default::default()
     };
 
@@ -148,6 +139,16 @@ pub fn transform_css(
         ..Default::default()
     })
     .expect("failed to minify/auto-prefix css");
+
+    ss.visit(&mut CssNamespace {
+        class_name: match class_name {
+            Some(s) => s.clone(),
+            None => format!("jsx-{}", &hash_string(&style_info.hash)),
+        },
+        is_global,
+        is_dynamic: style_info.is_dynamic,
+    })
+    .expect("failed to transform css");
 
     let mut res = ss
         .to_css(PrinterOptions {
@@ -293,7 +294,7 @@ impl<'i> Visitor<'i> for CssNamespace {
         let _tracing = tracing::span!(
             tracing::Level::ERROR,
             "visit_selector",
-            len = selector.len()
+            selector = ?selector
         )
         .entered();
 
@@ -500,6 +501,11 @@ impl CssNamespace {
         }
 
         let mut node: Vec<Component<'i>> = node.clone();
+
+        if result.is_empty() && node.len() == 1 && matches!(node[0], Component::Nesting) {
+            node.push(Component::Combinator(Combinator::Descendant));
+            return Ok(node);
+        }
 
         let subclass_selector = match self.is_dynamic {
             true => Cow::Borrowed("__jsx-style-dynamic-selector"),
