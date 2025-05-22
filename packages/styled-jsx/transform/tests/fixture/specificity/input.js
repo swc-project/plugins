@@ -4,7 +4,7 @@ export default function Home() {
             <style jsx>{`
             div {
                 &.parent {
-                color: green;
+                    color: green;
                 }
             }
         `}</style>
