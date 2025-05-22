@@ -367,6 +367,8 @@ impl<'i> Visitor<'i> for CssNamespace {
 
         *selector = Selector::from(new);
 
+        debug!("Selector: {:?}", SafeDebug(&selector));
+
         Ok(())
     }
 }
