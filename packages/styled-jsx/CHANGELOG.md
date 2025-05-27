@@ -1,5 +1,11 @@
 # @swc/plugin-styled-jsx
 
+## 7.0.9
+
+### Patch Changes
+
+- 8fb065a: Fix & > .container
+
 ## 7.0.8
 
 ### Patch Changes
