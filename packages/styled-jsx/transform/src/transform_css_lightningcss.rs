@@ -504,7 +504,11 @@ impl CssNamespace {
 
         let mut node: Vec<Component<'i>> = node.clone();
 
-        if result.is_empty() && node.len() == 1 && matches!(node[0], Component::Nesting) {
+        if result.is_empty()
+            && node.len() == 1
+            && matches!(node[0], Component::Nesting)
+            && matches!(combinator, Some(Combinator::Descendant))
+        {
             node.push(Component::Combinator(Combinator::Descendant));
             return Ok(node);
         }
