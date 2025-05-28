@@ -1547,6 +1547,16 @@ exports[`Should load swc-confidential wasm plugin correctly > Should transform s
 "
 `;
 
+exports[`Should load swc-confidential wasm plugin correctly > Should transform specifity correctly 1`] = `
+"import _JSXStyle from "styled-jsx/style";
+export default function Home() {
+    return /*#__PURE__*/ React.createElement(React.Fragment, null, /*#__PURE__*/ React.createElement(_JSXStyle, {
+        id: "86b7ac1a67e57b1"
+    }, "div.jsx-86b7ac1a67e57b1{}div.jsx-86b7ac1a67e57b1.parent.jsx-86b7ac1a67e57b1{color:green}"));
+}
+"
+`;
+
 exports[`Should load swc-confidential wasm plugin correctly > Should transform stateless correctly 1`] = `
 "import _JSXStyle from "styled-jsx/style";
 export default (()=>/*#__PURE__*/ React.createElement("div", {
