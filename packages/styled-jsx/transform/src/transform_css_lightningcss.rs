@@ -140,6 +140,29 @@ pub fn transform_css(
     })
     .expect("failed to minify/auto-prefix css");
 
+    let css = ss
+        .to_css(PrinterOptions {
+            minify: true,
+            targets,
+            ..Default::default()
+        })
+        .context("failed to print css")?;
+    let mut ss = {
+        StyleSheet::parse(
+            &css.code,
+            ParserOptions {
+                // We cannot use css_modules for `:global` because lightningcss does not support
+                // parsing-only mode.
+                css_modules: None,
+                error_recovery: true,
+                warnings: None,
+                flags: ParserFlags::all(),
+                ..Default::default()
+            },
+        )
+        .unwrap()
+    };
+
     ss.visit(&mut CssNamespace {
         class_name: match class_name {
             Some(s) => s.clone(),
