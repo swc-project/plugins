@@ -1,5 +1,11 @@
 # @swc/plugin-styled-jsx
 
+## 7.0.10
+
+### Patch Changes
+
+- ba14bef: Fix specifity
+
 ## 7.0.9
 
 ### Patch Changes
