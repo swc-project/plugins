@@ -1,6 +1,8 @@
+const CUTOUT_AVATAR_PERCENTAGE_VISIBLE = Math.random();
+const HEAD_MARGIN_PERCENTAGE = Math.random();
+
 const MaskedDivBad = () => {
-    const CUTOUT_AVATAR_PERCENTAGE_VISIBLE = 0.5;
-    const HEAD_MARGIN_PERCENTAGE = 0.1;
+
 
     return (
         <>
