@@ -15,12 +15,12 @@ version      = "0.90.0"
 [dependencies]
 base64              = { workspace = true }
 byteorder           = { workspace = true }
+bytes-str           = { workspace = true }
 once_cell           = { workspace = true }
 radix_fmt           = { workspace = true }
 regex               = { workspace = true }
 rustc-hash          = { workspace = true }
 serde               = { workspace = true }
-sourcemap           = { workspace = true }
 swc_atoms           = { workspace = true }
 swc_common          = { workspace = true }
 swc_ecma_ast        = { workspace = true }
@@ -28,6 +28,7 @@ swc_ecma_codegen    = { workspace = true }
 swc_ecma_transforms = { workspace = true }
 swc_ecma_utils      = { workspace = true }
 swc_ecma_visit      = { workspace = true }
+swc_sourcemap       = { workspace = true }
 swc_trace_macro     = { workspace = true }
 tracing             = { workspace = true }
 
