@@ -219,10 +219,9 @@ describe("formatjs swc plugin", () => {
       }
     `;
 
-    console.log(input);
     const output = await transformCode(input);
 
-    expect(output).toMatch(/id: "zL\/jyT\"/);
+    expect(output).toMatch(/id: "zL\/jyT"/);
   });
 
   it("should generate same id even if order of keys is different in two description objects with same keys", async () => {
@@ -256,6 +255,124 @@ describe("formatjs swc plugin", () => {
     const output2 = await transformCode(input2);
 
     expect(output).toMatch(output2);
+  });
+
+  it("should generate same id even if description is an external variable", async () => {
+    const input = `
+      import { FormattedMessage } from 'react-intl';
+
+      const description = {
+        text: "Hello description",
+        img: "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+      };
+
+      <FormattedMessage
+        defaultMessage="Hello message {name}"
+        description={description}
+        values={{
+          name: value.value,
+        }}
+      />
+    `;
+
+    const input2 = `
+      import { FormattedMessage } from 'react-intl';
+
+      export function Greeting() {
+        return (
+          <FormattedMessage
+            defaultMessage="Hello message {name}"
+            description={{
+              text: "Hello description",
+              img: "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+            }}
+            values={{
+              name: value.value,
+            }}
+          />
+        );
+      }
+    `;
+
+    const output = await transformCode(input);
+    const output2 = await transformCode(input2);
+
+    const id1 = output.match(/id: "([^"]+)"/)?.[1];
+    const id2 = output2.match(/id: "([^"]+)"/)?.[1];
+
+    expect(id1).toBe(id2);
+  });
+
+  it("should generate same id after react compiler optimizations", async () => {
+    const input = `
+      "use client";
+      import { c as _c } from "react/compiler-runtime";
+
+      import { FormattedMessage } from "react-intl";
+
+      interface ClientProps {
+        value: {
+          value: string;
+        };
+      }
+
+      export function Client(t0) {
+        const $ = _c(3);
+        const { value } = t0;
+        let t1;
+        if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
+          t1 = {
+            text: "Hello",
+            img: "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+          };
+          $[0] = t1;
+        } else {
+          t1 = $[0];
+        }
+        let t2;
+        if ($[1] !== value.value) {
+          t2 = (
+            <FormattedMessage
+              defaultMessage="Hello {name}"
+              description={t1}
+              values={{ name: value.value }}
+            />
+          );
+          $[1] = value.value;
+          $[2] = t2;
+        } else {
+          t2 = $[2];
+        }
+        return t2;
+      }
+    `;
+
+    const input2 = `
+      import { FormattedMessage } from 'react-intl';
+
+      export function Greeting() {
+        return (
+          <FormattedMessage
+            defaultMessage="Hello {name}"
+            description={{
+              text: "Hello",
+              img: "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+            }}
+            values={{
+              name: value.value,
+            }}
+          />
+        );
+      }
+    `;
+
+    const output = await transformCode(input);
+    const output2 = await transformCode(input2);
+
+    const id1 = output.match(/id: "([^"]+)"/)?.[1];
+    const id2 = output2.match(/id: "([^"]+)"/)?.[1];
+
+    expect(id1).toBe(id2);
   });
 
   it("should be able to use different encodings in interpolation", async () => {

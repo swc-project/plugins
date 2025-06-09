@@ -19,10 +19,11 @@ use swc_core::{
     },
     ecma::{
         ast::{
-            ArrayLit, Bool, CallExpr, Callee, Expr, ExprOrSpread, IdentName, JSXAttr, JSXAttrName,
-            JSXAttrOrSpread, JSXAttrValue, JSXElementName, JSXExpr, JSXNamespacedName,
-            JSXOpeningElement, KeyValueProp, Lit, MemberProp, ModuleItem, Number, ObjectLit, Prop,
-            PropName, PropOrSpread, Str,
+            ArrayLit, AssignExpr, AssignTarget, Bool, CallExpr, Callee, Expr, ExprOrSpread, Id,
+            IdentName, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElementName,
+            JSXExpr, JSXNamespacedName, JSXOpeningElement, KeyValueProp, Lit, MemberProp,
+            ModuleItem, Number, ObjectLit, Pat, Prop, PropName, PropOrSpread, SimpleAssignTarget,
+            Str, VarDeclarator,
         },
         visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
     },
@@ -284,68 +285,6 @@ impl Serialize for MessageDescriptionValue {
     }
 }
 
-// NOTE: due to not able to support static evaluation, this
-// fn manually expands possible values for the description values
-// from string to object.
-//TODO: Consolidate with get_call_expr_message_descriptor_value_maybe_object
-fn get_jsx_message_descriptor_value_maybe_object(
-    value: &Option<JSXAttrValue>,
-    is_message_node: Option<bool>,
-) -> Option<MessageDescriptionValue> {
-    if value.is_none() {
-        return None;
-    }
-    let value = value.as_ref().expect("Should be available");
-
-    // NOTE: do not support evaluatePath
-    match value {
-        JSXAttrValue::JSXExprContainer(container) => {
-            if is_message_node.unwrap_or(false) {
-                if let JSXExpr::Expr(expr) = &container.expr {
-                    // If this is already compiled, no need to recompiled it
-                    if let Expr::Array(..) = &**expr {
-                        return None;
-                    }
-                }
-            }
-
-            match &container.expr {
-                JSXExpr::Expr(expr) => match &**expr {
-                    Expr::Lit(Lit::Str(s)) => {
-                        Some(MessageDescriptionValue::Str(s.value.to_string()))
-                    }
-                    Expr::Object(object_lit) => {
-                        Some(MessageDescriptionValue::Obj(object_lit.clone()))
-                    }
-                    _ => None,
-                },
-                _ => None,
-            }
-        }
-        JSXAttrValue::Lit(Lit::Str(s)) => Some(MessageDescriptionValue::Str(s.value.to_string())),
-        _ => None,
-    }
-}
-
-fn get_call_expr_message_descriptor_value_maybe_object(
-    value: &Option<Expr>,
-    _is_message_node: Option<bool>,
-) -> Option<MessageDescriptionValue> {
-    if value.is_none() {
-        return None;
-    }
-
-    let value = value.as_ref().expect("Should be available");
-    // NOTE: do not support evaluatePath
-    match value {
-        Expr::Ident(ident) => Some(MessageDescriptionValue::Str(ident.sym.to_string())),
-        Expr::Lit(Lit::Str(s)) => Some(MessageDescriptionValue::Str(s.value.to_string())),
-        Expr::Object(object_lit) => Some(MessageDescriptionValue::Obj(object_lit.clone())),
-        _ => None,
-    }
-}
-
-// TODO: Consolidate with get_call_expr_icu_message_value
 fn get_jsx_icu_message_value(
     message_path: &Option<JSXAttrValue>,
     preserve_whitespace: bool,
@@ -561,10 +500,11 @@ fn interpolate_name(filename: &str, interpolate_pattern: &str, content: &str) ->
 }
 
 // TODO: Consolidate with evaluate_call_expr_message_descriptor
-fn evaluate_jsx_message_descriptor(
+fn evaluate_jsx_message_descriptor_with_visitor(
     descriptor_path: &JSXMessageDescriptorPath,
     options: &FormatJSPluginOptions,
     filename: &str,
+    visitor: &FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
 ) -> MessageDescriptor {
     let id = get_jsx_message_descriptor_value(&descriptor_path.id, None);
     let default_message = get_jsx_icu_message_value(
@@ -572,8 +512,10 @@ fn evaluate_jsx_message_descriptor(
         options.preserve_whitespace,
     );
 
-    let description =
-        get_jsx_message_descriptor_value_maybe_object(&descriptor_path.description, None);
+    let description = visitor.get_jsx_message_descriptor_value_maybe_object_with_resolution(
+        &descriptor_path.description,
+        None,
+    );
 
     // Note: do not support override fn
     let id = if id.is_none() && !default_message.is_empty() {
@@ -638,10 +580,11 @@ fn evaluate_jsx_message_descriptor(
     }
 }
 
-fn evaluate_call_expr_message_descriptor(
+fn evaluate_call_expr_message_descriptor_with_visitor(
     descriptor_path: &CallExprMessageDescriptorPath,
     options: &FormatJSPluginOptions,
     filename: &str,
+    visitor: &FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
 ) -> MessageDescriptor {
     let id = get_call_expr_message_descriptor_value(&descriptor_path.id, None);
     let default_message = get_call_expr_icu_message_value(
@@ -649,8 +592,10 @@ fn evaluate_call_expr_message_descriptor(
         options.preserve_whitespace,
     );
 
-    let description =
-        get_call_expr_message_descriptor_value_maybe_object(&descriptor_path.description, None);
+    let description = visitor.get_call_expr_message_descriptor_value_maybe_object_with_resolution(
+        &descriptor_path.description,
+        None,
+    );
 
     let id = if id.is_none() && !default_message.is_empty() {
         let interpolate_pattern =
@@ -844,6 +789,8 @@ pub struct FormatJSVisitor<C: Clone + Comments, S: SourceMapper> {
     meta: HashMap<String, String>,
     component_names: HashSet<String>,
     function_names: HashSet<String>,
+    // Variable tracking for React Compiler optimizations
+    variable_bindings: HashMap<Id, Expr>,
 }
 
 impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
@@ -881,6 +828,7 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
             meta: Default::default(),
             component_names,
             function_names,
+            variable_bindings: Default::default(),
         }
     }
 
@@ -911,6 +859,102 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
         }
     }
 
+    fn resolve_identifier(&self, ident: &swc_core::ecma::ast::Ident) -> Option<&Expr> {
+        self.variable_bindings.get(&ident.to_id())
+    }
+
+    fn get_jsx_message_descriptor_value_maybe_object_with_resolution(
+        &self,
+        value: &Option<JSXAttrValue>,
+        is_message_node: Option<bool>,
+    ) -> Option<MessageDescriptionValue> {
+        if value.is_none() {
+            return None;
+        }
+        let value = value.as_ref().expect("Should be available");
+        // NOTE: do not support evaluatePath
+        match value {
+            JSXAttrValue::JSXExprContainer(container) => {
+                if is_message_node.unwrap_or(false) {
+                    if let JSXExpr::Expr(expr) = &container.expr {
+                        // If this is already compiled, no need to recompiled it
+                        if let Expr::Array(..) = &**expr {
+                            return None;
+                        }
+                    }
+                }
+
+                match &container.expr {
+                    JSXExpr::Expr(expr) => match &**expr {
+                        Expr::Lit(Lit::Str(s)) => {
+                            Some(MessageDescriptionValue::Str(s.value.to_string()))
+                        }
+                        Expr::Object(object_lit) => {
+                            Some(MessageDescriptionValue::Obj(object_lit.clone()))
+                        }
+                        // Handle React Compiler optimized identifiers
+                        Expr::Ident(ident) => {
+                            if let Some(resolved_expr) = self.resolve_identifier(ident) {
+                                match resolved_expr {
+                                    Expr::Object(object_lit) => {
+                                        Some(MessageDescriptionValue::Obj(object_lit.clone()))
+                                    }
+                                    Expr::Lit(Lit::Str(s)) => {
+                                        Some(MessageDescriptionValue::Str(s.value.to_string()))
+                                    }
+                                    _ => None,
+                                }
+                            } else {
+                                None
+                            }
+                        }
+                        _ => None,
+                    },
+                    _ => None,
+                }
+            }
+            JSXAttrValue::Lit(Lit::Str(s)) => {
+                Some(MessageDescriptionValue::Str(s.value.to_string()))
+            }
+            _ => None,
+        }
+    }
+
+    fn get_call_expr_message_descriptor_value_maybe_object_with_resolution(
+        &self,
+        value: &Option<Expr>,
+        _is_message_node: Option<bool>,
+    ) -> Option<MessageDescriptionValue> {
+        if value.is_none() {
+            return None;
+        }
+
+        let value = value.as_ref().expect("Should be available");
+        // NOTE: do not support evaluatePath
+        match value {
+            Expr::Ident(ident) => {
+                // First try to resolve the identifier to see if it's a variable reference
+                if let Some(resolved_expr) = self.resolve_identifier(ident) {
+                    match resolved_expr {
+                        Expr::Object(object_lit) => {
+                            Some(MessageDescriptionValue::Obj(object_lit.clone()))
+                        }
+                        Expr::Lit(Lit::Str(s)) => {
+                            Some(MessageDescriptionValue::Str(s.value.to_string()))
+                        }
+                        _ => None,
+                    }
+                } else {
+                    // Fall back to treating identifier as a string value
+                    Some(MessageDescriptionValue::Str(ident.sym.to_string()))
+                }
+            }
+            Expr::Lit(Lit::Str(s)) => Some(MessageDescriptionValue::Str(s.value.to_string())),
+            Expr::Object(object_lit) => Some(MessageDescriptionValue::Obj(object_lit.clone())),
+            _ => None,
+        }
+    }
+
     fn process_message_object(&mut self, message_descriptor: &mut Option<&mut Expr>) {
         if let Some(message_obj) = &mut *message_descriptor {
             let (lo, hi) = (message_obj.span().lo, message_obj.span().hi);
@@ -927,10 +971,11 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
                     }
                 }
 
-                let descriptor = evaluate_call_expr_message_descriptor(
+                let descriptor = evaluate_call_expr_message_descriptor_with_visitor(
                     &descriptor_path,
                     &self.options,
                     &self.filename,
+                    self,
                 );
 
                 let source_location = if self.options.extract_source_location {
@@ -1062,6 +1107,51 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
 impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
     noop_visit_mut_type!();
 
+    fn visit_mut_var_declarator(&mut self, var_declarator: &mut VarDeclarator) {
+        var_declarator.visit_mut_children_with(self);
+
+        // Track variable declarations for React Compiler optimizations
+        if let (Pat::Ident(binding_ident), Some(init)) =
+            (&var_declarator.name, &var_declarator.init)
+        {
+            // Store the variable binding
+            self.variable_bindings
+                .insert(binding_ident.id.to_id(), *init.clone());
+        }
+    }
+
+    fn visit_mut_assign_expr(&mut self, assign_expr: &mut AssignExpr) {
+        assign_expr.visit_mut_children_with(self);
+
+        // Track assignment expressions for React Compiler optimizations
+        // Handle patterns like: t1 = { ... }
+        if let AssignTarget::Simple(SimpleAssignTarget::Ident(ident)) = &assign_expr.left {
+            let variable_id = ident.id.to_id();
+
+            // Check if we already have a binding for this variable
+            let should_update = match self.variable_bindings.get(&variable_id) {
+                Some(existing_expr) => {
+                    // Only overwrite if the new expression is an object literal
+                    // and the existing one is not, or if both are object literals
+                    match (existing_expr, &*assign_expr.right) {
+                        (Expr::Object(_), Expr::Object(_)) => true, // Both objects, update
+                        (_, Expr::Object(_)) => true,               /* New is object, existing */
+                        // is not, update
+                        (Expr::Object(_), _) => false, /* Existing is object, new is not, don't */
+                        // update
+                        _ => true, // Neither is object, update
+                    }
+                }
+                None => true, // No existing binding, always update
+            };
+
+            if should_update {
+                self.variable_bindings
+                    .insert(variable_id, *assign_expr.right.clone());
+            }
+        }
+    }
+
     fn visit_mut_jsx_opening_element(&mut self, jsx_opening_elem: &mut JSXOpeningElement) {
         jsx_opening_elem.visit_mut_children_with(self);
 
@@ -1087,8 +1177,12 @@ impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
 
         // Evaluate the Message Descriptor values in a JSX
         // context, then store it.
-        let descriptor =
-            evaluate_jsx_message_descriptor(&descriptor_path, &self.options, &self.filename);
+        let descriptor = evaluate_jsx_message_descriptor_with_visitor(
+            &descriptor_path,
+            &self.options,
+            &self.filename,
+            self,
+        );
 
         let source_location = if self.options.extract_source_location {
             Some((
