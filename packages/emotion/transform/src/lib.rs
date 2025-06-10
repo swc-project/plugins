@@ -1,11 +1,11 @@
 use std::{borrow::Cow, path::Path, sync::Arc};
 
 use base64::Engine;
+use bytes_str::BytesStr;
 use once_cell::sync::Lazy;
 use regex::{Regex, RegexBuilder};
 use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
-use sourcemap::{RawToken, SourceMap as RawSourcemap};
 use swc_atoms::{atom, Atom};
 use swc_common::{comments::Comments, util::take::Take, BytePos, SourceMapperDyn, DUMMY_SP};
 use swc_ecma_ast::{
@@ -17,6 +17,7 @@ use swc_ecma_ast::{
 };
 use swc_ecma_utils::ExprFactory;
 use swc_ecma_visit::{Fold, FoldWith, Visit, VisitWith};
+use swc_sourcemap::{RawToken, SourceMap as RawSourcemap};
 use swc_trace_macro::swc_trace;
 
 pub use crate::import_map::*;
@@ -244,7 +245,7 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
     fn create_sourcemap(&mut self, pos: BytePos) -> Option<String> {
         if self.options.sourcemap.unwrap_or(false) {
             let loc = self.cm.get_code_map().lookup_char_pos(pos);
-            let filename = self.filepath.to_str().map(Arc::<str>::from);
+            let filename = self.filepath.to_str().map(BytesStr::from_str_slice);
             let cm = RawSourcemap::new(
                 filename.clone(),
                 vec![RawToken {
@@ -257,7 +258,7 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
                     is_range: false,
                 }],
                 Vec::new(),
-                vec![filename.unwrap_or_else(|| Arc::from(""))],
+                vec![filename.unwrap_or_else(|| BytesStr::from(""))],
                 Some(vec![Some(loc.file.src.to_string().into())]),
             );
             let mut writer = Vec::new();

@@ -373,9 +373,19 @@ checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
 
 [[package]]
 name = "bytes"
-version = "1.7.1"
+version = "1.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8318a53db07bb3f8dca91a600466bdb3f2eaadeedfdbcf02e1accbad9271ba50"
+checksum = "d71b6127be86fdcfddb610f7182ac57211d4b18a3e9c82eb2d17662f2227ad6a"
+
+[[package]]
+name = "bytes-str"
+version = "0.2.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c02af038c863b51d496dd4a2eabdf781f8f7ab68025e13b984b7f2c525560454"
+dependencies = [
+ "bytes",
+ "serde",
+]
 
 [[package]]
 name = "camino"
@@ -2183,9 +2193,9 @@ dependencies = [
 
 [[package]]
 name = "rkyv"
-version = "0.8.9"
+version = "0.8.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b11a153aec4a6ab60795f8ebe2923c597b16b05bb1504377451e705ef1a45323"
+checksum = "1e147371c75553e1e2fcdb483944a8540b8438c31426279553b9a8182a9b7b65"
 dependencies = [
  "bytecheck 0.8.0",
  "bytes",
@@ -2195,7 +2205,7 @@ dependencies = [
  "ptr_meta 0.3.0",
  "rancor",
  "rend 0.5.2",
- "rkyv_derive 0.8.9",
+ "rkyv_derive 0.8.10",
  "tinyvec",
  "uuid",
 ]
@@ -2213,9 +2223,9 @@ dependencies = [
 
 [[package]]
 name = "rkyv_derive"
-version = "0.8.9"
+version = "0.8.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "beb382a4d9f53bd5c0be86b10d8179c3f8a14c30bf774ff77096ed6581e35981"
+checksum = "246b40ac189af6c675d124b802e8ef6d5246c53e17367ce9501f8f66a81abb7a"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2646,7 +2656,7 @@ dependencies = [
  "hstr",
  "once_cell",
  "rancor",
- "rkyv 0.8.9",
+ "rkyv 0.8.10",
  "rustc-hash",
  "serde",
 ]
@@ -2683,7 +2693,7 @@ dependencies = [
  "once_cell",
  "parking_lot",
  "rancor",
- "rkyv 0.8.9",
+ "rkyv 0.8.10",
  "rustc-hash",
  "serde",
  "siphasher",
@@ -2916,7 +2926,7 @@ dependencies = [
  "once_cell",
  "phf",
  "rancor",
- "rkyv 0.8.9",
+ "rkyv 0.8.10",
  "rustc-hash",
  "scoped-tls",
  "serde",
@@ -3270,13 +3280,13 @@ version = "0.90.0"
 dependencies = [
  "base64 0.22.1",
  "byteorder",
+ "bytes-str",
  "once_cell",
  "radix_fmt",
  "regex",
  "rustc-hash",
  "serde",
  "serde_json",
- "sourcemap",
  "swc_atoms",
  "swc_common",
  "swc_ecma_ast",
@@ -3287,6 +3297,7 @@ dependencies = [
  "swc_ecma_transforms_testing",
  "swc_ecma_utils",
  "swc_ecma_visit",
+ "swc_sourcemap",
  "swc_trace_macro",
  "testing",
  "tracing",
@@ -3514,7 +3525,7 @@ dependencies = [
  "better_scoped_tls",
  "bytecheck 0.8.0",
  "rancor",
- "rkyv 0.8.9",
+ "rkyv 0.8.10",
  "rustc-hash",
  "swc_common",
  "swc_ecma_ast",
@@ -3702,6 +3713,25 @@ dependencies = [
  "swc_ecma_utils",
  "swc_ecma_visit",
  "testing",
+]
+
+[[package]]
+name = "swc_sourcemap"
+version = "9.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5c8d25be7830fcf30414c080697f5db03cbe7467cd4908a9a77958ebc8dbbafe"
+dependencies = [
+ "base64-simd 0.8.0",
+ "bitvec",
+ "bytes-str",
+ "data-encoding",
+ "debugid",
+ "if_chain",
+ "rustc-hash",
+ "serde",
+ "serde_json",
+ "unicode-id-start",
+ "url",
 ]
 
 [[package]]
