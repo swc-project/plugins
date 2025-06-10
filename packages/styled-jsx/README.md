@@ -2,6 +2,12 @@
 
 # @swc/plugin-styled-jsx
 
+## 8.0.1
+
+### Patch Changes
+
+- 1bd58bf: Fix interpolation in svg
+
 ## 8.0.0
 
 ### Major Changes
