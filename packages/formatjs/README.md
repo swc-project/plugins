@@ -4,6 +4,12 @@ FormatJS SWC plugin, maintained by SWC team.
 
 # @swc/plugin-formatjs
 
+## 4.0.0
+
+### Major Changes
+
+- cf2636b: Update swc_core to v27
+
 ## 3.2.4
 
 ### Patch Changes
