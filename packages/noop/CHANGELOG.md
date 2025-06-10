@@ -1,5 +1,17 @@
 # @swc/plugin-noop
 
+## 8.0.0
+
+### Major Changes
+
+- cf2636b: Update swc_core to v27
+
+## 7.0.4
+
+### Patch Changes
+
+- e3e743d: Update swc_core to v27
+
 ## 7.0.3
 
 ### Patch Changes

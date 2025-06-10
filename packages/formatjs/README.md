@@ -4,6 +4,24 @@ FormatJS SWC plugin, maintained by SWC team.
 
 # @swc/plugin-formatjs
 
+## 4.0.0
+
+### Major Changes
+
+- cf2636b: Update swc_core to v27
+
+## 3.2.4
+
+### Patch Changes
+
+- e3e743d: Update swc_core to v27
+
+## 3.2.3
+
+### Patch Changes
+
+- f226c4b: Generate the same ID after React Compiler
+
 ## 3.2.2
 
 ### Patch Changes
