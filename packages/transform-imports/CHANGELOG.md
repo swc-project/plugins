@@ -1,5 +1,11 @@
 # @swc/plugin-transform-imports
 
+## 8.0.0
+
+### Major Changes
+
+- cf2636b: Update swc_core to v27
+
 ## 7.2.1
 
 ### Patch Changes

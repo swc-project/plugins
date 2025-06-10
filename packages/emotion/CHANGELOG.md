@@ -1,5 +1,11 @@
 # @swc/plugin-emotion
 
+## 10.0.0
+
+### Major Changes
+
+- cf2636b: Update swc_core to v27
+
 ## 9.0.5
 
 ### Patch Changes
