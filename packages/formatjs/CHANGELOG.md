@@ -1,5 +1,11 @@
 # @swc/plugin-formatjs
 
+## 3.2.3
+
+### Patch Changes
+
+- f226c4b: Generate the same ID after React Compiler
+
 ## 3.2.2
 
 ### Patch Changes
