@@ -1,5 +1,11 @@
 # @swc/plugin-transform-imports
 
+## 7.2.1
+
+### Patch Changes
+
+- e3e743d: Update swc_core to v27
+
 ## 7.2.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @swc/plugin-styled-components
 
+## 7.1.6
+
+### Patch Changes
+
+- e3e743d: Update swc_core to v27
+
 ## 7.1.5
 
 ### Patch Changes

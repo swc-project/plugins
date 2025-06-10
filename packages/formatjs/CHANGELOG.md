@@ -1,5 +1,11 @@
 # @swc/plugin-formatjs
 
+## 3.2.4
+
+### Patch Changes
+
+- e3e743d: Update swc_core to v27
+
 ## 3.2.3
 
 ### Patch Changes

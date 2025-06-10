@@ -1,5 +1,11 @@
 # @swc/plugin-loadable-components
 
+## 6.0.4
+
+### Patch Changes
+
+- e3e743d: Update swc_core to v27
+
 ## 6.0.3
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @swc/plugin-swc-sdk
 
+## 7.0.4
+
+### Patch Changes
+
+- e3e743d: Update swc_core to v27
+
 ## 7.0.3
 
 ### Patch Changes

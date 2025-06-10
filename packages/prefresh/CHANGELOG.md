@@ -1,5 +1,11 @@
 # @swc/plugin-prefresh
 
+## 7.0.5
+
+### Patch Changes
+
+- e3e743d: Update swc_core to v27
+
 ## 7.0.4
 
 ### Patch Changes
