@@ -8,8 +8,8 @@ export default function Home({ fontFamily }) {
             ]
         ]
     ])}>
-        <_JSXStyle id={"b45f7ae33801eec9"} dynamic={[
-            fontFamily
-        ]}>{`body{font-family:${fontFamily}}code:before,code:after{content:"\`"}`}</_JSXStyle>
+      <_JSXStyle id={"b45f7ae33801eec9"} dynamic={[
+        fontFamily
+    ]}>{`body{font-family:${fontFamily}}code:before,code:after{content:"\`"}`}</_JSXStyle>
     </div>;
 }
