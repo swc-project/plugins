@@ -347,7 +347,7 @@ impl<'i> Visitor<'i> for CssNamespace {
                         debug!("Transformed as: {:?}", SafeDebug(&transformed_selectors))
                     }
 
-                    new_selectors.push(transformed_selectors);
+                    new_selectors.extend(transformed_selectors);
                 }
                 Err(_) => {
                     error!("Failed to transform one off global selector");
@@ -435,7 +435,7 @@ impl CssNamespace {
         &mut self,
         combinator: Option<Combinator>,
         node: &mut SelectorIter<'a, 'i, Impl>,
-    ) -> Result<Vec<Component<'i>>, Error>
+    ) -> Result<Vec<Vec<Component<'i>>>, Error>
     where
         Impl: SelectorImpl<'i>,
         SelectorIter<'a, 'i, Impl>: Iterator<Item = &'a Component<'i>>,
@@ -447,7 +447,7 @@ impl CssNamespace {
         let node: Vec<Component<'i>> = node.fuse().cloned().collect::<Vec<_>>();
 
         if node.is_empty() {
-            return Ok(result);
+            return Ok(vec![result]);
         }
 
         #[cfg(debug_assertions)]
@@ -465,7 +465,7 @@ impl CssNamespace {
             }
 
             // Look for :global
-            let complex_selectors: Vec<Component<'i>> = match &component {
+            let complex_selectors: Vec<Vec<Component<'i>>> = match &component {
                 Component::NonTSPseudoClass(PseudoClass::CustomFunction { name, arguments }) => {
                     if &**name != "global" {
                         if pseudo_index.is_none() {
@@ -503,17 +503,25 @@ impl CssNamespace {
                 }
             };
 
-            #[cfg(debug_assertions)]
-            debug!("Complex selectors: {:?}", complex_selectors);
+            let mut items: Vec<Vec<Component<'i>>> = vec![];
 
-            result.extend(complex_selectors);
-            result.extend(node.into_iter().skip(i + 1));
+            for complex_selectors in complex_selectors {
+                let mut result = result.clone();
 
-            if let Some(combinator) = combinator {
-                result.push(Component::Combinator(combinator));
+                #[cfg(debug_assertions)]
+                debug!("Complex selectors: {:?}", complex_selectors);
+
+                result.extend(complex_selectors);
+                result.extend(node.clone().into_iter().skip(i + 1));
+
+                if let Some(combinator) = combinator {
+                    result.push(Component::Combinator(combinator));
+                }
+
+                items.push(result);
             }
 
-            return Ok(result);
+            return Ok(items);
         }
 
         // Pseudo element
@@ -522,7 +530,7 @@ impl CssNamespace {
             && pseudo_index.is_some()
             && matches!(&node[0], Component::PseudoElement(..))
         {
-            return Ok(node);
+            return Ok(vec![node]);
         }
 
         let mut node: Vec<Component<'i>> = node.clone();
@@ -533,7 +541,7 @@ impl CssNamespace {
             && matches!(combinator, Some(Combinator::Descendant))
         {
             node.push(Component::Combinator(Combinator::Descendant));
-            return Ok(node);
+            return Ok(vec![node]);
         }
 
         let subclass_selector = match self.is_dynamic {
@@ -565,7 +573,7 @@ impl CssNamespace {
             result.push(Component::Combinator(combinator));
         }
 
-        Ok(result)
+        Ok(vec![result])
     }
 }
 
@@ -573,7 +581,7 @@ impl CssNamespace {
 /// :global(.foo) {}`, so selector can be complex or relative (it violates the
 /// specification), but it is popular usage, so we just add `a ` at top and
 /// then remove it
-fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Vec<Component<'i>> {
+fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Vec<Vec<Component<'i>>> {
     let mut buf = String::new();
 
     for t in tokens.0.iter() {
@@ -625,10 +633,10 @@ fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Vec<Component<'i>> {
     }
 
     if let Ok(selectors) = SelectorList::parse_string_with_options(&buf, Default::default()) {
-        let mut result: Vec<Component<'i>> = vec![];
+        let mut result: Vec<Vec<Component<'i>>> = vec![];
 
-        for selector in selectors.0 {
-            result.extend(selector_to_components(selector.into_owned()));
+        for selector in selectors.0.into_iter() {
+            result.push(selector_to_components(selector.into_owned()));
         }
 
         return result;
@@ -640,7 +648,7 @@ fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Vec<Component<'i>> {
         debug!("Parsing: {:?}", buf)
     }
 
-    let mut final_result: Vec<Component<'i>> = vec![];
+    let mut final_result: Vec<Vec<Component<'i>>> = vec![];
 
     let selectors = SelectorList::parse_string_with_options(&buf, Default::default())
         .expect("failed to parse selector list")
@@ -664,7 +672,7 @@ fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Vec<Component<'i>> {
             result.pop();
         }
 
-        final_result.extend(result);
+        final_result.push(result);
     }
 
     final_result
