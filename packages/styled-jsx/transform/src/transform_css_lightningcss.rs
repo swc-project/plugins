@@ -18,7 +18,7 @@ use lightningcss::{
     visit_types,
     visitor::{Visit, VisitTypes, Visitor},
 };
-use parcel_selectors::{parser::SelectorIter, SelectorImpl};
+use parcel_selectors::{parser::SelectorIter, SelectorImpl, SelectorList};
 use preset_env_base::{version::Version, Versions};
 use swc_common::{
     errors::{DiagnosticBuilder, Level, HANDLER},
@@ -574,7 +574,7 @@ impl CssNamespace {
 /// specification), but it is popular usage, so we just add `a ` at top and
 /// then remove it
 fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Vec<Component<'i>> {
-    let mut buf = "a ".to_string();
+    let mut buf = String::new();
 
     for t in tokens.0.iter() {
         match t {
@@ -621,14 +621,57 @@ fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Vec<Component<'i>> {
     }
 
     if cfg!(debug_assertions) {
+        debug!("Try parsing: {:?}", buf)
+    }
+
+    if let Ok(selectors) = SelectorList::parse_string_with_options(&buf, Default::default()) {
+        let mut result: Vec<Component<'i>> = vec![];
+
+        for selector in selectors.0 {
+            result.extend(selector_to_components(selector.into_owned()));
+        }
+
+        return result;
+    }
+
+    buf = format!("a {buf}");
+
+    if cfg!(debug_assertions) {
         debug!("Parsing: {:?}", buf)
     }
 
-    let mut result: Vec<Component<'i>> = vec![];
+    let mut final_result: Vec<Component<'i>> = vec![];
 
-    let selector = Selector::parse_string_with_options(&buf, Default::default())
+    let selectors = SelectorList::parse_string_with_options(&buf, Default::default())
         .expect("failed to parse selector list")
         .into_owned();
+
+    if cfg!(debug_assertions) {
+        debug!("Parsed selectors: {:?}", selectors);
+    }
+
+    for selector in selectors.0 {
+        let mut result: Vec<Component<'i>> = selector_to_components(selector);
+
+        // Remove `a`
+        result.remove(0);
+
+        if let Some(Component::Combinator(Combinator::Descendant)) = result.first() {
+            result.remove(0);
+        }
+
+        if let Some(Component::Combinator(Combinator::Descendant)) = result.last() {
+            result.pop();
+        }
+
+        final_result.extend(result);
+    }
+
+    final_result
+}
+
+fn selector_to_components<'i>(selector: Selector<'i>) -> Vec<Component<'i>> {
+    let mut result: Vec<Component<'i>> = vec![];
 
     // Compound selectors invert the order of their contents, so we need to
     // undo that during serialization.
@@ -741,17 +784,6 @@ fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Vec<Component<'i>> {
         //    pseudo-element, to s.
         //
         // (we handle this above)
-    }
-
-    // Remove `a`
-    result.remove(0);
-
-    if let Some(Component::Combinator(Combinator::Descendant)) = result.first() {
-        result.remove(0);
-    }
-
-    if let Some(Component::Combinator(Combinator::Descendant)) = result.last() {
-        result.pop();
     }
 
     result
