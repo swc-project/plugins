@@ -2,6 +2,7 @@ use std::{
     borrow::Cow,
     convert::Infallible,
     fmt::Debug,
+    mem::take,
     panic::{catch_unwind, AssertUnwindSafe},
     sync::Arc,
 };
@@ -10,7 +11,7 @@ use anyhow::{bail, Context, Error};
 use lightningcss::{
     error::ParserError,
     properties::custom::{TokenList, TokenOrValue},
-    selector::{Combinator, Component, PseudoClass, Selector},
+    selector::{Combinator, Component, PseudoClass, Selector, SelectorList},
     stylesheet::{MinifyOptions, ParserFlags, ParserOptions, PrinterOptions, StyleSheet},
     targets::{Browsers, Features, Targets},
     traits::{IntoOwned, ParseWithOptions, ToCss},
@@ -18,7 +19,7 @@ use lightningcss::{
     visit_types,
     visitor::{Visit, VisitTypes, Visitor},
 };
-use parcel_selectors::{parser::SelectorIter, SelectorImpl, SelectorList};
+use parcel_selectors::{parser::SelectorIter, SelectorImpl};
 use preset_env_base::{version::Version, Versions};
 use swc_common::{
     errors::{DiagnosticBuilder, Level, HANDLER},
@@ -311,7 +312,25 @@ impl<'i> Visitor<'i> for CssNamespace {
         visit_types!(SELECTORS)
     }
 
-    fn visit_selector(&mut self, selector: &mut Selector<'i>) -> Result<(), Self::Error> {
+    fn visit_selector_list(&mut self, selectors: &mut SelectorList<'i>) -> Result<(), Self::Error> {
+        let mut new_selectors = vec![];
+
+        for mut selector in take(&mut selectors.0) {
+            let new = self.transform(&mut selector)?;
+            new_selectors.extend(new.into_owned().0);
+        }
+
+        *selectors = SelectorList::from_vec(new_selectors);
+
+        Ok(())
+    }
+}
+
+impl CssNamespace {
+    fn transform<'i>(
+        &mut self,
+        selector: &mut Selector<'i>,
+    ) -> Result<SelectorList<'i>, Infallible> {
         let mut new_selectors = vec![];
         let mut combinator = None;
 
@@ -381,16 +400,21 @@ impl<'i> Visitor<'i> for CssNamespace {
             }
         }
 
-        let new: Vec<_> = RemoveWhitespace {
-            iter: new_selectors.into_iter().rev().flatten(),
-            prev: None,
-        }
-        .collect();
+        let new: Vec<Selector<'i>> = new_selectors
+            .into_iter()
+            .map(|components| {
+                Selector::from(
+                    RemoveWhitespace {
+                        iter: components.into_iter().rev(),
+                        prev: None,
+                    }
+                    .collect::<Vec<_>>(),
+                )
+            })
+            .collect();
         debug!("Selector vector: {:?}", SafeDebug(&new));
 
-        *selector = Selector::from(new);
-
-        Ok(())
+        Ok(SelectorList::from_vec(new))
     }
 }
 
