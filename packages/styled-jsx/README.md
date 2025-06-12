@@ -2,6 +2,12 @@
 
 # @swc/plugin-styled-jsx
 
+## 8.0.2
+
+### Patch Changes
+
+- b28b674: Fix content escaping regression
+
 ## 8.0.1
 
 ### Patch Changes
