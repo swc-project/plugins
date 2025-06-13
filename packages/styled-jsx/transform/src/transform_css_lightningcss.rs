@@ -2,6 +2,7 @@ use std::{
     borrow::Cow,
     convert::Infallible,
     fmt::Debug,
+    mem::take,
     panic::{catch_unwind, AssertUnwindSafe},
     sync::Arc,
 };
@@ -10,7 +11,7 @@ use anyhow::{bail, Context, Error};
 use lightningcss::{
     error::ParserError,
     properties::custom::{TokenList, TokenOrValue},
-    selector::{Combinator, Component, PseudoClass, Selector},
+    selector::{Combinator, Component, PseudoClass, Selector, SelectorList},
     stylesheet::{MinifyOptions, ParserFlags, ParserOptions, PrinterOptions, StyleSheet},
     targets::{Browsers, Features, Targets},
     traits::{IntoOwned, ParseWithOptions, ToCss},
@@ -311,7 +312,25 @@ impl<'i> Visitor<'i> for CssNamespace {
         visit_types!(SELECTORS)
     }
 
-    fn visit_selector(&mut self, selector: &mut Selector<'i>) -> Result<(), Self::Error> {
+    fn visit_selector_list(&mut self, selectors: &mut SelectorList<'i>) -> Result<(), Self::Error> {
+        let mut new_selectors = vec![];
+
+        for mut selector in take(&mut selectors.0) {
+            let new = self.transform(&mut selector)?;
+            new_selectors.extend(new.into_owned().0);
+        }
+
+        *selectors = SelectorList::from_vec(new_selectors);
+
+        Ok(())
+    }
+}
+
+impl CssNamespace {
+    fn transform<'i>(
+        &mut self,
+        selector: &mut Selector<'i>,
+    ) -> Result<SelectorList<'i>, Infallible> {
         let mut new_selectors = vec![];
         let mut combinator = None;
 
@@ -347,7 +366,7 @@ impl<'i> Visitor<'i> for CssNamespace {
                         debug!("Transformed as: {:?}", SafeDebug(&transformed_selectors))
                     }
 
-                    new_selectors.push(transformed_selectors);
+                    new_selectors.extend(transformed_selectors);
                 }
                 Err(_) => {
                     error!("Failed to transform one off global selector");
@@ -381,16 +400,21 @@ impl<'i> Visitor<'i> for CssNamespace {
             }
         }
 
-        let new: Vec<_> = RemoveWhitespace {
-            iter: new_selectors.into_iter().rev().flatten(),
-            prev: None,
-        }
-        .collect();
+        let new: Vec<Selector<'i>> = new_selectors
+            .into_iter()
+            .map(|components| {
+                Selector::from(
+                    RemoveWhitespace {
+                        iter: components.into_iter().rev(),
+                        prev: None,
+                    }
+                    .collect::<Vec<_>>(),
+                )
+            })
+            .collect();
         debug!("Selector vector: {:?}", SafeDebug(&new));
 
-        *selector = Selector::from(new);
-
-        Ok(())
+        Ok(SelectorList::from_vec(new))
     }
 }
 
@@ -435,7 +459,7 @@ impl CssNamespace {
         &mut self,
         combinator: Option<Combinator>,
         node: &mut SelectorIter<'a, 'i, Impl>,
-    ) -> Result<Vec<Component<'i>>, Error>
+    ) -> Result<Vec<Vec<Component<'i>>>, Error>
     where
         Impl: SelectorImpl<'i>,
         SelectorIter<'a, 'i, Impl>: Iterator<Item = &'a Component<'i>>,
@@ -447,7 +471,7 @@ impl CssNamespace {
         let node: Vec<Component<'i>> = node.fuse().cloned().collect::<Vec<_>>();
 
         if node.is_empty() {
-            return Ok(result);
+            return Ok(vec![result]);
         }
 
         #[cfg(debug_assertions)]
@@ -465,7 +489,7 @@ impl CssNamespace {
             }
 
             // Look for :global
-            let complex_selectors: Vec<Component<'i>> = match &component {
+            let complex_selectors: Vec<Vec<Component<'i>>> = match &component {
                 Component::NonTSPseudoClass(PseudoClass::CustomFunction { name, arguments }) => {
                     if &**name != "global" {
                         if pseudo_index.is_none() {
@@ -503,17 +527,25 @@ impl CssNamespace {
                 }
             };
 
-            #[cfg(debug_assertions)]
-            debug!("Complex selectors: {:?}", complex_selectors);
+            let mut items: Vec<Vec<Component<'i>>> = vec![];
 
-            result.extend(complex_selectors);
-            result.extend(node.into_iter().skip(i + 1));
+            for complex_selectors in complex_selectors {
+                let mut result = result.clone();
 
-            if let Some(combinator) = combinator {
-                result.push(Component::Combinator(combinator));
+                #[cfg(debug_assertions)]
+                debug!("Complex selectors: {:?}", complex_selectors);
+
+                result.extend(complex_selectors);
+                result.extend(node.clone().into_iter().skip(i + 1));
+
+                if let Some(combinator) = combinator {
+                    result.push(Component::Combinator(combinator));
+                }
+
+                items.push(result);
             }
 
-            return Ok(result);
+            return Ok(items);
         }
 
         // Pseudo element
@@ -522,7 +554,7 @@ impl CssNamespace {
             && pseudo_index.is_some()
             && matches!(&node[0], Component::PseudoElement(..))
         {
-            return Ok(node);
+            return Ok(vec![node]);
         }
 
         let mut node: Vec<Component<'i>> = node.clone();
@@ -533,7 +565,7 @@ impl CssNamespace {
             && matches!(combinator, Some(Combinator::Descendant))
         {
             node.push(Component::Combinator(Combinator::Descendant));
-            return Ok(node);
+            return Ok(vec![node]);
         }
 
         let subclass_selector = match self.is_dynamic {
@@ -565,7 +597,7 @@ impl CssNamespace {
             result.push(Component::Combinator(combinator));
         }
 
-        Ok(result)
+        Ok(vec![result])
     }
 }
 
@@ -573,8 +605,8 @@ impl CssNamespace {
 /// :global(.foo) {}`, so selector can be complex or relative (it violates the
 /// specification), but it is popular usage, so we just add `a ` at top and
 /// then remove it
-fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Vec<Component<'i>> {
-    let mut buf = "a ".to_string();
+fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Vec<Vec<Component<'i>>> {
+    let mut buf = String::new();
 
     for t in tokens.0.iter() {
         match t {
@@ -621,14 +653,57 @@ fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Vec<Component<'i>> {
     }
 
     if cfg!(debug_assertions) {
+        debug!("Try parsing: {:?}", buf)
+    }
+
+    if let Ok(selectors) = SelectorList::parse_string_with_options(&buf, Default::default()) {
+        let mut result: Vec<Vec<Component<'i>>> = vec![];
+
+        for selector in selectors.0.into_iter() {
+            result.push(selector_to_components(selector.into_owned()));
+        }
+
+        return result;
+    }
+
+    buf = format!("a {buf}");
+
+    if cfg!(debug_assertions) {
         debug!("Parsing: {:?}", buf)
     }
 
-    let mut result: Vec<Component<'i>> = vec![];
+    let mut final_result: Vec<Vec<Component<'i>>> = vec![];
 
-    let selector = Selector::parse_string_with_options(&buf, Default::default())
+    let selectors = SelectorList::parse_string_with_options(&buf, Default::default())
         .expect("failed to parse selector list")
         .into_owned();
+
+    if cfg!(debug_assertions) {
+        debug!("Parsed selectors: {:?}", selectors);
+    }
+
+    for selector in selectors.0 {
+        let mut result: Vec<Component<'i>> = selector_to_components(selector);
+
+        // Remove `a`
+        result.remove(0);
+
+        if let Some(Component::Combinator(Combinator::Descendant)) = result.first() {
+            result.remove(0);
+        }
+
+        if let Some(Component::Combinator(Combinator::Descendant)) = result.last() {
+            result.pop();
+        }
+
+        final_result.push(result);
+    }
+
+    final_result
+}
+
+fn selector_to_components<'i>(selector: Selector<'i>) -> Vec<Component<'i>> {
+    let mut result: Vec<Component<'i>> = vec![];
 
     // Compound selectors invert the order of their contents, so we need to
     // undo that during serialization.
@@ -741,17 +816,6 @@ fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Vec<Component<'i>> {
         //    pseudo-element, to s.
         //
         // (we handle this above)
-    }
-
-    // Remove `a`
-    result.remove(0);
-
-    if let Some(Component::Combinator(Combinator::Descendant)) = result.first() {
-        result.remove(0);
-    }
-
-    if let Some(Component::Combinator(Combinator::Descendant)) = result.last() {
-        result.pop();
     }
 
     result
