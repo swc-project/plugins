@@ -381,9 +381,25 @@ impl VisitMut for TransformImports<'_> {
         for item in module.body.take() {
             match item {
                 ModuleItem::ModuleDecl(ModuleDecl::Import(decl)) => {
-                    // Ignore side-effect only imports
                     if decl.specifiers.is_empty() {
-                        new_items.push(ModuleItem::ModuleDecl(ModuleDecl::Import(decl)));
+                        if let Some(rewriter) = self.should_rewrite(&decl.src.value) {
+                            let new_path = rewriter.new_path(None);
+                            let raw_with_quotes = Atom::from(format!("'{}'", new_path.as_ref()));
+                            let new_src = Box::new(Str {
+                                span: decl.src.span,
+                                value: new_path.clone(),
+                                raw: Some(raw_with_quotes),
+                            });
+                            let new_decl = ImportDecl {
+                                src: new_src,
+                                specifiers: vec![],
+                                ..decl
+                            };
+
+                            new_items.push(ModuleItem::ModuleDecl(ModuleDecl::Import(new_decl)));
+                        } else {
+                            new_items.push(ModuleItem::ModuleDecl(ModuleDecl::Import(decl)));
+                        }
                         continue;
                     }
 
