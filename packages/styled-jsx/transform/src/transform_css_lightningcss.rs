@@ -126,7 +126,7 @@ pub fn transform_css(
 
     let targets = Targets {
         browsers: Some(convert_browsers(browsers)),
-        include: Features::Nesting,
+        include: Features::Nesting | Features::IsSelector,
         ..Default::default()
     };
 
