@@ -1,2 +1,2 @@
-import './upload/upload.ts';
+import './upload/upload.js';
 import './scripts/scripts.model.js';
