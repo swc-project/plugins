@@ -1,5 +1,11 @@
 # @swc/plugin-transform-imports
 
+## 8.0.1
+
+### Patch Changes
+
+- 60dfc2c: fix(transform-imports): Transform side-effect imports
+
 ## 8.0.0
 
 ### Major Changes
