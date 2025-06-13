@@ -10,7 +10,7 @@ use anyhow::{bail, Context, Error};
 use lightningcss::{
     error::ParserError,
     properties::custom::{TokenList, TokenOrValue},
-    selector::{Combinator, Component, PseudoClass, Selector},
+    selector::{Combinator, Component, PseudoClass, Selector, SelectorList},
     stylesheet::{MinifyOptions, ParserFlags, ParserOptions, PrinterOptions, StyleSheet},
     targets::{Browsers, Features, Targets},
     traits::{IntoOwned, ParseWithOptions, ToCss},
@@ -126,7 +126,7 @@ pub fn transform_css(
 
     let targets = Targets {
         browsers: Some(convert_browsers(browsers)),
-        include: Features::Nesting,
+        include: Features::Nesting | Features::IsSelector,
         ..Default::default()
     };
 
@@ -574,7 +574,7 @@ impl CssNamespace {
 /// specification), but it is popular usage, so we just add `a ` at top and
 /// then remove it
 fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Vec<Component<'i>> {
-    let mut buf = "a ".to_string();
+    let mut buf = "".to_string();
 
     for t in tokens.0.iter() {
         match t {
@@ -623,6 +623,14 @@ fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Vec<Component<'i>> {
     if cfg!(debug_assertions) {
         debug!("Parsing: {:?}", buf)
     }
+
+    if let Ok(s) = SelectorList::parse_string_with_options(&buf, Default::default()) {
+        if s.0.len() != 1 {
+            return vec![Component::Is(s.0.into_owned().into_boxed_slice())];
+        }
+    }
+
+    buf = format!("a {buf}");
 
     let mut result: Vec<Component<'i>> = vec![];
 

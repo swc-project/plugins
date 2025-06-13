@@ -1016,6 +1016,30 @@ const Test = ()=>/*#__PURE__*/ React.createElement("div", {
 "
 `;
 
+exports[`Should load swc-confidential wasm plugin correctly > Should transform global-multiple correctly 1`] = `
+"import _JSXStyle from "styled-jsx/style";
+const Test = ()=>/*#__PURE__*/ React.createElement("div", {
+        className: "jsx-3d9ecfaa448ef714"
+    }, /*#__PURE__*/ React.createElement("span", {
+        className: "jsx-3d9ecfaa448ef714"
+    }, "test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
+        id: "3d9ecfaa448ef714"
+    }, ".c1{background:orange!important}"));
+"
+`;
+
+exports[`Should load swc-confidential wasm plugin correctly > Should transform global-nested correctly 1`] = `
+"import _JSXStyle from "styled-jsx/style";
+const Test = ()=>/*#__PURE__*/ React.createElement("div", {
+        className: "jsx-258c8cca0b71d485"
+    }, /*#__PURE__*/ React.createElement("span", {
+        className: "jsx-258c8cca0b71d485"
+    }, "test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
+        id: "258c8cca0b71d485"
+    }, ".p1.jsx-258c8cca0b71d485{background:purple!important}.p1.jsx-258c8cca0b71d485 .c1,.p1.jsx-258c8cca0b71d485 .c2.jsx-258c8cca0b71d485{background:orange!important}"));
+"
+`;
+
 exports[`Should load swc-confidential wasm plugin correctly > Should transform global-redundant correctly 1`] = `
 "import _JSXStyle from "styled-jsx/style";
 export default function IndexPage() {
