@@ -2,6 +2,12 @@
 
 # @swc/plugin-styled-jsx
 
+## 8.0.3
+
+### Patch Changes
+
+- ae8b938: Allow specifying multiple selectors in :global
+
 ## 8.0.2
 
 ### Patch Changes
