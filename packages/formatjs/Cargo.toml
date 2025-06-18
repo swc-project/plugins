@@ -21,4 +21,4 @@ swc_core = { workspace = true, features = [
   "ecma_plugin_transform",
   "ecma_ast_serde",
 ] }
-swc_formatjs_transform = { path = "./transform", version = "4.0.0" }
+swc_formatjs_transform = { path = "./transform", version = "5.0.0" }
