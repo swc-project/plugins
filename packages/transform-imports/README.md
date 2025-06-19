@@ -18,6 +18,12 @@
 
 # @swc/plugin-transform-imports
 
+## 8.0.3
+
+### Patch Changes
+
+- 54febbc: Update swc_core to v29
+
 ## 8.0.2
 
 ### Patch Changes
