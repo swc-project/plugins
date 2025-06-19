@@ -22,7 +22,7 @@ export const Red = ({ Component = "button" })=>{
             ]
         ]
     ])}>
-      {}
+      { /* Dynamic Styles */ }
       <_JSXStyle id={"b64be9301c97785c"} dynamic={[
         e1,
         e2,

@@ -1,5 +1,11 @@
 # @swc/plugin-swc-confidential
 
+## 7.0.2
+
+### Patch Changes
+
+- 54febbc: Update swc_core to v29
+
 ## 7.0.1
 
 ### Patch Changes

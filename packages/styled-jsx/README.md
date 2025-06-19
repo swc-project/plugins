@@ -2,6 +2,12 @@
 
 # @swc/plugin-styled-jsx
 
+## 8.0.5
+
+### Patch Changes
+
+- 54febbc: Update swc_core to v29
+
 ## 8.0.4
 
 ### Patch Changes
