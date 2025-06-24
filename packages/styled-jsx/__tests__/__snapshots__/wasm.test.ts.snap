@@ -1040,6 +1040,30 @@ const Test = ()=>/*#__PURE__*/ React.createElement("div", {
 "
 `;
 
+exports[`Should load swc-confidential wasm plugin correctly > Should transform global-nested-scope-2 correctly 1`] = `
+"import _JSXStyle from "styled-jsx/style";
+const Test = ()=>/*#__PURE__*/ React.createElement("div", {
+        className: "jsx-9303248a3896bf50"
+    }, /*#__PURE__*/ React.createElement("span", {
+        className: "jsx-9303248a3896bf50"
+    }, "test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
+        id: "9303248a3896bf50"
+    }, ".parent.jsx-9303248a3896bf50{}.parent.jsx-9303248a3896bf50 div{}.parent.jsx-9303248a3896bf50 div.child{background:orange}"));
+"
+`;
+
+exports[`Should load swc-confidential wasm plugin correctly > Should transform global-nested-scope-3 correctly 1`] = `
+"import _JSXStyle from "styled-jsx/style";
+const Test = ()=>/*#__PURE__*/ React.createElement("div", {
+        className: "jsx-da58316599e32d09"
+    }, /*#__PURE__*/ React.createElement("span", {
+        className: "jsx-da58316599e32d09"
+    }, "test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
+        id: "da58316599e32d09"
+    }, ".parent.jsx-da58316599e32d09{}.parent.jsx-da58316599e32d09 div{}.parent.jsx-da58316599e32d09 div.child>.child2{background:orange}"));
+"
+`;
+
 exports[`Should load swc-confidential wasm plugin correctly > Should transform global-nested-scope-sel correctly 1`] = `
 "import _JSXStyle from "styled-jsx/style";
 const Test = ()=>/*#__PURE__*/ React.createElement("div", {
