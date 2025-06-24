@@ -411,10 +411,15 @@ where
                 self.prev = self.iter.next();
 
                 match self.prev {
-                    Some(Component::Combinator(..) | Component::Nesting) => self.next(),
+                    Some(Component::Combinator(..)) => self.next(),
+                    // If the next component is a nesting selector (&), we should remove the
+                    // whitespace because we are going to remove the (&)
+                    Some(Component::Nesting) => self.next(),
                     _ => Some(Component::Combinator(Combinator::Descendant)),
                 }
             }
+            // Handle nesting selectors (&) by removing whitespaces between & and the next
+            // component
             Some(Component::Nesting) => {
                 self.prev = self.iter.next();
                 self.next()
