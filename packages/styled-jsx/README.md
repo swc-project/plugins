@@ -2,6 +2,12 @@
 
 # @swc/plugin-styled-jsx
 
+## 8.0.6
+
+### Patch Changes
+
+- 8d4f2db: Fix handling of deeply nested `&`
+
 ## 8.0.5
 
 ### Patch Changes
