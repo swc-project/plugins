@@ -1,5 +1,11 @@
 # @swc/plugin-styled-jsx
 
+## 8.0.7
+
+### Patch Changes
+
+- ac458bd: Handle more `&`
+
 ## 8.0.6
 
 ### Patch Changes
