@@ -62,6 +62,17 @@ export { default as Footer } from "my-library/components/App/Footer";
 "
 `;
 
+exports[`Should load transform-imports wasm plugin correctly > Should transform rewrite-namespace correctly 1`] = `
+"import * as test from 'rewrite-module-namespace';
+"
+`;
+
+exports[`Should load transform-imports wasm plugin correctly > Should transform rewrite-namespace-export correctly 1`] = `
+"import * as _someModule from "rewrite-module-namespace";
+export { _someModule as someModule };
+"
+`;
+
 exports[`Should load transform-imports wasm plugin correctly > Should transform side-effect-imports correctly 1`] = `
 "import './upload/upload.js';
 import './scripts/scripts.model.js';
