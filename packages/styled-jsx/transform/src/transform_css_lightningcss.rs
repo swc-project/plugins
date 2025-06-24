@@ -635,7 +635,19 @@ fn parse_token_list<'i>(tokens: &TokenList<'i>) -> Vec<Component<'i>> {
 
     if let Ok(s) = SelectorList::parse_string_with_options(&buf, Default::default()) {
         if s.0.len() != 1 {
-            return vec![Component::Is(s.0.into_owned().into_boxed_slice())];
+            let mut selectors = s.0.into_owned().into_boxed_slice();
+
+            for selector in selectors.iter_mut() {
+                let new: Vec<_> = RemoveWhitespace {
+                    iter: selector.iter_raw_match_order().rev().cloned(),
+                    prev: None,
+                }
+                .collect();
+
+                *selector = Selector::from(new);
+            }
+
+            return vec![Component::Is(selectors)];
         }
     }
 
