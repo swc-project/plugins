@@ -1040,6 +1040,18 @@ const Test = ()=>/*#__PURE__*/ React.createElement("div", {
 "
 `;
 
+exports[`Should load swc-confidential wasm plugin correctly > Should transform global-nested-scope-sel correctly 1`] = `
+"import _JSXStyle from "styled-jsx/style";
+const Test = ()=>/*#__PURE__*/ React.createElement("div", {
+        className: "jsx-b0a16d58836c444b"
+    }, /*#__PURE__*/ React.createElement("span", {
+        className: "jsx-b0a16d58836c444b"
+    }, "test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
+        id: "b0a16d58836c444b"
+    }, ".parent.jsx-b0a16d58836c444b{}.parent.jsx-b0a16d58836c444b div{}.parent.jsx-b0a16d58836c444b div.child{background:orange}"));
+"
+`;
+
 exports[`Should load swc-confidential wasm plugin correctly > Should transform global-redundant correctly 1`] = `
 "import _JSXStyle from "styled-jsx/style";
 export default function IndexPage() {
