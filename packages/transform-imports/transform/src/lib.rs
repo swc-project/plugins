@@ -30,6 +30,8 @@ pub struct PackageConfig {
     #[serde(default)]
     pub handle_namespace_import: bool,
     #[serde(default)]
+    pub rewrite_namespace_to_proxy: bool,
+    #[serde(default)]
     pub skip_default_conversion: bool,
 }
 
@@ -208,12 +210,26 @@ impl Rewriter<'_> {
                     });
                 }
                 ExportSpecifier::Namespace(ns_spec) if self.config.handle_namespace_import => {
-                    let name_str = match &ns_spec.name {
-                        ModuleExportName::Ident(x) => x.as_ref(),
-                        ModuleExportName::Str(x) => x.value.as_ref(),
+                    let (new_path, specifier) = if self.config.rewrite_namespace_to_proxy {
+                        (
+                            self.new_path(Some("swc-proxy".into())),
+                            ExportSpecifier::Named(ExportNamedSpecifier {
+                                span: DUMMY_SP,
+                                orig: ModuleExportName::Ident(Ident::from("default")),
+                                exported: Some(ns_spec.name.clone()),
+                                is_type_only: false,
+                            }),
+                        )
+                    } else {
+                        let name_str = match &ns_spec.name {
+                            ModuleExportName::Ident(x) => x.as_ref(),
+                            ModuleExportName::Str(x) => x.value.as_ref(),
+                        };
+                        (
+                            self.new_path(Some(name_str)),
+                            ExportSpecifier::Namespace(ns_spec.clone()),
+                        )
                     };
-                    let new_path = self.new_path(Some(name_str));
-                    let specifier = ExportSpecifier::Namespace(ns_spec.clone());
                     out.push(NamedExport {
                         specifiers: vec![specifier],
                         src: Some(Box::new(Str::from(new_path.as_ref()))),
@@ -273,9 +289,21 @@ impl Rewriter<'_> {
                     });
                 }
                 ImportSpecifier::Namespace(ns_spec) if self.config.handle_namespace_import => {
-                    let name_str = ns_spec.local.as_ref();
-                    let new_path = self.new_path(Some(name_str));
-                    let specifier = ImportSpecifier::Namespace(ns_spec.clone());
+                    let (new_path, specifier) = if self.config.rewrite_namespace_to_proxy {
+                        (
+                            self.new_path(Some("swc-proxy")),
+                            ImportSpecifier::Default(ImportDefaultSpecifier {
+                                span: DUMMY_SP,
+                                local: ns_spec.local.clone(),
+                            }),
+                        )
+                    } else {
+                        let name_str = ns_spec.local.as_ref();
+                        (
+                            self.new_path(Some(name_str)),
+                            ImportSpecifier::Namespace(ns_spec.clone()),
+                        )
+                    };
                     out.push(ImportDecl {
                         specifiers: vec![specifier],
                         src: Box::new(Str::from(new_path.as_ref())),
