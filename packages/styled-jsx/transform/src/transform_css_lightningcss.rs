@@ -411,9 +411,13 @@ where
                 self.prev = self.iter.next();
 
                 match self.prev {
-                    Some(Component::Combinator(..)) => self.next(),
+                    Some(Component::Combinator(..) | Component::Nesting) => self.next(),
                     _ => Some(Component::Combinator(Combinator::Descendant)),
                 }
+            }
+            Some(Component::Nesting) => {
+                self.prev = self.iter.next();
+                self.next()
             }
             Some(v) => Some(v),
             _ => {
