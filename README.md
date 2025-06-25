@@ -16,5 +16,6 @@ Plugins for SWC, written in Rust
 - [`swc-confidential`](packages/swc-confidential) for hiding sensitive strings in your code.
 - [`swc-magic`](packages/swc-magic) for building high-performance frameworks.
 - [`transform-imports`](packages/transform-imports)
+- [`transform-ns-imports`](packages/transform-ns-imports) for transforming namespace imports.
 - [`prefresh`](packages/prefresh) for preact refresh transformation.
 - [`formatjs`](packages/formatjs)
