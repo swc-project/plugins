@@ -1,0 +1,1 @@
+import test from "rewrite-module-namespace/swc-proxy";

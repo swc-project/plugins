@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Should load transform-ns-imports wasm plugin correctly > Should transform rewrite-namespace correctly 1`] = `
+"import test from "rewrite-module-namespace/swc-proxy";
+"
+`;
+
+exports[`Should load transform-ns-imports wasm plugin correctly > Should transform rewrite-namespace-export correctly 1`] = `
+"export { default as someModule } from "rewrite-module-namespace/swc-proxy";
+"
+`;
