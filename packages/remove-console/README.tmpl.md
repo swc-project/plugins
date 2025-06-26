@@ -5,14 +5,14 @@ See https://nextjs.org/docs/architecture/nextjs-compiler#remove-console for more
 ## Config
 
 ```json
-["remove-console"]
+["@swc/plugin-remove-console"]
 ```
 
 or
 
 ```json
 [
-  "remove-console",
+  "@swc/plugin-remove-console",
   {
     "exclude": ["error"]
   }
