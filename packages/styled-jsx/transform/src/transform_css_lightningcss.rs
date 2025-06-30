@@ -140,7 +140,7 @@ pub fn transform_css(
     let targets = Targets {
         browsers: Some(*BASE_BROWSERS),
         include: Features::Nesting,
-        exclude: Features::IsSelector | Features::CustomMediaQueries,
+        exclude: Features::IsSelector | Features::CustomMediaQueries | Features::VendorPrefixes,
     };
 
     // Apply auto prefixer
