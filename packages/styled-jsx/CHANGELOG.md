@@ -1,5 +1,11 @@
 # @swc/plugin-styled-jsx
 
+## 8.0.8
+
+### Patch Changes
+
+- a8cfcaf: Fix lightningcss interop with browserslist
+
 ## 8.0.7
 
 ### Patch Changes
