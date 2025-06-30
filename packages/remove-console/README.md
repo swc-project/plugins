@@ -21,6 +21,12 @@ or
 
 # @swc/plugin-remove-console
 
+## 8.0.3
+
+### Patch Changes
+
+- 3b8ad25: feat: update @swc/plugin-remove-console readme
+
 ## 8.0.2
 
 ### Patch Changes
