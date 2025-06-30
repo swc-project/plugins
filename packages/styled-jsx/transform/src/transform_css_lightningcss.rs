@@ -147,6 +147,9 @@ pub fn transform_css(
             ..Default::default()
         })
         .context("failed to print css")?;
+
+    debug!("Intermediate CSS: \n{}", css.code);
+
     let mut ss = {
         StyleSheet::parse(
             &css.code,
