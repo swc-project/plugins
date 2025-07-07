@@ -1,5 +1,11 @@
 # @swc/plugin-formatjs
 
+## 5.1.0
+
+### Minor Changes
+
+- 899d803: Add support for md5 hash_type in idInterpolationPattern
+
 ## 5.0.0
 
 ### Major Changes
