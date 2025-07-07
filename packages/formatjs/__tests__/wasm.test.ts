@@ -193,6 +193,9 @@ describe("formatjs swc plugin", () => {
       }
     `;
 
+    const md5output = await transformCode(input, {
+      idInterpolationPattern: "[md5:contenthash:base64:6]",
+    });
     const sha1output = await transformCode(input, {
       idInterpolationPattern: "[sha1:contenthash:base64:6]",
     });
@@ -200,8 +203,10 @@ describe("formatjs swc plugin", () => {
       idInterpolationPattern: "[sha512:contenthash:base64:6]",
     });
 
+    expect(md5output).toMatch(/id: "[a-zA-Z0-9]{6}"/);
     expect(sha1output).toMatch(/id: "[a-zA-Z0-9]{6}"/);
     expect(sha512output).toMatch(/id: "[a-zA-Z0-9]{6}"/);
+    expect(md5output).not.toMatch(sha512output);
     expect(sha1output).not.toMatch(sha512output);
   });
 
