@@ -4,6 +4,18 @@ FormatJS SWC plugin, maintained by SWC team.
 
 # @swc/plugin-formatjs
 
+## 5.1.1
+
+### Patch Changes
+
+- 45d1ac7: Update swc_core to v31
+
+## 5.1.0
+
+### Minor Changes
+
+- 899d803: Add support for md5 hash_type in idInterpolationPattern
+
 ## 5.0.0
 
 ### Major Changes

@@ -1,5 +1,11 @@
 # @swc/plugin-formatjs
 
+## 5.1.1
+
+### Patch Changes
+
+- 45d1ac7: Update swc_core to v31
+
 ## 5.1.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @swc/plugin-emotion
 
+## 10.0.3
+
+### Patch Changes
+
+- 45d1ac7: Update swc_core to v31
+
 ## 10.0.2
 
 ### Patch Changes
