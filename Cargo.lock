@@ -1514,7 +1514,7 @@ dependencies = [
  "crc-any",
  "des",
  "digest 0.9.0",
- "md-5",
+ "md-5 0.9.1",
  "sha2 0.9.9",
  "tiger",
 ]
@@ -1543,6 +1543,16 @@ dependencies = [
  "block-buffer 0.9.0",
  "digest 0.9.0",
  "opaque-debug",
+]
+
+[[package]]
+name = "md-5"
+version = "0.10.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d89e7ee0cfbedfc4da3340218492196241d89eefb6dab27de5df917a6d2e78cf"
+dependencies = [
+ "cfg-if",
+ "digest 0.10.7",
 ]
 
 [[package]]
@@ -3414,6 +3424,7 @@ dependencies = [
  "base64ct",
  "digest 0.10.7",
  "hex",
+ "md-5 0.10.6",
  "once_cell",
  "pretty_assertions",
  "regex",
