@@ -3351,7 +3351,7 @@ dependencies = [
 
 [[package]]
 name = "swc_formatjs_transform"
-version = "5.0.0"
+version = "6.0.0"
 dependencies = [
  "base64ct",
  "digest 0.10.7",
@@ -3396,7 +3396,7 @@ dependencies = [
 
 [[package]]
 name = "swc_magic"
-version = "0.38.0"
+version = "0.39.0"
 dependencies = [
  "rustc-hash",
  "serde",
@@ -3665,7 +3665,7 @@ dependencies = [
 
 [[package]]
 name = "swc_prefresh"
-version = "0.21.0"
+version = "0.22.0"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -3681,7 +3681,7 @@ dependencies = [
 
 [[package]]
 name = "swc_relay"
-version = "0.64.0"
+version = "0.65.0"
 dependencies = [
  "once_cell",
  "regex",
