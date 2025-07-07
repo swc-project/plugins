@@ -1088,6 +1088,30 @@ export default function IndexPage() {
 "
 `;
 
+exports[`Should load swc-confidential wasm plugin correctly > Should transform global-sel correctly 1`] = `
+"import _JSXStyle from "styled-jsx/style";
+const Test = ()=>/*#__PURE__*/ React.createElement(React.Fragment, null, /*#__PURE__*/ React.createElement("div", {
+        className: "jsx-60bae1dc4409a62b" + " " + "container"
+    }, /*#__PURE__*/ React.createElement("div", {
+        className: "jsx-60bae1dc4409a62b" + " " + "p1"
+    }, ".p1 -This is another parent.", /*#__PURE__*/ React.createElement("div", {
+        className: "jsx-60bae1dc4409a62b" + " " + "c1"
+    }, ".c1 - This should be orange bg.", /*#__PURE__*/ React.createElement("div", {
+        className: "jsx-60bae1dc4409a62b" + " " + "c2"
+    }, ".c2 - This should be orange bg as well."))), /*#__PURE__*/ React.createElement("hr", {
+        className: "jsx-60bae1dc4409a62b" + " " + "my-4"
+    }), /*#__PURE__*/ React.createElement("h3", {
+        className: "jsx-60bae1dc4409a62b" + " " + "mb-2"
+    }, "Compiled CSS"), compiledCss ? /*#__PURE__*/ React.createElement("pre", {
+        className: "jsx-60bae1dc4409a62b"
+    }, formatCss(compiledCss)) : /*#__PURE__*/ React.createElement("p", {
+        className: "jsx-60bae1dc4409a62b"
+    }, "Loading CSS...")), /*#__PURE__*/ React.createElement(_JSXStyle, {
+        id: "60bae1dc4409a62b"
+    }, "#css-test-page-id.jsx-60bae1dc4409a62b{color:red}.p1.jsx-60bae1dc4409a62b{background:purple!important}.c1,.c2.jsx-60bae1dc4409a62b{background:orange!important}.container.jsx-60bae1dc4409a62b{max-width:1e3px;margin:0 auto;padding:1rem}"));
+"
+`;
+
 exports[`Should load swc-confidential wasm plugin correctly > Should transform global-styles-with-dynamic-values correctly 1`] = `
 "import _JSXStyle from "styled-jsx/style";
 export default function Component() {

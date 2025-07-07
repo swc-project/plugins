@@ -18,6 +18,7 @@ use lightningcss::{
     visit_types,
     visitor::{Visit, VisitTypes, Visitor},
 };
+use once_cell::sync::Lazy;
 use parcel_selectors::{parser::SelectorIter, SelectorImpl};
 use preset_env_base::{version::Version, Versions};
 use swc_common::{
@@ -32,6 +33,18 @@ use crate::{
     utils::{hash_string, string_literal_expr},
     visitor::NativeConfig,
 };
+
+static BASE_BROWSERS: Lazy<Browsers> = Lazy::new(|| {
+    convert_browsers(&Versions {
+        chrome: Some("64".parse().unwrap()),
+        edge: Some("79".parse().unwrap()),
+        firefox: Some("67".parse().unwrap()),
+        opera: Some("51".parse().unwrap()),
+        safari: Some("12".parse().unwrap()),
+
+        ..Default::default()
+    })
+});
 
 fn report(
     cm: &SourceMap,
@@ -125,17 +138,14 @@ pub fn transform_css(
     };
 
     let targets = Targets {
-        browsers: Some(convert_browsers(browsers)),
-        include: Features::Nesting | Features::IsSelector,
-        ..Default::default()
+        browsers: Some(*BASE_BROWSERS),
+        include: Features::Nesting,
+        exclude: Features::IsSelector | Features::CustomMediaQueries | Features::VendorPrefixes,
     };
 
     // Apply auto prefixer
     ss.minify(MinifyOptions {
-        targets: Targets {
-            exclude: Features::CustomMediaQueries,
-            ..targets
-        },
+        targets,
         ..Default::default()
     })
     .expect("failed to minify/auto-prefix css");
@@ -147,6 +157,15 @@ pub fn transform_css(
             ..Default::default()
         })
         .context("failed to print css")?;
+
+    debug!("Intermediate CSS: \n{}", css.code);
+
+    let targets = Targets {
+        browsers: Some(convert_browsers(browsers)),
+        include: Features::IsSelector,
+        ..targets
+    };
+
     let mut ss = {
         StyleSheet::parse(
             &css.code,
@@ -172,6 +191,16 @@ pub fn transform_css(
         is_dynamic: style_info.is_dynamic,
     })
     .expect("failed to transform css");
+
+    // Apply auto prefixer
+    ss.minify(MinifyOptions {
+        targets: Targets {
+            exclude: Features::CustomMediaQueries,
+            ..targets
+        },
+        ..Default::default()
+    })
+    .expect("failed to minify/auto-prefix css");
 
     let mut res = ss
         .to_css(PrinterOptions {
