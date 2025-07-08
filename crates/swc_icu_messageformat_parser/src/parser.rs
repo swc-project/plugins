@@ -715,7 +715,11 @@ impl<'s> Parser<'s> {
                 '#' if matches!(parent_arg_type, "plural" | "selectordinal") => {
                     let position = self.position();
                     self.bump();
-                    AstElement::Pound(Span::new(position, self.position()))
+                    AstElement::Pound(if self.options.capture_location {
+                        Some(Span::new(position, self.position()))
+                    } else {
+                        None
+                    })
                 }
                 '<' if !self.options.ignore_tag && self.peek() == Some('/') => {
                     if expecting_close_tag {

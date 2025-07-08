@@ -260,7 +260,7 @@ pub enum AstElement<'s> {
     },
     /// Only possible within plural argument.
     /// This is the `#` symbol that will be substituted with the count.
-    Pound(Span),
+    Pound(Option<Span>),
     /// XML-like tag
     Tag {
         value: &'s str,
@@ -377,7 +377,9 @@ impl Serialize for AstElement<'_> {
             AstElement::Pound(ref span) => {
                 let mut state = serializer.serialize_struct("Pound", 2)?;
                 state.serialize_field("type", &7)?;
-                state.serialize_field("location", span)?;
+                if span.is_some() {
+                    state.serialize_field("location", span)?;
+                }
                 state.end()
             }
             AstElement::Tag {

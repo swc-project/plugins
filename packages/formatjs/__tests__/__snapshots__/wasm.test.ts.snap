@@ -1,0 +1,52 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`formatjs swc plugin > should quote plural keys correctly when ast enabled 1`] = `
+"import { formatMessage } from 'react-intl';
+formatMessage({
+    id: "h2WwSW",
+    defaultMessage: [
+        {
+            "type": 0,
+            "value": "You did "
+        },
+        {
+            "offset": 0,
+            "options": {
+                "=0": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "nothing"
+                        }
+                    ]
+                },
+                "=1": {
+                    "value": [
+                        {
+                            "type": 0,
+                            "value": "1 click"
+                        }
+                    ]
+                },
+                "other": {
+                    "value": [
+                        {
+                            "type": 7
+                        },
+                        {
+                            "type": 0,
+                            "value": " clicks"
+                        }
+                    ]
+                }
+            },
+            "pluralType": "cardinal",
+            "type": 6,
+            "value": "count"
+        }
+    ]
+}, {
+    count: count
+});
+"
+`;
