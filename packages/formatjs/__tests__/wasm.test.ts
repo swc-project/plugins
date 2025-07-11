@@ -405,4 +405,25 @@ describe("formatjs swc plugin", () => {
     expect(hexOutput).toMatch(/id: "[0-9a-f]{9}"/);
     expect(base64UrlOutput).toMatch(/id: "[a-zA-Z0-9-_]{12}"/);
   });
+
+  it("should quote plural keys correctly when ast enabled", async () => {
+    const input = `
+      import { formatMessage } from 'react-intl';
+      formatMessage(
+        {
+          defaultMessage: \`
+            You did {count, plural,
+              =0 {nothing}
+              =1 {1 click}
+              other {# clicks}
+            }
+          \`,
+        },
+        { count }
+      )`;
+
+    const code = await transformCode(input, { ast: true });
+
+    expect(code).toMatchSnapshot();
+  });
 });
