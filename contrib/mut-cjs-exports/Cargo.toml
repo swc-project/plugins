@@ -1,0 +1,38 @@
+[package]
+authors     = ["magic-akari <akari.ccino@gmail.com>"]
+description = "[SWC plugin] mutable CJS exports"
+edition     = "2021"
+homepage    = "https://github.com/magic-akari/swc_mut_cjs_exports"
+keywords    = ["swc-plugin", "swc", "jest", "cjs", "commonjs"]
+license     = "MIT"
+name        = "swc_mut_cjs_exports"
+readme      = "README.md"
+repository  = "https://github.com/magic-akari/swc_mut_cjs_exports"
+version     = "10.7.0"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+rustc-hash = "2.1.1"
+swc_core = { version = "10.7.0", features = [
+  "ecma_ast",
+  "ecma_visit",
+  "swc_plugin",
+  "ecma_utils",
+  "swc_atoms",
+  "ecma_plugin_transform",
+] }
+
+
+[dev-dependencies]
+swc_core = { version = "10.7.0", features = [
+  "testing_transform",
+  "ecma_parser",
+] }
+testing = "4.0.0"
+
+[profile.release]
+codegen-units = 1
+opt-level     = "s"
+strip         = "debuginfo"
