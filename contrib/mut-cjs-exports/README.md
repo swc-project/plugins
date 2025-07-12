@@ -1,12 +1,6 @@
 # [SWC plugin] mutable CJS exports
 
-[![Crates.io](https://img.shields.io/crates/v/swc_mut_cjs_exports)](https://crates.io/crates/swc_mut_cjs_exports)
-[![npm](https://img.shields.io/npm/v/swc_mut_cjs_exports)](https://www.npmjs.com/package/swc_mut_cjs_exports)
-
-[![Test](https://github.com/magic-akari/swc_mut_cjs_exports/actions/workflows/test.yml/badge.svg)](https://github.com/magic-akari/swc_mut_cjs_exports/actions/workflows/test.yml)
-[![SWC Compat Test](https://github.com/magic-akari/swc_mut_cjs_exports/actions/workflows/swc-compat-test.yml/badge.svg)](https://github.com/magic-akari/swc_mut_cjs_exports/actions/workflows/swc-compat-test.yml)
-[![with @swc/core@latest](https://github.com/magic-akari/swc_mut_cjs_exports/actions/workflows/cron-latest.yml/badge.svg)](https://github.com/magic-akari/swc_mut_cjs_exports/actions/workflows/cron-latest.yml)
-[![with @swc/core@nightly](https://github.com/magic-akari/swc_mut_cjs_exports/actions/workflows/cron-nightly.yml/badge.svg)](https://github.com/magic-akari/swc_mut_cjs_exports/actions/workflows/cron-nightly.yml)
+Migrated from https://github.com/magic-akari/swc_mut_cjs_exports
 
 This is a SWC plugin to emit mutable CJS exports.
 
@@ -23,7 +17,7 @@ https://swc.rs/docs/plugin/selecting-swc-core
 install
 
 ```bash
-npm i -D jest @swc/core @swc/jest swc_mut_cjs_exports
+npm i -D jest @swc/core @swc/jest @swc-contrib/mut-cjs-exports
 ```
 
 ```js
@@ -34,7 +28,7 @@ const swcrc = JSON.parse(fs.readFileSync(".swcrc", "utf8"));
 
 // If you have other plugins, change this line.
 ((swcrc.jsc ??= {}).experimental ??= {}).plugins = [
-  ["swc_mut_cjs_exports", {}],
+  ["@swc-contrib/mut-cjs-exports", {}],
 ];
 
 module.exports = {
@@ -56,7 +50,7 @@ module.exports = {
       {
         jsc: {
           experimental: {
-            plugins: [["swc_mut_cjs_exports", {}]],
+            plugins: [["@swc-contrib/mut-cjs-exports", {}]],
           },
         },
       },
