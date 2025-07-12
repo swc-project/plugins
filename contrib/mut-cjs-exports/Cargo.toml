@@ -15,7 +15,7 @@ crate-type = ["cdylib", "lib"]
 
 [dependencies]
 rustc-hash = "2.1.1"
-swc_core = { version = "10.7.0", features = [
+swc_core = { workspace = true, features = [
   "ecma_ast",
   "ecma_visit",
   "swc_plugin",
@@ -26,11 +26,8 @@ swc_core = { version = "10.7.0", features = [
 
 
 [dev-dependencies]
-swc_core = { version = "10.7.0", features = [
-  "testing_transform",
-  "ecma_parser",
-] }
-testing = "4.0.0"
+swc_core = { workspace = true, features = ["testing_transform", "ecma_parser"] }
+testing  = "4.0.0"
 
 [profile.release]
 codegen-units = 1
