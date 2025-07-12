@@ -94,6 +94,31 @@ describe("formatjs swc plugin", () => {
     expect(output).not.toMatch(/description/);
   });
 
+  it("should transform to ast when enabled", async () => {
+    const input = `
+      import { defineMessage, formatMessage, FormattedMessage } from 'react-intl';
+
+      const helloWorldMessage = formatMessage({
+        defaultMessage: "Hello, world!",
+      });
+
+      const helloWorld = defineMessage({
+        defaultMessage: "Hello, world!",
+        description: "A simple greeting",
+      });
+
+      export function Greeting() {
+        return (
+          <FormattedMessage defaultMessage="Hello, world!" />
+        );
+      }
+    `;
+
+    const code = await transformCode(input, { ast: true });
+
+    expect(code).toMatchSnapshot();
+  });
+
   it("should handle formatMessage calls", async () => {
     const input = `
       import { useIntl } from 'react-intl';

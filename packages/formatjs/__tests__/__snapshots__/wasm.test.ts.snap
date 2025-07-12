@@ -50,3 +50,37 @@ formatMessage({
 });
 "
 `;
+
+exports[`formatjs swc plugin > should transform to ast when enabled 1`] = `
+"import { defineMessage, formatMessage, FormattedMessage } from 'react-intl';
+var helloWorldMessage = formatMessage({
+    id: "wVJ82J",
+    defaultMessage: [
+        {
+            "type": 0,
+            "value": "Hello, world!"
+        }
+    ]
+});
+var helloWorld = defineMessage({
+    id: "AlnfGI",
+    defaultMessage: [
+        {
+            "type": 0,
+            "value": "Hello, world!"
+        }
+    ]
+});
+export function Greeting() {
+    return /*#__PURE__*/ React.createElement(FormattedMessage, {
+        id: "wVJ82J",
+        defaultMessage: [
+            {
+                "type": 0,
+                "value": "Hello, world!"
+            }
+        ]
+    });
+}
+"
+`;

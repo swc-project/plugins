@@ -22,9 +22,9 @@ use swc_core::{
         ast::{
             ArrayLit, AssignExpr, AssignTarget, Bool, CallExpr, Callee, Expr, ExprOrSpread, Id,
             IdentName, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElementName,
-            JSXExpr, JSXNamespacedName, JSXOpeningElement, KeyValueProp, Lit, MemberProp,
-            ModuleItem, Number, ObjectLit, Pat, Prop, PropName, PropOrSpread, SimpleAssignTarget,
-            Str, VarDeclarator,
+            JSXExpr, JSXExprContainer, JSXNamespacedName, JSXOpeningElement, KeyValueProp, Lit,
+            MemberProp, ModuleItem, Number, ObjectLit, Pat, Prop, PropName, PropOrSpread,
+            SimpleAssignTarget, Str, VarDeclarator,
         },
         visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
     },
@@ -1255,21 +1255,26 @@ impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
                             if self.options.remove_default_message {
                                 // remove defaultMessage
                             } else {
-                                /*
-                                if (ast && descriptor.defaultMessage) {
-                                    defaultMessageAttr
-                                        .get('value')
-                                        .replaceWith(t.jsxExpressionContainer(t.nullLiteral()))
-                                    const valueAttr = defaultMessageAttr.get(
-                                        'value'
-                                    ) as NodePath<t.JSXExpressionContainer>
-                                    valueAttr
-                                        .get('expression')
-                                        .replaceWithSourceString(
-                                        JSON.stringify(parse(descriptor.defaultMessage))
-                                        )
+                                let mut attr = attr.to_owned();
+                                if let Some(descriptor_default_message) =
+                                    descriptor.default_message.as_ref()
+                                {
+                                    if self.options.ast {
+                                        let mut parser = Parser::new(
+                                            descriptor_default_message,
+                                            &ParserOptions::new(false, false, false, false, None),
+                                        );
+                                        if let Ok(parsed) = parser.parse() {
+                                            let v = serde_json::to_value(&parsed).unwrap();
+                                            attr.value = Some(JSXAttrValue::JSXExprContainer(
+                                                JSXExprContainer {
+                                                    span: DUMMY_SP,
+                                                    expr: JSXExpr::Expr(json_value_to_expr(&v)),
+                                                },
+                                            ));
+                                        }
                                     }
-                                 */
+                                }
                                 attrs.push(JSXAttrOrSpread::JSXAttr(attr))
                             }
                         }
