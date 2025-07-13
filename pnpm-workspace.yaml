@@ -1,2 +1,3 @@
 packages:
+  - contrib/*
   - packages/*

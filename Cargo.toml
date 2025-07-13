@@ -1,5 +1,5 @@
 [workspace]
-members = ["xtask", "crates/*", "packages/*"]
+members = ["xtask", "crates/*", "packages/*", "contrib/*"]
 
 
 resolver = "2"
@@ -29,9 +29,9 @@ digest                      = "0.10"
 handlebars                  = "5.1.2"
 hex                         = "0.4.3"
 langtag                     = "0.3.2"
-md-5                        = "0.10"
 lightningcss                = "1.0.0-alpha.67"
 magic-crypt                 = "3.1.13"
+md-5                        = "0.10"
 once_cell                   = "1.19.0"
 parcel_selectors            = "0.28.0"
 phf                         = "0.11.2"
