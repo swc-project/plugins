@@ -1,5 +1,11 @@
 # @swc/plugin-formatjs
 
+## 5.1.2
+
+### Patch Changes
+
+- 467573b: fix(formatjs): Fix ast transform in jsx
+
 ## 5.1.1
 
 ### Patch Changes
