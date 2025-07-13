@@ -451,4 +451,61 @@ describe("formatjs swc plugin", () => {
 
     expect(code).toMatchSnapshot();
   });
+
+  it("should generate same id even if description is an template literal string", async () => {
+    const input1 = `
+      import { FormattedMessage } from 'react-intl';
+
+      export function Greeting() {
+        return (
+          <FormattedMessage
+            defaultMessage="Hello, World!"
+            description="Greeting message"
+          />
+        );
+      }
+    `;
+
+    const input2 = `
+      import { FormattedMessage } from 'react-intl';
+
+      export function Greeting() {
+        return (
+          <FormattedMessage
+            defaultMessage="Hello, World!"
+            description={\`Greeting message\`}
+          />
+        );
+      }
+    `;
+
+    const input3 = `
+      import { FormattedMessage } from 'react-intl';
+
+      const description = \`Greeting message\`;
+
+      export function Greeting() {
+        return (
+          <FormattedMessage
+            defaultMessage="Hello, World!"
+            description={description}
+          />
+        );
+      }
+    `;
+
+    const code1 = await transformCode(input1, {
+      idInterpolationPattern: "[sha512:contenthash:base64:6]",
+    });
+    const code2 = await transformCode(input2, {
+      idInterpolationPattern: "[sha512:contenthash:base64:6]",
+    });
+    const code3 = await transformCode(input3, {
+      idInterpolationPattern: "[sha512:contenthash:base64:6]",
+    });
+
+    expect(code1).toMatch(/id: "Ae\/S0P"/);
+    expect(code2).toMatch(/id: "Ae\/S0P"/);
+    expect(code3).toMatch(/id: "Ae\/S0P"/);
+  });
 });

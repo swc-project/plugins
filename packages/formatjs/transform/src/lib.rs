@@ -24,7 +24,7 @@ use swc_core::{
             IdentName, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElementName,
             JSXExpr, JSXExprContainer, JSXNamespacedName, JSXOpeningElement, KeyValueProp, Lit,
             MemberProp, ModuleItem, Number, ObjectLit, Pat, Prop, PropName, PropOrSpread,
-            SimpleAssignTarget, Str, VarDeclarator,
+            SimpleAssignTarget, Str, Tpl, VarDeclarator,
         },
         visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
     },
@@ -171,21 +171,7 @@ fn get_jsx_message_descriptor_value(
             match &container.expr {
                 JSXExpr::Expr(expr) => match &**expr {
                     Expr::Lit(Lit::Str(s)) => Some(s.value.to_string()),
-                    Expr::Tpl(tpl) => {
-                        //NOTE: This doesn't fully evaluate templates
-                        Some(
-                            tpl.quasis
-                                .iter()
-                                .map(|q| {
-                                    q.cooked
-                                        .as_ref()
-                                        .map(|v| v.to_string())
-                                        .unwrap_or("".to_string())
-                                })
-                                .collect::<Vec<String>>()
-                                .join(""),
-                        )
-                    }
+                    Expr::Tpl(tpl) => Some(evaluate_template_literal_string(tpl)),
                     _ => None,
                 },
                 _ => None,
@@ -754,6 +740,20 @@ fn assert_object_expression(expr: &Option<&mut Expr>, callee: &Callee) {
     }
 }
 
+fn evaluate_template_literal_string(tpl: &Tpl) -> String {
+    //NOTE: This doesn't fully evaluate templates
+    tpl.quasis
+        .iter()
+        .map(|q| {
+            q.cooked
+                .as_ref()
+                .map(|v| v.to_string())
+                .unwrap_or("".to_string())
+        })
+        .collect::<Vec<String>>()
+        .join("")
+}
+
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct ExtractedMessage {
@@ -894,6 +894,9 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
                         Expr::Object(object_lit) => {
                             Some(MessageDescriptionValue::Obj(object_lit.clone()))
                         }
+                        Expr::Tpl(tpl) => Some(MessageDescriptionValue::Str(
+                            evaluate_template_literal_string(tpl),
+                        )),
                         // Handle React Compiler optimized identifiers
                         Expr::Ident(ident) => {
                             if let Some(resolved_expr) = self.resolve_identifier(ident) {
@@ -904,6 +907,9 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
                                     Expr::Lit(Lit::Str(s)) => {
                                         Some(MessageDescriptionValue::Str(s.value.to_string()))
                                     }
+                                    Expr::Tpl(tpl) => Some(MessageDescriptionValue::Str(
+                                        evaluate_template_literal_string(tpl),
+                                    )),
                                     _ => None,
                                 }
                             } else {
