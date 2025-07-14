@@ -17,7 +17,7 @@ use swc_core::{
 };
 
 fn capetalize(s: &str) -> String {
-    format!("{}{}", (&s[..1].to_string()).to_uppercase(), &s[1..])
+    format!("{}{}", &s[..1].to_uppercase(), &s[1..])
 }
 
 #[cfg(test)]
@@ -44,10 +44,7 @@ impl GraphQLVisitor {
     }
 
     fn handle_error(&self, details: &str, span: Span) {
-        let message = format!(
-            "@graphql-codegen/client-preset-swc-plugin details: {}",
-            details
-        );
+        let message = format!("@graphql-codegen/client-preset-swc-plugin details: {details}");
         HANDLER.with(|handler| handler.struct_span_err(span, &message).emit());
     }
 
@@ -122,13 +119,13 @@ impl VisitMut for GraphQLVisitor {
                         Err(e) => {
                             // Currently the parser outputs a string like: "query parse error", so
                             // we add "GraphQL" to the beginning
-                            let error = format!("GraphQL {}", e);
+                            let error = format!("GraphQL {e}");
                             self.handle_error(error.as_str(), quasis[0].span);
                             return;
                         }
                     };
 
-                    let first_definition = match graphql_ast.definitions.get(0) {
+                    let first_definition = match graphql_ast.definitions.first() {
                         Some(definition) => definition,
                         None => return,
                     };
