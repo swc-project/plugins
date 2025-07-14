@@ -7,7 +7,7 @@
     "prepack": "pnpm run build",
     "build": "cargo build --release -p swc_plugin_graphql_codegen_client_preset --target wasm32-wasip1 --release && cp ../../target/wasm32-wasip1/release/swc_plugin_graphql_codegen_client_preset.wasm .",
     "build:debug": "cargo build -p swc_plugin_graphql_codegen_client_preset --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/debug/swc_plugin_graphql_codegen_client_preset.wasm .",
-    "test": "pnpm run build:debug && vitest run --testTimeout=0"
+    "test": "pnpm run build:debug && cargo test"
   },
   "homepage": "https://the-guild.dev/graphql/codegen/plugins/presets/preset-client",
   "repository": {

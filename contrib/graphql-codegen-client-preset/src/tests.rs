@@ -79,12 +79,9 @@ fn import_files_from_other_directory(input_path: PathBuf) {
 
 test!(
     Default::default(),
-    |_| as_folder(get_test_code_visitor()),
+    |_| visit_mut_pass(get_test_code_visitor()),
     expect_normal_declarations_to_not_panic_and_to_be_ignored,
     // Example from Next.js' server.js
-    r#"const emitter = (0, _mitt).default();
-    const looseToArray = (input)=>[].slice.call(input);
-    const targetTag = document.querySelector(`style[data-n-href="${href}"]`);"#,
     r#"const emitter = (0, _mitt).default();
     const looseToArray = (input)=>[].slice.call(input);
     const targetTag = document.querySelector(`style[data-n-href="${href}"]`);"#
