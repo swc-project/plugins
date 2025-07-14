@@ -2,9 +2,9 @@ use std::path::PathBuf;
 
 use swc_core::{
     ecma::{
-        parser::{Syntax, TsConfig},
+        parser::{Syntax, TsSyntax},
         transforms::testing::{test, test_fixture},
-        visit::as_folder,
+        visit::visit_mut_pass,
     },
     testing,
 };
@@ -29,12 +29,12 @@ fn import_files_from_same_directory(input_path: PathBuf) {
     let output_path = input_path.with_extension("js");
 
     test_fixture(
-        Syntax::Typescript(TsConfig {
+        Syntax::Typescript(TsSyntax {
             tsx: input_path.to_string_lossy().ends_with(".tsx"),
             ..Default::default()
         }),
         &|_metadata| {
-            as_folder(GraphQLVisitor::new(GraphQLCodegenOptions {
+            visit_mut_pass(GraphQLVisitor::new(GraphQLCodegenOptions {
                 filename: relative_file_path.to_string_lossy().to_string(),
                 cwd: cwd.to_string_lossy().to_string(),
                 artifact_directory: "./tests/fixtures".to_string(),
@@ -59,12 +59,12 @@ fn import_files_from_other_directory(input_path: PathBuf) {
     let output_path = input_path.with_extension("other-dir.js");
 
     test_fixture(
-        Syntax::Typescript(TsConfig {
+        Syntax::Typescript(TsSyntax {
             tsx: input_path.to_string_lossy().ends_with(".tsx"),
             ..Default::default()
         }),
         &|_metadata| {
-            as_folder(GraphQLVisitor::new(GraphQLCodegenOptions {
+            visit_mut_pass(GraphQLVisitor::new(GraphQLCodegenOptions {
                 filename: relative_file_path.to_string_lossy().to_string(),
                 cwd: cwd.to_string_lossy().to_string(),
                 artifact_directory: cwd.to_string_lossy().to_string(),
