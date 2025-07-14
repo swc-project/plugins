@@ -2,10 +2,12 @@
   "name": "@swc-contrib/plugin-graphql-codegen-client-preset",
   "version": "0.0.0",
   "description": "A SWC plugin for https://the-guild.dev/graphql/codegen/plugins/presets/preset-client",
-  "main": "swc_plugin.wasm",
+  "main": "swc_plugin_graphql_codegen_client_preset.wasm",
   "scripts": {
-    "build-wasm": "cargo build --target wasm32-wasi --release && cp target/wasm32-wasi/release/swc_plugin.wasm ./",
-    "debug": "cargo build --target wasm32-wasi && cp target/wasm32-wasi/debug/swc_plugin.wasm ./"
+    "prepack": "pnpm run build",
+    "build": "cargo build --release -p swc_plugin_graphql_codegen_client_preset --target wasm32-wasip1 --release && cp ../../target/wasm32-wasip1/release/swc_plugin_graphql_codegen_client_preset.wasm .",
+    "build:debug": "cargo build -p swc_plugin_graphql_codegen_client_preset --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/debug/swc_plugin_graphql_codegen_client_preset.wasm .",
+    "test": "pnpm run build:debug && vitest run --testTimeout=0"
   },
   "homepage": "https://the-guild.dev/graphql/codegen/plugins/presets/preset-client",
   "repository": {
@@ -23,7 +25,7 @@
   ],
   "license": "MIT",
   "files": [
-    "swc_plugin.wasm"
+    "swc_plugin_graphql_codegen_client_preset.wasm"
   ],
   "type": "module",
   "engines": {

@@ -33,6 +33,8 @@ importers:
         specifier: ^3.0.7
         version: 3.0.7(@types/node@22.13.9)(yaml@2.7.0)
 
+  contrib/graphql-codegen-client-preset: {}
+
   contrib/mut-cjs-exports:
     devDependencies:
       '@swc/core':
