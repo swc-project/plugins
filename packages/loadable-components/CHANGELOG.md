@@ -1,5 +1,11 @@
 # @swc/plugin-loadable-components
 
+## 7.0.2
+
+### Patch Changes
+
+- 85719ca: Update swc_core to v32
+
 ## 7.0.1
 
 ### Patch Changes

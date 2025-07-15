@@ -23,6 +23,12 @@ or
 
 # @swc/plugin-react-remove-properties
 
+## 8.0.4
+
+### Patch Changes
+
+- 85719ca: Update swc_core to v32
+
 ## 8.0.3
 
 ### Patch Changes

@@ -148,14 +148,11 @@ impl VisitMut for TransformVisitor {
         match n {
             JSXElementName::Ident(ref_ident) => {
                 if self.export_decl_id.contains(&ref_ident.to_id()) {
-                    *n = JSXElementName::JSXMemberExpr(
-                        JSXMemberExpr {
-                            span: DUMMY_SP,
-                            obj: self.exports().into(),
-                            prop: ref_ident.clone().into(),
-                        }
-                        .into(),
-                    );
+                    *n = JSXElementName::JSXMemberExpr(JSXMemberExpr {
+                        span: DUMMY_SP,
+                        obj: self.exports().into(),
+                        prop: ref_ident.clone().into(),
+                    });
                 }
             }
             _ => n.visit_mut_children_with(self),
