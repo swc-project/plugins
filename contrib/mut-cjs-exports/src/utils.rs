@@ -126,14 +126,14 @@ pub(crate) fn emit_export_stmts(exports: Ident, export: Export) -> Vec<Stmt> {
 pub(crate) fn key_from_export_name(n: &ModuleExportName) -> (Atom, Span) {
     match n {
         ModuleExportName::Ident(ident) => (ident.sym.clone(), ident.span),
-        ModuleExportName::Str(str) => (str.value.clone(), str.span),
+        ModuleExportName::Str(s) => (s.value.clone(), s.span),
     }
 }
 
 pub(crate) fn local_ident_from_export_name(n: ModuleExportName) -> Ident {
     let name = match n {
         ModuleExportName::Ident(ident) => ident.sym,
-        ModuleExportName::Str(str) => str.value,
+        ModuleExportName::Str(s) => s.value,
     };
 
     match Ident::verify_symbol(&name) {
