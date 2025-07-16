@@ -95,7 +95,7 @@ impl VisitMut for GraphQLVisitor {
                     match callee.as_expr() {
                         Some(expr_box) => match &**expr_box {
                             Expr::Ident(ident) => {
-                                if &ident.sym != self.options.gql_tag_name.as_str() {
+                                if ident.sym != *self.options.gql_tag_name {
                                     return;
                                 }
                             }
