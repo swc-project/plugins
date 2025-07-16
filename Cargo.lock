@@ -2837,7 +2837,7 @@ dependencies = [
  "swc_plugin_macro",
  "swc_plugin_proxy",
  "swc_transform_common",
- "testing 14.0.1",
+ "testing",
  "vergen",
 ]
 
