@@ -21,6 +21,12 @@ or
 
 # @swc/plugin-remove-console
 
+## 8.0.5
+
+### Patch Changes
+
+- 85719ca: Update swc_core to v32
+
 ## 8.0.4
 
 ### Patch Changes

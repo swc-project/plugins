@@ -1,5 +1,11 @@
 # @swc/plugin-swc-sdk
 
+## 8.0.2
+
+### Patch Changes
+
+- 85719ca: Update swc_core to v32
+
 ## 8.0.1
 
 ### Patch Changes

@@ -8,13 +8,13 @@ license     = "MIT"
 name        = "swc_mut_cjs_exports"
 readme      = "README.md"
 repository  = "https://github.com/magic-akari/swc_mut_cjs_exports"
-version     = "10.7.0"
+version     = "11.0.0"
 
 [lib]
 crate-type = ["cdylib", "lib"]
 
 [dependencies]
-rustc-hash = "2.1.1"
+rustc-hash = { workspace = true }
 swc_core = { workspace = true, features = [
   "ecma_ast",
   "ecma_visit",
@@ -27,9 +27,4 @@ swc_core = { workspace = true, features = [
 
 [dev-dependencies]
 swc_core = { workspace = true, features = ["testing_transform", "ecma_parser"] }
-testing  = "4.0.0"
-
-[profile.release]
-codegen-units = 1
-opt-level     = "s"
-strip         = "debuginfo"
+testing  = { workspace = true }
