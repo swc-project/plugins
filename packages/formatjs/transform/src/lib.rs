@@ -744,13 +744,8 @@ fn evaluate_template_literal_string(tpl: &Tpl) -> String {
     //NOTE: This doesn't fully evaluate templates
     tpl.quasis
         .iter()
-        .map(|q| {
-            q.cooked
-                .as_ref()
-                .map(|v| v.to_string())
-                .unwrap_or("".to_string())
-        })
-        .collect::<Vec<String>>()
+        .map(|q| q.cooked.as_deref().unwrap_or_default())
+        .collect::<Vec<&str>>()
         .join("")
 }
 
