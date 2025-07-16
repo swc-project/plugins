@@ -1,0 +1,25 @@
+[package]
+description = "SWC plugin for https://the-guild.dev/graphql/codegen/plugins/presets/preset-client"
+edition     = "2021"
+license     = "MIT"
+name        = "swc_plugin_graphql_codegen_client_preset"
+publish     = false
+version     = "0.2.0"
+
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+graphql-parser = "0.4.0"
+pathdiff = "0.2.1"
+serde = "1"
+serde_json = "1.0.105"
+swc_core = { workspace = true, features = [
+  "ecma_plugin_transform",
+  "ecma_visit",
+  "ecma_utils",
+  "ecma_parser",
+  "common",
+  "testing",
+] }

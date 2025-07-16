@@ -18,3 +18,4 @@ Plugins for SWC, written in Rust
 - [`transform-imports`](packages/transform-imports)
 - [`prefresh`](packages/prefresh) for preact refresh transformation.
 - [`formatjs`](packages/formatjs)
+- [`graphql-codegen-client-preset`](contrib/graphql-codegen-client-preset/)

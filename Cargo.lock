@@ -331,9 +331,9 @@ dependencies = [
 
 [[package]]
 name = "bytecheck"
-version = "0.6.12"
+version = "0.6.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "23cdc57ce23ac53c931e88a43d06d070a6fd142f2617be5855eb75efc9beb1c2"
+checksum = "13fe11640a23eb24562225322cd3e452b93a3d4091d62fab69c70542fcd17d1f"
 dependencies = [
  "bytecheck_derive 0.6.12",
  "ptr_meta 0.1.4",
@@ -526,6 +526,16 @@ name = "colorchoice"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0b6a852b24ab71dffc585bcb46eaf7959d175cb865a7152e35b348d1b2960422"
+
+[[package]]
+name = "combine"
+version = "4.6.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ba5a308b75df32fe02788e748662718f03fde005016435c444eea572398219fd"
+dependencies = [
+ "bytes",
+ "memchr",
+]
 
 [[package]]
 name = "compact_str"
@@ -1009,6 +1019,16 @@ dependencies = [
  "bstr",
  "regex-automata 0.4.6",
  "regex-syntax 0.8.3",
+]
+
+[[package]]
+name = "graphql-parser"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7a818c0d883d7c0801df27be910917750932be279c7bc82dc541b8769425f409"
+dependencies = [
+ "combine",
+ "thiserror",
 ]
 
 [[package]]
@@ -1764,7 +1784,7 @@ checksum = "485b74d7218068b2b7c0e3ff12fbc61ae11d57cb5d8224f525bd304c6be05bbb"
 dependencies = [
  "base64-simd 0.7.0",
  "data-url",
- "rkyv 0.7.45",
+ "rkyv 0.7.41",
  "serde",
  "serde_json",
  "vlq",
@@ -2218,7 +2238,7 @@ version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "71fe3824f5629716b1589be05dacd749f6aa084c87e00e016714a8cdfccc997c"
 dependencies = [
- "bytecheck 0.6.12",
+ "bytecheck 0.6.10",
 ]
 
 [[package]]
@@ -2232,20 +2252,16 @@ dependencies = [
 
 [[package]]
 name = "rkyv"
-version = "0.7.45"
+version = "0.7.41"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9008cd6385b9e161d8229e1f6549dd23c3d022f132a2ea37ac3a10ac4935779b"
+checksum = "21499ed91807f07ae081880aabb2ccc0235e9d88011867d984525e9a4c3cfa3e"
 dependencies = [
- "bitvec",
- "bytecheck 0.6.12",
- "bytes",
+ "bytecheck 0.6.10",
  "hashbrown 0.12.3",
  "ptr_meta 0.1.4",
  "rend 0.4.2",
  "rkyv_derive 0.7.45",
  "seahash",
- "tinyvec",
- "uuid",
 ]
 
 [[package]]
@@ -2821,6 +2837,7 @@ dependencies = [
  "swc_plugin_macro",
  "swc_plugin_proxy",
  "swc_transform_common",
+ "testing",
  "vergen",
 ]
 
@@ -3457,6 +3474,17 @@ dependencies = [
  "serde_json",
  "swc_core",
  "swc_formatjs_transform",
+]
+
+[[package]]
+name = "swc_plugin_graphql_codegen_client_preset"
+version = "0.2.0"
+dependencies = [
+ "graphql-parser",
+ "pathdiff",
+ "serde",
+ "serde_json",
+ "swc_core",
 ]
 
 [[package]]
