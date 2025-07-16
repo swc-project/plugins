@@ -20,6 +20,7 @@ fn get_test_code_visitor() -> GraphQLVisitor {
     })
 }
 
+#[cfg(not(target_os = "windows"))]
 #[testing::fixture("tests/fixtures/simple-uppercase-operation-name.ts")]
 fn import_files_from_same_directory(input_path: PathBuf) {
     let cwd = std::env::current_dir().unwrap();
@@ -47,6 +48,7 @@ fn import_files_from_same_directory(input_path: PathBuf) {
     );
 }
 
+#[cfg(not(target_os = "windows"))]
 #[testing::fixture("tests/fixtures/simple-uppercase-operation-name.ts")]
 fn import_files_from_other_directory(input_path: PathBuf) {
     // Let's do the same test as for the babel plugin, assume we are in the tests
