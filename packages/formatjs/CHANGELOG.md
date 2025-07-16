@@ -1,5 +1,11 @@
 # @swc/plugin-formatjs
 
+## 5.1.4
+
+### Patch Changes
+
+- 9a27285: fix(formatjs): Fix description extract for the template literal string
+
 ## 5.1.3
 
 ### Patch Changes
