@@ -4,6 +4,18 @@ FormatJS SWC plugin, maintained by SWC team.
 
 # @swc/plugin-formatjs
 
+## 6.0.0
+
+### Major Changes
+
+- 562e755: Update swc_core to v33
+
+## 5.1.4
+
+### Patch Changes
+
+- 9a27285: fix(formatjs): Fix description extract for the template literal string
+
 ## 5.1.3
 
 ### Patch Changes
