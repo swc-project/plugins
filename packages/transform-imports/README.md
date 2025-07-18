@@ -18,6 +18,12 @@
 
 # @swc/plugin-transform-imports
 
+## 9.0.0
+
+### Major Changes
+
+- 562e755: Update swc_core to v33
+
 ## 8.0.5
 
 ### Patch Changes
