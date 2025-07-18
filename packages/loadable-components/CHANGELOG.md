@@ -1,5 +1,11 @@
 # @swc/plugin-loadable-components
 
+## 8.0.0
+
+### Major Changes
+
+- 562e755: Update swc_core to v33
+
 ## 7.0.2
 
 ### Patch Changes
