@@ -1,5 +1,11 @@
 # @swc/plugin-formatjs
 
+## 6.0.1
+
+### Patch Changes
+
+- df280ad: Update swc_core to v34.0.0
+
 ## 6.0.0
 
 ### Major Changes
