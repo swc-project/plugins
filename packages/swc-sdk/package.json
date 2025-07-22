@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-swc-sdk",
-  "version": "9.0.0",
+  "version": "9.0.1",
   "description": "SWC plugin for swc-sdk",
   "main": "swc_plugin_swc_sdk.wasm",
   "scripts": {

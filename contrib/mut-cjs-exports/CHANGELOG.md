@@ -1,5 +1,11 @@
 # @swc-contrib/mut-cjs-exports
 
+## 11.0.1
+
+### Patch Changes
+
+- df280ad: Update swc_core to v34.0.0
+
 ## 11.0.0
 
 ### Major Changes

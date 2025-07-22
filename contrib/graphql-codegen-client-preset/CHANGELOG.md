@@ -1,5 +1,11 @@
 # @swc-contrib/plugin-graphql-codegen-client-preset
 
+## 0.4.1
+
+### Patch Changes
+
+- df280ad: Update swc_core to v34.0.0
+
 ## 0.4.0
 
 ### Minor Changes
