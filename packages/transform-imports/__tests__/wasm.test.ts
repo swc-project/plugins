@@ -61,6 +61,14 @@ const transformCode = async (
       handleDefaultImport: false,
       handleNamespaceImport: false,
     },
+    antd: {
+      transform: "antd/lib/{{ kebabCase member }}",
+      prevent_full_import: false,
+      skip_default_conversion: false,
+      handle_default_import: true,
+      handle_namespace_import: true,
+      style: "style",
+    },
   },
 ) => {
   return transform(code, {

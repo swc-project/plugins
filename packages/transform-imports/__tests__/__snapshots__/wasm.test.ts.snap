@@ -1,5 +1,15 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`Should load transform-imports wasm plugin correctly > Should transform antd correctly 1`] = `
+"import Button from "antd/lib/button";
+import "antd/lib/button/style";
+import Card from "antd/lib/card";
+import "antd/lib/card/style";
+import InputNumber from "antd/lib/input-number";
+import "antd/lib/input-number/style";
+"
+`;
+
 exports[`Should load transform-imports wasm plugin correctly > Should transform default correctly 1`] = `
 "import defaultExport from "my-default";
 "

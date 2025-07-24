@@ -31,6 +31,8 @@ pub struct PackageConfig {
     pub handle_namespace_import: bool,
     #[serde(default)]
     pub skip_default_conversion: bool,
+    #[serde(default)]
+    pub style: Option<String>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -239,8 +241,10 @@ impl Rewriter<'_> {
         if old_decl.type_only || old_decl.with.is_some() {
             return vec![old_decl.clone()];
         }
+        let with_style = self.config.style.as_ref().is_some();
 
-        let mut out: Vec<ImportDecl> = Vec::with_capacity(old_decl.specifiers.len());
+        let mut out: Vec<ImportDecl> =
+            Vec::with_capacity(old_decl.specifiers.len() * (if with_style { 2 } else { 1 }));
 
         for spec in &old_decl.specifiers {
             match spec {
@@ -271,6 +275,19 @@ impl Rewriter<'_> {
                         with: None,
                         phase: Default::default(),
                     });
+                    if with_style {
+                        let style = self.config.style.as_ref().unwrap();
+                        let new_path_with_style =
+                            self.new_path(Some(&format!("{name_str}/{style}")));
+                        out.push(ImportDecl {
+                            specifiers: vec![],
+                            src: Box::new(Str::from(new_path_with_style.as_ref())),
+                            span: old_decl.span,
+                            type_only: false,
+                            with: None,
+                            phase: Default::default(),
+                        });
+                    }
                 }
                 ImportSpecifier::Namespace(ns_spec) if self.config.handle_namespace_import => {
                     let name_str = ns_spec.local.as_ref();

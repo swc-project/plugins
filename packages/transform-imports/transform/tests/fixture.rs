@@ -25,6 +25,7 @@ fn modularize_imports_fixture(input: PathBuf) {
                     skip_default_conversion: false,
                     handle_default_import: true,
                     handle_namespace_import: true,
+                    style: None,
                 },
             ),
             (
@@ -35,6 +36,7 @@ fn modularize_imports_fixture(input: PathBuf) {
                     skip_default_conversion: false,
                     handle_default_import: true,
                     handle_namespace_import: true,
+                    style: None,
                 },
             ),
             (
@@ -45,6 +47,7 @@ fn modularize_imports_fixture(input: PathBuf) {
                     skip_default_conversion: true,
                     handle_default_import: true,
                     handle_namespace_import: true,
+                    style: None,
                 },
             ),
             (
@@ -55,6 +58,7 @@ fn modularize_imports_fixture(input: PathBuf) {
                     skip_default_conversion: true,
                     handle_default_import: true,
                     handle_namespace_import: true,
+                    style: None,
                 },
             ),
             (
@@ -82,6 +86,7 @@ fn modularize_imports_fixture(input: PathBuf) {
                     skip_default_conversion: true,
                     handle_default_import: true,
                     handle_namespace_import: true,
+                    style: None,
                 },
             ),
             (
@@ -92,6 +97,7 @@ fn modularize_imports_fixture(input: PathBuf) {
                     skip_default_conversion: true,
                     handle_default_import: true,
                     handle_namespace_import: true,
+                    style: None,
                 },
             ),
             (
@@ -102,6 +108,18 @@ fn modularize_imports_fixture(input: PathBuf) {
                     skip_default_conversion: false,
                     handle_default_import: false,
                     handle_namespace_import: false,
+                    style: None,
+                },
+            ),
+            (
+                "antd".to_string(),
+                PackageConfig {
+                    transform: "antd/lib/{{ kebabCase member }}".into(),
+                    prevent_full_import: false,
+                    skip_default_conversion: false,
+                    handle_default_import: true,
+                    handle_namespace_import: true,
+                    style: Some("style".to_string()),
                 },
             ),
         ]
