@@ -27,7 +27,7 @@ struct Analyzer<'a> {
 }
 
 impl Visit for Analyzer<'_> {
-    noop_visit_type!();
+    noop_visit_type!(fail);
 
     fn visit_var_declarator(&mut self, v: &VarDeclarator) {
         v.visit_children_with(self);

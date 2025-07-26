@@ -25,7 +25,7 @@ pub struct TransformVisitor {
 }
 
 impl VisitMut for TransformVisitor {
-    noop_visit_mut_type!();
+    noop_visit_mut_type!(fail);
 
     fn visit_mut_script(&mut self, _: &mut Script) {
         // skip

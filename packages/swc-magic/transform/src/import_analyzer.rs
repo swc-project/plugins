@@ -55,7 +55,7 @@ struct Analyzer<'a> {
 }
 
 impl Visit for Analyzer<'_> {
-    noop_visit_type!();
+    noop_visit_type!(fail);
 
     fn visit_import_decl(&mut self, import: &ImportDecl) {
         self.data.imported_modules.insert(import.src.value.clone());

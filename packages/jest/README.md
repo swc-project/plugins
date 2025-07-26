@@ -2,6 +2,12 @@
 
 # @swc/plugin-jest
 
+## 9.0.2
+
+### Patch Changes
+
+- 27cae40: Disallow typescript types to shrink size
+
 ## 9.0.1
 
 ### Patch Changes

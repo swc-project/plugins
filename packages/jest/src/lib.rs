@@ -83,7 +83,7 @@ impl Jest {
 }
 
 impl VisitMut for Jest {
-    noop_visit_mut_type!();
+    noop_visit_mut_type!(fail);
 
     fn visit_mut_stmts(&mut self, stmts: &mut Vec<Stmt>) {
         self.visit_mut_stmt_like(stmts)

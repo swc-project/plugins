@@ -379,7 +379,7 @@ impl TransformImports<'_> {
 }
 
 impl VisitMut for TransformImports<'_> {
-    noop_visit_mut_type!();
+    noop_visit_mut_type!(fail);
 
     fn visit_mut_call_expr(&mut self, call: &mut CallExpr) {
         call.visit_mut_children_with(self);

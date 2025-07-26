@@ -226,7 +226,7 @@ impl DisplayNameAndId<'_> {
 }
 
 impl VisitMut for DisplayNameAndId<'_> {
-    noop_visit_mut_type!();
+    noop_visit_mut_type!(fail);
 
     fn visit_mut_assign_expr(&mut self, e: &mut AssignExpr) {
         let old = self.cur_display_name.clone();
