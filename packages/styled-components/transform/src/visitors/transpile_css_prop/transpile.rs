@@ -62,7 +62,7 @@ impl TranspileCssProp<'_> {
 }
 
 impl VisitMut for TranspileCssProp<'_> {
-    noop_visit_mut_type!();
+    noop_visit_mut_type!(fail);
 
     fn visit_mut_jsx_element(&mut self, elem: &mut JSXElement) {
         elem.visit_mut_children_with(self);

@@ -1108,7 +1108,7 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
 }
 
 impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
-    noop_visit_mut_type!();
+    noop_visit_mut_type!(fail);
 
     fn visit_mut_var_declarator(&mut self, var_declarator: &mut VarDeclarator) {
         var_declarator.visit_mut_children_with(self);

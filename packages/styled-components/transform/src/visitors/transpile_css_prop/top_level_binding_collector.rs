@@ -15,7 +15,7 @@ impl TopLevelBindingCollector {
 }
 
 impl Visit for TopLevelBindingCollector {
-    noop_visit_type!();
+    noop_visit_type!(fail);
 
     fn visit_class_decl(&mut self, node: &ClassDecl) {
         self.add(&node.ident.to_id());

@@ -26,7 +26,7 @@ impl<C> VisitMut for PureAnnotation<'_, C>
 where
     C: Comments,
 {
-    noop_visit_mut_type!();
+    noop_visit_mut_type!(fail);
 
     fn visit_mut_expr(&mut self, expr: &mut Expr) {
         expr.visit_mut_children_with(self);
