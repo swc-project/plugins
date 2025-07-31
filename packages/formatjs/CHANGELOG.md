@@ -1,5 +1,11 @@
 # @swc/plugin-formatjs
 
+## 6.0.3
+
+### Patch Changes
+
+- 08db5e1: docs(formatjs): add Usage to readme
+
 ## 6.0.2
 
 ### Patch Changes
