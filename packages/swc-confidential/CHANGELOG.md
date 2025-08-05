@@ -1,5 +1,11 @@
 # @swc/plugin-swc-confidential
 
+## 8.0.2
+
+### Patch Changes
+
+- 9b08ff7: Update swc_core to v35
+
 ## 8.0.1
 
 ### Patch Changes
