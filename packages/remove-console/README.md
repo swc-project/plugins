@@ -21,6 +21,12 @@ or
 
 # @swc/plugin-remove-console
 
+## 9.0.2
+
+### Patch Changes
+
+- 9b08ff7: Update swc_core to v35
+
 ## 9.0.1
 
 ### Patch Changes
