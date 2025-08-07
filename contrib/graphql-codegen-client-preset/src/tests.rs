@@ -88,3 +88,59 @@ test!(
     const looseToArray = (input)=>[].slice.call(input);
     const targetTag = document.querySelector(`style[data-n-href="${href}"]`);"#
 );
+
+test!(
+    Default::default(),
+    |_| visit_mut_pass(get_test_code_visitor()),
+    preserves_use_cache_directive,
+    r#""use cache";
+
+import gql from "gql-tag";
+
+const GetUser = gql(`
+  query GetUser {
+    user {
+      id
+      name
+    }
+  }
+`);
+
+const CreatePost = gql(`
+  mutation CreatePost($input: PostInput!) {
+    createPost(input: $input) {
+      id
+      title
+    }
+  }
+`);"#
+);
+
+test!(
+    Default::default(),
+    |_| visit_mut_pass(get_test_code_visitor()),
+    preserves_multiple_directives,
+    r#""use strict";
+"use cache";
+
+import gql from "gql-tag";
+
+const GetData = gql(`
+  query GetData {
+    data
+  }
+`);"#
+);
+
+test!(
+    Default::default(),
+    |_| visit_mut_pass(get_test_code_visitor()),
+    works_without_directives,
+    r#"import gql from "gql-tag";
+
+const GetData = gql(`
+  query GetData {
+    data
+  }
+`);"#
+);
