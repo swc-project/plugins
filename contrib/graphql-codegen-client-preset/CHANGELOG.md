@@ -1,5 +1,11 @@
 # @swc-contrib/plugin-graphql-codegen-client-preset
 
+## 0.4.3
+
+### Patch Changes
+
+- 5c67c0f: Add import below directives
+
 ## 0.4.2
 
 ### Patch Changes
