@@ -20,11 +20,11 @@ use swc_core::{
     },
     ecma::{
         ast::{
-            ArrayLit, AssignExpr, AssignTarget, Bool, CallExpr, Callee, Expr, ExprOrSpread, Id,
-            IdentName, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElementName,
-            JSXExpr, JSXExprContainer, JSXNamespacedName, JSXOpeningElement, KeyValueProp, Lit,
-            MemberProp, ModuleItem, Number, ObjectLit, Pat, Prop, PropName, PropOrSpread,
-            SimpleAssignTarget, Str, Tpl, VarDeclarator,
+            ArrayLit, AssignExpr, AssignTarget, BinExpr, BinaryOp, Bool, CallExpr, Callee, Expr,
+            ExprOrSpread, Id, IdentName, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue,
+            JSXElementName, JSXExpr, JSXExprContainer, JSXNamespacedName, JSXOpeningElement,
+            KeyValueProp, Lit, MemberProp, ModuleItem, Number, ObjectLit, Pat, Prop, PropName,
+            PropOrSpread, SimpleAssignTarget, Str, Tpl, VarDeclarator,
         },
         visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
     },
@@ -172,6 +172,7 @@ fn get_jsx_message_descriptor_value(
                 JSXExpr::Expr(expr) => match &**expr {
                     Expr::Lit(Lit::Str(s)) => Some(s.value.to_string()),
                     Expr::Tpl(tpl) => Some(evaluate_template_literal_string(tpl)),
+                    Expr::Bin(bin_expr) => evaluate_binary_expr(bin_expr),
                     _ => None,
                 },
                 _ => None,
@@ -180,6 +181,20 @@ fn get_jsx_message_descriptor_value(
         JSXAttrValue::Lit(Lit::Str(s)) => Some(s.value.to_string()),
         _ => None,
     }
+}
+
+/// Helper function to evaluate binary expressions (string concatenation)
+fn evaluate_binary_expr(expr: &BinExpr) -> Option<String> {
+    // Only handle string concatenation (+ operator)
+    if !matches!(expr.op, BinaryOp::Add) {
+        return None;
+    }
+
+    // Recursively evaluate left and right operands
+    let left_str = get_call_expr_message_descriptor_value(&Some(*expr.left.clone()), None)?;
+    let right_str = get_call_expr_message_descriptor_value(&Some(*expr.right.clone()), None)?;
+
+    Some(format!("{}{}", left_str, right_str))
 }
 
 fn get_call_expr_message_descriptor_value(
@@ -211,6 +226,7 @@ fn get_call_expr_message_descriptor_value(
                     .join(""),
             )
         }
+        Expr::Bin(bin_expr) => evaluate_binary_expr(bin_expr),
         _ => None,
     }
 }
@@ -892,6 +908,7 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
                         Expr::Tpl(tpl) => Some(MessageDescriptionValue::Str(
                             evaluate_template_literal_string(tpl),
                         )),
+                        Expr::Bin(bin_expr) => self.evaluate_binary_expr_with_resolution(bin_expr),
                         // Handle React Compiler optimized identifiers
                         Expr::Ident(ident) => {
                             if let Some(resolved_expr) = self.resolve_identifier(ident) {
@@ -918,6 +935,38 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
             }
             JSXAttrValue::Lit(Lit::Str(s)) => {
                 Some(MessageDescriptionValue::Str(s.value.to_string()))
+            }
+            _ => None,
+        }
+    }
+
+    /// Helper method to evaluate binary expressions with resolution support
+    fn evaluate_binary_expr_with_resolution(
+        &self,
+        expr: &BinExpr,
+    ) -> Option<MessageDescriptionValue> {
+        // Only handle string concatenation (+ operator)
+        if !matches!(expr.op, BinaryOp::Add) {
+            return None;
+        }
+
+        // Recursively evaluate left and right operands
+        let left_val = self.get_call_expr_message_descriptor_value_maybe_object_with_resolution(
+            &Some(*expr.left.clone()),
+            None,
+        )?;
+        let right_val = self.get_call_expr_message_descriptor_value_maybe_object_with_resolution(
+            &Some(*expr.right.clone()),
+            None,
+        )?;
+
+        // Only concatenate if both are strings
+        match (left_val, right_val) {
+            (MessageDescriptionValue::Str(left_str), MessageDescriptionValue::Str(right_str)) => {
+                Some(MessageDescriptionValue::Str(format!(
+                    "{}{}",
+                    left_str, right_str
+                )))
             }
             _ => None,
         }
@@ -954,6 +1003,7 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
             }
             Expr::Lit(Lit::Str(s)) => Some(MessageDescriptionValue::Str(s.value.to_string())),
             Expr::Object(object_lit) => Some(MessageDescriptionValue::Obj(object_lit.clone())),
+            Expr::Bin(bin_expr) => self.evaluate_binary_expr_with_resolution(bin_expr),
             _ => None,
         }
     }
@@ -1273,6 +1323,30 @@ impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
                                                     expr: JSXExpr::Expr(json_value_to_expr(&v)),
                                                 },
                                             ));
+                                        }
+                                    } else {
+                                        // Only update the defaultMessage value with the evaluated
+                                        // string
+                                        // if the original value was a binary expression
+                                        // (concatenation)
+                                        // Otherwise, keep the original to preserve formatting
+                                        let should_update = if let Some(
+                                            JSXAttrValue::JSXExprContainer(container),
+                                        ) = &attr.value
+                                        {
+                                            if let JSXExpr::Expr(expr) = &container.expr {
+                                                matches!(&**expr, Expr::Bin(_))
+                                            } else {
+                                                false
+                                            }
+                                        } else {
+                                            false
+                                        };
+
+                                        if should_update {
+                                            attr.value = Some(JSXAttrValue::Lit(Lit::Str(
+                                                Str::from(descriptor_default_message.clone()),
+                                            )));
                                         }
                                     }
                                 }
