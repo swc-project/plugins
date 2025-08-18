@@ -148,13 +148,13 @@ fn create_message_descriptor_from_call_expr(
 }
 
 fn get_jsx_message_descriptor_value(
-    value: &Option<JSXAttrValue>,
+    value: Option<&JSXAttrValue>,
     is_message_node: Option<bool>,
 ) -> Option<String> {
-    if value.is_none() {
-        return None;
-    }
-    let value = value.as_ref().expect("Should be available");
+    let value = match value {
+        Some(v) => v,
+        None => return None,
+    };
 
     // NOTE: do not support evaluatePath
     match value {
@@ -191,21 +191,20 @@ fn evaluate_binary_expr(expr: &BinExpr) -> Option<String> {
     }
 
     // Recursively evaluate left and right operands
-    let left_str = get_call_expr_message_descriptor_value(&Some(*expr.left.clone()), None)?;
-    let right_str = get_call_expr_message_descriptor_value(&Some(*expr.right.clone()), None)?;
+    let left_str = get_call_expr_message_descriptor_value(Some(&*expr.left), None)?;
+    let right_str = get_call_expr_message_descriptor_value(Some(&*expr.right), None)?;
 
     Some(format!("{}{}", left_str, right_str))
 }
 
 fn get_call_expr_message_descriptor_value(
-    value: &Option<Expr>,
+    value: Option<&Expr>,
     _is_message_node: Option<bool>,
 ) -> Option<String> {
-    if value.is_none() {
-        return None;
-    }
-
-    let value = value.as_ref().expect("Should be available");
+    let value = match value {
+        Some(v) => v,
+        None => return None,
+    };
 
     // NOTE: do not support evaluatePath
     match value {
@@ -289,15 +288,12 @@ impl Serialize for MessageDescriptionValue {
 }
 
 fn get_jsx_icu_message_value(
-    message_path: &Option<JSXAttrValue>,
+    message_path: Option<&JSXAttrValue>,
     preserve_whitespace: bool,
 ) -> String {
-    if message_path.is_none() {
-        return "".to_string();
-    }
-
-    let message =
-        get_jsx_message_descriptor_value(message_path, Some(true)).unwrap_or("".to_string());
+    let message = message_path
+        .and_then(|path| get_jsx_message_descriptor_value(Some(path), Some(true)))
+        .unwrap_or("".to_string());
 
     let message = if !preserve_whitespace {
         let message = WHITESPACE_REGEX.replace_all(&message, " ");
@@ -357,15 +353,12 @@ fn get_jsx_icu_message_value(
 }
 
 fn get_call_expr_icu_message_value(
-    message_path: &Option<Expr>,
+    message_path: Option<&Expr>,
     preserve_whitespace: bool,
 ) -> String {
-    if message_path.is_none() {
-        return "".to_string();
-    }
-
-    let message =
-        get_call_expr_message_descriptor_value(message_path, Some(true)).unwrap_or("".to_string());
+    let message = message_path
+        .and_then(|path| get_call_expr_message_descriptor_value(Some(path), Some(true)))
+        .unwrap_or("".to_string());
 
     let message = if !preserve_whitespace {
         let message = WHITESPACE_REGEX.replace_all(&message, " ");
@@ -510,14 +503,14 @@ fn evaluate_jsx_message_descriptor_with_visitor(
     filename: &str,
     visitor: &FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
 ) -> MessageDescriptor {
-    let id = get_jsx_message_descriptor_value(&descriptor_path.id, None);
+    let id = get_jsx_message_descriptor_value(descriptor_path.id.as_ref(), None);
     let default_message = get_jsx_icu_message_value(
-        &descriptor_path.default_message,
+        descriptor_path.default_message.as_ref(),
         options.preserve_whitespace,
     );
 
     let description = visitor.get_jsx_message_descriptor_value_maybe_object_with_resolution(
-        &descriptor_path.description,
+        descriptor_path.description.as_ref(),
         None,
     );
 
@@ -590,14 +583,14 @@ fn evaluate_call_expr_message_descriptor_with_visitor(
     filename: &str,
     visitor: &FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
 ) -> MessageDescriptor {
-    let id = get_call_expr_message_descriptor_value(&descriptor_path.id, None);
+    let id = get_call_expr_message_descriptor_value(descriptor_path.id.as_ref(), None);
     let default_message = get_call_expr_icu_message_value(
-        &descriptor_path.default_message,
+        descriptor_path.default_message.as_ref(),
         options.preserve_whitespace,
     );
 
     let description = visitor.get_call_expr_message_descriptor_value_maybe_object_with_resolution(
-        &descriptor_path.description,
+        descriptor_path.description.as_ref(),
         None,
     );
 
@@ -878,13 +871,13 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
 
     fn get_jsx_message_descriptor_value_maybe_object_with_resolution(
         &self,
-        value: &Option<JSXAttrValue>,
+        value: Option<&JSXAttrValue>,
         is_message_node: Option<bool>,
     ) -> Option<MessageDescriptionValue> {
-        if value.is_none() {
-            return None;
-        }
-        let value = value.as_ref().expect("Should be available");
+        let value = match value {
+            Some(v) => v,
+            None => return None,
+        };
         // NOTE: do not support evaluatePath
         match value {
             JSXAttrValue::JSXExprContainer(container) => {
@@ -952,11 +945,11 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
 
         // Recursively evaluate left and right operands
         let left_val = self.get_call_expr_message_descriptor_value_maybe_object_with_resolution(
-            &Some(*expr.left.clone()),
+            Some(&*expr.left),
             None,
         )?;
         let right_val = self.get_call_expr_message_descriptor_value_maybe_object_with_resolution(
-            &Some(*expr.right.clone()),
+            Some(&*expr.right),
             None,
         )?;
 
@@ -974,14 +967,13 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
 
     fn get_call_expr_message_descriptor_value_maybe_object_with_resolution(
         &self,
-        value: &Option<Expr>,
+        value: Option<&Expr>,
         _is_message_node: Option<bool>,
     ) -> Option<MessageDescriptionValue> {
-        if value.is_none() {
-            return None;
-        }
-
-        let value = value.as_ref().expect("Should be available");
+        let value = match value {
+            Some(v) => v,
+            None => return None,
+        };
         // NOTE: do not support evaluatePath
         match value {
             Expr::Ident(ident) => {
