@@ -94,6 +94,62 @@ describe("formatjs swc plugin", () => {
     expect(output).not.toMatch(/description/);
   });
 
+  it("should handle string concatenation in defaultMessage", async () => {
+    const input = `
+      import { defineMessage } from 'react-intl';
+
+      const message = defineMessage({
+        defaultMessage: "Foo " + "Bar",
+        description: "foobar"
+      });
+    `;
+
+    const output = await transformCode(input);
+
+    expect(output).toMatch(/id: "[^"]+"/);
+    expect(output).toMatch(/defaultMessage: "Foo Bar"/);
+    expect(output).not.toMatch(/description/);
+  });
+
+  it("should handle multiple string concatenations", async () => {
+    const input = `
+      import { defineMessage } from 'react-intl';
+
+      const message = defineMessage({
+        defaultMessage: "This is " + "a very " + "long message",
+        description: "multi concat"
+      });
+    `;
+
+    const output = await transformCode(input);
+
+    expect(output).toMatch(/id: "[^"]+"/);
+    expect(output).toMatch(/defaultMessage: "This is a very long message"/);
+    expect(output).not.toMatch(/description/);
+  });
+
+  it("should handle string concatenation in FormattedMessage JSX", async () => {
+    const input = `
+      import React from 'react';
+      import { FormattedMessage } from 'react-intl';
+
+      export function Greeting() {
+        return (
+          <FormattedMessage
+            defaultMessage={"Hello " + "World"}
+            description="jsx concat"
+          />
+        );
+      }
+    `;
+
+    const output = await transformCode(input);
+
+    expect(output).toMatch(/id: "[^"]+"/);
+    expect(output).toMatch(/defaultMessage: "Hello World"/);
+    expect(output).not.toMatch(/description/);
+  });
+
   it("should transform to ast when enabled", async () => {
     const input = `
       import { defineMessage, formatMessage, FormattedMessage } from 'react-intl';
