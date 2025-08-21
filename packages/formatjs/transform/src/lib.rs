@@ -68,6 +68,22 @@ pub struct MessageDescriptor {
     description: Option<MessageDescriptionValue>,
 }
 
+fn parse(source: &str) -> Result<Box<Expr>, swc_icu_messageformat_parser::Error> {
+    let options = ParserOptions {
+        should_parse_skeletons: true,
+        requires_other_clause: true,
+        ..ParserOptions::default()
+    };
+    let mut parser = Parser::new(source, &options);
+    match parser.parse() {
+        Ok(parsed) => {
+            let v = serde_json::to_value(&parsed).unwrap();
+            Ok(json_value_to_expr(&v))
+        }
+        Err(e) => Err(e),
+    }
+}
+
 // TODO: consolidate with get_message_descriptor_key_from_call_expr?
 fn get_message_descriptor_key_from_jsx(name: &JSXAttrName) -> &str {
     match name {
@@ -290,9 +306,7 @@ fn get_jsx_icu_message_value(
         message
     };
 
-    let mut parser = Parser::new(message.as_str(), &ParserOptions::default());
-
-    if let Err(e) = parser.parse() {
+    if let Err(e) = parse(message.as_str()) {
         let is_literal_err = if let Some(JSXAttrValue::Lit(..)) = message_path {
             message.contains("\\\\")
         } else {
@@ -358,9 +372,7 @@ fn get_call_expr_icu_message_value(
         message
     };
 
-    let mut parser = Parser::new(message.as_str(), &ParserOptions::default());
-
-    if let Err(e) = parser.parse() {
+    if let Err(e) = parse(message.as_str()) {
         let handler = &swc_core::plugin::errors::HANDLER;
 
         {
@@ -1062,16 +1074,10 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
                                                     descriptor.default_message.as_ref()
                                                 {
                                                     if self.options.ast {
-                                                        let mut parser = Parser::new(
-                                                            descriptor_default_message,
-                                                            &ParserOptions::new(
-                                                                false, false, false, false, None,
-                                                            ),
-                                                        );
-                                                        if let Ok(parsed) = parser.parse() {
-                                                            let v = serde_json::to_value(&parsed)
-                                                                .unwrap();
-                                                            keyvalue.value = json_value_to_expr(&v);
+                                                        if let Ok(parsed_expr) = parse(
+                                                            descriptor_default_message.as_str(),
+                                                        ) {
+                                                            keyvalue.value = parsed_expr;
                                                         }
                                                     } else {
                                                         keyvalue.value =
@@ -1261,16 +1267,13 @@ impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
                                     descriptor.default_message.as_ref()
                                 {
                                     if self.options.ast {
-                                        let mut parser = Parser::new(
-                                            descriptor_default_message,
-                                            &ParserOptions::new(false, false, false, false, None),
-                                        );
-                                        if let Ok(parsed) = parser.parse() {
-                                            let v = serde_json::to_value(&parsed).unwrap();
+                                        if let Ok(parsed_expr) =
+                                            parse(descriptor_default_message.as_str())
+                                        {
                                             attr.value = Some(JSXAttrValue::JSXExprContainer(
                                                 JSXExprContainer {
                                                     span: DUMMY_SP,
-                                                    expr: JSXExpr::Expr(json_value_to_expr(&v)),
+                                                    expr: JSXExpr::Expr(parsed_expr),
                                                 },
                                             ));
                                         }
