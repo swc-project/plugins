@@ -28,6 +28,12 @@ Then update your `.swcrc` file like below:
 
 # @swc/plugin-styled-components
 
+## 9.0.4
+
+### Patch Changes
+
+- 9cdcdc5: Update swc_core to v36
+
 ## 9.0.3
 
 ### Patch Changes
