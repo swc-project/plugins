@@ -1,5 +1,11 @@
 # @swc/plugin-formatjs
 
+## 6.0.5
+
+### Patch Changes
+
+- 8383ada: build: Update swc_core to v36.0.0
+
 ## 6.0.4
 
 ### Patch Changes

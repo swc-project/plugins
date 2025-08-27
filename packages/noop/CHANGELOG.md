@@ -1,5 +1,11 @@
 # @swc/plugin-noop
 
+## 9.0.3
+
+### Patch Changes
+
+- 8383ada: build: Update swc_core to v36.0.0
+
 ## 9.0.2
 
 ### Patch Changes

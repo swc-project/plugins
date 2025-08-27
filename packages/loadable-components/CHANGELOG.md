@@ -1,5 +1,11 @@
 # @swc/plugin-loadable-components
 
+## 8.0.3
+
+### Patch Changes
+
+- 8383ada: build: Update swc_core to v36.0.0
+
 ## 8.0.2
 
 ### Patch Changes
