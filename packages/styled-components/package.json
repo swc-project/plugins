@@ -1,6 +1,10 @@
 {
   "name": "@swc/plugin-styled-components",
   "version": "9.1.0",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "description": "SWC plugin for styled-components",
   "main": "swc_plugin_styled_components.wasm",
   "scripts": {

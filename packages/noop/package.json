@@ -1,6 +1,10 @@
 {
   "name": "@swc/plugin-noop",
   "version": "9.1.0",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "description": "Noop SWC plugin, for debugging",
   "main": "swc_plugin_noop.wasm",
   "scripts": {

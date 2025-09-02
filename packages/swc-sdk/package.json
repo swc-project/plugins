@@ -1,6 +1,10 @@
 {
   "name": "@swc/plugin-swc-sdk",
   "version": "9.1.0",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "description": "SWC plugin for swc-sdk",
   "main": "swc_plugin_swc_sdk.wasm",
   "scripts": {
