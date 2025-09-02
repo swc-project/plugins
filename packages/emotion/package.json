@@ -24,5 +24,8 @@
   "preferUnplugged": true,
   "dependencies": {
     "@swc/counter": "^0.1.3"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
