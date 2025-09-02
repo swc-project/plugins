@@ -5,6 +5,8 @@ curl https://raw.githubusercontent.com/swc-project/swc/main/scripts/update-all-s
 
 git add -A && git commit -m "build: Update swc core"
 
+echo "Bumping crates"
 ./scripts/bump-crates.sh --breaking
 
-./scripts/bump.sh
+echo "Bumping npm packages"
+./scripts/bump-npm.sh
