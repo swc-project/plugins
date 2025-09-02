@@ -1,5 +1,11 @@
 # @swc/plugin-loadable-components
 
+## 8.1.0
+
+### Minor Changes
+
+- a872100: build: Update swc_core to v38
+
 ## 8.0.2
 
 ### Patch Changes

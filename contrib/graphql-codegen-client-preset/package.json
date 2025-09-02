@@ -1,6 +1,6 @@
 {
   "name": "@swc-contrib/plugin-graphql-codegen-client-preset",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "description": "A SWC plugin for https://the-guild.dev/graphql/codegen/plugins/presets/preset-client",
   "main": "swc_plugin_graphql_codegen_client_preset.wasm",
   "scripts": {
