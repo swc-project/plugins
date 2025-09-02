@@ -10,6 +10,10 @@ env:
   CARGO_INCREMENTAL: 0
   MACOSX_DEPLOYMENT_TARGET: "10.13"
 
+permissions:
+  id-token: write # Required for OIDC
+  contents: read
+
 jobs:
   build:
     name: Build
@@ -21,6 +25,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 20
+          registry-url: "https://registry.npmjs.org"
 
       - run: |
           echo "Before: corepack version => $(corepack --version || echo 'not installed')"
