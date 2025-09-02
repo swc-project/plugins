@@ -1,5 +1,11 @@
 # @swc-contrib/mut-cjs-exports
 
+## 11.1.0
+
+### Minor Changes
+
+- a872100: build: Update swc_core to v38
+
 ## 11.0.4
 
 ### Patch Changes

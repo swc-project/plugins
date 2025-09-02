@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-swc-confidential",
-  "version": "8.0.3",
+  "version": "8.1.0",
   "description": "SWC plugin for swc-confidential",
   "main": "swc_plugin_swc_confidential.wasm",
   "scripts": {
