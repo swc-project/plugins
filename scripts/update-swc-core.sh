@@ -10,3 +10,5 @@ echo "Bumping crates"
 
 echo "Bumping npm packages"
 ./scripts/bump-npm.sh
+
+git push
