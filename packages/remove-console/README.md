@@ -21,6 +21,12 @@ or
 
 # @swc/plugin-remove-console
 
+## 9.2.0
+
+### Minor Changes
+
+- 0c9d7a1: build: Update swc_core to v39.0.0
+
 ## 9.1.0
 
 ### Minor Changes
