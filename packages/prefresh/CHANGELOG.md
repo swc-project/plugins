@@ -1,5 +1,11 @@
 # @swc/plugin-prefresh
 
+## 9.3.0
+
+### Minor Changes
+
+- 47be132: Update swc_core to v42
+
 ## 9.2.0
 
 ### Minor Changes
