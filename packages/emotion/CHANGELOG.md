@@ -1,5 +1,11 @@
 # @swc/plugin-emotion
 
+## 11.4.0
+
+### Minor Changes
+
+- 8bad98d: Update swc_core to v44
+
 ## 11.3.0
 
 ### Minor Changes

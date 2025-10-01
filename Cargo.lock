@@ -1095,9 +1095,9 @@ checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 
 [[package]]
 name = "hstr"
-version = "2.0.1"
+version = "2.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ced1416104790052518d199e753d49a7d8130d476c664bc9e53f40cfecb8e615"
+checksum = "31f11d91d7befd2ffd9d216e9e5ea1fae6174b20a2a1b67a688138003d2f4122"
 dependencies = [
  "hashbrown 0.14.5",
  "new_debug_unreachable",
@@ -1602,7 +1602,7 @@ checksum = "68354c5c6bd36d73ff3feceb05efa59b6acb7626617f4962be322a825e61f79a"
 
 [[package]]
 name = "modularize_imports"
-version = "0.97.0"
+version = "0.98.0"
 dependencies = [
  "convert_case",
  "handlebars",
@@ -2133,7 +2133,7 @@ dependencies = [
 
 [[package]]
 name = "react_remove_properties"
-version = "0.51.0"
+version = "0.52.0"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -2218,7 +2218,7 @@ checksum = "ba39f3699c378cd8970968dcbff9c43159ea4cfbd88d43c00b22f2ef10a435d2"
 
 [[package]]
 name = "remove_console"
-version = "0.52.0"
+version = "0.53.0"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -2650,7 +2650,7 @@ checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
 
 [[package]]
 name = "styled_components"
-version = "0.125.0"
+version = "0.126.0"
 dependencies = [
  "Inflector",
  "once_cell",
@@ -2672,7 +2672,7 @@ dependencies = [
 
 [[package]]
 name = "styled_jsx"
-version = "0.101.0"
+version = "0.102.0"
 dependencies = [
  "anyhow",
  "lightningcss",
@@ -2777,7 +2777,7 @@ dependencies = [
 
 [[package]]
 name = "swc_confidential"
-version = "0.46.0"
+version = "0.47.0"
 dependencies = [
  "cipher 0.4.4",
  "hex",
@@ -2829,9 +2829,9 @@ dependencies = [
 
 [[package]]
 name = "swc_core"
-version = "42.0.3"
+version = "44.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fe5b0d7a8321f395373710f9d61766788c77704b1e532fcea34fe96cb4930422"
+checksum = "a285ec49b51d359c9a2968d1929c359626d547709ad30dcf572eb9cc05138d94"
 dependencies = [
  "swc_allocator",
  "swc_atoms",
@@ -3039,9 +3039,9 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_lexer"
-version = "23.0.1"
+version = "23.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "67c3bd958a5a67e2cc3f74abdd41fda688e54e7a25b866569260ef7018b67972"
+checksum = "017d06ea85008234aa9fb34d805c7dc563f2ea6e03869ed5ac5a2dc27d561e4d"
 dependencies = [
  "arrayvec",
  "bitflags",
@@ -3062,9 +3062,9 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_minifier"
-version = "32.0.5"
+version = "33.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "80500b64911bb710aed7a0fa97e38abf8b7937426af133c27631c72ce22129ae"
+checksum = "952b8d1ca2c525b817a36934bd659e52a02cdfa1b7a393acf7e21fa0e8f96848"
 dependencies = [
  "arrayvec",
  "bitflags",
@@ -3098,9 +3098,9 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_parser"
-version = "24.0.1"
+version = "24.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e8079e65c43d8f3e64e791321355f5864322425fce3a3ab7fc959bbddb531933"
+checksum = "38cd8f08611d6d4927bcd81501813b304885af064b9704ba8e4a0e0f869364e8"
 dependencies = [
  "either",
  "num-bigint",
@@ -3145,9 +3145,9 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_transforms"
-version = "33.0.0"
+version = "35.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "17aad69f947105eae180fecbf17c5e494a962787c037e6facf1f50895b806b4a"
+checksum = "f4284795973c3678467ea4b40cc2c36c8c5950579456ab09c53a1f0ca4cf49b0"
 dependencies = [
  "par-core",
  "swc_common",
@@ -3158,9 +3158,9 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_transforms_base"
-version = "26.0.1"
+version = "27.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a0526b4e3d6cedb7e48c5026242809387676f836d4251235fa95165218bb8ce4"
+checksum = "6c6f1b8f4232e7a7f614ff7c0f6ccb89c2d028cdf7629f79ad710cff5b28b62c"
 dependencies = [
  "better_scoped_tls",
  "indexmap",
@@ -3180,9 +3180,9 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_transforms_optimization"
-version = "28.0.0"
+version = "29.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8ecb86ae16f150aa4fbc46bd37d6cce44612af59861afa987ab3053f17d343b1"
+checksum = "506bf81408ad780a3f696bb9f84a508d2024c6cd6803d440ededc25be5cee7c8"
 dependencies = [
  "bytes-str",
  "dashmap",
@@ -3204,9 +3204,9 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_transforms_react"
-version = "29.0.0"
+version = "30.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3c9939e0a5a23529b63ac87d7a9981dba7f7021b7cb64ecf9039f3dfb0abb48c"
+checksum = "4e4472901e7aca71371591918b7be65de1c3df8f2f5184db84ffee3c41ffd856"
 dependencies = [
  "base64 0.22.1",
  "bytes-str",
@@ -3228,9 +3228,9 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_transforms_testing"
-version = "29.0.0"
+version = "30.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b394293ee1a70c986aac9282d606cfb05d0ee81f7f48958e3975e33886bd8745"
+checksum = "c82030bb2a60b87b6193053adbd3409812e45764970c0fa238e79ca1bd5889c6"
 dependencies = [
  "ansi_term",
  "anyhow",
@@ -3306,7 +3306,7 @@ dependencies = [
 
 [[package]]
 name = "swc_emotion"
-version = "0.101.0"
+version = "0.102.0"
 dependencies = [
  "base64 0.22.1",
  "byteorder",
@@ -3359,7 +3359,7 @@ dependencies = [
 
 [[package]]
 name = "swc_experimental_babel"
-version = "0.18.0"
+version = "0.19.0"
 dependencies = [
  "anyhow",
  "once_cell",
@@ -3379,7 +3379,7 @@ dependencies = [
 
 [[package]]
 name = "swc_formatjs_transform"
-version = "8.0.0"
+version = "9.0.0"
 dependencies = [
  "base64ct",
  "digest 0.10.7",
@@ -3398,7 +3398,7 @@ dependencies = [
 
 [[package]]
 name = "swc_icu_messageformat_parser"
-version = "4.0.0"
+version = "5.0.0"
 dependencies = [
  "langtag",
  "once_cell",
@@ -3424,7 +3424,7 @@ dependencies = [
 
 [[package]]
 name = "swc_magic"
-version = "0.45.0"
+version = "0.46.0"
 dependencies = [
  "rustc-hash",
  "serde",
@@ -3713,7 +3713,7 @@ dependencies = [
 
 [[package]]
 name = "swc_prefresh"
-version = "0.28.0"
+version = "0.29.0"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -3729,7 +3729,7 @@ dependencies = [
 
 [[package]]
 name = "swc_relay"
-version = "0.71.0"
+version = "0.72.0"
 dependencies = [
  "once_cell",
  "regex",

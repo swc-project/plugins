@@ -1,5 +1,11 @@
 # @swc/plugin-swc-confidential
 
+## 8.4.0
+
+### Minor Changes
+
+- 8bad98d: Update swc_core to v44
+
 ## 8.3.0
 
 ### Minor Changes

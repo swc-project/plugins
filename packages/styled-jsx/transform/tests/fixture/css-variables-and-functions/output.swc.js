@@ -7,7 +7,7 @@ export default function Component() {
     const spacing = 10;
     return <div className={_JSXStyle.dynamic([
         [
-            "81713e75931e918d",
+            "906d88069a2f1c7e",
             [
                 dynamicValue,
                 color1,
@@ -20,7 +20,7 @@ export default function Component() {
     ]) + " " + "container"}>
       <div className={_JSXStyle.dynamic([
         [
-            "81713e75931e918d",
+            "906d88069a2f1c7e",
             [
                 dynamicValue,
                 color1,
@@ -31,7 +31,7 @@ export default function Component() {
             ]
         ]
     ]) + " " + "item"}>CSS Variables and Functions</div>
-      <_JSXStyle id={"81713e75931e918d"} dynamic={[
+      <_JSXStyle id={"906d88069a2f1c7e"} dynamic={[
         dynamicValue,
         color1,
         color2,
