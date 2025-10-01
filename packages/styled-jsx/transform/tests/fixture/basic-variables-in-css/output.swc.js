@@ -5,7 +5,7 @@ export default function Component() {
     const color = '#FF0000';
     return <div className={_JSXStyle.dynamic([
         [
-            "fb6f0ccab88fe7c7",
+            "1f03eb09b28338e",
             [
                 width,
                 height,
@@ -15,7 +15,7 @@ export default function Component() {
     ])}>
       <h1 className={_JSXStyle.dynamic([
         [
-            "fb6f0ccab88fe7c7",
+            "1f03eb09b28338e",
             [
                 width,
                 height,
@@ -23,7 +23,7 @@ export default function Component() {
             ]
         ]
     ])}>Basic Variables Test</h1>
-      <_JSXStyle id={"fb6f0ccab88fe7c7"} dynamic={[
+      <_JSXStyle id={"1f03eb09b28338e"} dynamic={[
         width,
         height,
         color

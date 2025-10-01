@@ -1,11 +1,11 @@
 import _JSXStyle from "styled-jsx/style";
 import Link from "next/link";
 export default function IndexPage() {
-    return <div className={"jsx-30b5b84a05e853dc"}>
+    return <div className={"jsx-e431798e22cb060f"}>
       Hello World.{" "}
       <Link href="/about">
-        <a className={"jsx-30b5b84a05e853dc"}>Abound</a>
+        <a className={"jsx-e431798e22cb060f"}>Abound</a>
       </Link>
-      <_JSXStyle id={"30b5b84a05e853dc"}>{`a.jsx-30b5b84a05e853dc{color:${"#abcdef"}12}`}</_JSXStyle>
+      <_JSXStyle id={"e431798e22cb060f"}>{`a.jsx-e431798e22cb060f{color:${"#abcdef"}12}`}</_JSXStyle>
     </div>;
 }
