@@ -153,7 +153,7 @@ checksum = "d92bec98840b8f03a5ff5413de5293bfcd8bf96467cf5452609f939ec6f5de16"
 [[package]]
 name = "ast_node"
 version = "3.0.4"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "quote",
  "swc_macros_common",
@@ -217,7 +217,7 @@ checksum = "55248b47b0caf0546f7988906588779981c43bb1bc9d0c44087278f80cdb44ba"
 [[package]]
 name = "better_scoped_tls"
 version = "1.0.1"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "scoped-tls",
 ]
@@ -916,7 +916,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
 dependencies = [
  "libc",
- "windows-sys 0.61.2",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -961,7 +961,7 @@ dependencies = [
 [[package]]
 name = "from_variant"
 version = "2.0.2"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "swc_macros_common",
  "syn 2.0.106",
@@ -1105,7 +1105,7 @@ checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 [[package]]
 name = "hstr"
 version = "2.1.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "hashbrown 0.14.5",
  "new_debug_unreachable",
@@ -1591,7 +1591,7 @@ dependencies = [
  "swc_cached",
  "swc_common",
  "swc_ecma_ast",
- "swc_ecma_parser 24.0.3",
+ "swc_ecma_parser",
  "swc_ecma_transforms_testing",
  "swc_ecma_visit",
  "testing",
@@ -1937,7 +1937,7 @@ checksum = "925383efa346730478fb4838dbe9137d2a47675ad789c546d150a6e1dd4ab31c"
 [[package]]
 name = "preset_env_base"
 version = "5.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "anyhow",
  "browserslist-rs",
@@ -2099,7 +2099,7 @@ dependencies = [
  "swc_cached",
  "swc_common",
  "swc_ecma_ast",
- "swc_ecma_parser 24.0.3",
+ "swc_ecma_parser",
  "swc_ecma_transforms_base",
  "swc_ecma_transforms_testing",
  "swc_ecma_visit",
@@ -2169,7 +2169,7 @@ dependencies = [
  "swc_cached",
  "swc_common",
  "swc_ecma_ast",
- "swc_ecma_parser 24.0.3",
+ "swc_ecma_parser",
  "swc_ecma_transforms_base",
  "swc_ecma_transforms_testing",
  "swc_ecma_visit",
@@ -2296,7 +2296,7 @@ dependencies = [
  "errno",
  "libc",
  "linux-raw-sys",
- "windows-sys 0.61.2",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -2599,7 +2599,7 @@ checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 [[package]]
 name = "string_enum"
 version = "1.0.2"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "quote",
  "swc_macros_common",
@@ -2625,7 +2625,7 @@ dependencies = [
  "swc_atoms",
  "swc_common",
  "swc_ecma_ast",
- "swc_ecma_parser 24.0.3",
+ "swc_ecma_parser",
  "swc_ecma_transforms",
  "swc_ecma_transforms_testing",
  "swc_ecma_utils",
@@ -2656,7 +2656,7 @@ dependencies = [
  "swc_css_visit",
  "swc_ecma_ast",
  "swc_ecma_minifier",
- "swc_ecma_parser 24.0.3",
+ "swc_ecma_parser",
  "swc_ecma_transforms",
  "swc_ecma_transforms_base",
  "swc_ecma_transforms_testing",
@@ -2670,7 +2670,7 @@ dependencies = [
 [[package]]
 name = "swc_allocator"
 version = "4.0.1"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "allocator-api2",
  "bumpalo",
@@ -2681,7 +2681,7 @@ dependencies = [
 [[package]]
 name = "swc_atoms"
 version = "7.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "bytecheck 0.8.2",
  "hstr",
@@ -2708,7 +2708,7 @@ dependencies = [
 [[package]]
 name = "swc_common"
 version = "14.0.4"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "anyhow",
  "ast_node",
@@ -2747,7 +2747,7 @@ dependencies = [
  "swc_atoms",
  "swc_common",
  "swc_ecma_ast",
- "swc_ecma_parser 24.0.3",
+ "swc_ecma_parser",
  "swc_ecma_transforms_base",
  "swc_ecma_transforms_testing",
  "swc_ecma_utils",
@@ -2758,7 +2758,7 @@ dependencies = [
 [[package]]
 name = "swc_config"
 version = "3.1.2"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "anyhow",
  "bytes-str",
@@ -2778,7 +2778,7 @@ dependencies = [
 [[package]]
 name = "swc_config_macro"
 version = "1.0.1"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2789,14 +2789,13 @@ dependencies = [
 [[package]]
 name = "swc_core"
 version = "44.0.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "71454b0b392bbf890c257471c96c52a303186820388b491d08ff6718a8152588"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "swc_allocator",
  "swc_atoms",
  "swc_common",
  "swc_ecma_ast",
- "swc_ecma_parser 24.0.3",
+ "swc_ecma_parser",
  "swc_ecma_quote_macros",
  "swc_ecma_transforms_base",
  "swc_ecma_transforms_testing",
@@ -2813,7 +2812,7 @@ dependencies = [
 [[package]]
 name = "swc_css_ast"
 version = "14.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "is-macro",
  "string_enum",
@@ -2824,7 +2823,7 @@ dependencies = [
 [[package]]
 name = "swc_css_codegen"
 version = "14.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "auto_impl",
  "bitflags",
@@ -2840,7 +2839,7 @@ dependencies = [
 [[package]]
 name = "swc_css_codegen_macros"
 version = "1.0.2"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "quote",
  "syn 2.0.106",
@@ -2849,7 +2848,7 @@ dependencies = [
 [[package]]
 name = "swc_css_compat"
 version = "14.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "bitflags",
  "serde",
@@ -2863,7 +2862,7 @@ dependencies = [
 [[package]]
 name = "swc_css_minifier"
 version = "14.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "rustc-hash",
  "serde",
@@ -2877,7 +2876,7 @@ dependencies = [
 [[package]]
 name = "swc_css_parser"
 version = "14.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "lexical",
  "serde",
@@ -2889,7 +2888,7 @@ dependencies = [
 [[package]]
 name = "swc_css_prefixer"
 version = "17.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "once_cell",
  "preset_env_base",
@@ -2906,7 +2905,7 @@ dependencies = [
 [[package]]
 name = "swc_css_utils"
 version = "14.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "once_cell",
  "rustc-hash",
@@ -2920,7 +2919,7 @@ dependencies = [
 [[package]]
 name = "swc_css_visit"
 version = "14.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -2932,7 +2931,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_ast"
 version = "15.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "bitflags",
  "bytecheck 0.8.2",
@@ -2954,7 +2953,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_codegen"
 version = "17.0.2"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "ascii",
  "compact_str",
@@ -2977,7 +2976,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_codegen_macros"
 version = "2.0.2"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "proc-macro2",
  "swc_macros_common",
@@ -2987,7 +2986,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_lexer"
 version = "23.0.2"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "arrayvec",
  "bitflags",
@@ -3009,7 +3008,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_minifier"
 version = "33.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "arrayvec",
  "bitflags",
@@ -3031,7 +3030,7 @@ dependencies = [
  "swc_config",
  "swc_ecma_ast",
  "swc_ecma_codegen",
- "swc_ecma_parser 24.0.2",
+ "swc_ecma_parser",
  "swc_ecma_transforms_base",
  "swc_ecma_transforms_optimization",
  "swc_ecma_usage_analyzer",
@@ -3043,24 +3042,8 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_parser"
-version = "24.0.2"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
-dependencies = [
- "either",
- "num-bigint",
- "serde",
- "swc_atoms",
- "swc_common",
- "swc_ecma_ast",
- "swc_ecma_lexer",
- "tracing",
-]
-
-[[package]]
-name = "swc_ecma_parser"
 version = "24.0.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2e9011783c975ba592ffc09cd208ced92b1dfabb2e5e0ef453559e2e25286127"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "either",
  "num-bigint",
@@ -3075,7 +3058,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_quote_macros"
 version = "24.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "anyhow",
  "proc-macro2",
@@ -3084,7 +3067,7 @@ dependencies = [
  "swc_atoms",
  "swc_common",
  "swc_ecma_ast",
- "swc_ecma_parser 24.0.2",
+ "swc_ecma_parser",
  "swc_macros_common",
  "syn 2.0.106",
 ]
@@ -3092,7 +3075,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_testing"
 version = "15.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "anyhow",
  "hex",
@@ -3104,8 +3087,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_transforms"
 version = "35.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f4284795973c3678467ea4b40cc2c36c8c5950579456ab09c53a1f0ca4cf49b0"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "par-core",
  "swc_common",
@@ -3117,7 +3099,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_transforms_base"
 version = "27.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "better_scoped_tls",
  "indexmap",
@@ -3129,7 +3111,7 @@ dependencies = [
  "swc_atoms",
  "swc_common",
  "swc_ecma_ast",
- "swc_ecma_parser 24.0.2",
+ "swc_ecma_parser",
  "swc_ecma_utils",
  "swc_ecma_visit",
  "tracing",
@@ -3138,7 +3120,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_transforms_optimization"
 version = "29.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "bytes-str",
  "dashmap",
@@ -3151,7 +3133,7 @@ dependencies = [
  "swc_atoms",
  "swc_common",
  "swc_ecma_ast",
- "swc_ecma_parser 24.0.2",
+ "swc_ecma_parser",
  "swc_ecma_transforms_base",
  "swc_ecma_utils",
  "swc_ecma_visit",
@@ -3161,8 +3143,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_transforms_react"
 version = "30.0.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "69ea0052ac23b5b9fbc85bbdb1791b36b918f9d55f594b0ed8e25babb4c32d16"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "base64 0.22.1",
  "bytes-str",
@@ -3176,7 +3157,7 @@ dependencies = [
  "swc_common",
  "swc_config",
  "swc_ecma_ast",
- "swc_ecma_parser 24.0.3",
+ "swc_ecma_parser",
  "swc_ecma_transforms_base",
  "swc_ecma_utils",
  "swc_ecma_visit",
@@ -3185,7 +3166,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_transforms_testing"
 version = "30.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "ansi_term",
  "anyhow",
@@ -3197,7 +3178,7 @@ dependencies = [
  "swc_common",
  "swc_ecma_ast",
  "swc_ecma_codegen",
- "swc_ecma_parser 24.0.2",
+ "swc_ecma_parser",
  "swc_ecma_testing",
  "swc_ecma_transforms_base",
  "swc_ecma_utils",
@@ -3210,7 +3191,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_usage_analyzer"
 version = "22.0.1"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "bitflags",
  "indexmap",
@@ -3227,7 +3208,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_utils"
 version = "21.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "indexmap",
  "num_cpus",
@@ -3245,7 +3226,7 @@ dependencies = [
 [[package]]
 name = "swc_ecma_visit"
 version = "15.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "new_debug_unreachable",
  "num-bigint",
@@ -3273,7 +3254,7 @@ dependencies = [
  "swc_common",
  "swc_ecma_ast",
  "swc_ecma_codegen",
- "swc_ecma_parser 24.0.3",
+ "swc_ecma_parser",
  "swc_ecma_transforms",
  "swc_ecma_transforms_react",
  "swc_ecma_transforms_testing",
@@ -3288,7 +3269,7 @@ dependencies = [
 [[package]]
 name = "swc_eq_ignore_macros"
 version = "1.0.1"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3298,7 +3279,7 @@ dependencies = [
 [[package]]
 name = "swc_error_reporters"
 version = "16.0.1"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "anyhow",
  "miette",
@@ -3320,7 +3301,7 @@ dependencies = [
  "swc_core",
  "swc_ecma_ast",
  "swc_ecma_codegen",
- "swc_ecma_parser 24.0.3",
+ "swc_ecma_parser",
  "swc_ecma_transforms_base",
  "swc_ecma_transforms_testing",
  "swc_ecma_visit",
@@ -3364,7 +3345,7 @@ dependencies = [
 [[package]]
 name = "swc_macros_common"
 version = "1.0.1"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3380,7 +3361,7 @@ dependencies = [
  "swc_atoms",
  "swc_common",
  "swc_ecma_ast",
- "swc_ecma_parser 24.0.3",
+ "swc_ecma_parser",
  "swc_ecma_transforms_base",
  "swc_ecma_transforms_testing",
  "swc_ecma_utils",
@@ -3400,7 +3381,7 @@ dependencies = [
 [[package]]
 name = "swc_plugin"
 version = "1.0.1"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "once_cell",
 ]
@@ -3481,7 +3462,7 @@ dependencies = [
 [[package]]
 name = "swc_plugin_macro"
 version = "1.1.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3514,7 +3495,7 @@ dependencies = [
 [[package]]
 name = "swc_plugin_proxy"
 version = "15.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "better_scoped_tls",
  "bytecheck 0.8.2",
@@ -3606,7 +3587,7 @@ dependencies = [
  "swc_core",
  "swc_ecma_ast",
  "swc_ecma_minifier",
- "swc_ecma_parser 24.0.3",
+ "swc_ecma_parser",
  "swc_ecma_transforms_testing",
  "swc_ecma_utils",
  "swc_ecma_visit",
@@ -3666,7 +3647,7 @@ dependencies = [
  "swc_common",
  "swc_core",
  "swc_ecma_ast",
- "swc_ecma_parser 24.0.3",
+ "swc_ecma_parser",
  "swc_ecma_transforms_base",
  "swc_ecma_transforms_testing",
  "swc_ecma_visit",
@@ -3701,7 +3682,7 @@ dependencies = [
  "swc_atoms",
  "swc_common",
  "swc_ecma_ast",
- "swc_ecma_parser 24.0.3",
+ "swc_ecma_parser",
  "swc_ecma_transforms_base",
  "swc_ecma_transforms_testing",
  "swc_ecma_utils",
@@ -3731,7 +3712,7 @@ dependencies = [
 [[package]]
 name = "swc_timer"
 version = "1.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "tracing",
 ]
@@ -3739,7 +3720,7 @@ dependencies = [
 [[package]]
 name = "swc_trace_macro"
 version = "2.0.2"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "quote",
  "syn 2.0.106",
@@ -3748,7 +3729,7 @@ dependencies = [
 [[package]]
 name = "swc_transform_common"
 version = "8.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "better_scoped_tls",
  "rustc-hash",
@@ -3759,7 +3740,7 @@ dependencies = [
 [[package]]
 name = "swc_visit"
 version = "2.0.1"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "either",
  "new_debug_unreachable",
@@ -3814,7 +3795,7 @@ dependencies = [
  "getrandom 0.3.3",
  "once_cell",
  "rustix",
- "windows-sys 0.61.2",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -3829,7 +3810,7 @@ dependencies = [
 [[package]]
 name = "testing"
 version = "15.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "cargo_metadata 0.18.1",
  "difference",
@@ -3849,7 +3830,7 @@ dependencies = [
 [[package]]
 name = "testing_macros"
 version = "1.0.1"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 dependencies = [
  "anyhow",
  "glob",
@@ -4269,7 +4250,7 @@ version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
 dependencies = [
- "windows-sys 0.61.2",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -4362,15 +4343,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f2f500e4d28234f72040990ec9d39e3a6b950f9f22d3dba18416c35882612bcb"
 dependencies = [
  "windows-targets 0.53.5",
-]
-
-[[package]]
-name = "windows-sys"
-version = "0.61.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc"
-dependencies = [
- "windows-link",
 ]
 
 [[package]]
@@ -4638,350 +4610,335 @@ dependencies = [
 
 [[patch.unused]]
 name = "binding_macros"
-version = "41.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+version = "42.0.0"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "dbg-swc"
 version = "34.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "generate-code"
 version = "0.2.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "jsdoc"
 version = "14.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc"
-version = "41.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+version = "42.0.0"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_bundler"
 version = "32.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_cli_impl"
-version = "43.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+version = "44.0.0"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_compiler_base"
 version = "36.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
-
-[[patch.unused]]
-name = "swc_core"
-version = "43.0.1"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_css"
 version = "17.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_css_lints"
 version = "15.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_css_modules"
 version = "14.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_compat_bugfixes"
-version = "29.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+version = "30.0.0"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_compat_common"
 version = "21.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_compat_es2015"
-version = "29.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+version = "30.0.0"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_compat_es2016"
 version = "27.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_compat_es2017"
 version = "27.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_compat_es2018"
 version = "27.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_compat_es2019"
 version = "27.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_compat_es2020"
 version = "28.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_compat_es2021"
 version = "27.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_compat_es2022"
 version = "28.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_compat_es3"
 version = "22.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_compiler"
 version = "5.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_ext_transforms"
 version = "21.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_lints"
 version = "22.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_loader"
 version = "14.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_preset_env"
-version = "35.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+version = "36.0.0"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_quote"
 version = "24.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_react_compiler"
 version = "8.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_regexp"
 version = "0.3.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_regexp_ast"
 version = "0.3.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_regexp_common"
 version = "0.0.1"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_regexp_visit"
 version = "0.3.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
-
-[[patch.unused]]
-name = "swc_ecma_transforms"
-version = "34.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_transforms_classes"
 version = "27.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_transforms_compat"
-version = "30.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+version = "31.0.0"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_transforms_macros"
 version = "1.0.1"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_transforms_module"
 version = "30.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_transforms_proposal"
 version = "27.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
-
-[[patch.unused]]
-name = "swc_ecma_transforms_react"
-version = "30.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecma_transforms_typescript"
-version = "30.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+version = "30.0.1"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ecmascript"
-version = "39.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+version = "40.0.0"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_estree_ast"
 version = "14.0.1"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_estree_compat"
 version = "26.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_graph_analyzer"
 version = "14.0.1"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_html"
 version = "26.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_html_ast"
 version = "14.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_html_codegen"
 version = "15.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_html_codegen_macros"
 version = "1.0.1"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_html_minifier"
 version = "33.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_html_parser"
 version = "14.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_html_utils"
 version = "14.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_html_visit"
 version = "14.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_malloc"
 version = "1.2.3"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_node_bundler"
-version = "42.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+version = "43.0.0"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_node_comments"
 version = "14.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_nodejs_common"
 version = "1.0.3"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_plugin_backend_tests"
 version = "0.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_plugin_backend_wasmer"
 version = "2.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_plugin_backend_wasmtime"
 version = "1.0.2"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_plugin_runner"
 version = "19.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_ts_fast_strip"
-version = "33.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+version = "33.0.1"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_typescript"
 version = "20.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_xml"
 version = "14.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_xml_ast"
 version = "14.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_xml_codegen"
 version = "14.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_xml_codegen_macros"
 version = "1.0.1"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_xml_parser"
 version = "14.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
 
 [[patch.unused]]
 name = "swc_xml_visit"
 version = "14.0.0"
-source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#9ee1a150ca293e82f56b236def5e40579a7053c3"
+source = "git+https://github.com/quininer/swc.git?branch=r/ast-non-exhaustive#d8eb3510d34f8f297aac87d6649457642ec3b5c4"
