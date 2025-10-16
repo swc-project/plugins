@@ -17,9 +17,9 @@ fn swc_inject_imports_plugin(
     let config = serde_json::from_str::<swc_inject_imports::Config>(
         &data
             .get_transform_plugin_config()
-            .expect("failed to get plugin config for swc-inject-imports"),
+            .expect("failed to get plugin config for swc-experimental-inject-imports"),
     )
-    .expect("invalid config for swc-inject-imports");
+    .expect("invalid config for swc-experimental-inject-imports");
 
     let filename = data
         .get_context(&TransformPluginMetadataContextKind::Filename)

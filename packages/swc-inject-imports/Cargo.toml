@@ -1,6 +1,6 @@
 [package]
 
-description = "SWC Plugin for swc-inject-imports"
+description = "SWC Plugin for swc-experimental-inject-imports"
 
 
 authors      = { workspace = true }

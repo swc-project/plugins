@@ -21,7 +21,7 @@ fn pure(input: PathBuf) {
                 swc_inject_imports::swc_inject_imports(
                     "test.js".into(),
                     Config {
-                        imports_paths: vec![Atom::new("@swc/inject-imports")],
+                        imports_paths: vec![Atom::new("@swc/experimental-inject-imports")],
                         only_filenames: vec![],
                     },
                 ),

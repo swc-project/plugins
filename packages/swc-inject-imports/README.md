@@ -1,4 +1,4 @@
-# @swc/plugin-swc-inject-imports
+# @swc/plugin-swc-experimental-inject-imports
 
 ## Usage
 
@@ -9,9 +9,9 @@
   "jsc": {
     "experimental": {
       "plugins": [
-        "@swc/plugin-swc-inject-imports",
+        "@swc/plugin-swc-experimental-inject-imports",
         {
-          "importsPaths": ["@swc/inject-imports"],
+          "importsPaths": ["@swc/experimental-inject-imports"],
           "onlyFilenames": ["page.tsx", "layout.tsx"]
         }
       ]
@@ -20,4 +20,4 @@
 }
 ```
 
-# @swc/plugin-swc-inject-imports
+# @swc/plugin-swc-experimental-inject-imports

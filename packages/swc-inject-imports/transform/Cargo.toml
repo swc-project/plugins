@@ -1,6 +1,6 @@
 [package]
 
-description = "AST transforms visitor for swc-inject-imports"
+description = "AST transforms visitor for swc-experimental-inject-imports"
 
 
 authors      = { workspace = true }
