@@ -1,0 +1,29 @@
+{
+  "name": "@swc/plugin-swc-inject-imports",
+  "version": "1.0.0",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "description": "SWC plugin for swc-inject-imports",
+  "main": "swc_plugin_swc_inject_imports.wasm",
+  "scripts": {
+    "prepack": "cargo build --release -p swc_plugin_swc_inject_imports --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/release/swc_plugin_swc_inject_imports.wasm ."
+  },
+  "homepage": "https://swc.rs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/swc-project/plugins.git",
+    "directory": "packages/swc-inject-imports"
+  },
+  "bugs": {
+    "url": "https://github.com/swc-project/plugins/issues"
+  },
+  "author": "강동윤 <kdy1997.dev@gmail.com>",
+  "keywords": [],
+  "license": "Apache-2.0",
+  "preferUnplugged": true,
+  "dependencies": {
+    "@swc/counter": "^0.1.3"
+  }
+}
