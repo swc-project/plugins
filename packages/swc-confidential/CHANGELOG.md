@@ -1,5 +1,11 @@
 # @swc/plugin-swc-confidential
 
+## 8.5.0
+
+### Minor Changes
+
+- c324a59: Update swc_core to v45
+
 ## 8.4.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @swc/plugin-formatjs
 
+## 6.5.0
+
+### Minor Changes
+
+- c324a59: Update swc_core to v45
+
 ## 6.4.0
 
 ### Minor Changes
