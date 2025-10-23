@@ -27,13 +27,13 @@
         "src",
         "swc_mut_cjs_exports.wasm"
     ],
-    "homepage": "https://github.com/magic-akari/swc_mut_cjs_exports#readme",
+    "homepage": "https://github.com/swc-project/plugins/tree/main/contrib/mut-cjs-exports",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/swc-project/plugins.git"
     },
     "bugs": {
-        "url": "https://github.com/magic-akari/swc_mut_cjs_exports/issues"
+        "url": "https://github.com/swc-project/plugins/issues"
     },
     "devDependencies": {
         "@swc/core": "^1.10.0",
