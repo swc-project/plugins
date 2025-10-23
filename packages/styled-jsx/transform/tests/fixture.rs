@@ -68,28 +68,9 @@ fn styled_jsx_errors(input: PathBuf) {
         true => FileName::Real(PathBuf::from("/some-project/src/some-file.ts")),
         false => FileName::Real(PathBuf::from("/some-project/src/some-file.js")),
     };
-    {
-        let output = input.parent().unwrap().join("output-swc.js");
-        let config = styled_jsx::visitor::Config {
-            ..Default::default()
-        };
-        let native_config = Default::default();
-
-        test_fixture(
-            syntax(),
-            &|t| styled_jsx(t.cm.clone(), &file_name, &config, &native_config),
-            &input,
-            &output,
-            FixtureTestConfig {
-                allow_error: true,
-                module: Some(true),
-                ..Default::default()
-            },
-        );
-    }
 
     {
-        let output = input.parent().unwrap().join("output-lightningcss.js");
+        let output = input.parent().unwrap().join("output.js");
         let config = styled_jsx::visitor::Config {
             ..Default::default()
         };
