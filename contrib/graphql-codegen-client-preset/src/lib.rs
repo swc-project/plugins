@@ -180,7 +180,8 @@ impl VisitMut for GraphQLVisitor {
 
         let platform_specific_path = self.get_relative_import_path("graphql");
 
-        // Find the position after any directive prologue (e.g., "use strict", "use cache")
+        // Find the position after any directive prologue (e.g., "use strict", "use
+        // cache")
         let mut insert_position = 0;
         for (index, item) in module.body.iter().enumerate() {
             match item {
@@ -198,7 +199,11 @@ impl VisitMut for GraphQLVisitor {
             }
         }
 
-        for (i, operation_or_fragment_name) in self.graphql_operations_or_fragments_to_import.iter().enumerate() {
+        for (i, operation_or_fragment_name) in self
+            .graphql_operations_or_fragments_to_import
+            .iter()
+            .enumerate()
+        {
             module.body.insert(
                 insert_position + i,
                 ModuleItem::ModuleDecl(ModuleDecl::Import(ImportDecl {

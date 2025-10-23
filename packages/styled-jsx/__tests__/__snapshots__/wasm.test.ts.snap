@@ -77,11 +77,11 @@ export default (({ display })=>/*#__PURE__*/ React.createElement("div", {
         ]
     }, \`p.__jsx-style-dynamic-selector{color:\${darken(color) + 2}}\`), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "cb506cc21b457018"
-    }, \`@media(min-width:\${mediumScreen}){p.jsx-98c353683ca4620a{color:green}p.jsx-98c353683ca4620a{color:\${\`red\`}}}p.jsx-98c353683ca4620a{color:red}\`), /*#__PURE__*/ React.createElement(_JSXStyle, {
+    }, \`@media (min-width:\${mediumScreen}){p.jsx-98c353683ca4620a{color:\${\`red\`}}}p.jsx-98c353683ca4620a{color:red}\`), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "3fbd7f33ecd97f05"
-    }, \`p.jsx-98c353683ca4620a{-webkit-animation-duration:\${animationDuration};-moz-animation-duration:\${animationDuration};-o-animation-duration:\${animationDuration};animation-duration:\${animationDuration}}\`), /*#__PURE__*/ React.createElement(_JSXStyle, {
+    }, \`p.jsx-98c353683ca4620a{animation-duration:\${animationDuration}}\`), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "79b95ec4ba723b8c"
-    }, \`p.jsx-98c353683ca4620a{-webkit-animation:\${animationDuration} forwards \${animationName};-moz-animation:\${animationDuration} forwards \${animationName};-o-animation:\${animationDuration} forwards \${animationName};animation:\${animationDuration} forwards \${animationName}}div.jsx-98c353683ca4620a{background:\${color}}\`), /*#__PURE__*/ React.createElement(_JSXStyle, {
+    }, \`p.jsx-98c353683ca4620a{animation:forwards \${animationDuration};animation-timeline:\${animationName}}div.jsx-98c353683ca4620a{background:\${color}}\`), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "f7dcddda350c6320",
         dynamic: [
             display ? "block" : "none"
@@ -588,7 +588,7 @@ export default function Component() {
             easing,
             delay
         ]
-    }, \`@-webkit-keyframes customAnimation{0%{opacity:0;-webkit-transform:scale(0);transform:scale(0)}50%{opacity:\${middleOpacity};-webkit-transform:rotate(\${rotation}deg);transform:rotate(\${rotation}deg)}100%{opacity:1;-webkit-transform:scale(1);transform:scale(1)}}@-moz-keyframes customAnimation{0%{opacity:0;-moz-transform:scale(0);transform:scale(0)}50%{opacity:\${middleOpacity};-moz-transform:rotate(\${rotation}deg);transform:rotate(\${rotation}deg)}100%{opacity:1;-moz-transform:scale(1);transform:scale(1)}}@-o-keyframes customAnimation{0%{opacity:0;-o-transform:scale(0);transform:scale(0)}50%{opacity:\${middleOpacity};-o-transform:rotate(\${rotation}deg);transform:rotate(\${rotation}deg)}100%{opacity:1;-o-transform:scale(1);transform:scale(1)}}@keyframes customAnimation{0%{opacity:0;-webkit-transform:scale(0);-moz-transform:scale(0);-o-transform:scale(0);transform:scale(0)}50%{opacity:\${middleOpacity};-webkit-transform:rotate(\${rotation}deg);-moz-transform:rotate(\${rotation}deg);-o-transform:rotate(\${rotation}deg);transform:rotate(\${rotation}deg)}100%{opacity:1;-webkit-transform:scale(1);-moz-transform:scale(1);-o-transform:scale(1);transform:scale(1)}}.wrapper.__jsx-style-dynamic-selector{}.wrapper.__jsx-style-dynamic-selector .animated.__jsx-style-dynamic-selector{-webkit-animation:customAnimation \${duration}ms \${easing} forwards;-moz-animation:customAnimation \${duration}ms \${easing} forwards;-o-animation:customAnimation \${duration}ms \${easing} forwards;animation:customAnimation \${duration}ms \${easing} forwards;-webkit-animation-delay:\${delay}ms;-moz-animation-delay:\${delay}ms;-o-animation-delay:\${delay}ms;animation-delay:\${delay}ms}\`));
+    }, \`@keyframes customAnimation{0%{opacity:0;transform:scale(0)}50%{opacity:\${middleOpacity};transform:rotate(\${rotation}deg)}to{opacity:1;transform:scale(1)}}.wrapper.__jsx-style-dynamic-selector .animated.__jsx-style-dynamic-selector{animation:customAnimation \${duration}ms \${easing} forwards;animation-delay:\${delay}ms}\`));
 }
 "
 `;
@@ -632,7 +632,7 @@ function NavigationItem({ active, className }) {
         }, className, "navigation-item") || "")
     }, /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "e73bf96b356a8634"
-    }, '.navigation-item.jsx-e73bf96b356a8634 a::after{content:attr(data-text);content:attr(data-text)/""}'));
+    }, '.navigation-item.jsx-e73bf96b356a8634 a:after{content:attr(data-text);content:attr(data-text)/""}'));
 }
 export default NavigationItem;
 "
@@ -709,7 +709,7 @@ export default function Component() {
             offset,
             spacing
         ]
-    }, \`.container.__jsx-style-dynamic-selector{--local-var:\${dynamicValue};color:var(--text-color);background:-webkit-linear-gradient(left,\${color1},\${color2});background:-moz-linear-gradient(left,\${color1},\${color2});background:-o-linear-gradient(left,\${color1},\${color2});background:linear-gradient(to right,\${color1},\${color2})}.container.__jsx-style-dynamic-selector .item.__jsx-style-dynamic-selector{-webkit-transform:translate(-webkit-calc(var(--x) + \${offset}px),-webkit-calc(var(--y) + \${offset}px));-moz-transform:translate(-moz-calc(var(--x) + \${offset}px),-moz-calc(var(--y) + \${offset}px));-ms-transform:translate(calc(var(--x) + \${offset}px),calc(var(--y) + \${offset}px));-o-transform:translate(calc(var(--x) + \${offset}px),calc(var(--y) + \${offset}px));transform:translate(-webkit-calc(var(--x) + \${offset}px),-webkit-calc(var(--y) + \${offset}px));transform:translate(-moz-calc(var(--x) + \${offset}px),-moz-calc(var(--y) + \${offset}px));transform:translate(calc(var(--x) + \${offset}px),calc(var(--y) + \${offset}px))}.container.__jsx-style-dynamic-selector div.__jsx-style-dynamic-selector{margin:-webkit-calc(10px + \${spacing}px);margin:-moz-calc(10px + \${spacing}px);margin:calc(10px + \${spacing}px)}\`));
+    }, \`.container.__jsx-style-dynamic-selector{--local-var:\${dynamicValue};color:var(--text-color);background:linear-gradient(to right,\${color1},\${color2})}.container.__jsx-style-dynamic-selector .item.__jsx-style-dynamic-selector{transform:translate(calc(var(--x) + \${offset}px),calc(var(--y) + \${offset}px))}.container.__jsx-style-dynamic-selector div.__jsx-style-dynamic-selector{margin:calc(10px + \${spacing}px)}\`));
 }
 "
 `;
@@ -977,7 +977,7 @@ export default (()=>/*#__PURE__*/ React.createElement(React.Fragment, null, /*#_
         className: "jsx-6dd5f97e085c0297"
     }, "world"))), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "6dd5f97e085c0297"
-    }, "p.jsx-6dd5f97e085c0297{color:cyan}.foo.jsx-6dd5f97e085c0297{font-size:18px;color:hotpink}#head.jsx-6dd5f97e085c0297{text-decoration:underline}")));
+    }, "p.jsx-6dd5f97e085c0297{color:#0ff}.foo.jsx-6dd5f97e085c0297{color:#ff69b4;font-size:18px}#head.jsx-6dd5f97e085c0297{text-decoration:underline}")));
 function Component1() {
     return /*#__PURE__*/ React.createElement(React.Fragment, null, /*#__PURE__*/ React.createElement("div", null, "test"));
 }
@@ -997,7 +997,7 @@ const Test = ()=>/*#__PURE__*/ React.createElement("div", {
         className: "jsx-f84dd0db2f59ea88"
     }, /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "f84dd0db2f59ea88"
-    }, "body{color:red}:hover{color:red;display:-webkit-box;display:-webkit-flex;display:-moz-box;display:-ms-flexbox;display:flex;-webkit-animation:foo 1s ease-out;-moz-animation:foo 1s ease-out;-o-animation:foo 1s ease-out;animation:foo 1s ease-out}div a{display:none}[data-test]>div{color:red}"));
+    }, "body{color:red}:hover{color:red;animation:1s ease-out foo;display:flex}div a{display:none}[data-test]>div{color:red}"));
 const Test2 = ()=>/*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "94239b6d6b42c9b5"
     }, "p{color:red}");
@@ -1024,7 +1024,7 @@ const Test = ()=>/*#__PURE__*/ React.createElement("div", {
         className: "jsx-3d9ecfaa448ef714"
     }, "test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "3d9ecfaa448ef714"
-    }, ".c1{background:orange!important}"));
+    }, ":-webkit-any(.c1,.c2){background:orange!important}:-moz-any(.c1,.c2){background:orange!important}:is(.c1,.c2){background:orange!important}"));
 "
 `;
 
@@ -1048,7 +1048,7 @@ const Test = ()=>/*#__PURE__*/ React.createElement("div", {
         className: "jsx-9303248a3896bf50"
     }, "test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "9303248a3896bf50"
-    }, ".parent.jsx-9303248a3896bf50{}.parent.jsx-9303248a3896bf50 div{}.parent.jsx-9303248a3896bf50 div.child{background:orange}"));
+    }, ".parent.jsx-9303248a3896bf50 div :-webkit-any(.child,.child2){background:orange}.parent.jsx-9303248a3896bf50 div :-moz-any(.child,.child2){background:orange}.parent.jsx-9303248a3896bf50 div :is(.child,.child2){background:orange}"));
 "
 `;
 
@@ -1060,7 +1060,7 @@ const Test = ()=>/*#__PURE__*/ React.createElement("div", {
         className: "jsx-da58316599e32d09"
     }, "test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "da58316599e32d09"
-    }, ".parent.jsx-da58316599e32d09{}.parent.jsx-da58316599e32d09 div{}.parent.jsx-da58316599e32d09 div.child>.child2{background:orange}"));
+    }, ".parent.jsx-da58316599e32d09 div.child>.child2{background:orange}"));
 "
 `;
 
@@ -1072,7 +1072,7 @@ const Test = ()=>/*#__PURE__*/ React.createElement("div", {
         className: "jsx-b0a16d58836c444b"
     }, "test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "b0a16d58836c444b"
-    }, ".parent.jsx-b0a16d58836c444b{}.parent.jsx-b0a16d58836c444b div{}.parent.jsx-b0a16d58836c444b div.child{background:orange}"));
+    }, ".parent.jsx-b0a16d58836c444b div.child{background:orange}"));
 "
 `;
 
@@ -1083,7 +1083,7 @@ export default function IndexPage() {
         className: "jsx-b6abd0684ba81871"
     }, "should be blue.", /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "b6abd0684ba81871"
-    }, "div{color:blue}"));
+    }, "div{color:#00f}"));
 }
 "
 `;
@@ -1108,7 +1108,7 @@ const Test = ()=>/*#__PURE__*/ React.createElement(React.Fragment, null, /*#__PU
         className: "jsx-60bae1dc4409a62b"
     }, "Loading CSS...")), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "60bae1dc4409a62b"
-    }, "#css-test-page-id.jsx-60bae1dc4409a62b{color:red}.p1.jsx-60bae1dc4409a62b{background:purple!important}.c1,.c2.jsx-60bae1dc4409a62b{background:orange!important}.container.jsx-60bae1dc4409a62b{max-width:1e3px;margin:0 auto;padding:1rem}"));
+    }, "#css-test-page-id.jsx-60bae1dc4409a62b{color:red}.p1.jsx-60bae1dc4409a62b{background:purple!important}.c2.jsx-60bae1dc4409a62b,.c1{background:orange!important}.container.jsx-60bae1dc4409a62b{max-width:1000px;margin:0 auto;padding:1rem}"));
 "
 `;
 
@@ -1193,7 +1193,7 @@ export default function Home() {
         className: "jsx-762285c3ffa56b0" + " " + "child"
     }, "this should be green")), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "762285c3ffa56b0"
-    }, ".container.jsx-762285c3ffa56b0{color:blue;padding:3rem}div.child{color:green}"));
+    }, ".container.jsx-762285c3ffa56b0{color:#00f;padding:3rem}div.child{color:green}"));
 }
 "
 `;
@@ -1203,7 +1203,7 @@ exports[`Should load swc-confidential wasm plugin correctly > Should transform i
 export default function Home() {
     return /*#__PURE__*/ React.createElement(React.Fragment, null, /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "c717b7da8095da63"
-    }, ".theme-root{}.theme-root .parent.jsx-c717b7da8095da63{color:green}"));
+    }, ".theme-root .parent.jsx-c717b7da8095da63{color:green}"));
 }
 "
 `;
@@ -1213,7 +1213,7 @@ exports[`Should load swc-confidential wasm plugin correctly > Should transform i
 export default function Home() {
     return /*#__PURE__*/ React.createElement(React.Fragment, null, /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "44c2e59534385f9"
-    }, "div.jsx-44c2e59534385f9{-webkit-mask-image:-webkit-radial-gradient(white,black);mask-image:-webkit-radial-gradient(white,black)}"));
+    }, "div.jsx-44c2e59534385f9{-webkit-mask-image:-webkit-radial-gradient(#fff,#000)}"));
 }
 "
 `;
@@ -1234,7 +1234,7 @@ export default (({ breakPoint })=>/*#__PURE__*/ React.createElement("div", {
         dynamic: [
             breakPoint
         ]
-    }, \`@media(\${breakPoint}){.test.__jsx-style-dynamic-selector{margin-bottom:1em}}\`)));
+    }, \`@media (\${breakPoint}){.test.__jsx-style-dynamic-selector{margin-bottom:1em}}\`)));
 "
 `;
 
@@ -1247,7 +1247,7 @@ export default function IndexPage() {
         className: "jsx-6226396a225d1c8b"
     }, "Hello World."), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "6226396a225d1c8b"
-    }, "@supports((display:flex)or (display:-webkit-box)or (display:-webkit-flex)or (display:-moz-box)or (display:-ms-flexbox)){h1{color:hotpink}}"));
+    }, "@supports (display:flex){h1{color:#ff69b4}}"));
 }
 "
 `;
@@ -1313,7 +1313,7 @@ export default (()=>/*#__PURE__*/ React.createElement("div", {
         className: "jsx-3b0234e9651851cb"
     }, "woot"), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "3b0234e9651851cb"
-    }, ".container.jsx-3b0234e9651851cb{color:blue;padding:3rem}.container.jsx-3b0234e9651851cb .inner.jsx-3b0234e9651851cb{color:yellow}")));
+    }, ".container.jsx-3b0234e9651851cb{color:#00f;padding:3rem}.container.jsx-3b0234e9651851cb .inner.jsx-3b0234e9651851cb{color:#ff0}")));
 "
 `;
 
@@ -1326,7 +1326,7 @@ export default function IndexPage() {
         className: "jsx-490e0a92136d9307"
     }, "Hello World."), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "490e0a92136d9307"
-    }, ".container{}.container>div{color:green}"));
+    }, ".container>div{color:green}"));
 }
 "
 `;
@@ -1367,7 +1367,7 @@ export default function Component() {
             ResponsiveBreakpoint[breakpoint],
             mobileWidth
         ]
-    }, \`.component.__jsx-style-dynamic-selector{width:100%}@media(max-width:\${ResponsiveBreakpoint[breakpoint]}){.component.__jsx-style-dynamic-selector{width:\${mobileWidth}px}.component.__jsx-style-dynamic-selector.active.__jsx-style-dynamic-selector{color:blue}.component.__jsx-style-dynamic-selector div.__jsx-style-dynamic-selector{display:block}}\`));
+    }, \`.component.__jsx-style-dynamic-selector{width:100%}@media (max-width:\${ResponsiveBreakpoint[breakpoint]}){.component.__jsx-style-dynamic-selector{width:\${mobileWidth}px}.component.active.__jsx-style-dynamic-selector{color:#00f}.component.__jsx-style-dynamic-selector div.__jsx-style-dynamic-selector{display:block}}\`));
 }
 "
 `;
@@ -1437,13 +1437,13 @@ export default function Component() {
         className: "jsx-2552bb7cce0bcbcf"
     }, "Heading"), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "2552bb7cce0bcbcf"
-    }, ".parent.jsx-2552bb7cce0bcbcf{position:relative}.parent.jsx-2552bb7cce0bcbcf.jsx-2552bb7cce0bcbcf:hover{background-color:red}.parent.jsx-2552bb7cce0bcbcf .child.jsx-2552bb7cce0bcbcf{margin-top:10px}.parent.jsx-2552bb7cce0bcbcf div.jsx-2552bb7cce0bcbcf{padding:15px}.parent.jsx-2552bb7cce0bcbcf h1.jsx-2552bb7cce0bcbcf{font-size:24px}"));
+    }, ".parent.jsx-2552bb7cce0bcbcf{position:relative}.parent.jsx-2552bb7cce0bcbcf:hover{background-color:red}.parent.jsx-2552bb7cce0bcbcf .child.jsx-2552bb7cce0bcbcf{margin-top:10px}.parent.jsx-2552bb7cce0bcbcf div.jsx-2552bb7cce0bcbcf{padding:15px}.parent.jsx-2552bb7cce0bcbcf h1.jsx-2552bb7cce0bcbcf{font-size:24px}"));
 }
 "
 `;
 
 exports[`Should load swc-confidential wasm plugin correctly > Should transform next-54653 correctly 1`] = `
-"const _defaultExport = new String("@media(max-width:870px){th.expiration-date-cell,td.expiration-date-cell{display:none}}");
+"const _defaultExport = new String("@media (max-width:870px){th.expiration-date-cell,td.expiration-date-cell{display:none}}");
 _defaultExport.__hash = "fd71bf06ba8860bb";
 export default _defaultExport;
 "
@@ -1615,7 +1615,7 @@ export default (()=>/*#__PURE__*/ React.createElement("div", {
         className: "jsx-d3bc3634b8d1b3fb"
     }, "woot"), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "d3bc3634b8d1b3fb"
-    }, ".container.jsx-d3bc3634b8d1b3fb{color:blue;padding:3rem}.container.jsx-d3bc3634b8d1b3fb.inner.jsx-d3bc3634b8d1b3fb{color:yellow}")));
+    }, ".container.jsx-d3bc3634b8d1b3fb{color:#00f;padding:3rem}.container.inner.jsx-d3bc3634b8d1b3fb{color:#ff0}")));
 "
 `;
 
@@ -1636,7 +1636,7 @@ exports[`Should load swc-confidential wasm plugin correctly > Should transform s
 export default function Home() {
     return /*#__PURE__*/ React.createElement(React.Fragment, null, /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "86b7ac1a67e57b1"
-    }, "div.jsx-86b7ac1a67e57b1{}div.jsx-86b7ac1a67e57b1.parent.jsx-86b7ac1a67e57b1{color:green}"));
+    }, "div.parent.jsx-86b7ac1a67e57b1{color:green}"));
 }
 "
 `;
@@ -1774,7 +1774,7 @@ const MaskedDivBad = ()=>{
             0.5 + HEAD_MARGIN_PERCENTAGE,
             0.5 + CUTOUT_AVATAR_PERCENTAGE_VISIBLE + HEAD_MARGIN_PERCENTAGE
         ]
-    }, \`.head.__jsx-style-dynamic-selector{position:relative}.avatar-wrapper.__jsx-style-dynamic-selector{width:40px;height:40px;background:#ff6b6b;-webkit-border-radius:50%;-moz-border-radius:50%;border-radius:50%;-webkit-mask-image:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><circle r="0.5" cx="0.5" cy="0.5"/></svg>'),url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><circle r="\${0.5 + HEAD_MARGIN_PERCENTAGE}" cx="\${0.5 + CUTOUT_AVATAR_PERCENTAGE_VISIBLE + HEAD_MARGIN_PERCENTAGE}" cy="0.5"/></svg>');mask-image:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><circle r="0.5" cx="0.5" cy="0.5"/></svg>'),url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><circle r="\${0.5 + HEAD_MARGIN_PERCENTAGE}" cx="\${0.5 + CUTOUT_AVATAR_PERCENTAGE_VISIBLE + HEAD_MARGIN_PERCENTAGE}" cy="0.5"/></svg>');-webkit-mask-size:100%100%;mask-size:100%100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;-webkit-mask-composite:source-out;mask-composite:subtract}\`));
+    }, \`.head.__jsx-style-dynamic-selector{position:relative}.avatar-wrapper.__jsx-style-dynamic-selector{-webkit-mask-composite:source-out;background:#ff6b6b;border-radius:50%;width:40px;height:40px;-webkit-mask-image:url("data:image/svg+xml,<svg xmlns=\\\\"http://www.w3.org/2000/svg\\\\" viewBox=\\\\"0 0 1 1\\\\"><circle r=\\\\"0.5\\\\" cx=\\\\"0.5\\\\" cy=\\\\"0.5\\\\"/></svg>"),url("data:image/svg+xml,<svg xmlns=\\\\"http://www.w3.org/2000/svg\\\\" viewBox=\\\\"0 0 1 1\\\\"><circle r=\\\\"\${0.5 + HEAD_MARGIN_PERCENTAGE}\\\\" cx=\\\\"\${0.5 + CUTOUT_AVATAR_PERCENTAGE_VISIBLE + HEAD_MARGIN_PERCENTAGE}\\\\" cy=\\\\"0.5\\\\"/></svg>");mask-image:url("data:image/svg+xml,<svg xmlns=\\\\"http://www.w3.org/2000/svg\\\\" viewBox=\\\\"0 0 1 1\\\\"><circle r=\\\\"0.5\\\\" cx=\\\\"0.5\\\\" cy=\\\\"0.5\\\\"/></svg>"),url("data:image/svg+xml,<svg xmlns=\\\\"http://www.w3.org/2000/svg\\\\" viewBox=\\\\"0 0 1 1\\\\"><circle r=\\\\"\${0.5 + HEAD_MARGIN_PERCENTAGE}\\\\" cx=\\\\"\${0.5 + CUTOUT_AVATAR_PERCENTAGE_VISIBLE + HEAD_MARGIN_PERCENTAGE}\\\\" cy=\\\\"0.5\\\\"/></svg>");-webkit-mask-position:50%;mask-position:50%;-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-composite:source-out;mask-composite:subtract}\`));
 };
 "
 `;
@@ -2006,7 +2006,7 @@ class _class {
                 a || "var(--c)",
                 b || "inherit"
             ]
-        }, \`.a:hover .b.__jsx-style-dynamic-selector{display:inline-block;padding:0 \${a || "var(--c)"};color:\${b || "inherit"}}\`));
+        }, \`.a:hover .b.__jsx-style-dynamic-selector{padding:0 \${a || "var(--c)"};color:\${b || "inherit"};display:inline-block}\`));
     }
 }
 export { _class as default };
@@ -2058,7 +2058,7 @@ export default (()=>/*#__PURE__*/ React.createElement("div", {
         className: "jsx-374655937fd2de40"
     }, "test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "374655937fd2de40"
-    }, 'html.jsx-374655937fd2de40{background-image:-webkit-linear-gradient(bottom,rgba(255,255,255,.8),rgba(255,255,255,.8)),url(/static/background.svg);background-image:-moz-linear-gradient(bottom,rgba(255,255,255,.8),rgba(255,255,255,.8)),url(/static/background.svg);background-image:-o-linear-gradient(bottom,rgba(255,255,255,.8),rgba(255,255,255,.8)),url(/static/background.svg);background-image:linear-gradient(0deg,rgba(255,255,255,.8),rgba(255,255,255,.8)),url(/static/background.svg)}p{color:#001}p{color:#002}p,a.jsx-374655937fd2de40{color:#003}.foo+a{color:#004}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}p.jsx-374655937fd2de40{color:#005}p.jsx-374655937fd2de40{color:#006}*.jsx-374655937fd2de40{color:#007}[href="woot"].jsx-374655937fd2de40{color:#008}p.jsx-374655937fd2de40 a.jsx-374655937fd2de40 span.jsx-374655937fd2de40{color:#009}p.jsx-374655937fd2de40 span{background:#00a}p.jsx-374655937fd2de40 a[title="\\'w \\' \\'  t\\'"].jsx-374655937fd2de40{margin:auto}p.jsx-374655937fd2de40 span:not(.test){color:#00b}p.jsx-374655937fd2de40,h1.jsx-374655937fd2de40{color:#00c;-webkit-animation:hahaha 3s ease forwards infinite;-moz-animation:hahaha 3s ease forwards infinite;-o-animation:hahaha 3s ease forwards infinite;animation:hahaha 3s ease forwards infinite;-webkit-animation-name:hahaha;-moz-animation-name:hahaha;-o-animation-name:hahaha;animation-name:hahaha;-webkit-animation-delay:100ms;-moz-animation-delay:100ms;-o-animation-delay:100ms;animation-delay:100ms}p.jsx-374655937fd2de40{-webkit-animation:hahaha 1s,hehehe 2s;-moz-animation:hahaha 1s,hehehe 2s;-o-animation:hahaha 1s,hehehe 2s;animation:hahaha 1s,hehehe 2s}p.jsx-374655937fd2de40:hover{color:#00d}p.jsx-374655937fd2de40::before{color:#00e}.jsx-374655937fd2de40:hover{color:#00f}.jsx-374655937fd2de40::before{color:#010}.jsx-374655937fd2de40:hover p.jsx-374655937fd2de40{color:#011}p.jsx-374655937fd2de40+a.jsx-374655937fd2de40{color:#012}p.jsx-374655937fd2de40~a.jsx-374655937fd2de40{color:#013}p.jsx-374655937fd2de40>a.jsx-374655937fd2de40{color:#014}@-webkit-keyframes hahaha{from{top:0}to{top:100}}@-moz-keyframes hahaha{from{top:0}to{top:100}}@-o-keyframes hahaha{from{top:0}to{top:100}}@keyframes hahaha{from{top:0}to{top:100}}@-webkit-keyframes hehehe{from{left:0}to{left:100}}@-moz-keyframes hehehe{from{left:0}to{left:100}}@-o-keyframes hehehe{from{left:0}to{left:100}}@keyframes hehehe{from{left:0}to{left:100}}@media(min-width:500px){.test.jsx-374655937fd2de40{color:#015}}.test.jsx-374655937fd2de40{display:block}.inline-flex.jsx-374655937fd2de40{display:-webkit-inline-box;display:-webkit-inline-flex;display:-moz-inline-box;display:-ms-inline-flexbox;display:inline-flex}.flex.jsx-374655937fd2de40{display:-webkit-box;display:-webkit-flex;display:-moz-box;display:-ms-flexbox;display:flex}.test.jsx-374655937fd2de40{-webkit-box-shadow:0 0 10px black,inset 0 0 5px black;-moz-box-shadow:0 0 10px black,inset 0 0 5px black;box-shadow:0 0 10px black,inset 0 0 5px black}.test[title=","].jsx-374655937fd2de40{display:inline-block}.test.is-status.jsx-374655937fd2de40 .test.jsx-374655937fd2de40{color:#016}.a-selector.jsx-374655937fd2de40:hover,.a-selector.jsx-374655937fd2de40:focus{outline:none}@media(min-width:1px)and (max-width:768px){[class*="grid__col--"].jsx-374655937fd2de40{margin-top:12px;margin-bottom:12px}}@media(max-width:64em){.test.jsx-374655937fd2de40{margin-bottom:1em}@supports(-moz-appearance:none)and (display:contents){.test.jsx-374655937fd2de40{margin-bottom:2rem}}}')));
+    }, "html.jsx-374655937fd2de40{background-image:linear-gradient(rgba(255,255,255,.8),rgba(255,255,255,.8)),url(/static/background.svg)}p{color:#002}a.jsx-374655937fd2de40,p{color:#003}.foo+a{color:#004}body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif}p.jsx-374655937fd2de40{color:#006}.jsx-374655937fd2de40{color:#007}[href=woot].jsx-374655937fd2de40{color:#008}p.jsx-374655937fd2de40 a.jsx-374655937fd2de40 span.jsx-374655937fd2de40{color:#009}p.jsx-374655937fd2de40 span{background:#00a}p.jsx-374655937fd2de40 a[title=\\"'w ' '  t'\\"].jsx-374655937fd2de40{margin:auto}p.jsx-374655937fd2de40 span:not(.test){color:#00b}p.jsx-374655937fd2de40,h1.jsx-374655937fd2de40{color:#00c;animation:3s .1s infinite forwards hahaha}p.jsx-374655937fd2de40{animation:1s hahaha,2s hehehe}p.jsx-374655937fd2de40:hover{color:#00d}p.jsx-374655937fd2de40:before{color:#00e}.jsx-374655937fd2de40:hover{color:#00f}:before{color:#010}.jsx-374655937fd2de40:hover p.jsx-374655937fd2de40{color:#011}p.jsx-374655937fd2de40+a.jsx-374655937fd2de40{color:#012}p.jsx-374655937fd2de40~a.jsx-374655937fd2de40{color:#013}p.jsx-374655937fd2de40>a.jsx-374655937fd2de40{color:#014}@keyframes hahaha{0%{top:0}to{top:100px}}@keyframes hehehe{0%{left:0}to{left:100px}}@media (min-width:500px){.test.jsx-374655937fd2de40{color:#015}}.test.jsx-374655937fd2de40{display:block}.inline-flex.jsx-374655937fd2de40{display:inline-flex}.flex.jsx-374655937fd2de40{display:flex}.test.jsx-374655937fd2de40{box-shadow:0 0 10px #000,inset 0 0 5px #000}.test[title=\\\\,].jsx-374655937fd2de40{display:inline-block}.test.is-status.jsx-374655937fd2de40 .test.jsx-374655937fd2de40{color:#016}.a-selector.jsx-374655937fd2de40:hover,.a-selector.jsx-374655937fd2de40:focus{outline:none}@media (min-width:1px) and (max-width:768px){[class*=grid__col--].jsx-374655937fd2de40{margin-top:12px;margin-bottom:12px}}@media (max-width:64em){.test.jsx-374655937fd2de40{margin-bottom:1em}@supports ((-moz-appearance:none)) and (display:contents){.test.jsx-374655937fd2de40{margin-bottom:2rem}}}")));
 "
 `;
 
@@ -2070,7 +2070,7 @@ export default (()=>/*#__PURE__*/ React.createElement("div", {
         className: "jsx-2e0b2fdc9a904355"
     }, "test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "2e0b2fdc9a904355"
-    }, "p.jsx-2e0b2fdc9a904355 a.jsx-2e0b2fdc9a904355 span.jsx-2e0b2fdc9a904355{color:red}p.jsx-2e0b2fdc9a904355 span{background:blue}p.jsx-2e0b2fdc9a904355 a[title=\\"'w ' '  t'\\"].jsx-2e0b2fdc9a904355{margin:auto}p.jsx-2e0b2fdc9a904355 span:not(.test){color:green}p.jsx-2e0b2fdc9a904355,h1.jsx-2e0b2fdc9a904355{color:blue;-webkit-animation:hahaha 3s ease forwards infinite;-moz-animation:hahaha 3s ease forwards infinite;-o-animation:hahaha 3s ease forwards infinite;animation:hahaha 3s ease forwards infinite;-webkit-animation-name:hahaha;-moz-animation-name:hahaha;-o-animation-name:hahaha;animation-name:hahaha;-webkit-animation-delay:100ms;-moz-animation-delay:100ms;-o-animation-delay:100ms;animation-delay:100ms}p.jsx-2e0b2fdc9a904355{-webkit-animation:hahaha 1s,hehehe 2s;-moz-animation:hahaha 1s,hehehe 2s;-o-animation:hahaha 1s,hehehe 2s;animation:hahaha 1s,hehehe 2s}p.jsx-2e0b2fdc9a904355:hover{color:red}p.jsx-2e0b2fdc9a904355::before{color:red}.jsx-2e0b2fdc9a904355:hover{color:red}.jsx-2e0b2fdc9a904355::before{color:red}.jsx-2e0b2fdc9a904355:hover p.jsx-2e0b2fdc9a904355{color:red}p.jsx-2e0b2fdc9a904355+a.jsx-2e0b2fdc9a904355{color:red}p.jsx-2e0b2fdc9a904355~a.jsx-2e0b2fdc9a904355{color:red}p.jsx-2e0b2fdc9a904355>a.jsx-2e0b2fdc9a904355{color:red}@-webkit-keyframes hahaha{from{top:0}to{top:100}}@-moz-keyframes hahaha{from{top:0}to{top:100}}@-o-keyframes hahaha{from{top:0}to{top:100}}@keyframes hahaha{from{top:0}to{top:100}}@-webkit-keyframes hehehe{from{left:0}to{left:100}}@-moz-keyframes hehehe{from{left:0}to{left:100}}@-o-keyframes hehehe{from{left:0}to{left:100}}@keyframes hehehe{from{left:0}to{left:100}}@media(min-width:500px){.test.jsx-2e0b2fdc9a904355{color:red}}.test.jsx-2e0b2fdc9a904355{display:block}.inline-flex.jsx-2e0b2fdc9a904355{display:-webkit-inline-box;display:-webkit-inline-flex;display:-moz-inline-box;display:-ms-inline-flexbox;display:inline-flex}.flex.jsx-2e0b2fdc9a904355{display:-webkit-box;display:-webkit-flex;display:-moz-box;display:-ms-flexbox;display:flex}.test.jsx-2e0b2fdc9a904355{-webkit-box-shadow:0 0 10px black,inset 0 0 5px black;-moz-box-shadow:0 0 10px black,inset 0 0 5px black;box-shadow:0 0 10px black,inset 0 0 5px black}.test[title=\\",\\"].jsx-2e0b2fdc9a904355{display:inline-block}.test.is-status.jsx-2e0b2fdc9a904355 .test.jsx-2e0b2fdc9a904355{color:red}.a-selector.jsx-2e0b2fdc9a904355:hover,.a-selector.jsx-2e0b2fdc9a904355:focus{outline:none}")));
+    }, "p.jsx-2e0b2fdc9a904355 a.jsx-2e0b2fdc9a904355 span.jsx-2e0b2fdc9a904355{color:red}p.jsx-2e0b2fdc9a904355 span{background:#00f}p.jsx-2e0b2fdc9a904355 a[title=\\"'w ' '  t'\\"].jsx-2e0b2fdc9a904355{margin:auto}p.jsx-2e0b2fdc9a904355 span:not(.test){color:green}p.jsx-2e0b2fdc9a904355,h1.jsx-2e0b2fdc9a904355{color:#00f;animation:3s .1s infinite forwards hahaha}p.jsx-2e0b2fdc9a904355{animation:1s hahaha,2s hehehe}p.jsx-2e0b2fdc9a904355:hover,p.jsx-2e0b2fdc9a904355:before,.jsx-2e0b2fdc9a904355:hover,:before,.jsx-2e0b2fdc9a904355:hover p.jsx-2e0b2fdc9a904355,p.jsx-2e0b2fdc9a904355+a.jsx-2e0b2fdc9a904355,p.jsx-2e0b2fdc9a904355~a.jsx-2e0b2fdc9a904355,p.jsx-2e0b2fdc9a904355>a.jsx-2e0b2fdc9a904355{color:red}@keyframes hahaha{0%{top:0}to{top:100px}}@keyframes hehehe{0%{left:0}to{left:100px}}@media (min-width:500px){.test.jsx-2e0b2fdc9a904355{color:red}}.test.jsx-2e0b2fdc9a904355{display:block}.inline-flex.jsx-2e0b2fdc9a904355{display:inline-flex}.flex.jsx-2e0b2fdc9a904355{display:flex}.test.jsx-2e0b2fdc9a904355{box-shadow:0 0 10px #000,inset 0 0 5px #000}.test[title=\\\\,].jsx-2e0b2fdc9a904355{display:inline-block}.test.is-status.jsx-2e0b2fdc9a904355 .test.jsx-2e0b2fdc9a904355{color:red}.a-selector.jsx-2e0b2fdc9a904355:hover,.a-selector.jsx-2e0b2fdc9a904355:focus{outline:none}")));
 "
 `;
 
@@ -2094,7 +2094,7 @@ export default (()=>/*#__PURE__*/ React.createElement("div", {
         className: "jsx-13e06bb770708a4c"
     }, "test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "13e06bb770708a4c"
-    }, 'html.jsx-13e06bb770708a4c{background-image:-webkit-linear-gradient(bottom,rgba(255,255,255,.8),rgba(255,255,255,.8)),url(/static/background.svg);background-image:-moz-linear-gradient(bottom,rgba(255,255,255,.8),rgba(255,255,255,.8)),url(/static/background.svg);background-image:-o-linear-gradient(bottom,rgba(255,255,255,.8),rgba(255,255,255,.8)),url(/static/background.svg);background-image:linear-gradient(0deg,rgba(255,255,255,.8),rgba(255,255,255,.8)),url(/static/background.svg)}p{color:#001}h1{color:#002}h2,a.jsx-13e06bb770708a4c{color:#003}.foo+a{color:#004}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}')));
+    }, "html.jsx-13e06bb770708a4c{background-image:linear-gradient(rgba(255,255,255,.8),rgba(255,255,255,.8)),url(/static/background.svg)}p{color:#001}h1{color:#002}a.jsx-13e06bb770708a4c,h2{color:#003}.foo+a{color:#004}body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif}")));
 "
 `;
 
@@ -2106,7 +2106,7 @@ export default (()=>/*#__PURE__*/ React.createElement("div", {
         className: "jsx-ec1bf2b940b30dc"
     }, "test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "ec1bf2b940b30dc"
-    }, '@media(min-width:1px)and (max-width:768px){[class*="grid__col--"].jsx-ec1bf2b940b30dc{margin-top:12px;margin-bottom:12px}}@media(max-width:64em){.test.jsx-ec1bf2b940b30dc{margin-bottom:1em}@supports(-moz-appearance:none)and (display:contents){.test.jsx-ec1bf2b940b30dc{margin-bottom:2rem}}}')));
+    }, "@media (min-width:1px) and (max-width:768px){[class*=grid__col--].jsx-ec1bf2b940b30dc{margin-top:12px;margin-bottom:12px}}@media (max-width:64em){.test.jsx-ec1bf2b940b30dc{margin-bottom:1em}@supports ((-moz-appearance:none)) and (display:contents){.test.jsx-ec1bf2b940b30dc{margin-bottom:2rem}}}")));
 "
 `;
 
@@ -2118,7 +2118,7 @@ export default (()=>/*#__PURE__*/ React.createElement("div", {
         className: "jsx-292192d0348369b"
     }, "test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "292192d0348369b"
-    }, 'p.jsx-292192d0348369b{color:red}p.jsx-292192d0348369b{color:red}*.jsx-292192d0348369b{color:blue}[href="woot"].jsx-292192d0348369b{color:red}')));
+    }, "p.jsx-292192d0348369b{color:red}.jsx-292192d0348369b{color:#00f}[href=woot].jsx-292192d0348369b{color:red}")));
 "
 `;
 
@@ -2130,7 +2130,7 @@ export default (()=>/*#__PURE__*/ React.createElement("div", {
         className: "jsx-d8153edfc80ef241"
     }, "test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "d8153edfc80ef241"
-    }, "li.jsx-d8153edfc80ef241:nth-child(2){color:lime}")));
+    }, "li.jsx-d8153edfc80ef241:nth-child(2){color:#0f0}")));
 "
 `;
 

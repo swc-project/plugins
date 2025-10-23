@@ -10,7 +10,7 @@ license      = { workspace = true }
 name         = "styled_jsx"
 repository   = { workspace = true }
 rust-version = { workspace = true }
-version      = "0.103.0"
+version      = "0.103.1"
 
 
 [features]
@@ -28,13 +28,6 @@ tracing          = { workspace = true }
 preset_env_base          = { workspace = true }
 swc_atoms                = { workspace = true }
 swc_common               = { workspace = true }
-swc_css_ast              = { workspace = true }
-swc_css_codegen          = { workspace = true }
-swc_css_compat           = { workspace = true }
-swc_css_minifier         = { workspace = true }
-swc_css_parser           = { workspace = true }
-swc_css_prefixer         = { workspace = true }
-swc_css_visit            = { workspace = true }
 swc_ecma_ast             = { workspace = true }
 swc_ecma_minifier        = { workspace = true }
 swc_ecma_parser          = { workspace = true }

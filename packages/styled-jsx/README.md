@@ -2,6 +2,12 @@
 
 # @swc/plugin-styled-jsx
 
+## 10.0.0
+
+### Major Changes
+
+- 90c4f87: Drop swc_css mode
+
 ## 9.5.0
 
 ### Minor Changes
