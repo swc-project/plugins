@@ -1,9 +1,7 @@
 use std::path::PathBuf;
 
-use anyhow::bail;
-use lightningcss::stylesheet::ParserOptions;
 use preset_env_base::Versions;
-use styled_jsx::visitor::{styled_jsx, NativeConfig};
+use styled_jsx::visitor::styled_jsx;
 use swc_common::{FileName, Mark, Span, DUMMY_SP};
 use swc_ecma_parser::{EsSyntax, Syntax};
 use swc_ecma_transforms::resolver;
@@ -17,13 +15,8 @@ fn syntax() -> Syntax {
     })
 }
 
-fn run(input: PathBuf, use_lightningcss: bool) {
-    let output = input.parent().unwrap().join(if use_lightningcss {
-        "output.lightningcss.js"
-    } else {
-        "output.swc.js"
-    });
-
+fn run(input: PathBuf) {
+    let output = input.parent().unwrap().join("output.js");
     let browsers = Versions {
         chrome: Some("64".parse().unwrap()),
         edge: Some("79".parse().unwrap()),
@@ -35,47 +28,9 @@ fn run(input: PathBuf, use_lightningcss: bool) {
     };
 
     let file_name = FileName::Real(PathBuf::from("/some-project/src/some-file.js"));
-    let config = styled_jsx::visitor::Config {
-        use_lightningcss,
-        browsers,
-    };
+    let config = styled_jsx::visitor::Config { browsers };
 
-    let native_config = if use_lightningcss {
-        Default::default()
-    } else {
-        NativeConfig {
-            process_css: Some(Box::new(move |css| {
-                let ss = lightningcss::stylesheet::StyleSheet::parse(
-                    css,
-                    ParserOptions {
-                        error_recovery: true,
-                        ..Default::default()
-                    },
-                );
-
-                let ss = match ss {
-                    Ok(v) => v,
-                    Err(err) => {
-                        bail!(
-                            "failed to parse css using lightningcss: {}\nCode: {}",
-                            err,
-                            css
-                        )
-                    }
-                };
-
-                let output = ss.to_css(lightningcss::stylesheet::PrinterOptions {
-                    minify: true,
-                    source_map: None,
-                    project_root: None,
-                    targets: Default::default(),
-                    analyze_dependencies: None,
-                    pseudo_classes: None,
-                })?;
-                Ok(output.code)
-            })),
-        }
-    };
+    let native_config = Default::default();
 
     test_fixture(
         syntax(),
@@ -97,12 +52,7 @@ fn run(input: PathBuf, use_lightningcss: bool) {
 
 #[fixture("tests/fixture/**/input.js")]
 fn styled_jsx_fixture_lightningcs(input: PathBuf) {
-    run(input, true);
-}
-
-#[fixture("tests/fixture/**/input.js")]
-fn styled_jsx_fixture_swc(input: PathBuf) {
-    run(input, false);
+    run(input);
 }
 
 pub struct DropSpan;
@@ -121,7 +71,6 @@ fn styled_jsx_errors(input: PathBuf) {
     {
         let output = input.parent().unwrap().join("output-swc.js");
         let config = styled_jsx::visitor::Config {
-            use_lightningcss: false,
             ..Default::default()
         };
         let native_config = Default::default();
@@ -142,7 +91,6 @@ fn styled_jsx_errors(input: PathBuf) {
     {
         let output = input.parent().unwrap().join("output-lightningcss.js");
         let config = styled_jsx::visitor::Config {
-            use_lightningcss: true,
             ..Default::default()
         };
         let native_config = Default::default();
