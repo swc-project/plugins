@@ -30,7 +30,7 @@
     "homepage": "https://github.com/magic-akari/swc_mut_cjs_exports#readme",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/magic-akari/swc_mut_cjs_exports.git"
+        "url": "git+https://github.com/swc-project/plugins.git"
     },
     "bugs": {
         "url": "https://github.com/magic-akari/swc_mut_cjs_exports/issues"
