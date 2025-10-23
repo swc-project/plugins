@@ -1,8 +1,0 @@
-  x Expected a single child of type JSXExpressionContainer under JSX Style tag.
-  | Read more: https://nextjs.org/docs/messages/invalid-styled-jsx-children
-   ,-[input.js:3:1]
- 2 |   <div>
- 3 |     <style jsx>10</style>
-   :     ^^^^^^^^^^^^^^^^^^^^^
- 4 |   </div>
-   `----
