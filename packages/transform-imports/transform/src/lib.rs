@@ -350,7 +350,7 @@ impl TransformImports<'_> {
         None
     }
 
-    fn handle_dynamic_import(&mut self, call: &CallExpr) -> Option<Atom> {
+    fn handle_dynamic_import(&mut self, call: &CallExpr) -> Option<Wtf8Atom> {
         let first_arg = call.args.first()?;
         if first_arg.spread.is_some() {
             return None;
@@ -403,7 +403,8 @@ impl VisitMut for TransformImports<'_> {
                     if decl.specifiers.is_empty() {
                         if let Some(rewriter) = self.should_rewrite(&decl.src.value) {
                             let new_path = rewriter.new_path(None);
-                            let raw_with_quotes = Atom::from(format!("'{}'", new_path.as_ref()));
+                            let raw_with_quotes =
+                                Atom::from(format!("'{}'", new_path.to_atom_lossy()));
                             let new_src = Box::new(Str {
                                 span: decl.src.span,
                                 value: new_path.clone(),

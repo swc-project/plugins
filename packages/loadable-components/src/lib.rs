@@ -247,7 +247,7 @@ where
             Expr::Tpl(t) => {
                 let v1 = t.quasis[0].cooked.clone().unwrap_or_default();
                 if t.exprs.is_empty() {
-                    return v1.to_string();
+                    return v1.to_string_lossy().into_owned();
                 }
 
                 format!("{v1}[request]")

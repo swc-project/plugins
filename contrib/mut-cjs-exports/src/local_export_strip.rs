@@ -194,7 +194,7 @@ impl VisitMut for LocalExportStrip {
                         ModuleExportName::Str(Str { span, value, .. }) => (
                             match value.as_atom() {
                                 Some(s) => s.clone(),
-                                None => panic!("non-utf8 export name: {:?}", value),
+                                None => panic!("non-utf8 export name: {value:?}"),
                             },
                             span,
                         ),
