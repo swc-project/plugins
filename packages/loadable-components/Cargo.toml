@@ -20,6 +20,7 @@ once_cell = { workspace = true }
 regex = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
+swc_atoms = { workspace = true }
 swc_common = { workspace = true, features = ["concurrent"] }
 swc_core = { workspace = true, features = [
   "ecma_quote",

@@ -3261,6 +3261,7 @@ dependencies = [
  "regex",
  "serde",
  "serde_json",
+ "swc_atoms",
  "swc_common",
  "swc_core",
  "swc_ecma_ast",
