@@ -5,7 +5,7 @@ use handlebars::{Context, Handlebars, Helper, HelperResult, Output, RenderContex
 use once_cell::sync::Lazy;
 use regex::{Captures, Regex};
 use serde::{Deserialize, Serialize};
-use swc_atoms::Atom;
+use swc_atoms::{Atom, Wtf8Atom};
 use swc_cached::regex::CachedRegex;
 use swc_common::{util::take::Take, DUMMY_SP};
 use swc_ecma_ast::{ImportDecl, ImportSpecifier, ModuleExportName, *};
@@ -89,7 +89,7 @@ struct CtxWithMember<'a> {
 }
 
 impl Rewriter<'_> {
-    fn new_path(&self, name_str: Option<&str>) -> Atom {
+    fn new_path(&self, name_str: Option<&str>) -> Wtf8Atom {
         let ctx: Ctx = Ctx {
             matches: &self.group[..],
             member: name_str,
@@ -330,7 +330,9 @@ impl Rewriter<'_> {
 }
 
 impl TransformImports<'_> {
-    fn should_rewrite<'a>(&'a self, name: &'a str) -> Option<Rewriter<'a>> {
+    fn should_rewrite<'a>(&'a self, name: &'a Wtf8Atom) -> Option<Rewriter<'a>> {
+        let name = name.as_str()?;
+
         for (regex, config) in &self.packages {
             let group = regex.captures(name);
             if let Some(group) = group {

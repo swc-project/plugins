@@ -3,12 +3,12 @@ use std::sync::Arc;
 use once_cell::sync::Lazy;
 use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
-use swc_atoms::Atom;
+use swc_atoms::{Atom, Wtf8Atom};
 
 use crate::{EmotionModuleConfig, ExportItem, ExprKind};
 
 /// key: `importSource`
-pub type ImportMap = FxHashMap<Atom, ImportMapValue>;
+pub type ImportMap = FxHashMap<Wtf8Atom, ImportMapValue>;
 
 /// key: `localExportName`
 pub type ImportMapValue = FxHashMap<Atom, ImportItemConfig>;
@@ -22,7 +22,7 @@ pub struct ImportItemConfig {
 
 /// `(packageName, exportName)`
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ItemSpecifier(pub Atom, pub Atom);
+pub struct ItemSpecifier(pub Wtf8Atom, pub Atom);
 
 static EMOTION_OFFICIAL_LIBRARIES: Lazy<Arc<Vec<EmotionModuleConfig>>> = Lazy::new(|| {
     Arc::new(vec![
@@ -104,7 +104,7 @@ pub(crate) fn expand_import_map(map: Option<&ImportMap>) -> Arc<Vec<EmotionModul
                         .unwrap_or_else(|| {
                             panic!(
                                 "There is no transformer for the export '{export_name}' in \
-                                 '{package_name}'"
+                                 '{package_name:?}'"
                             )
                         })
                         .clone();
@@ -124,7 +124,7 @@ pub(crate) fn expand_import_map(map: Option<&ImportMap>) -> Arc<Vec<EmotionModul
                         .unwrap_or_else(|| {
                             panic!(
                                 "failed to find export '{export_name}' from package \
-                                 '{package_name}'"
+                                 '{package_name:?}'"
                             )
                         });
 

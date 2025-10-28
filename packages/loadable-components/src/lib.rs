@@ -10,7 +10,10 @@ use swc_common::{
     util::take::Take,
     BytePos, Spanned, DUMMY_SP,
 };
-use swc_core::{atoms::Atom, quote};
+use swc_core::{
+    atoms::{Atom, Wtf8Atom},
+    quote,
+};
 use swc_ecma_ast::*;
 use swc_ecma_utils::{quote_ident, ExprFactory};
 use swc_ecma_visit::{Visit, VisitMut, VisitMutWith, VisitWith};
@@ -594,7 +597,7 @@ where
         }
     }
 
-    fn module_to_chunk(&self, s: &str) -> String {
+    fn module_to_chunk(&self, s: &Wtf8Atom) -> String {
         debug!("module_to_chunk: `{}`", s);
 
         let s = JS_PATH_REGEXP.replace_all(s, "");
@@ -767,7 +770,7 @@ fn clone_params(e: &Expr) -> Vec<Param> {
 #[derive(Debug, Clone, Deserialize, PartialEq)]
 pub struct Signature {
     pub name: Atom,
-    pub from: Atom,
+    pub from: Wtf8Atom,
 }
 
 impl Default for Signature {

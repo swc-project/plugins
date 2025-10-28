@@ -97,7 +97,7 @@ fn get_message_descriptor_key_from_jsx(name: &JSXAttrName) -> &str {
 fn get_message_descriptor_key_from_call_expr(name: &PropName) -> Option<&str> {
     match name {
         PropName::Ident(name) => Some(&*name.sym),
-        PropName::Str(name) => Some(&*name.value),
+        PropName::Str(name) => Some(&*name.value.as_str().expect("non-utf8 prop name")),
         _ => None,
     }
 

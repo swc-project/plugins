@@ -114,6 +114,10 @@ impl VisitMut for GraphQLVisitor {
                         None => return,
                     };
 
+                    let Some(raw) = raw.as_str() else {
+                        return;
+                    };
+
                     let graphql_ast = match parse_query::<&str>(raw) {
                         Ok(ast) => ast,
                         Err(e) => {
