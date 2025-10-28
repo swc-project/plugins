@@ -167,10 +167,7 @@ fn get_jsx_message_descriptor_value(
     value: Option<&JSXAttrValue>,
     is_message_node: Option<bool>,
 ) -> Option<String> {
-    let value = match value {
-        Some(v) => v,
-        None => return None,
-    };
+    let value = value?;
 
     // NOTE: do not support evaluatePath
     match value {
@@ -892,10 +889,7 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
         value: Option<&JSXAttrValue>,
         is_message_node: Option<bool>,
     ) -> Option<MessageDescriptionValue> {
-        let value = match value {
-            Some(v) => v,
-            None => return None,
-        };
+        let value = value?;
         // NOTE: do not support evaluatePath
         match value {
             JSXAttrValue::JSXExprContainer(container) => {
@@ -975,8 +969,7 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
         match (left_val, right_val) {
             (MessageDescriptionValue::Str(left_str), MessageDescriptionValue::Str(right_str)) => {
                 Some(MessageDescriptionValue::Str(format!(
-                    "{}{}",
-                    left_str, right_str
+                    "{left_str}{right_str}"
                 )))
             }
             _ => None,
@@ -988,10 +981,7 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
         value: Option<&Expr>,
         _is_message_node: Option<bool>,
     ) -> Option<MessageDescriptionValue> {
-        let value = match value {
-            Some(v) => v,
-            None => return None,
-        };
+        let value = value?;
         // NOTE: do not support evaluatePath
         match value {
             Expr::Ident(ident) => {
