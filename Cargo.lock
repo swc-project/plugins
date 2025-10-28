@@ -1519,7 +1519,7 @@ checksum = "68354c5c6bd36d73ff3feceb05efa59b6acb7626617f4962be322a825e61f79a"
 
 [[package]]
 name = "modularize_imports"
-version = "0.99.0"
+version = "0.100.0"
 dependencies = [
  "convert_case",
  "handlebars",
@@ -2043,7 +2043,7 @@ dependencies = [
 
 [[package]]
 name = "react_remove_properties"
-version = "0.53.0"
+version = "0.54.0"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -2113,7 +2113,7 @@ checksum = "ba39f3699c378cd8970968dcbff9c43159ea4cfbd88d43c00b22f2ef10a435d2"
 
 [[package]]
 name = "remove_console"
-version = "0.54.0"
+version = "0.55.0"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -2545,7 +2545,7 @@ checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
 
 [[package]]
 name = "styled_components"
-version = "0.127.0"
+version = "0.128.0"
 dependencies = [
  "Inflector",
  "once_cell",
@@ -2567,7 +2567,7 @@ dependencies = [
 
 [[package]]
 name = "styled_jsx"
-version = "0.103.1"
+version = "0.104.0"
 dependencies = [
  "anyhow",
  "lightningcss",
@@ -2665,7 +2665,7 @@ dependencies = [
 
 [[package]]
 name = "swc_confidential"
-version = "0.48.0"
+version = "0.49.0"
 dependencies = [
  "cipher 0.4.4",
  "hex",
@@ -3048,7 +3048,7 @@ dependencies = [
 
 [[package]]
 name = "swc_emotion"
-version = "0.103.0"
+version = "0.104.0"
 dependencies = [
  "base64 0.22.1",
  "byteorder",
@@ -3101,7 +3101,7 @@ dependencies = [
 
 [[package]]
 name = "swc_experimental_babel"
-version = "0.20.0"
+version = "0.21.0"
 dependencies = [
  "anyhow",
  "once_cell",
@@ -3121,7 +3121,7 @@ dependencies = [
 
 [[package]]
 name = "swc_formatjs_transform"
-version = "10.0.0"
+version = "11.0.0"
 dependencies = [
  "base64ct",
  "digest 0.10.7",
@@ -3140,7 +3140,7 @@ dependencies = [
 
 [[package]]
 name = "swc_icu_messageformat_parser"
-version = "6.0.0"
+version = "7.0.0"
 dependencies = [
  "langtag",
  "once_cell",
@@ -3166,7 +3166,7 @@ dependencies = [
 
 [[package]]
 name = "swc_magic"
-version = "0.47.0"
+version = "0.48.0"
 dependencies = [
  "rustc-hash",
  "serde",
@@ -3455,7 +3455,7 @@ dependencies = [
 
 [[package]]
 name = "swc_prefresh"
-version = "0.30.0"
+version = "0.31.0"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -3471,7 +3471,7 @@ dependencies = [
 
 [[package]]
 name = "swc_relay"
-version = "0.73.0"
+version = "0.74.0"
 dependencies = [
  "once_cell",
  "regex",
