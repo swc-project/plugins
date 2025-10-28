@@ -2,7 +2,7 @@ use std::{convert::TryInto, path::Path};
 
 use once_cell::sync::Lazy;
 use regex::Regex;
-use swc_atoms::{atom, Atom};
+use swc_atoms::{atom, Atom, Wtf8Atom};
 use swc_common::{util::take::Take, DUMMY_SP};
 use swc_ecma_ast::*;
 use swc_ecma_utils::{quote_ident, ExprFactory};
@@ -114,7 +114,12 @@ impl DisplayNameAndId<'_> {
         format!("{}sc-{:x}-{}", self.config.use_namespace(), hash, next_id)
     }
 
-    fn add_config(&mut self, e: &mut Expr, display_name: Option<Atom>, component_id: Option<Atom>) {
+    fn add_config(
+        &mut self,
+        e: &mut Expr,
+        display_name: Option<Wtf8Atom>,
+        component_id: Option<Wtf8Atom>,
+    ) {
         if display_name.is_none() && component_id.is_none() {
             return;
         }

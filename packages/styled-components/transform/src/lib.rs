@@ -1,7 +1,7 @@
 #![deny(unused)]
 
 use serde::Deserialize;
-use swc_atoms::{Atom, Wtf8Atom};
+use swc_atoms::Wtf8Atom;
 use swc_common::{comments::Comments, pass::Optional};
 use swc_ecma_ast::{fn_pass, Pass};
 
