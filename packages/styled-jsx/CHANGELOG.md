@@ -1,5 +1,11 @@
 # @swc/plugin-styled-jsx
 
+## 11.0.0
+
+### Major Changes
+
+- 25e0c2c: Update swc_core to v46.0.0
+
 ## 10.0.0
 
 ### Major Changes
