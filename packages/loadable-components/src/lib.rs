@@ -245,9 +245,14 @@ where
     fn chunk_name_from_template_literal(&self, node: &Expr) -> String {
         match node {
             Expr::Tpl(t) => {
-                let v1 = t.quasis[0].cooked.clone().unwrap_or_default();
+                let v1 = t.quasis[0]
+                    .cooked
+                    .clone()
+                    .unwrap_or_default()
+                    .to_string_lossy()
+                    .into_owned();
                 if t.exprs.is_empty() {
-                    return v1.to_string_lossy().into_owned();
+                    return v1;
                 }
 
                 format!("{v1}[request]")

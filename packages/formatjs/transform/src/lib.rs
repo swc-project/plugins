@@ -212,17 +212,14 @@ fn evaluate_binary_expr(expr: &BinExpr) -> Option<String> {
     let left_str = get_call_expr_message_descriptor_value(Some(&*expr.left), None)?;
     let right_str = get_call_expr_message_descriptor_value(Some(&*expr.right), None)?;
 
-    Some(format!("{}{}", left_str, right_str))
+    Some(format!("{left_str}{right_str}"))
 }
 
 fn get_call_expr_message_descriptor_value(
     value: Option<&Expr>,
     _is_message_node: Option<bool>,
 ) -> Option<String> {
-    let value = match value {
-        Some(v) => v,
-        None => return None,
-    };
+    let value = value?;
 
     // NOTE: do not support evaluatePath
     match value {
