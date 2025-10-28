@@ -26,7 +26,7 @@ pub struct FlagConfig {
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct ImportItem {
-    pub module: Atom,
+    pub module: Wtf8Atom,
     pub name: Atom,
 }
 
@@ -36,7 +36,7 @@ fn default_remove_imports_from() -> Vec<Wtf8Atom> {
 
 fn default_flag_import_source() -> Vec<ImportItem> {
     vec![ImportItem {
-        module: Atom::new("@swc/sdk/flag"),
+        module: Wtf8Atom::from("@swc/sdk/flag"),
         name: Atom::new("flag"),
     }]
 }

@@ -6,7 +6,7 @@ use swc_ecma_visit::{noop_visit_type, Visit, VisitWith};
 #[derive(Debug, Default)]
 pub(crate) struct ImportMap {
     /// Map from module name to (module path, exported symbol)
-    imports: FxHashMap<Id, (Atom, Atom)>,
+    imports: FxHashMap<Id, (Wtf8Atom, Atom)>,
 
     namespace_imports: FxHashMap<Id, Wtf8Atom>,
 
@@ -15,7 +15,7 @@ pub(crate) struct ImportMap {
 
 impl ImportMap {
     /// Returns true if `e` is an import of `orig_name` from `module`.
-    pub fn is_import(&self, e: &Expr, module: &str, orig_name: &str) -> bool {
+    pub fn is_import(&self, e: &Expr, module: &Wtf8Atom, orig_name: &str) -> bool {
         match e {
             Expr::Ident(i) => {
                 if let Some((i_src, i_sym)) = self.imports.get(&i.to_id()) {

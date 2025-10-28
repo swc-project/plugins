@@ -1,5 +1,5 @@
 use rustc_hash::{FxHashMap, FxHashSet};
-use swc_atoms::Atom;
+use swc_atoms::{Atom, Wtf8Atom};
 use swc_common::Span;
 use swc_ecma_ast::*;
 use swc_ecma_visit::{noop_visit_type, Visit, VisitWith};
@@ -9,16 +9,16 @@ use crate::config::ImportItem;
 #[derive(Debug, Default)]
 pub(crate) struct ImportMap {
     /// Map from module name to (module path, exported symbol, span)
-    imports: FxHashMap<Id, (Atom, Atom, Span)>,
+    imports: FxHashMap<Id, (Wtf8Atom, Atom, Span)>,
 
-    namespace_imports: FxHashMap<Id, (Atom, Span)>,
+    namespace_imports: FxHashMap<Id, (Wtf8Atom, Span)>,
 
-    imported_modules: FxHashSet<Atom>,
+    imported_modules: FxHashSet<Wtf8Atom>,
 }
 
 impl ImportMap {
     /// Returns true if `e` is an import of `orig_name` from `module`.
-    pub fn is_import(&self, e: &Expr, module: &Atom, orig_name: &Atom) -> Option<Span> {
+    pub fn is_import(&self, e: &Expr, module: &Wtf8Atom, orig_name: &Atom) -> Option<Span> {
         match e {
             Expr::Ident(i) => {
                 if let Some((i_src, i_sym, i_span)) = self.imports.get(&i.to_id()) {
@@ -104,6 +104,6 @@ impl Visit for Analyzer<'_> {
 fn orig_name(n: &ModuleExportName) -> Atom {
     match n {
         ModuleExportName::Ident(v) => v.sym.clone(),
-        ModuleExportName::Str(v) => v.value.clone(),
+        ModuleExportName::Str(v) => v.value.to_atom_lossy().into_owned(),
     }
 }

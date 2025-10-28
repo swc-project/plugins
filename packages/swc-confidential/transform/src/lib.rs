@@ -77,7 +77,7 @@ where
             let encrypted = self
                 .config
                 .algorithm
-                .encrypt(&self.config.encryption_key, &n.value)
+                .encrypt(&self.config.encryption_key, &n.value.to_string_lossy())
                 .expect("failed to encrypt");
 
             n.raw = None;
