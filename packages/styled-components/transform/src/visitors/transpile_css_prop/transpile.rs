@@ -108,7 +108,7 @@ impl VisitMut for TranspileCssProp<'_> {
                                 callee: import_name.as_callee(),
                                 args: vec![Lit::Str(Str {
                                     span: DUMMY_SP,
-                                    value: name.sym,
+                                    value: name.sym.into(),
                                     raw: None,
                                 })
                                 .as_arg()],
@@ -139,14 +139,14 @@ impl VisitMut for TranspileCssProp<'_> {
                             //
 
                             match css {
-                                JSXAttrValue::Lit(Lit::Str(v)) => Expr::Tpl(Tpl {
+                                JSXAttrValue::Str(v) => Expr::Tpl(Tpl {
                                     span: DUMMY_SP,
                                     exprs: Default::default(),
                                     quasis: vec![TplElement {
                                         span: DUMMY_SP,
                                         tail: true,
                                         cooked: None,
-                                        raw: (&*v.value).into(),
+                                        raw: v.value.to_atom_lossy().into_owned(),
                                     }],
                                 }),
                                 JSXAttrValue::JSXExprContainer(JSXExprContainer {

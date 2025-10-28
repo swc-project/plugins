@@ -570,11 +570,11 @@ where
                 if single {
                     self.module_to_chunk(cooked).into()
                 } else {
-                    self.replace_quasi(cooked, first).into()
+                    self.replace_quasi(&cooked.to_string_lossy(), first).into()
                 }
             }),
             raw: if single {
-                self.module_to_chunk(&quasi.raw).into()
+                self.module_to_chunk(&quasi.raw.clone().into()).into()
             } else {
                 self.replace_quasi(&quasi.raw, first).into()
             },
@@ -603,9 +603,10 @@ where
     }
 
     fn module_to_chunk(&self, s: &Wtf8Atom) -> String {
+        let s = s.to_string_lossy();
         debug!("module_to_chunk: `{}`", s);
 
-        let s = JS_PATH_REGEXP.replace_all(s, "");
+        let s = JS_PATH_REGEXP.replace_all(&s, "");
         let s = WEBPACK_PATH_NAME_NORMALIZE_REPLACE_REGEX.replace_all(&s, "-");
         let s = WEBPACK_MATCH_PADDED_HYPHENS_REPLACE_REGEX.replace_all(&s, "");
 

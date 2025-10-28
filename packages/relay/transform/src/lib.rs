@@ -177,7 +177,7 @@ fn build_require_expr_from_path(path: &str, mark: Option<Mark>) -> Expr {
         .as_callee(),
         args: vec![Lit::Str(Str {
             span: Default::default(),
-            value: Atom::from(path),
+            value: path.into(),
             raw: None,
         })
         .as_arg()],
