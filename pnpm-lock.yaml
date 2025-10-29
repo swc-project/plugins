@@ -36,10 +36,11 @@ importers:
   contrib/graphql-codegen-client-preset: {}
 
   contrib/mut-cjs-exports:
-    devDependencies:
+    dependencies:
       '@swc/core':
-        specifier: ^1.14.0
+        specifier: ^1.10.0
         version: 1.14.0
+    devDependencies:
       '@swc/jest':
         specifier: ^0.2.37
         version: 0.2.39(@swc/core@1.14.0)
