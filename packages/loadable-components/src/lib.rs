@@ -10,7 +10,10 @@ use swc_common::{
     util::take::Take,
     BytePos, Spanned, DUMMY_SP,
 };
-use swc_core::{atoms::Atom, quote};
+use swc_core::{
+    atoms::{Atom, Wtf8Atom},
+    quote,
+};
 use swc_ecma_ast::*;
 use swc_ecma_utils::{quote_ident, ExprFactory};
 use swc_ecma_visit::{Visit, VisitMut, VisitMutWith, VisitWith};
@@ -242,9 +245,14 @@ where
     fn chunk_name_from_template_literal(&self, node: &Expr) -> String {
         match node {
             Expr::Tpl(t) => {
-                let v1 = t.quasis[0].cooked.clone().unwrap_or_default();
+                let v1 = t.quasis[0]
+                    .cooked
+                    .clone()
+                    .unwrap_or_default()
+                    .to_string_lossy()
+                    .into_owned();
                 if t.exprs.is_empty() {
-                    return v1.to_string();
+                    return v1;
                 }
 
                 format!("{v1}[request]")
@@ -304,7 +312,7 @@ where
             webpack_chunk_name = Some(self.chunk_name_from_template_literal(&chunk_name_node));
             chunk_name_node = self.sanitize_chunk_name_template_literal(Box::new(chunk_name_node));
         } else if let Expr::Lit(Lit::Str(s)) = &chunk_name_node {
-            webpack_chunk_name = Some(s.value.to_string());
+            webpack_chunk_name = Some(s.value.to_string_lossy().into_owned());
         }
         let mut values = values.unwrap_or_default();
 
@@ -562,11 +570,11 @@ where
                 if single {
                     self.module_to_chunk(cooked).into()
                 } else {
-                    self.replace_quasi(cooked, first).into()
+                    self.replace_quasi(&cooked.to_string_lossy(), first).into()
                 }
             }),
             raw: if single {
-                self.module_to_chunk(&quasi.raw).into()
+                self.module_to_chunk(&quasi.raw.clone().into()).into()
             } else {
                 self.replace_quasi(&quasi.raw, first).into()
             },
@@ -594,10 +602,11 @@ where
         }
     }
 
-    fn module_to_chunk(&self, s: &str) -> String {
+    fn module_to_chunk(&self, s: &Wtf8Atom) -> String {
+        let s = s.to_string_lossy();
         debug!("module_to_chunk: `{}`", s);
 
-        let s = JS_PATH_REGEXP.replace_all(s, "");
+        let s = JS_PATH_REGEXP.replace_all(&s, "");
         let s = WEBPACK_PATH_NAME_NORMALIZE_REPLACE_REGEX.replace_all(&s, "-");
         let s = WEBPACK_MATCH_PADDED_HYPHENS_REPLACE_REGEX.replace_all(&s, "");
 
@@ -767,7 +776,7 @@ fn clone_params(e: &Expr) -> Vec<Param> {
 #[derive(Debug, Clone, Deserialize, PartialEq)]
 pub struct Signature {
     pub name: Atom,
-    pub from: Atom,
+    pub from: Wtf8Atom,
 }
 
 impl Default for Signature {

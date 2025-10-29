@@ -2,7 +2,7 @@
 
 use import_analyzer::ImportMap;
 use serde::Deserialize;
-use swc_atoms::Atom;
+use swc_atoms::Wtf8Atom;
 use swc_common::{
     comments::Comments, errors::HANDLER, util::take::Take, Mark, Span, Spanned, DUMMY_SP,
 };
@@ -14,11 +14,11 @@ mod import_analyzer;
 #[derive(Debug, Clone, Deserialize)]
 pub struct Config {
     #[serde(default = "default_import_path")]
-    pub import_path: Atom,
+    pub import_path: Wtf8Atom,
 }
 
-fn default_import_path() -> Atom {
-    Atom::from("@swc/magic")
+fn default_import_path() -> Wtf8Atom {
+    Wtf8Atom::from("@swc/magic")
 }
 
 impl Config {}

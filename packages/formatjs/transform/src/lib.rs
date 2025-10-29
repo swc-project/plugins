@@ -97,7 +97,7 @@ fn get_message_descriptor_key_from_jsx(name: &JSXAttrName) -> &str {
 fn get_message_descriptor_key_from_call_expr(name: &PropName) -> Option<&str> {
     match name {
         PropName::Ident(name) => Some(&*name.sym),
-        PropName::Str(name) => Some(&*name.value),
+        PropName::Str(name) => Some(name.value.as_str().expect("non-utf8 prop name")),
         _ => None,
     }
 
@@ -167,10 +167,7 @@ fn get_jsx_message_descriptor_value(
     value: Option<&JSXAttrValue>,
     is_message_node: Option<bool>,
 ) -> Option<String> {
-    let value = match value {
-        Some(v) => v,
-        None => return None,
-    };
+    let value = value?;
 
     // NOTE: do not support evaluatePath
     match value {
@@ -186,7 +183,9 @@ fn get_jsx_message_descriptor_value(
 
             match &container.expr {
                 JSXExpr::Expr(expr) => match &**expr {
-                    Expr::Lit(Lit::Str(s)) => Some(s.value.to_string()),
+                    Expr::Lit(Lit::Str(s)) => {
+                        Some(s.value.as_str().expect("non-utf8 string").to_string())
+                    }
                     Expr::Tpl(tpl) => Some(evaluate_template_literal_string(tpl)),
                     Expr::Bin(bin_expr) => evaluate_binary_expr(bin_expr),
                     _ => None,
@@ -194,7 +193,7 @@ fn get_jsx_message_descriptor_value(
                 _ => None,
             }
         }
-        JSXAttrValue::Lit(Lit::Str(s)) => Some(s.value.to_string()),
+        JSXAttrValue::Str(s) => Some(s.value.as_str().expect("non-utf8 string").to_string()),
         _ => None,
     }
 }
@@ -210,22 +209,19 @@ fn evaluate_binary_expr(expr: &BinExpr) -> Option<String> {
     let left_str = get_call_expr_message_descriptor_value(Some(&*expr.left), None)?;
     let right_str = get_call_expr_message_descriptor_value(Some(&*expr.right), None)?;
 
-    Some(format!("{}{}", left_str, right_str))
+    Some(format!("{left_str}{right_str}"))
 }
 
 fn get_call_expr_message_descriptor_value(
     value: Option<&Expr>,
     _is_message_node: Option<bool>,
 ) -> Option<String> {
-    let value = match value {
-        Some(v) => v,
-        None => return None,
-    };
+    let value = value?;
 
     // NOTE: do not support evaluatePath
     match value {
         Expr::Ident(ident) => Some(ident.sym.to_string()),
-        Expr::Lit(Lit::Str(s)) => Some(s.value.to_string()),
+        Expr::Lit(Lit::Str(s)) => Some(s.value.as_str().expect("non-utf8 string").to_string()),
         Expr::Tpl(tpl) => {
             //NOTE: This doesn't fully evaluate templates
             Some(
@@ -234,7 +230,7 @@ fn get_call_expr_message_descriptor_value(
                     .map(|q| {
                         q.cooked
                             .as_ref()
-                            .map(|v| v.to_string())
+                            .map(|v| v.as_str().expect("non-utf8 string").to_string())
                             .unwrap_or("".to_string())
                     })
                     .collect::<Vec<String>>()
@@ -270,14 +266,16 @@ impl Serialize for MessageDescriptionValue {
                                 Prop::KeyValue(key_value) => {
                                     let key = match &key_value.key {
                                         PropName::Ident(ident) => ident.sym.to_string(),
-                                        PropName::Str(s) => s.value.to_string(),
+                                        PropName::Str(s) => s.value.to_atom_lossy().to_string(),
                                         _ => {
                                             //unexpected
                                             continue;
                                         }
                                     };
                                     let value = match &*key_value.value {
-                                        Expr::Lit(Lit::Str(s)) => s.value.to_string(),
+                                        Expr::Lit(Lit::Str(s)) => {
+                                            s.value.to_atom_lossy().to_string()
+                                        }
                                         _ => {
                                             //unexpected
                                             continue;
@@ -319,7 +317,7 @@ fn get_jsx_icu_message_value(
     };
 
     if let Err(e) = parse(message.as_str()) {
-        let is_literal_err = if let Some(JSXAttrValue::Lit(..)) = message_path {
+        let is_literal_err = if let Some(JSXAttrValue::Str(..)) = message_path {
             message.contains("\\\\")
         } else {
             false
@@ -546,13 +544,13 @@ fn evaluate_jsx_message_descriptor_with_visitor(
                     if let Prop::KeyValue(key_value) = &**prop {
                         let key_str = match &key_value.key {
                             PropName::Ident(ident) => ident.sym.to_string(),
-                            PropName::Str(s) => s.value.to_string(),
+                            PropName::Str(s) => s.value.to_atom_lossy().to_string(),
                             _ => continue,
                         };
 
                         let value = match &*key_value.value {
                             Expr::Lit(Lit::Str(s)) => {
-                                serde_json::Value::String(s.value.to_string())
+                                serde_json::Value::String(s.value.to_atom_lossy().to_string())
                             }
                             Expr::Lit(Lit::Num(n)) => serde_json::Number::from_f64(n.value)
                                 .map(serde_json::Value::Number)
@@ -625,13 +623,13 @@ fn evaluate_call_expr_message_descriptor_with_visitor(
                     if let Prop::KeyValue(key_value) = &**prop {
                         let key_str = match &key_value.key {
                             PropName::Ident(ident) => ident.sym.to_string(),
-                            PropName::Str(s) => s.value.to_string(),
+                            PropName::Str(s) => s.value.to_atom_lossy().to_string(),
                             _ => continue,
                         };
 
                         let value = match &*key_value.value {
                             Expr::Lit(Lit::Str(s)) => {
-                                serde_json::Value::String(s.value.to_string())
+                                serde_json::Value::String(s.value.to_atom_lossy().to_string())
                             }
                             Expr::Lit(Lit::Num(n)) => serde_json::Number::from_f64(n.value)
                                 .map(serde_json::Value::Number)
@@ -765,8 +763,13 @@ fn evaluate_template_literal_string(tpl: &Tpl) -> String {
     //NOTE: This doesn't fully evaluate templates
     tpl.quasis
         .iter()
-        .map(|q| q.cooked.as_deref().unwrap_or_default())
-        .collect::<Vec<&str>>()
+        .map(|q| {
+            q.cooked
+                .as_ref()
+                .map(|v| v.to_string_lossy().to_string())
+                .unwrap_or_default()
+        })
+        .collect::<Vec<String>>()
         .join("")
 }
 
@@ -886,10 +889,7 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
         value: Option<&JSXAttrValue>,
         is_message_node: Option<bool>,
     ) -> Option<MessageDescriptionValue> {
-        let value = match value {
-            Some(v) => v,
-            None => return None,
-        };
+        let value = value?;
         // NOTE: do not support evaluatePath
         match value {
             JSXAttrValue::JSXExprContainer(container) => {
@@ -904,9 +904,9 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
 
                 match &container.expr {
                     JSXExpr::Expr(expr) => match &**expr {
-                        Expr::Lit(Lit::Str(s)) => {
-                            Some(MessageDescriptionValue::Str(s.value.to_string()))
-                        }
+                        Expr::Lit(Lit::Str(s)) => Some(MessageDescriptionValue::Str(
+                            s.value.to_string_lossy().into_owned(),
+                        )),
                         Expr::Object(object_lit) => {
                             Some(MessageDescriptionValue::Obj(object_lit.clone()))
                         }
@@ -921,9 +921,9 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
                                     Expr::Object(object_lit) => {
                                         Some(MessageDescriptionValue::Obj(object_lit.clone()))
                                     }
-                                    Expr::Lit(Lit::Str(s)) => {
-                                        Some(MessageDescriptionValue::Str(s.value.to_string()))
-                                    }
+                                    Expr::Lit(Lit::Str(s)) => Some(MessageDescriptionValue::Str(
+                                        s.value.to_string_lossy().into_owned(),
+                                    )),
                                     Expr::Tpl(tpl) => Some(MessageDescriptionValue::Str(
                                         evaluate_template_literal_string(tpl),
                                     )),
@@ -938,9 +938,9 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
                     _ => None,
                 }
             }
-            JSXAttrValue::Lit(Lit::Str(s)) => {
-                Some(MessageDescriptionValue::Str(s.value.to_string()))
-            }
+            JSXAttrValue::Str(s) => Some(MessageDescriptionValue::Str(
+                s.value.to_atom_lossy().to_string(),
+            )),
             _ => None,
         }
     }
@@ -969,8 +969,7 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
         match (left_val, right_val) {
             (MessageDescriptionValue::Str(left_str), MessageDescriptionValue::Str(right_str)) => {
                 Some(MessageDescriptionValue::Str(format!(
-                    "{}{}",
-                    left_str, right_str
+                    "{left_str}{right_str}"
                 )))
             }
             _ => None,
@@ -982,10 +981,7 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
         value: Option<&Expr>,
         _is_message_node: Option<bool>,
     ) -> Option<MessageDescriptionValue> {
-        let value = match value {
-            Some(v) => v,
-            None => return None,
-        };
+        let value = value?;
         // NOTE: do not support evaluatePath
         match value {
             Expr::Ident(ident) => {
@@ -995,9 +991,9 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
                         Expr::Object(object_lit) => {
                             Some(MessageDescriptionValue::Obj(object_lit.clone()))
                         }
-                        Expr::Lit(Lit::Str(s)) => {
-                            Some(MessageDescriptionValue::Str(s.value.to_string()))
-                        }
+                        Expr::Lit(Lit::Str(s)) => Some(MessageDescriptionValue::Str(
+                            s.value.to_atom_lossy().to_string(),
+                        )),
                         _ => None,
                     }
                 } else {
@@ -1005,7 +1001,9 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
                     Some(MessageDescriptionValue::Str(ident.sym.to_string()))
                 }
             }
-            Expr::Lit(Lit::Str(s)) => Some(MessageDescriptionValue::Str(s.value.to_string())),
+            Expr::Lit(Lit::Str(s)) => Some(MessageDescriptionValue::Str(
+                s.value.to_atom_lossy().to_string(),
+            )),
             Expr::Object(object_lit) => Some(MessageDescriptionValue::Obj(object_lit.clone())),
             Expr::Bin(bin_expr) => self.evaluate_binary_expr_with_resolution(bin_expr),
             _ => None,
@@ -1268,9 +1266,8 @@ impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
         if descriptor.id.is_some() {
             if let Some(id_attr) = id_attr {
                 if let JSXAttrOrSpread::JSXAttr(attr) = id_attr {
-                    attr.to_owned().value = Some(JSXAttrValue::Lit(Lit::Str(Str::from(
-                        descriptor.id.unwrap(),
-                    ))));
+                    attr.to_owned().value =
+                        Some(JSXAttrValue::Str(Str::from(descriptor.id.unwrap().clone())));
                 }
             } else if first_attr {
                 jsx_opening_elem.attrs.insert(
@@ -1278,9 +1275,7 @@ impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
                     JSXAttrOrSpread::JSXAttr(JSXAttr {
                         span: DUMMY_SP,
                         name: JSXAttrName::Ident(IdentName::new("id".into(), DUMMY_SP)),
-                        value: Some(JSXAttrValue::Lit(Lit::Str(Str::from(
-                            descriptor.id.unwrap(),
-                        )))),
+                        value: Some(JSXAttrValue::Str(Str::from(descriptor.id.unwrap()))),
                     }),
                 )
             }
@@ -1339,8 +1334,8 @@ impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
                                         };
 
                                         if should_update {
-                                            attr.value = Some(JSXAttrValue::Lit(Lit::Str(
-                                                Str::from(descriptor_default_message.clone()),
+                                            attr.value = Some(JSXAttrValue::Str(Str::from(
+                                                descriptor_default_message.clone(),
                                             )));
                                         }
                                     }

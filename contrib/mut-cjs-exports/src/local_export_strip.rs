@@ -191,7 +191,13 @@ impl VisitMut for LocalExportStrip {
                 if let Some(exported) = exported {
                     let (export_name, export_name_span) = match exported {
                         ModuleExportName::Ident(Ident { span, sym, .. }) => (sym, span),
-                        ModuleExportName::Str(Str { span, value, .. }) => (value, span),
+                        ModuleExportName::Str(Str { span, value, .. }) => (
+                            match value.as_atom() {
+                                Some(s) => s.clone(),
+                                None => panic!("non-utf8 export name: {value:?}"),
+                            },
+                            span,
+                        ),
                     };
 
                     (export_name, ExportItem::new(export_name_span, orig))

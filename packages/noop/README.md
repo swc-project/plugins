@@ -2,6 +2,12 @@
 
 # @swc/plugin-noop
 
+## 10.0.0
+
+### Major Changes
+
+- 25e0c2c: Update swc_core to v46.0.0
+
 ## 9.5.0
 
 ### Minor Changes

@@ -6,14 +6,14 @@ use once_cell::sync::Lazy;
 use regex::{Regex, RegexBuilder};
 use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
-use swc_atoms::{atom, Atom};
+use swc_atoms::{atom, Atom, Wtf8Atom};
 use swc_common::{comments::Comments, util::take::Take, BytePos, SourceMapperDyn, DUMMY_SP};
 use swc_ecma_ast::{
     fn_pass, ArrayLit, CallExpr, Callee, ClassDecl, ClassMethod, ClassProp, Expr, ExprOrSpread,
     FnDecl, Id, Ident, IdentName, ImportDecl, ImportSpecifier, JSXAttr, JSXAttrName,
     JSXAttrOrSpread, JSXAttrValue, JSXElement, JSXElementName, JSXExpr, JSXExprContainer,
-    JSXObject, KeyValueProp, MemberProp, MethodProp, ModuleExportName, ObjectLit, Pass, Pat, Prop,
-    PropName, PropOrSpread, SourceMapperExt, SpreadElement, Tpl, VarDeclarator,
+    JSXObject, KeyValueProp, Lit, MemberProp, MethodProp, ModuleExportName, ObjectLit, Pass, Pat,
+    Prop, PropName, PropOrSpread, SourceMapperExt, SpreadElement, Tpl, VarDeclarator,
 };
 use swc_ecma_utils::ExprFactory;
 use swc_ecma_visit::{Fold, FoldWith, Visit, VisitWith};
@@ -77,7 +77,7 @@ impl Default for EmotionOptions {
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct EmotionModuleConfig {
-    module_name: Atom,
+    module_name: Wtf8Atom,
     exported_names: Vec<ExportItem>,
     default_export: Option<ExprKind>,
 }
@@ -207,7 +207,7 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
         }
     }
 
-    fn sanitize_label_part<'t>(&self, label_part: &'t str) -> String {
+    fn sanitize_label_part(&self, label_part: &str) -> String {
         // Existing @emotion/babel-plugin behaviour is to replace all spaces
         // with a single hyphen
         let without_spaces = INVALID_LABEL_SPACES.replace_all(label_part, "-");
@@ -288,7 +288,9 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
                                 let matched = match &named.imported {
                                     Some(imported) => match imported {
                                         ModuleExportName::Ident(v) => v.sym == exported.name,
-                                        ModuleExportName::Str(v) => v.value == exported.name,
+                                        ModuleExportName::Str(v) => {
+                                            v.value.as_str() == Some(exported.name.as_str())
+                                        }
                                     },
                                     _ => named.local.as_ref() == exported.name,
                                 };
@@ -382,7 +384,7 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
             None
         }) {
             if let Some(raw_attr) = match attr_value {
-                JSXAttrValue::Lit(lit) => Some(Box::new(Expr::Lit(lit.clone()))),
+                JSXAttrValue::Str(s) => Some(Box::new(Expr::Lit(Lit::Str(s.clone())))),
                 JSXAttrValue::JSXExprContainer(JSXExprContainer {
                     expr: JSXExpr::Expr(expr),
                     ..
@@ -874,7 +876,13 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                 self.current_context = Some(k.sym.as_ref().to_owned());
             }
             PropName::Str(k) => {
-                self.current_context = Some(k.value.as_ref().to_owned());
+                self.current_context = Some(
+                    k.value
+                        .as_atom()
+                        .expect("non-utf8 prop name")
+                        .as_ref()
+                        .to_owned(),
+                );
             }
             _ => (),
         }

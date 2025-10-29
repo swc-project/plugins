@@ -499,8 +499,8 @@ impl StyledJSXTransformer<'_> {
         let mut is_expr_property = vec![];
         match style_expr {
             StyleExpr::Str(Str { value, span, .. }) => {
-                hasher.write(value.as_ref().as_bytes());
-                css = value.to_string();
+                hasher.write(value.to_string_lossy().as_bytes());
+                css = value.to_string_lossy().into_owned();
                 css_span = *span;
                 is_dynamic = false;
             }
@@ -851,7 +851,9 @@ fn get_existing_class_name(el: &JSXOpeningElement) -> (Option<Expr>, Option<usiz
                 if sym == "className" {
                     existing_index = Some(i);
                     class_name_expr = match value {
-                        Some(JSXAttrValue::Lit(str_lit)) => Some(Expr::Lit(str_lit.clone())),
+                        Some(JSXAttrValue::Str(str_lit)) => {
+                            Some(Expr::Lit(Lit::Str(str_lit.clone())))
+                        }
                         Some(JSXAttrValue::JSXExprContainer(JSXExprContainer {
                             expr: JSXExpr::Expr(expr),
                             ..

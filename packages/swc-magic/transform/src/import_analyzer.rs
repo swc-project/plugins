@@ -1,21 +1,21 @@
 use rustc_hash::{FxHashMap, FxHashSet};
-use swc_atoms::Atom;
+use swc_atoms::{Atom, Wtf8Atom};
 use swc_ecma_ast::*;
 use swc_ecma_visit::{noop_visit_type, Visit, VisitWith};
 
 #[derive(Debug, Default)]
 pub(crate) struct ImportMap {
     /// Map from module name to (module path, exported symbol)
-    imports: FxHashMap<Id, (Atom, Atom)>,
+    imports: FxHashMap<Id, (Wtf8Atom, Atom)>,
 
-    namespace_imports: FxHashMap<Id, Atom>,
+    namespace_imports: FxHashMap<Id, Wtf8Atom>,
 
-    imported_modules: FxHashSet<Atom>,
+    imported_modules: FxHashSet<Wtf8Atom>,
 }
 
 impl ImportMap {
     /// Returns true if `e` is an import of `orig_name` from `module`.
-    pub fn is_import(&self, e: &Expr, module: &str, orig_name: &str) -> bool {
+    pub fn is_import(&self, e: &Expr, module: &Wtf8Atom, orig_name: &str) -> bool {
         match e {
             Expr::Ident(i) => {
                 if let Some((i_src, i_sym)) = self.imports.get(&i.to_id()) {
@@ -87,6 +87,6 @@ impl Visit for Analyzer<'_> {
 fn orig_name(n: &ModuleExportName) -> Atom {
     match n {
         ModuleExportName::Ident(v) => v.sym.clone(),
-        ModuleExportName::Str(v) => v.value.clone(),
+        ModuleExportName::Str(v) => v.value.as_atom().expect("non-utf8 export name").clone(),
     }
 }

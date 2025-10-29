@@ -88,7 +88,7 @@ impl PrefreshPlugin {
 
 impl VisitMut for PrefreshPlugin {
     fn visit_mut_import_decl(&mut self, import_decl: &mut ImportDecl) {
-        let import_from = import_decl.src.value.to_string();
+        let import_from = import_decl.src.value.to_string_lossy().into_owned();
         let is_library = self.config.library.contains(&import_from);
 
         if !is_library {
@@ -104,7 +104,7 @@ impl VisitMut for PrefreshPlugin {
                     if let Some(imported) = &spec.imported {
                         let name = match imported {
                             ModuleExportName::Ident(ident) => &ident.sym,
-                            ModuleExportName::Str(s) => &s.value,
+                            ModuleExportName::Str(s) => &s.value.to_atom_lossy(),
                         };
                         if name == "createContext" {
                             self.local.insert(spec.local.to_id());
@@ -218,7 +218,7 @@ impl VisitMut for PrefreshPlugin {
     fn visit_mut_object_pat_prop(&mut self, obj_pat_prop: &mut ObjectPatProp) {
         if let Some(key) = obj_pat_prop.as_key_value().and_then(|kv| kv.key.as_str()) {
             let old_key = self.parent_key.clone();
-            self.parent_key = format!("__{}", key.value);
+            self.parent_key = format!("__{}", key.value.to_string_lossy());
             obj_pat_prop.visit_mut_children_with(self);
             self.parent_key = old_key;
         } else {

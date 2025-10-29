@@ -5,7 +5,7 @@ use handlebars::{Context, Handlebars, Helper, HelperResult, Output, RenderContex
 use once_cell::sync::Lazy;
 use regex::{Captures, Regex};
 use serde::{Deserialize, Serialize};
-use swc_atoms::Atom;
+use swc_atoms::{Atom, Wtf8Atom};
 use swc_cached::regex::CachedRegex;
 use swc_common::{util::take::Take, DUMMY_SP};
 use swc_ecma_ast::{ImportDecl, ImportSpecifier, ModuleExportName, *};
@@ -89,7 +89,7 @@ struct CtxWithMember<'a> {
 }
 
 impl Rewriter<'_> {
-    fn new_path(&self, name_str: Option<&str>) -> Atom {
+    fn new_path(&self, name_str: Option<&str>) -> Wtf8Atom {
         let ctx: Ctx = Ctx {
             matches: &self.group[..],
             member: name_str,
@@ -177,11 +177,11 @@ impl Rewriter<'_> {
                 ExportSpecifier::Named(named_spec) => {
                     let name_str = named_spec.exported.as_ref().unwrap_or(&named_spec.orig);
                     let name_str = match name_str {
-                        ModuleExportName::Ident(x) => x.as_ref(),
-                        ModuleExportName::Str(x) => x.value.as_ref(),
+                        ModuleExportName::Ident(x) => Cow::Borrowed(x.as_ref()),
+                        ModuleExportName::Str(x) => x.value.to_string_lossy(),
                     };
 
-                    let new_path = self.new_path(Some(name_str));
+                    let new_path = self.new_path(Some(name_str.as_ref()));
                     let specifier = if self.config.skip_default_conversion {
                         ExportSpecifier::Named(named_spec.clone())
                     } else {
@@ -203,7 +203,7 @@ impl Rewriter<'_> {
                     };
                     out.push(NamedExport {
                         specifiers: vec![specifier],
-                        src: Some(Box::new(Str::from(new_path.as_ref()))),
+                        src: Some(Box::new(Str::from(new_path.to_string_lossy().as_ref()))),
                         span: old_decl.span,
                         type_only: false,
                         with: None,
@@ -211,14 +211,14 @@ impl Rewriter<'_> {
                 }
                 ExportSpecifier::Namespace(ns_spec) if self.config.handle_namespace_import => {
                     let name_str = match &ns_spec.name {
-                        ModuleExportName::Ident(x) => x.as_ref(),
-                        ModuleExportName::Str(x) => x.value.as_ref(),
+                        ModuleExportName::Ident(x) => Cow::Borrowed(x.as_ref()),
+                        ModuleExportName::Str(x) => x.value.to_string_lossy(),
                     };
-                    let new_path = self.new_path(Some(name_str));
+                    let new_path = self.new_path(Some(name_str.as_ref()));
                     let specifier = ExportSpecifier::Namespace(ns_spec.clone());
                     out.push(NamedExport {
                         specifiers: vec![specifier],
-                        src: Some(Box::new(Str::from(new_path.as_ref()))),
+                        src: Some(Box::new(Str::from(new_path.to_string_lossy().as_ref()))),
                         span: old_decl.span,
                         type_only: false,
                         with: None,
@@ -253,12 +253,12 @@ impl Rewriter<'_> {
                         .imported
                         .as_ref()
                         .map(|x| match x {
-                            ModuleExportName::Ident(x) => x.as_ref(),
-                            ModuleExportName::Str(x) => x.value.as_ref(),
+                            ModuleExportName::Ident(x) => Cow::Borrowed(x.as_ref()),
+                            ModuleExportName::Str(x) => x.value.to_string_lossy(),
                         })
-                        .unwrap_or_else(|| named_spec.local.as_ref());
+                        .unwrap_or_else(|| Cow::Borrowed(named_spec.local.as_ref()));
 
-                    let new_path = self.new_path(Some(name_str));
+                    let new_path = self.new_path(Some(name_str.as_ref()));
                     let specifier = if self.config.skip_default_conversion {
                         ImportSpecifier::Named(named_spec.clone())
                     } else {
@@ -269,7 +269,7 @@ impl Rewriter<'_> {
                     };
                     out.push(ImportDecl {
                         specifiers: vec![specifier],
-                        src: Box::new(Str::from(new_path.as_ref())),
+                        src: Box::new(Str::from(new_path.to_string_lossy().as_ref())),
                         span: old_decl.span,
                         type_only: false,
                         with: None,
@@ -281,7 +281,9 @@ impl Rewriter<'_> {
                             self.new_path(Some(&format!("{name_str}/{style}")));
                         out.push(ImportDecl {
                             specifiers: vec![],
-                            src: Box::new(Str::from(new_path_with_style.as_ref())),
+                            src: Box::new(Str::from(
+                                new_path_with_style.to_string_lossy().as_ref(),
+                            )),
                             span: old_decl.span,
                             type_only: false,
                             with: None,
@@ -295,7 +297,7 @@ impl Rewriter<'_> {
                     let specifier = ImportSpecifier::Namespace(ns_spec.clone());
                     out.push(ImportDecl {
                         specifiers: vec![specifier],
-                        src: Box::new(Str::from(new_path.as_ref())),
+                        src: Box::new(Str::from(new_path.to_string_lossy().as_ref())),
                         span: old_decl.span,
                         type_only: false,
                         with: None,
@@ -308,7 +310,7 @@ impl Rewriter<'_> {
                     let specifier = ImportSpecifier::Default(def_spec.clone());
                     out.push(ImportDecl {
                         specifiers: vec![specifier],
-                        src: Box::new(Str::from(new_path.as_ref())),
+                        src: Box::new(Str::from(new_path.to_string_lossy().as_ref())),
                         span: old_decl.span,
                         type_only: false,
                         with: None,
@@ -330,7 +332,9 @@ impl Rewriter<'_> {
 }
 
 impl TransformImports<'_> {
-    fn should_rewrite<'a>(&'a self, name: &'a str) -> Option<Rewriter<'a>> {
+    fn should_rewrite<'a>(&'a self, name: &'a Wtf8Atom) -> Option<Rewriter<'a>> {
+        let name = name.as_str()?;
+
         for (regex, config) in &self.packages {
             let group = regex.captures(name);
             if let Some(group) = group {
@@ -348,7 +352,7 @@ impl TransformImports<'_> {
         None
     }
 
-    fn handle_dynamic_import(&mut self, call: &CallExpr) -> Option<Atom> {
+    fn handle_dynamic_import(&mut self, call: &CallExpr) -> Option<Wtf8Atom> {
         let first_arg = call.args.first()?;
         if first_arg.spread.is_some() {
             return None;
@@ -401,7 +405,8 @@ impl VisitMut for TransformImports<'_> {
                     if decl.specifiers.is_empty() {
                         if let Some(rewriter) = self.should_rewrite(&decl.src.value) {
                             let new_path = rewriter.new_path(None);
-                            let raw_with_quotes = Atom::from(format!("'{}'", new_path.as_ref()));
+                            let raw_with_quotes =
+                                Atom::from(format!("'{}'", new_path.to_atom_lossy()));
                             let new_src = Box::new(Str {
                                 span: decl.src.span,
                                 value: new_path.clone(),

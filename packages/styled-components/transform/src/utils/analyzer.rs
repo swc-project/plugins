@@ -77,7 +77,9 @@ impl Visit for Analyzer<'_> {
                             .as_ref()
                             .map(|v| match v {
                                 ModuleExportName::Ident(v) => &*v.sym,
-                                ModuleExportName::Str(v) => &*v.value,
+                                ModuleExportName::Str(v) => {
+                                    v.value.as_str().expect("non-utf8 export name")
+                                }
                             })
                             .unwrap_or(&*s.local.sym);
                         self.state

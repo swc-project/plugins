@@ -1,6 +1,6 @@
 use default_from_serde::SerdeDefault;
 use serde::Deserialize;
-use swc_atoms::Atom;
+use swc_atoms::{Atom, Wtf8Atom};
 
 #[derive(Debug, Clone, Deserialize, SerdeDefault)]
 pub struct Config {
@@ -9,7 +9,7 @@ pub struct Config {
 
     /// Drop imports from the following modules.
     #[serde(default = "default_remove_imports_from")]
-    pub remove_imports_from: Vec<Atom>,
+    pub remove_imports_from: Vec<Wtf8Atom>,
 }
 
 #[derive(Debug, Clone, Deserialize, SerdeDefault)]
@@ -26,17 +26,17 @@ pub struct FlagConfig {
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct ImportItem {
-    pub module: Atom,
+    pub module: Wtf8Atom,
     pub name: Atom,
 }
 
-fn default_remove_imports_from() -> Vec<Atom> {
-    vec![Atom::new("@swc/sdk/annotations")]
+fn default_remove_imports_from() -> Vec<Wtf8Atom> {
+    vec![Wtf8Atom::from("@swc/sdk/annotations")]
 }
 
 fn default_flag_import_source() -> Vec<ImportItem> {
     vec![ImportItem {
-        module: Atom::new("@swc/sdk/flag"),
+        module: Wtf8Atom::from("@swc/sdk/flag"),
         name: Atom::new("flag"),
     }]
 }
