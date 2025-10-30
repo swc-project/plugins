@@ -20,11 +20,11 @@ use swc_core::{
     },
     ecma::{
         ast::{
-            ArrayLit, AssignExpr, AssignTarget, BinExpr, BinaryOp, Bool, CallExpr, Callee, Expr,
-            ExprOrSpread, Id, IdentName, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue,
-            JSXElementName, JSXExpr, JSXExprContainer, JSXNamespacedName, JSXOpeningElement,
-            KeyValueProp, Lit, MemberProp, ModuleItem, Number, ObjectLit, Pat, Prop, PropName,
-            PropOrSpread, SimpleAssignTarget, Str, Tpl, VarDeclarator,
+            ArrayLit, AssignExpr, AssignTarget, Bool, CallExpr, Callee, Expr, ExprOrSpread, Id,
+            IdentName, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElementName,
+            JSXExpr, JSXExprContainer, JSXNamespacedName, JSXOpeningElement, KeyValueProp, Lit,
+            MemberProp, ModuleItem, Number, ObjectLit, Pat, Prop, PropName, PropOrSpread,
+            SimpleAssignTarget, Str, Tpl, VarDeclarator,
         },
         visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
     },
@@ -47,18 +47,143 @@ pub struct FormatJSPluginOptions {
     pub additional_component_names: Vec<String>,
 }
 
-#[derive(Debug, Clone, Default)]
-pub struct JSXMessageDescriptorPath {
-    id: Option<JSXAttrValue>,
-    default_message: Option<JSXAttrValue>,
-    description: Option<JSXAttrValue>,
+trait MessageDescriptorExtractor {
+    fn get_key_value_with_visitor(
+        &self,
+        _visitor: &FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
+    ) -> Option<(String, MessageDescriptionValue)> {
+        None
+    }
+    fn is_jsx(&self) -> bool {
+        false
+    }
 }
 
-#[derive(Debug, Clone, Default)]
-pub struct CallExprMessageDescriptorPath {
-    id: Option<Expr>,
-    default_message: Option<Expr>,
-    description: Option<Expr>,
+impl MessageDescriptorExtractor for JSXAttrOrSpread {
+    fn get_key_value_with_visitor(
+        &self,
+        visitor: &FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
+    ) -> Option<(String, MessageDescriptionValue)> {
+        if let JSXAttrOrSpread::JSXAttr(JSXAttr {
+            name,
+            value: Some(value),
+            ..
+        }) = self
+        {
+            let key = match name {
+                JSXAttrName::Ident(name)
+                | JSXAttrName::JSXNamespacedName(JSXNamespacedName { name, .. }) => {
+                    Some(name.sym.to_string())
+                }
+            };
+            let value = match value {
+                JSXAttrValue::Str(s) => Some(MessageDescriptionValue::Str(
+                    s.value.as_str().expect("non-utf8 string").to_string(),
+                )),
+                JSXAttrValue::JSXExprContainer(container) => {
+                    if let JSXExpr::Expr(expr) = &container.expr {
+                        match &**expr {
+                            Expr::Ident(ident) => {
+                                if let Some(resolved_expr) = visitor.resolve_identifier(ident) {
+                                    match resolved_expr {
+                                        Expr::Object(object_lit) => {
+                                            Some(MessageDescriptionValue::Obj(object_lit.clone()))
+                                        }
+                                        Expr::Lit(Lit::Str(s)) => {
+                                            Some(MessageDescriptionValue::Str(
+                                                s.value.to_string_lossy().into_owned(),
+                                            ))
+                                        }
+                                        Expr::Tpl(tpl) => {
+                                            evaluate_template_literal_string_with_visitor(
+                                                tpl, visitor,
+                                            )
+                                            .map(MessageDescriptionValue::Str)
+                                        }
+                                        _ => None,
+                                    }
+                                } else {
+                                    None
+                                }
+                            }
+                            Expr::Lit(Lit::Num(n)) => {
+                                Some(MessageDescriptionValue::Str(n.value.to_string()))
+                            }
+                            Expr::Lit(Lit::Bool(b)) => {
+                                Some(MessageDescriptionValue::Str(b.value.to_string()))
+                            }
+                            Expr::Object(obj) => Some(MessageDescriptionValue::Obj(obj.clone())),
+                            expr => {
+                                // Evaluate the binary expression
+                                let evaluated = evaluate_expression_with_visitor(expr, visitor);
+                                evaluated.map(MessageDescriptionValue::Str)
+                            }
+                        }
+                    } else {
+                        None
+                    }
+                }
+                _ => None,
+            };
+
+            if let (Some(key), Some(value)) = (key, value) {
+                Some((key, value))
+            } else {
+                None
+            }
+        } else {
+            None
+        }
+    }
+
+    fn is_jsx(&self) -> bool {
+        true
+    }
+}
+
+impl MessageDescriptorExtractor for PropOrSpread {
+    fn get_key_value_with_visitor(
+        &self,
+        visitor: &FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
+    ) -> Option<(String, MessageDescriptionValue)> {
+        if let PropOrSpread::Prop(prop) = self {
+            if let Prop::KeyValue(key_value) = &**prop {
+                let key = match &key_value.key {
+                    PropName::Computed(prop_name) => match &*prop_name.expr {
+                        Expr::Tpl(tpl) => {
+                            evaluate_template_literal_string_with_visitor(tpl, visitor)
+                        }
+                        expr => evaluate_expression_with_visitor(expr, visitor),
+                    },
+                    PropName::Ident(ident) => Some(ident.sym.to_string()),
+                    PropName::Str(s) => {
+                        Some(s.value.as_str().expect("non-utf8 string").to_string())
+                    }
+                    _ => None,
+                };
+                let value = match &*key_value.value {
+                    Expr::Object(obj) => Some(MessageDescriptionValue::Obj(obj.clone())),
+                    expr => {
+                        let evaluated = evaluate_expression_with_visitor(expr, visitor);
+                        evaluated.map(MessageDescriptionValue::Str)
+                    }
+                };
+                if let (Some(key), Some(value)) = (key, value) {
+                    Some((key, value))
+                } else {
+                    None
+                }
+            } else {
+                None
+            }
+        } else {
+            None
+        }
+    }
+
+    fn is_jsx(&self) -> bool {
+        false
+    }
 }
 
 #[derive(Debug, Clone, Default)]
@@ -66,6 +191,7 @@ pub struct MessageDescriptor {
     id: Option<String>,
     default_message: Option<String>,
     description: Option<MessageDescriptionValue>,
+    ast: Option<Box<Expr>>,
 }
 
 fn parse(source: &str) -> Result<Box<Expr>, swc_icu_messageformat_parser::Error> {
@@ -106,141 +232,129 @@ fn get_message_descriptor_key_from_call_expr(name: &PropName) -> Option<&str> {
     // NOTE: Do not support evaluatePath()
 }
 
-// TODO: Consolidate with create_message_descriptor_from_call_expr
-fn create_message_descriptor_from_jsx_attr(
-    attrs: &Vec<JSXAttrOrSpread>,
-) -> JSXMessageDescriptorPath {
-    let mut ret = JSXMessageDescriptorPath::default();
-    for attr in attrs {
-        if let JSXAttrOrSpread::JSXAttr(JSXAttr { name, value, .. }) = attr {
-            let key = get_message_descriptor_key_from_jsx(name);
+fn evaluate_expression_with_visitor(
+    root: &Expr,
+    visitor: &FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
+) -> Option<String> {
+    match root {
+        Expr::Lit(Lit::Str(s)) => {
+            return Some(s.value.as_str().expect("non-utf8 string").to_string())
+        }
+        Expr::Ident(ident) => {
+            // If it's an identifier, resolve it
+            let resolved_expr = visitor.resolve_identifier(ident)?;
+            return evaluate_expression_with_visitor(resolved_expr, visitor);
+        }
+        _ => {}
+    }
+    // Step 1: Create a post-order representation of the tree using a traversal
+    // stack. This process simulates recursion iteratively. The resulting
+    // `post_order_nodes` vector, when read in reverse, gives the correct order
+    // for evaluation.
+    let mut post_order_nodes: Vec<&Expr> = Vec::new();
+    let mut traversal_stack: Vec<&Expr> = vec![root];
 
-            match key {
-                "id" => {
-                    ret.id = value.clone();
-                }
-                "defaultMessage" => {
-                    ret.default_message = value.clone();
-                }
-                "description" => {
-                    ret.description = value.clone();
-                }
-                _ => {
-                    //unexpected
-                }
+    while let Some(node) = traversal_stack.pop() {
+        post_order_nodes.push(node);
+        match node {
+            Expr::Bin(bin) => {
+                // If the node is a binary expression, we need to traverse its
+                // left and right children.
+                traversal_stack.push(&bin.left);
+                traversal_stack.push(&bin.right);
+            }
+            _ => {
+                // For all other expression types, we don't need to traverse
+                // further, as they are terminal nodes in our evaluation.
             }
         }
     }
 
-    ret
-}
+    // Step 2: Evaluate the expression from the post-order list.
+    // We use a `result_stack` to hold intermediate string values.
+    let mut result_stack: Vec<String> = Vec::new();
 
-fn create_message_descriptor_from_call_expr(
-    props: &Vec<PropOrSpread>,
-) -> CallExprMessageDescriptorPath {
-    let mut ret = CallExprMessageDescriptorPath::default();
-    for prop in props {
-        if let PropOrSpread::Prop(prop) = prop {
-            if let Prop::KeyValue(KeyValueProp { key, value }) = &**prop {
-                if let Some(key) = get_message_descriptor_key_from_call_expr(key) {
-                    match key {
-                        "id" => {
-                            ret.id = Some(*value.clone());
-                        }
-                        "defaultMessage" => {
-                            ret.default_message = Some(*value.clone());
-                        }
-                        "description" => {
-                            ret.description = Some(*value.clone());
-                        }
-                        _ => {
-                            //unexpected
-                        }
-                    }
+    // We iterate through our collected nodes in reverse to get the correct
+    // post-order.
+    for node in post_order_nodes.iter().rev() {
+        match &&node {
+            // If it's a literal, just push its value onto the result stack.
+            Expr::Lit(Lit::Str(s)) => {
+                result_stack.push(s.value.as_str().expect("non-utf8 string").to_string());
+            }
+            Expr::Ident(ident) => {
+                // If it's an identifier, push its name onto the result stack.
+                let Some(resolved_expr) = visitor.resolve_identifier(ident) else {
+                    continue;
                 };
+                let Some(evaluated) = evaluate_expression_with_visitor(resolved_expr, &visitor)
+                else {
+                    continue;
+                };
+                result_stack.push(evaluated);
             }
-        }
-    }
-
-    ret
-}
-
-fn get_jsx_message_descriptor_value(
-    value: Option<&JSXAttrValue>,
-    is_message_node: Option<bool>,
-) -> Option<String> {
-    let value = value?;
-
-    // NOTE: do not support evaluatePath
-    match value {
-        JSXAttrValue::JSXExprContainer(container) => {
-            if is_message_node.unwrap_or(false) {
-                if let JSXExpr::Expr(expr) = &container.expr {
-                    // If this is already compiled, no need to recompiled it
-                    if let Expr::Array(..) = &**expr {
-                        return None;
+            Expr::Tpl(tpl) => {
+                //NOTE: This doesn't fully evaluate templates
+                let mut res: String = tpl.quasis[0]
+                    .cooked
+                    .as_ref()
+                    .map(|v| v.as_str().expect("non-utf8 string").to_string())
+                    .unwrap_or_else(|| "".to_string());
+                // for loop with index number
+                for (i, q) in tpl.quasis.iter().enumerate() {
+                    if i == 0 {
+                        // Skip the first one since we already handled it
+                        continue;
                     }
+                    // If there are expressions, we need to evaluate them.
+                    if let Some(expr) = &tpl.exprs.get(i - 1) {
+                        if let Some(evaluated) = evaluate_expression_with_visitor(expr, &visitor) {
+                            res += &evaluated;
+                        } else {
+                            return None; // Malformed expression
+                        }
+                    }
+                    res += &q
+                        .cooked
+                        .as_ref()
+                        .map(|v| v.as_str().expect("non-utf8 string").to_string())
+                        .unwrap_or_else(|| "".to_string());
                 }
+                result_stack.push(res);
             }
+            // If it's a binary expression, evaluate it.
+            Expr::Bin(bin) => {
+                // Validate the operation. Only '+' is allowed.
+                if bin.op != swc_core::ecma::ast::BinaryOp::Add {
+                    return None;
+                }
 
-            match &container.expr {
-                JSXExpr::Expr(expr) => match &**expr {
-                    Expr::Lit(Lit::Str(s)) => {
-                        Some(s.value.as_str().expect("non-utf8 string").to_string())
-                    }
-                    Expr::Tpl(tpl) => Some(evaluate_template_literal_string(tpl)),
-                    Expr::Bin(bin_expr) => evaluate_binary_expr(bin_expr),
-                    _ => None,
-                },
-                _ => None,
+                // A binary operation requires two operands. If we don't have them,
+                // the tree is malformed (e.g., an operator with only one child).
+                if result_stack.len() < 2 {
+                    return None;
+                }
+
+                // Pop the operands, concatenate, and push the result.
+                // Note: The right value was processed last, so it's at the top of the stack.
+                let right_val = result_stack.pop().unwrap();
+                let left_val = result_stack.pop().unwrap();
+
+                result_stack.push(format!("{left_val}{right_val}"));
             }
+            // Per the requirements, if we find any node that is not a Literal or Bin,
+            // the tree is invalid. This branch handles `Expr::Unary` and any other future types.
+            _ => return None,
         }
-        JSXAttrValue::Str(s) => Some(s.value.as_str().expect("non-utf8 string").to_string()),
-        _ => None,
-    }
-}
-
-/// Helper function to evaluate binary expressions (string concatenation)
-fn evaluate_binary_expr(expr: &BinExpr) -> Option<String> {
-    // Only handle string concatenation (+ operator)
-    if !matches!(expr.op, BinaryOp::Add) {
-        return None;
     }
 
-    // Recursively evaluate left and right operands
-    let left_str = get_call_expr_message_descriptor_value(Some(&*expr.left), None)?;
-    let right_str = get_call_expr_message_descriptor_value(Some(&*expr.right), None)?;
-
-    Some(format!("{left_str}{right_str}"))
-}
-
-fn get_call_expr_message_descriptor_value(
-    value: Option<&Expr>,
-    _is_message_node: Option<bool>,
-) -> Option<String> {
-    let value = value?;
-
-    // NOTE: do not support evaluatePath
-    match value {
-        Expr::Ident(ident) => Some(ident.sym.to_string()),
-        Expr::Lit(Lit::Str(s)) => Some(s.value.as_str().expect("non-utf8 string").to_string()),
-        Expr::Tpl(tpl) => {
-            //NOTE: This doesn't fully evaluate templates
-            Some(
-                tpl.quasis
-                    .iter()
-                    .map(|q| {
-                        q.cooked
-                            .as_ref()
-                            .map(|v| v.as_str().expect("non-utf8 string").to_string())
-                            .unwrap_or("".to_string())
-                    })
-                    .collect::<Vec<String>>()
-                    .join(""),
-            )
-        }
-        Expr::Bin(bin_expr) => evaluate_binary_expr(bin_expr),
-        _ => None,
+    // Step 3: Final validation and return.
+    // A correctly formed expression tree will result in exactly one value on the
+    // stack.
+    if result_stack.len() == 1 {
+        Some(result_stack.pop().unwrap())
+    } else {
+        None
     }
 }
 
@@ -301,108 +415,6 @@ impl Serialize for MessageDescriptionValue {
             }
         }
     }
-}
-
-fn get_jsx_icu_message_value(
-    message_path: Option<&JSXAttrValue>,
-    preserve_whitespace: bool,
-) -> String {
-    let message = message_path
-        .and_then(|path| get_jsx_message_descriptor_value(Some(path), Some(true)))
-        .unwrap_or("".to_string());
-
-    let message = if !preserve_whitespace {
-        let message = WHITESPACE_REGEX.replace_all(&message, " ");
-        message.trim().to_string()
-    } else {
-        message
-    };
-
-    if let Err(e) = parse(message.as_str()) {
-        let is_literal_err = if let Some(JSXAttrValue::Str(..)) = message_path {
-            message.contains("\\\\")
-        } else {
-            false
-        };
-
-        let handler = &swc_core::plugin::errors::HANDLER;
-
-        if is_literal_err {
-            {
-                handler.with(|handler| {
-                    handler
-                        .struct_err(
-                            r#"
-                    [React Intl] Message failed to parse.
-                    It looks like `\\`s were used for escaping,
-                    this won't work with JSX string literals.
-                    Wrap with `{{}}`.
-                    See: http://facebook.github.io/react/docs/jsx-gotchas.html
-                    "#,
-                        )
-                        .emit()
-                });
-            }
-        } else {
-            {
-                handler.with(|handler| {
-                    handler
-                        .struct_warn(
-                            r#"
-                    [React Intl] Message failed to parse.
-                    See: https://formatjs.io/docs/core-concepts/icu-syntax
-                    \n {:#?}
-                    "#,
-                        )
-                        .emit();
-                    handler
-                        .struct_err(&format!("SyntaxError: {}", e.kind))
-                        .emit()
-                });
-            }
-        }
-    }
-
-    message
-}
-
-fn get_call_expr_icu_message_value(
-    message_path: Option<&Expr>,
-    preserve_whitespace: bool,
-) -> String {
-    let message = message_path
-        .and_then(|path| get_call_expr_message_descriptor_value(Some(path), Some(true)))
-        .unwrap_or("".to_string());
-
-    let message = if !preserve_whitespace {
-        let message = WHITESPACE_REGEX.replace_all(&message, " ");
-        message.trim().to_string()
-    } else {
-        message
-    };
-
-    if let Err(e) = parse(message.as_str()) {
-        let handler = &swc_core::plugin::errors::HANDLER;
-
-        {
-            handler.with(|handler| {
-                handler
-                    .struct_warn(
-                        r#"
-                    [React Intl] Message failed to parse.
-                    See: https://formatjs.io/docs/core-concepts/icu-syntax
-                    \n {:#?}
-                    "#,
-                    )
-                    .emit();
-                handler
-                    .struct_err(&format!("SyntaxError: {}", e.kind))
-                    .emit()
-            });
-        }
-    }
-
-    message
 }
 
 fn interpolate_name(filename: &str, interpolate_pattern: &str, content: &str) -> Option<String> {
@@ -508,165 +520,6 @@ fn interpolate_name(filename: &str, interpolate_pattern: &str, content: &str) ->
     Some(url)
 }
 
-// TODO: Consolidate with evaluate_call_expr_message_descriptor
-fn evaluate_jsx_message_descriptor_with_visitor(
-    descriptor_path: &JSXMessageDescriptorPath,
-    options: &FormatJSPluginOptions,
-    filename: &str,
-    visitor: &FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
-) -> MessageDescriptor {
-    let id = get_jsx_message_descriptor_value(descriptor_path.id.as_ref(), None);
-    let default_message = get_jsx_icu_message_value(
-        descriptor_path.default_message.as_ref(),
-        options.preserve_whitespace,
-    );
-
-    let description = visitor.get_jsx_message_descriptor_value_maybe_object_with_resolution(
-        descriptor_path.description.as_ref(),
-        None,
-    );
-
-    // Note: do not support override fn
-    let id = if id.is_none() && !default_message.is_empty() {
-        let interpolate_pattern =
-            if let Some(interpolate_pattern) = &options.id_interpolation_pattern {
-                interpolate_pattern.as_str()
-            } else {
-                "[sha512:contenthash:base64:6]"
-            };
-
-        let content = if let Some(MessageDescriptionValue::Str(description)) = &description {
-            format!("{default_message}#{description}")
-        } else if let Some(MessageDescriptionValue::Obj(obj)) = &description {
-            // When description is an object, stringify it for the hash calculation
-            let mut map = std::collections::BTreeMap::new();
-            // Extract and convert properties in one pass
-            for prop in &obj.props {
-                if let PropOrSpread::Prop(prop) = prop {
-                    if let Prop::KeyValue(key_value) = &**prop {
-                        let key_str = match &key_value.key {
-                            PropName::Ident(ident) => ident.sym.to_string(),
-                            PropName::Str(s) => s.value.to_atom_lossy().to_string(),
-                            _ => continue,
-                        };
-
-                        let value = match &*key_value.value {
-                            Expr::Lit(Lit::Str(s)) => {
-                                serde_json::Value::String(s.value.to_atom_lossy().to_string())
-                            }
-                            Expr::Lit(Lit::Num(n)) => serde_json::Number::from_f64(n.value)
-                                .map(serde_json::Value::Number)
-                                .unwrap_or(serde_json::Value::Null),
-                            Expr::Lit(Lit::Bool(b)) => serde_json::Value::Bool(b.value),
-                            _ => continue,
-                        };
-
-                        map.insert(key_str, value);
-                    }
-                }
-            }
-
-            // Convert BTreeMap to JSON object with keys already sorted
-            let json_obj = map
-                .into_iter()
-                .collect::<serde_json::Map<String, serde_json::Value>>();
-            let obj_value = serde_json::Value::Object(json_obj);
-            let desc_json = serde_json::to_string(&obj_value).unwrap_or_default();
-            format!("{default_message}#{desc_json}")
-        } else {
-            default_message.clone()
-        };
-
-        interpolate_name(filename, interpolate_pattern, &content)
-    } else {
-        id
-    };
-
-    MessageDescriptor {
-        id,
-        default_message: Some(default_message),
-        description,
-    }
-}
-
-fn evaluate_call_expr_message_descriptor_with_visitor(
-    descriptor_path: &CallExprMessageDescriptorPath,
-    options: &FormatJSPluginOptions,
-    filename: &str,
-    visitor: &FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
-) -> MessageDescriptor {
-    let id = get_call_expr_message_descriptor_value(descriptor_path.id.as_ref(), None);
-    let default_message = get_call_expr_icu_message_value(
-        descriptor_path.default_message.as_ref(),
-        options.preserve_whitespace,
-    );
-
-    let description = visitor.get_call_expr_message_descriptor_value_maybe_object_with_resolution(
-        descriptor_path.description.as_ref(),
-        None,
-    );
-
-    let id = if id.is_none() && !default_message.is_empty() {
-        let interpolate_pattern =
-            if let Some(interpolate_pattern) = &options.id_interpolation_pattern {
-                interpolate_pattern.as_str()
-            } else {
-                "[sha512:contenthash:base64:6]"
-            };
-
-        let content = if let Some(MessageDescriptionValue::Str(description)) = &description {
-            format!("{default_message}#{description}")
-        } else if let Some(MessageDescriptionValue::Obj(obj)) = &description {
-            // When description is an object, stringify it for the hash calculation
-            let mut map = std::collections::BTreeMap::new();
-            // Extract and convert properties in one pass
-            for prop in &obj.props {
-                if let PropOrSpread::Prop(prop) = prop {
-                    if let Prop::KeyValue(key_value) = &**prop {
-                        let key_str = match &key_value.key {
-                            PropName::Ident(ident) => ident.sym.to_string(),
-                            PropName::Str(s) => s.value.to_atom_lossy().to_string(),
-                            _ => continue,
-                        };
-
-                        let value = match &*key_value.value {
-                            Expr::Lit(Lit::Str(s)) => {
-                                serde_json::Value::String(s.value.to_atom_lossy().to_string())
-                            }
-                            Expr::Lit(Lit::Num(n)) => serde_json::Number::from_f64(n.value)
-                                .map(serde_json::Value::Number)
-                                .unwrap_or(serde_json::Value::Null),
-                            Expr::Lit(Lit::Bool(b)) => serde_json::Value::Bool(b.value),
-                            _ => continue,
-                        };
-
-                        map.insert(key_str, value);
-                    }
-                }
-            }
-
-            // Convert BTreeMap to JSON object with keys already sorted
-            let json_obj = map
-                .into_iter()
-                .collect::<serde_json::Map<String, serde_json::Value>>();
-            let obj_value = serde_json::Value::Object(json_obj);
-            let desc_json = serde_json::to_string(&obj_value).unwrap_or_default();
-            format!("{default_message}#{desc_json}")
-        } else {
-            default_message.clone()
-        };
-        interpolate_name(filename, interpolate_pattern, &content)
-    } else {
-        id
-    };
-
-    MessageDescriptor {
-        id,
-        default_message: Some(default_message),
-        description,
-    }
-}
-
 fn store_message(
     messages: &mut Vec<ExtractedMessage>,
     descriptor: &MessageDescriptor,
@@ -761,20 +614,32 @@ fn assert_object_expression(expr: &Option<&mut Expr>, callee: &Callee) {
     }
 }
 
-fn evaluate_template_literal_string(tpl: &Tpl) -> String {
-    //NOTE: This doesn't fully evaluate templates
-    tpl.quasis
-        .iter()
-        .map(|q| {
-            q.cooked
-                .as_ref()
-                .map(|v| v.to_string_lossy().to_string())
-                .unwrap_or_default()
-        })
-        .collect::<Vec<String>>()
-        .join("")
+fn evaluate_template_literal_string_with_visitor(
+    tpl: &Tpl,
+    visitor: &FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
+) -> Option<String> {
+    // if expressions exist
+    let mut result = String::new();
+    for (i, expr) in tpl.exprs.iter().enumerate() {
+        result += &tpl.quasis[i]
+            .cooked
+            .as_ref()
+            .map(|v| v.as_str().expect("non-utf8 string").to_string())
+            .unwrap_or_default();
+        if let Some(evaluated) = evaluate_expression_with_visitor(expr, visitor) {
+            result += evaluated.as_str();
+        }
+    }
+    result += &tpl
+        .quasis
+        .last()
+        .unwrap()
+        .cooked
+        .as_ref()
+        .map(|v| v.as_str().expect("non-utf8 string").to_string())
+        .unwrap_or_default();
+    Some(result)
 }
-
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct ExtractedMessage {
@@ -886,272 +751,339 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
         self.variable_bindings.get(&ident.to_id())
     }
 
-    fn get_jsx_message_descriptor_value_maybe_object_with_resolution(
+    fn create_message_descriptor_from_extractor<T: MessageDescriptorExtractor>(
         &self,
-        value: Option<&JSXAttrValue>,
-        is_message_node: Option<bool>,
-    ) -> Option<MessageDescriptionValue> {
-        let value = value?;
-        // NOTE: do not support evaluatePath
-        match value {
-            JSXAttrValue::JSXExprContainer(container) => {
-                if is_message_node.unwrap_or(false) {
-                    if let JSXExpr::Expr(expr) = &container.expr {
-                        // If this is already compiled, no need to recompiled it
-                        if let Expr::Array(..) = &**expr {
-                            return None;
-                        }
-                    }
-                }
+        nodes: &Vec<T>,
+    ) -> MessageDescriptor {
+        let mut ret = MessageDescriptor::default();
+        for node in nodes {
+            let Some((key, value)) = node.get_key_value_with_visitor(self) else {
+                continue;
+            };
 
-                match &container.expr {
-                    JSXExpr::Expr(expr) => match &**expr {
-                        Expr::Lit(Lit::Str(s)) => Some(MessageDescriptionValue::Str(
-                            s.value.to_string_lossy().into_owned(),
-                        )),
-                        Expr::Object(object_lit) => {
-                            Some(MessageDescriptionValue::Obj(object_lit.clone()))
-                        }
-                        Expr::Tpl(tpl) => Some(MessageDescriptionValue::Str(
-                            evaluate_template_literal_string(tpl),
-                        )),
-                        Expr::Bin(bin_expr) => self.evaluate_binary_expr_with_resolution(bin_expr),
-                        // Handle React Compiler optimized identifiers
-                        Expr::Ident(ident) => {
-                            if let Some(resolved_expr) = self.resolve_identifier(ident) {
-                                match resolved_expr {
-                                    Expr::Object(object_lit) => {
-                                        Some(MessageDescriptionValue::Obj(object_lit.clone()))
-                                    }
-                                    Expr::Lit(Lit::Str(s)) => Some(MessageDescriptionValue::Str(
-                                        s.value.to_string_lossy().into_owned(),
-                                    )),
-                                    Expr::Tpl(tpl) => Some(MessageDescriptionValue::Str(
-                                        evaluate_template_literal_string(tpl),
-                                    )),
-                                    _ => None,
-                                }
-                            } else {
-                                None
-                            }
-                        }
+            match key.as_str() {
+                "id" => {
+                    ret.id = match value {
+                        MessageDescriptionValue::Str(s) => Some(s),
                         _ => None,
-                    },
-                    _ => None,
+                    };
+                }
+                "defaultMessage" => {
+                    ret.default_message = match value {
+                        MessageDescriptionValue::Str(s) => Some(s),
+                        _ => None,
+                    };
+                }
+                "description" => {
+                    ret.description = match value {
+                        MessageDescriptionValue::Str(s) => Some(MessageDescriptionValue::Str(s)),
+                        MessageDescriptionValue::Obj(obj) => {
+                            // When description is an object, we need to resolve it
+                            Some(MessageDescriptionValue::Obj(obj))
+                        }
+                    };
+                }
+                _ => {
+                    // ignore other keys
                 }
             }
-            JSXAttrValue::Str(s) => Some(MessageDescriptionValue::Str(
-                s.value.to_atom_lossy().to_string(),
-            )),
-            _ => None,
-        }
-    }
-
-    /// Helper method to evaluate binary expressions with resolution support
-    fn evaluate_binary_expr_with_resolution(
-        &self,
-        expr: &BinExpr,
-    ) -> Option<MessageDescriptionValue> {
-        // Only handle string concatenation (+ operator)
-        if !matches!(expr.op, BinaryOp::Add) {
-            return None;
         }
 
-        // Recursively evaluate left and right operands
-        let left_val = self.get_call_expr_message_descriptor_value_maybe_object_with_resolution(
-            Some(&*expr.left),
-            None,
-        )?;
-        let right_val = self.get_call_expr_message_descriptor_value_maybe_object_with_resolution(
-            Some(&*expr.right),
-            None,
-        )?;
+        let message = ret.default_message.as_deref().unwrap_or("");
 
-        // Only concatenate if both are strings
-        match (left_val, right_val) {
-            (MessageDescriptionValue::Str(left_str), MessageDescriptionValue::Str(right_str)) => {
-                Some(MessageDescriptionValue::Str(format!(
-                    "{left_str}{right_str}"
-                )))
-            }
-            _ => None,
-        }
-    }
+        let message = if !self.options.preserve_whitespace {
+            let replaced = WHITESPACE_REGEX.replace_all(message, " ");
+            replaced.trim().to_string()
+        } else {
+            message.to_string()
+        };
 
-    fn get_call_expr_message_descriptor_value_maybe_object_with_resolution(
-        &self,
-        value: Option<&Expr>,
-        _is_message_node: Option<bool>,
-    ) -> Option<MessageDescriptionValue> {
-        let value = value?;
-        // NOTE: do not support evaluatePath
-        match value {
-            Expr::Ident(ident) => {
-                // First try to resolve the identifier to see if it's a variable reference
-                if let Some(resolved_expr) = self.resolve_identifier(ident) {
-                    match resolved_expr {
-                        Expr::Object(object_lit) => {
-                            Some(MessageDescriptionValue::Obj(object_lit.clone()))
-                        }
-                        Expr::Lit(Lit::Str(s)) => Some(MessageDescriptionValue::Str(
-                            s.value.to_atom_lossy().to_string(),
-                        )),
-                        _ => None,
+        match parse(message.as_str()) {
+            Err(e) => {
+                let is_literal_err = if nodes[0].is_jsx() {
+                    message.contains("\\\\")
+                } else {
+                    false
+                };
+
+                let handler = &swc_core::plugin::errors::HANDLER;
+
+                if is_literal_err {
+                    {
+                        handler.with(|handler| {
+                            handler
+                                .struct_err(
+                                    r#"
+                        [React Intl] Message failed to parse.
+                        It looks like `\\`s were used for escaping,
+                        this won't work with JSX string literals.
+                        Wrap with `{{}}`.
+                        See: http://facebook.github.io/react/docs/jsx-gotchas.html
+                        "#,
+                                )
+                                .emit()
+                        });
                     }
                 } else {
-                    // Fall back to treating identifier as a string value
-                    Some(MessageDescriptionValue::Str(ident.sym.to_string()))
+                    {
+                        handler.with(|handler| {
+                            handler
+                                .struct_warn(
+                                    r#"
+                        [React Intl] Message failed to parse.
+                        See: https://formatjs.io/docs/core-concepts/icu-syntax
+                        \n {:#?}
+                        "#,
+                                )
+                                .emit();
+                            handler
+                                .struct_err(&format!("SyntaxError: {}", e.kind))
+                                .emit()
+                        });
+                    }
                 }
             }
-            Expr::Lit(Lit::Str(s)) => Some(MessageDescriptionValue::Str(
-                s.value.to_atom_lossy().to_string(),
-            )),
-            Expr::Object(object_lit) => Some(MessageDescriptionValue::Obj(object_lit.clone())),
-            Expr::Bin(bin_expr) => self.evaluate_binary_expr_with_resolution(bin_expr),
-            _ => None,
+            Ok(ast) => {
+                ret.ast = Some(ast);
+            }
         }
+
+        ret.default_message = Some(message);
+
+        ret
+    }
+
+    fn evaluate_message_descriptor(
+        &self,
+        descriptor: &mut MessageDescriptor,
+        options: &FormatJSPluginOptions,
+        filename: &str,
+    ) {
+        let id = &descriptor.id;
+        let default_message = descriptor.default_message.clone().unwrap_or_default();
+
+        let description = descriptor.description.clone();
+
+        // Note: do not support override fn
+        let id = if id.is_none() && !default_message.is_empty() {
+            let interpolate_pattern =
+                if let Some(interpolate_pattern) = &options.id_interpolation_pattern {
+                    interpolate_pattern.as_str()
+                } else {
+                    "[sha512:contenthash:base64:6]"
+                };
+
+            let content = match &description {
+                Some(MessageDescriptionValue::Str(description)) => {
+                    format!("{default_message}#{description}")
+                }
+                Some(MessageDescriptionValue::Obj(obj)) => {
+                    // When description is an object, stringify it for the hash calculation
+                    let mut map = std::collections::BTreeMap::new();
+                    // Extract and convert properties in one pass
+                    for prop in &obj.props {
+                        if let PropOrSpread::Prop(prop) = prop {
+                            if let Prop::KeyValue(key_value) = &**prop {
+                                let key_str = match &key_value.key {
+                                    PropName::Ident(ident) => ident.sym.to_string(),
+                                    PropName::Str(s) => s.value.to_atom_lossy().to_string(),
+                                    _ => continue,
+                                };
+                                let value = match &*key_value.value {
+                                    Expr::Ident(ident) => {
+                                        // If this is a variable reference, resolve it
+                                        if let Some(resolved_expr) = self.resolve_identifier(ident)
+                                        {
+                                            match resolved_expr {
+                                                Expr::Lit(Lit::Str(s)) => {
+                                                    serde_json::Value::String(
+                                                        s.value
+                                                            .as_str()
+                                                            .expect("non-utf8 string")
+                                                            .to_string(),
+                                                    )
+                                                }
+                                                Expr::Lit(Lit::Num(n)) => {
+                                                    serde_json::Number::from_f64(n.value)
+                                                        .map(serde_json::Value::Number)
+                                                        .unwrap_or(serde_json::Value::Null)
+                                                }
+                                                Expr::Lit(Lit::Bool(b)) => {
+                                                    serde_json::Value::Bool(b.value)
+                                                }
+                                                _ => continue,
+                                            }
+                                        } else {
+                                            continue;
+                                        }
+                                    }
+                                    Expr::Lit(Lit::Str(s)) => serde_json::Value::String(
+                                        s.value.to_atom_lossy().to_string(),
+                                    ),
+                                    Expr::Lit(Lit::Num(n)) => serde_json::Number::from_f64(n.value)
+                                        .map(serde_json::Value::Number)
+                                        .unwrap_or(serde_json::Value::Null),
+                                    Expr::Lit(Lit::Bool(b)) => serde_json::Value::Bool(b.value),
+                                    _ => continue,
+                                };
+
+                                map.insert(key_str, value);
+                            }
+                        }
+                    }
+
+                    // Convert BTreeMap to JSON object with keys already sorted
+                    let json_obj = map
+                        .into_iter()
+                        .collect::<serde_json::Map<String, serde_json::Value>>();
+                    let obj_value = serde_json::Value::Object(json_obj);
+                    let desc_json = serde_json::to_string(&obj_value).unwrap_or_default();
+                    format!("{default_message}#{desc_json}")
+                }
+                _ => default_message.clone(),
+            };
+
+            interpolate_name(filename, interpolate_pattern, &content)
+        } else {
+            id.clone()
+        };
+
+        descriptor.id = id;
     }
 
     fn process_message_object(&mut self, message_descriptor: &mut Option<&mut Expr>) {
-        if let Some(message_obj) = &mut *message_descriptor {
-            let (lo, hi) = (message_obj.span().lo, message_obj.span().hi);
+        let Some(message_obj) = &mut *message_descriptor else {
+            return;
+        };
+        let (lo, hi) = (message_obj.span().lo, message_obj.span().hi);
+        let Expr::Object(obj) = *message_obj else {
+            return;
+        };
 
-            if let Expr::Object(obj) = *message_obj {
-                let properties = &obj.props;
+        let properties = &obj.props;
 
-                let descriptor_path = create_message_descriptor_from_call_expr(properties);
+        let mut descriptor = self.create_message_descriptor_from_extractor(properties);
 
-                // If the message is already compiled, don't re-compile it
-                if let Some(default_message) = &descriptor_path.default_message {
-                    if default_message.is_array() {
-                        return;
-                    }
+        // If the message is already compiled, don't re-compile it
+        if descriptor.default_message.is_none() {
+            return;
+        }
+
+        self.evaluate_message_descriptor(&mut descriptor, &self.options, &self.filename);
+
+        let source_location = if self.options.extract_source_location {
+            Some((
+                self.source_map.lookup_char_pos(lo),
+                self.source_map.lookup_char_pos(hi),
+            ))
+        } else {
+            None
+        };
+
+        store_message(
+            &mut self.messages,
+            &descriptor,
+            &self.filename,
+            source_location,
+        );
+
+        // let first_prop = properties.first().is_some();
+
+        // Insert ID potentially 1st before removing nodes
+        let id_prop = obj.props.iter().find(|prop| {
+            if let PropOrSpread::Prop(prop) = prop {
+                if let Prop::KeyValue(kv) = &**prop {
+                    return match &kv.key {
+                        PropName::Ident(ident) => &*ident.sym == "id",
+                        PropName::Str(str_) => &*str_.value == "id",
+                        _ => false,
+                    };
                 }
+            }
+            false
+        });
 
-                let descriptor = evaluate_call_expr_message_descriptor_with_visitor(
-                    &descriptor_path,
-                    &self.options,
-                    &self.filename,
-                    self,
-                );
-
-                let source_location = if self.options.extract_source_location {
-                    Some((
-                        self.source_map.lookup_char_pos(lo),
-                        self.source_map.lookup_char_pos(hi),
-                    ))
-                } else {
-                    None
-                };
-
-                store_message(
-                    &mut self.messages,
-                    &descriptor,
-                    &self.filename,
-                    source_location,
-                );
-
-                // let first_prop = properties.first().is_some();
-
-                // Insert ID potentially 1st before removing nodes
-                let id_prop = obj.props.iter().find(|prop| {
-                    if let PropOrSpread::Prop(prop) = prop {
-                        if let Prop::KeyValue(kv) = &**prop {
-                            return match &kv.key {
-                                PropName::Ident(ident) => &*ident.sym == "id",
-                                PropName::Str(str_) => &*str_.value == "id",
-                                _ => false,
-                            };
-                        }
-                    }
-                    false
-                });
-
-                if let Some(descriptor_id) = descriptor.id {
-                    if let Some(id_prop) = id_prop {
-                        let prop = id_prop.as_prop().unwrap();
-                        let kv = &mut prop.as_key_value().unwrap();
-                        kv.to_owned().value = Box::new(Expr::Lit(Lit::Str(Str {
+        if let Some(descriptor_id) = descriptor.id {
+            if let Some(id_prop) = id_prop {
+                let prop = id_prop.as_prop().unwrap();
+                let kv = &mut prop.as_key_value().unwrap();
+                kv.to_owned().value = Box::new(Expr::Lit(Lit::Str(Str {
+                    span: DUMMY_SP,
+                    value: descriptor_id.into(),
+                    raw: None,
+                })));
+            } else {
+                obj.props.insert(
+                    0,
+                    PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
+                        key: PropName::Ident(IdentName::new("id".into(), DUMMY_SP)),
+                        value: Box::new(Expr::Lit(Lit::Str(Str {
                             span: DUMMY_SP,
                             value: descriptor_id.into(),
                             raw: None,
-                        })));
-                    } else {
-                        obj.props.insert(
-                            0,
-                            PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
-                                key: PropName::Ident(IdentName::new("id".into(), DUMMY_SP)),
-                                value: Box::new(Expr::Lit(Lit::Str(Str {
-                                    span: DUMMY_SP,
-                                    value: descriptor_id.into(),
-                                    raw: None,
-                                }))),
-                            }))),
-                        )
-                    }
-                }
-
-                let mut props = vec![];
-                for prop in obj.props.drain(..) {
-                    match prop {
-                        PropOrSpread::Prop(mut prop) => {
-                            if let Prop::KeyValue(keyvalue) = &mut *prop {
-                                let key = get_message_descriptor_key_from_call_expr(&keyvalue.key);
-                                if let Some(key) = key {
-                                    match key {
-                                        "description" => {
-                                            // remove description
-                                            if descriptor.description.is_some() {
-                                                self.comments.take_leading(prop.span().lo);
-                                            } else {
-                                                props.push(PropOrSpread::Prop(prop));
-                                            }
-                                        }
-                                        // Pre-parse or remove defaultMessage
-                                        "defaultMessage" => {
-                                            if self.options.remove_default_message {
-                                                // remove defaultMessage
-                                            } else {
-                                                if let Some(descriptor_default_message) =
-                                                    descriptor.default_message.as_ref()
-                                                {
-                                                    if self.options.ast {
-                                                        if let Ok(parsed_expr) = parse(
-                                                            descriptor_default_message.as_str(),
-                                                        ) {
-                                                            keyvalue.value = parsed_expr;
-                                                        }
-                                                    } else {
-                                                        keyvalue.value =
-                                                            Box::new(Expr::Lit(Lit::Str(Str {
-                                                                span: DUMMY_SP,
-                                                                value: descriptor_default_message
-                                                                    .as_str()
-                                                                    .into(),
-                                                                raw: None,
-                                                            })));
-                                                    }
-                                                }
-
-                                                props.push(PropOrSpread::Prop(prop));
-                                            }
-                                        }
-                                        _ => props.push(PropOrSpread::Prop(prop)),
-                                    }
-                                } else {
-                                    props.push(PropOrSpread::Prop(prop));
-                                }
-                            } else {
-                                props.push(PropOrSpread::Prop(prop));
-                            }
-                        }
-                        _ => props.push(prop),
-                    }
-                }
-
-                obj.props = props;
+                        }))),
+                    }))),
+                )
             }
         }
+
+        let mut props = vec![];
+        for prop in obj.props.drain(..) {
+            match prop {
+                PropOrSpread::Prop(mut prop) => {
+                    if let Prop::KeyValue(keyvalue) = &mut *prop {
+                        let key = get_message_descriptor_key_from_call_expr(&keyvalue.key);
+                        if let Some(key) = key {
+                            match key {
+                                "description" => {
+                                    // remove description
+                                    if descriptor.description.is_some() {
+                                        self.comments.take_leading(prop.span().lo);
+                                    } else {
+                                        props.push(PropOrSpread::Prop(prop));
+                                    }
+                                }
+                                // Pre-parse or remove defaultMessage
+                                "defaultMessage" => {
+                                    if self.options.remove_default_message {
+                                        // remove defaultMessage
+                                    } else {
+                                        if let Some(descriptor_default_message) =
+                                            descriptor.default_message.as_ref()
+                                        {
+                                            if self.options.ast {
+                                                if let Some(ref parsed_expr) = descriptor.ast {
+                                                    keyvalue.value = parsed_expr.clone();
+                                                }
+                                            } else {
+                                                keyvalue.value =
+                                                    Box::new(Expr::Lit(Lit::Str(Str {
+                                                        span: DUMMY_SP,
+                                                        value: descriptor_default_message
+                                                            .as_str()
+                                                            .into(),
+                                                        raw: None,
+                                                    })));
+                                            }
+                                        }
+
+                                        props.push(PropOrSpread::Prop(prop));
+                                    }
+                                }
+                                _ => props.push(PropOrSpread::Prop(prop)),
+                            }
+                        } else {
+                            props.push(PropOrSpread::Prop(prop));
+                        }
+                    } else {
+                        props.push(PropOrSpread::Prop(prop));
+                    }
+                }
+                _ => props.push(prop),
+            }
+        }
+
+        obj.props = props;
     }
 }
 
@@ -1214,7 +1146,7 @@ impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
             }
         }
 
-        let descriptor_path = create_message_descriptor_from_jsx_attr(&jsx_opening_elem.attrs);
+        let mut descriptor = self.create_message_descriptor_from_extractor(&jsx_opening_elem.attrs);
 
         // In order for a default message to be extracted when
         // declaring a JSX element, it must be done with standard
@@ -1222,18 +1154,13 @@ impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
         // write `<FormattedMessage {...descriptor} />`, because it will be
         // skipped here and extracted elsewhere. The descriptor will
         // be extracted only (storeMessage) if a `defaultMessage` prop.
-        if descriptor_path.default_message.is_none() {
+        if descriptor.default_message.is_none() {
             return;
         }
 
         // Evaluate the Message Descriptor values in a JSX
         // context, then store it.
-        let descriptor = evaluate_jsx_message_descriptor_with_visitor(
-            &descriptor_path,
-            &self.options,
-            &self.filename,
-            self,
-        );
+        self.evaluate_message_descriptor(&mut descriptor, &self.options, &self.filename);
 
         let source_location = if self.options.extract_source_location {
             Some((
@@ -1306,13 +1233,11 @@ impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
                                     descriptor.default_message.as_ref()
                                 {
                                     if self.options.ast {
-                                        if let Ok(parsed_expr) =
-                                            parse(descriptor_default_message.as_str())
-                                        {
+                                        if let Some(ref parsed_expr) = descriptor.ast {
                                             attr.value = Some(JSXAttrValue::JSXExprContainer(
                                                 JSXExprContainer {
                                                     span: DUMMY_SP,
-                                                    expr: JSXExpr::Expr(parsed_expr),
+                                                    expr: JSXExpr::Expr(parsed_expr.clone()),
                                                 },
                                             ));
                                         }

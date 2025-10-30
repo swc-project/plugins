@@ -150,6 +150,34 @@ describe("formatjs swc plugin", () => {
     expect(output).not.toMatch(/description/);
   });
 
+  it("should handle statically evaluate-able variables", async () => {
+    const input = `
+      import { defineMessage, formatMessage, FormattedMessage } from 'react-intl';
+
+      const part1 = "Hello, ";
+      const part2 = "world!";
+
+      const message = defineMessage({
+        defaultMessage: part1 + part2,
+        description: "static vars"
+      });
+      function Greeting() {
+        const message2 = formatMessage({
+          defaultMessage: part1 + part2,
+          description: "static vars in function"
+        });
+        const templateMessage = formatMessage({
+          defaultMessage: \`\${part1}\${part2}\`,
+          description: "static string"
+        });
+        return (<FormattedMessage defaultMessage={part1 + part2} />);
+      }
+    `;
+
+    const output = await transformCode(input);
+    expect(output).toMatchSnapshot();
+  });
+
   it("should transform to ast when enabled", async () => {
     const input = `
       import { defineMessage, formatMessage, FormattedMessage } from 'react-intl';
