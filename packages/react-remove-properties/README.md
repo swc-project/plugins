@@ -23,6 +23,12 @@ or
 
 # @swc/plugin-react-remove-properties
 
+## 11.0.0
+
+### Major Changes
+
+- 593f438: Update swc_core to v47
+
 ## 10.0.0
 
 ### Major Changes
