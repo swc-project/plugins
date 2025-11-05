@@ -89,6 +89,8 @@ fn get_message_descriptor_key_from_jsx(name: &JSXAttrName) -> &str {
     match name {
         JSXAttrName::Ident(name)
         | JSXAttrName::JSXNamespacedName(JSXNamespacedName { name, .. }) => &name.sym,
+        #[cfg(swc_ast_unknown)]
+        _ => panic!("unknown node")
     }
 
     // NOTE: Do not support evaluatePath()

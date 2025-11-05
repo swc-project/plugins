@@ -37,6 +37,8 @@ impl Visit for TopLevelBindingCollector {
                         ObjectPatProp::Assign(a) => self.add(&a.key.to_id()),
                         ObjectPatProp::KeyValue(k) => k.value.visit_with(self),
                         ObjectPatProp::Rest(_) => {}
+                        #[cfg(swc_ast_unknown)]
+                        _ => panic!("unknown node")
                     }
                 }
             }

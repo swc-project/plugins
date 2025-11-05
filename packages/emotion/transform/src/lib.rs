@@ -291,6 +291,8 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
                                         ModuleExportName::Str(v) => {
                                             v.value.as_str() == Some(exported.name.as_str())
                                         }
+                                        #[cfg(swc_ast_unknown)]
+                                        _ => panic!("unknown node")
                                     },
                                     _ => named.local.as_ref() == exported.name,
                                 };
@@ -312,6 +314,8 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
                             self.import_packages
                                 .insert(namespace.local.to_id(), PackageMeta::Namespace(c.clone()));
                         }
+                        #[cfg(swc_ast_unknown)]
+                        _ => panic!("unknown node")
                     }
                 }
             }

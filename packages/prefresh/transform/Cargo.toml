@@ -12,6 +12,9 @@ repository   = { workspace = true }
 rust-version = { workspace = true }
 version      = "0.32.0"
 
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(swc_ast_unknown)'] }
+
 [dependencies]
 serde          = { workspace = true, features = ["derive"] }
 swc_atoms      = { workspace = true }

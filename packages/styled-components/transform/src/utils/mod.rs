@@ -16,6 +16,8 @@ pub(crate) fn get_prop_key_as_expr(p: &Prop) -> Cow<Expr> {
         Prop::Getter(p) => prop_name_to_expr(&p.key),
         Prop::Setter(p) => prop_name_to_expr(&p.key),
         Prop::Method(p) => prop_name_to_expr(&p.key),
+        #[cfg(swc_ast_unknown)]
+        _ => panic!("unknown node")
     }
 }
 
@@ -26,6 +28,8 @@ pub(crate) fn prop_name_to_expr(p: &PropName) -> Cow<Expr> {
         PropName::Num(p) => Cow::Owned(Expr::Lit(Lit::Num(p.clone()))),
         PropName::BigInt(p) => Cow::Owned(Expr::Lit(Lit::BigInt(p.clone()))),
         PropName::Computed(e) => Cow::Borrowed(&e.expr),
+        #[cfg(swc_ast_unknown)]
+        _ => panic!("unknown node")
     }
 }
 
@@ -37,6 +41,8 @@ pub(crate) fn get_prop_name(p: &Prop) -> Option<&PropName> {
         Prop::Getter(p) => Some(&p.key),
         Prop::Setter(p) => Some(&p.key),
         Prop::Method(p) => Some(&p.key),
+        #[cfg(swc_ast_unknown)]
+        _ => panic!("unknown node")
     }
 }
 
@@ -48,6 +54,8 @@ pub(crate) fn get_prop_name2(p: &Prop) -> PropName {
         Prop::Getter(p) => p.key.clone(),
         Prop::Setter(p) => p.key.clone(),
         Prop::Method(p) => p.key.clone(),
+        #[cfg(swc_ast_unknown)]
+        _ => panic!("unknown node")
     }
 }
 

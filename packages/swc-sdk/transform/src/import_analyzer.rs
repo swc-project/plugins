@@ -92,6 +92,8 @@ impl Visit for Analyzer<'_> {
                         .insert(s.local.to_id(), (import.src.value.clone(), s.local.span));
                     continue;
                 }
+                #[cfg(swc_ast_unknown)]
+                _ => panic!("unknown node")
             };
 
             self.data
@@ -105,5 +107,7 @@ fn orig_name(n: &ModuleExportName) -> Atom {
     match n {
         ModuleExportName::Ident(v) => v.sym.clone(),
         ModuleExportName::Str(v) => v.value.to_atom_lossy().into_owned(),
+        #[cfg(swc_ast_unknown)]
+        _ => panic!("unknown node")
     }
 }

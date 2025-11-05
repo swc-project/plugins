@@ -75,6 +75,8 @@ impl Visit for Analyzer<'_> {
                         .insert(s.local.to_id(), import.src.value.clone());
                     continue;
                 }
+                #[cfg(swc_ast_unknown)]
+                _ => panic!("unknown node")
             };
 
             self.data
@@ -88,5 +90,7 @@ fn orig_name(n: &ModuleExportName) -> Atom {
     match n {
         ModuleExportName::Ident(v) => v.sym.clone(),
         ModuleExportName::Str(v) => v.value.as_atom().expect("non-utf8 export name").clone(),
+        #[cfg(swc_ast_unknown)]
+        _ => panic!("unknown node")
     }
 }

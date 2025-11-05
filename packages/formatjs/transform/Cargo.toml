@@ -10,6 +10,9 @@ name = "swc_formatjs_transform"
 repository = { workspace = true }
 version = "12.0.0"
 
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(swc_ast_unknown)'] }
+
 [features]
 custom_transform = []
 
