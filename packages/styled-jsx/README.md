@@ -2,6 +2,12 @@
 
 # @swc/plugin-styled-jsx
 
+## 12.0.1
+
+### Patch Changes
+
+- 11a980b: Restore swc_css mode
+
 ## 12.0.0
 
 ### Major Changes

@@ -31,6 +31,9 @@ use crate::{
 #[serde(rename_all = "camelCase")]
 pub struct Config {
     #[serde(default)]
+    pub use_lightningcss: bool,
+
+    #[serde(default)]
     pub browsers: Versions,
 }
 
@@ -606,14 +609,24 @@ impl StyledJSXTransformer<'_> {
 
         match &style_info {
             JSXStyle::Local(style_info) => {
-                let css = crate::transform_css_lightningcss::transform_css(
-                    self.cm.clone(),
-                    style_info,
-                    is_global,
-                    &self.static_class_name,
-                    &self.config.browsers,
-                    self.native_config,
-                )?;
+                let css = if self.config.use_lightningcss {
+                    crate::transform_css_lightningcss::transform_css(
+                        self.cm.clone(),
+                        style_info,
+                        is_global,
+                        &self.static_class_name,
+                        &self.config.browsers,
+                        self.native_config,
+                    )?
+                } else {
+                    crate::transform_css_swc::transform_css(
+                        self.cm.clone(),
+                        style_info,
+                        is_global,
+                        &self.static_class_name,
+                        self.native_config,
+                    )?
+                };
 
                 Ok(make_local_styled_jsx_el(
                     style_info,
@@ -664,14 +677,24 @@ impl StyledJSXTransformer<'_> {
             bail!("This shouldn't happen, we already know that this is a template literal");
         };
 
-        let css = crate::transform_css_lightningcss::transform_css(
-            self.cm.clone(),
-            style,
-            tag == "global",
-            &static_class_name,
-            &self.config.browsers,
-            self.native_config,
-        )?;
+        let css = if self.config.use_lightningcss {
+            crate::transform_css_lightningcss::transform_css(
+                self.cm.clone(),
+                style,
+                tag == "global",
+                &static_class_name,
+                &self.config.browsers,
+                self.native_config,
+            )?
+        } else {
+            crate::transform_css_swc::transform_css(
+                self.cm.clone(),
+                style,
+                tag == "global",
+                &static_class_name,
+                self.native_config,
+            )?
+        };
         if tag == "resolve" {
             self.file_has_css_resolve = true;
             return Ok(Expr::Object(ObjectLit {
