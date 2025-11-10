@@ -3,8 +3,8 @@
 
 use swc_common::{comments::Comments, errors::HANDLER, util::take::Take, Mark, DUMMY_SP};
 use swc_ecma_ast::{
-    ArrowExpr, AwaitExpr, BlockStmtOrExpr, CallExpr, Callee, Expr, Function, IdentName, Import,
-    MemberExpr, MemberProp, Module, ModuleDecl, ModuleItem, VarDeclarator,
+    ArrowExpr, AwaitExpr, BlockStmtOrExpr, CallExpr, Callee, Expr, Function, Ident, IdentName,
+    Import, MemberExpr, MemberProp, Module, ModuleDecl, ModuleItem, VarDeclarator,
 };
 use swc_ecma_utils::{private_ident, ExprFactory};
 use swc_ecma_visit::{VisitMut, VisitMutWith};
@@ -46,6 +46,50 @@ where
     imports: ImportMap,
 
     can_use_await: bool,
+}
+
+impl<C> SwcSdkTransform<C>
+where
+    C: Comments,
+{
+    fn replace_ident_with_dynamic_import(&mut self, ident: &Ident) -> Option<Expr> {
+        let node = Expr::Ident(ident.clone());
+
+        if let Some((import_span, source, export_name)) = self.imports.should_make_dynamic(&node) {
+            if self.can_use_await {
+                let import = Expr::Await(AwaitExpr {
+                    span: DUMMY_SP,
+                    arg: CallExpr {
+                        span: import_span,
+                        callee: Callee::Import(Import {
+                            span: import_span,
+                            phase: Default::default(),
+                        }),
+                        args: vec![source.clone().as_arg()],
+                        ..Default::default()
+                    }
+                    .into(),
+                });
+
+                let member_expr = MemberExpr {
+                    span: DUMMY_SP,
+                    obj: import.into(),
+                    prop: MemberProp::Ident(IdentName::new(export_name.clone(), ident.span)),
+                };
+
+                return Some(Expr::Member(member_expr));
+            } else {
+                HANDLER.with(|handler| {
+                    handler
+                        .struct_span_err(ident.span, "await is not allowed in this context.")
+                        .help("/*#__DYNAMIC__#*/ requires async context for dynamic imports")
+                        .emit();
+                });
+            }
+        }
+
+        None
+    }
 }
 
 impl<C> VisitMut for SwcSdkTransform<C>
@@ -126,39 +170,8 @@ where
         node.visit_mut_children_with(self);
 
         if let Expr::Ident(ident) = &*node {
-            if let Some((import_span, source, export_name)) =
-                self.imports.should_make_dynamic(&*node)
-            {
-                if self.can_use_await {
-                    let import = Expr::Await(AwaitExpr {
-                        span: DUMMY_SP,
-                        arg: CallExpr {
-                            span: import_span,
-                            callee: Callee::Import(Import {
-                                span: import_span,
-                                phase: Default::default(),
-                            }),
-                            args: vec![source.clone().as_arg()],
-                            ..Default::default()
-                        }
-                        .into(),
-                    });
-
-                    let member_expr = MemberExpr {
-                        span: DUMMY_SP,
-                        obj: import.into(),
-                        prop: MemberProp::Ident(IdentName::new(export_name.clone(), ident.span)),
-                    };
-
-                    *node = Expr::Member(member_expr);
-                } else {
-                    HANDLER.with(|handler| {
-                        handler
-                            .struct_span_err(ident.span, "await is not allowed in this context.")
-                            .help("/*#__DYNAMIC__#*/ requires async context for dynamic imports")
-                            .emit();
-                    });
-                }
+            if let Some(expr) = self.replace_ident_with_dynamic_import(ident) {
+                *node = expr;
             }
         }
     }
