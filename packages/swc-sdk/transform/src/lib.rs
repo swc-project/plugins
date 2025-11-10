@@ -1,8 +1,10 @@
 #![feature(box_patterns)]
 #![feature(never_type)]
 
+use rustc_hash::FxHashMap;
 use swc_common::{comments::Comments, util::take::Take, Mark};
-use swc_ecma_ast::{Module, ModuleDecl, ModuleItem, VarDeclarator};
+use swc_ecma_ast::{Id, Module, ModuleDecl, ModuleItem, Str, VarDeclarator};
+use swc_ecma_utils::find_pat_ids;
 use swc_ecma_visit::{VisitMut, VisitMutWith};
 
 use crate::{config::Config, import_analyzer::ImportMap};
@@ -25,6 +27,7 @@ where
         config,
         comments,
         imports: Default::default(),
+        ids_to_make_dynamic: Default::default(),
     }
 }
 
@@ -39,6 +42,8 @@ where
     #[allow(unused)]
     comments: C,
     imports: ImportMap,
+
+    ids_to_make_dynamic: FxHashMap<Id, Str>,
 }
 
 impl<C> VisitMut for SwcSdkTransform<C>
@@ -54,6 +59,18 @@ where
     fn visit_mut_module(&mut self, m: &mut Module) {
         self.imports = ImportMap::analyze(m);
 
+        for item in &m.body {
+            if let ModuleItem::ModuleDecl(ModuleDecl::Import(import)) = item {
+                if self.comments.has_flag(import.span.lo, "DYNAMIC") {
+                    let ids: Vec<Id> = find_pat_ids(&import.specifiers);
+
+                    for id in ids {
+                        self.ids_to_make_dynamic.insert(id, *import.src.clone());
+                    }
+                }
+            }
+        }
+
         m.visit_mut_children_with(self);
     }
 
@@ -63,8 +80,6 @@ where
                 m.take();
                 return;
             }
-
-            if self.comments.has_flag(import.span.lo, "DYNAMIC") {}
         }
 
         m.visit_mut_children_with(self);
