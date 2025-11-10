@@ -91,7 +91,8 @@ where
                 } else {
                     HANDLER.with(|handler| {
                         handler
-                            .struct_span_err(ident.span, "await is not allowed in this context")
+                            .struct_span_err(ident.span, "await is not allowed in this context.")
+                            .help("/*#__DYNAMIC__#*/ requires async context for dynamic imports")
                             .emit();
                     });
                 }
