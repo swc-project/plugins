@@ -1,10 +1,10 @@
 #![feature(box_patterns)]
 #![feature(never_type)]
 
-use swc_common::{comments::Comments, util::take::Take, Mark, DUMMY_SP};
+use swc_common::{comments::Comments, errors::HANDLER, util::take::Take, Mark, DUMMY_SP};
 use swc_ecma_ast::{
-    AwaitExpr, CallExpr, Callee, Expr, IdentName, Import, MemberExpr, MemberProp, Module,
-    ModuleDecl, ModuleItem, VarDeclarator,
+    ArrowExpr, AwaitExpr, CallExpr, Callee, Expr, Function, IdentName, Import, MemberExpr,
+    MemberProp, Module, ModuleDecl, ModuleItem, VarDeclarator,
 };
 use swc_ecma_utils::ExprFactory;
 use swc_ecma_visit::{VisitMut, VisitMutWith};
@@ -52,10 +52,12 @@ impl<C> VisitMut for SwcSdkTransform<C>
 where
     C: Comments,
 {
-    fn visit_mut_var_declarator(&mut self, node: &mut VarDeclarator) {
-        self.transform_flag(node);
-
+    fn visit_mut_arrow_expr(&mut self, node: &mut ArrowExpr) {
+        let old_can_use_await = self.can_use_await;
+        self.can_use_await = node.is_async;
         node.visit_mut_children_with(self);
+
+        self.can_use_await = old_can_use_await;
     }
 
     fn visit_mut_expr(&mut self, node: &mut Expr) {
@@ -64,29 +66,45 @@ where
         if let Expr::Ident(ident) = &*node {
             if let Some((import_span, source, export_name)) = self.imports.should_make_dynamic(node)
             {
-                let import = Expr::Await(AwaitExpr {
-                    span: DUMMY_SP,
-                    arg: CallExpr {
-                        span: import_span,
-                        callee: Callee::Import(Import {
+                if self.can_use_await {
+                    let import = Expr::Await(AwaitExpr {
+                        span: DUMMY_SP,
+                        arg: CallExpr {
                             span: import_span,
-                            phase: Default::default(),
-                        }),
-                        args: vec![source.clone().as_arg()],
-                        ..Default::default()
-                    }
-                    .into(),
-                });
+                            callee: Callee::Import(Import {
+                                span: import_span,
+                                phase: Default::default(),
+                            }),
+                            args: vec![source.clone().as_arg()],
+                            ..Default::default()
+                        }
+                        .into(),
+                    });
 
-                let member_expr = MemberExpr {
-                    span: DUMMY_SP,
-                    obj: import.into(),
-                    prop: MemberProp::Ident(IdentName::new(export_name.clone(), ident.span)),
-                };
+                    let member_expr = MemberExpr {
+                        span: DUMMY_SP,
+                        obj: import.into(),
+                        prop: MemberProp::Ident(IdentName::new(export_name.clone(), ident.span)),
+                    };
 
-                *node = Expr::Member(member_expr);
+                    *node = Expr::Member(member_expr);
+                } else {
+                    HANDLER.with(|handler| {
+                        handler
+                            .struct_span_err(ident.span, "await is not allowed in this context")
+                            .emit();
+                    });
+                }
             }
         }
+    }
+
+    fn visit_mut_function(&mut self, node: &mut Function) {
+        let old_can_use_await = self.can_use_await;
+        self.can_use_await = node.is_async;
+        node.visit_mut_children_with(self);
+
+        self.can_use_await = old_can_use_await;
     }
 
     fn visit_mut_module(&mut self, m: &mut Module) {
@@ -104,5 +122,11 @@ where
         }
 
         m.visit_mut_children_with(self);
+    }
+
+    fn visit_mut_var_declarator(&mut self, node: &mut VarDeclarator) {
+        self.transform_flag(node);
+
+        node.visit_mut_children_with(self);
     }
 }
