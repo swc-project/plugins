@@ -2,7 +2,7 @@ use rustc_hash::{FxHashMap, FxHashSet};
 use swc_atoms::{Atom, Wtf8Atom};
 use swc_common::{comments::Comments, Span};
 use swc_ecma_ast::*;
-use swc_ecma_visit::{noop_visit_type, Visit, VisitWith};
+use swc_ecma_visit::{VisitMut, VisitMutWith};
 
 use crate::config::ImportItem;
 
@@ -94,10 +94,10 @@ impl ImportMap {
         }
     }
 
-    pub fn analyze(m: &Module, comments: &dyn Comments) -> Self {
+    pub fn analyze(m: &mut Module, comments: &dyn Comments) -> Self {
         let mut data = ImportMap::default();
 
-        m.visit_with(&mut Analyzer {
+        m.visit_mut_with(&mut Analyzer {
             data: &mut data,
             comments,
         });
@@ -111,10 +111,8 @@ struct Analyzer<'a> {
     comments: &'a dyn Comments,
 }
 
-impl Visit for Analyzer<'_> {
-    noop_visit_type!(fail);
-
-    fn visit_import_decl(&mut self, import: &ImportDecl) {
+impl VisitMut for Analyzer<'_> {
+    fn visit_mut_import_decl(&mut self, import: &mut ImportDecl) {
         let should_make_dynamic = self.comments.has_flag(import.span.lo, "DYNAMIC");
 
         if should_make_dynamic {
@@ -144,6 +142,17 @@ impl Visit for Analyzer<'_> {
                 .imports
                 .insert(local, (import.src.value.clone(), orig_sym, import.span));
         }
+    }
+
+    fn visit_mut_module_items(&mut self, node: &mut Vec<ModuleItem>) {
+        node.visit_mut_children_with(self);
+
+        node.retain(|import| match import {
+            ModuleItem::ModuleDecl(ModuleDecl::Import(import)) => {
+                !self.data.to_make_dynamic.contains(&import.src.value)
+            }
+            _ => true,
+        });
     }
 }
 
