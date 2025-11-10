@@ -1,10 +1,12 @@
 #![feature(box_patterns)]
 #![feature(never_type)]
 
-use rustc_hash::FxHashMap;
-use swc_common::{comments::Comments, util::take::Take, Mark};
-use swc_ecma_ast::{Id, Module, ModuleDecl, ModuleItem, Str, VarDeclarator};
-use swc_ecma_utils::find_pat_ids;
+use swc_common::{comments::Comments, util::take::Take, Mark, DUMMY_SP};
+use swc_ecma_ast::{
+    AwaitExpr, CallExpr, Callee, Expr, IdentName, Import, MemberExpr, MemberProp, Module,
+    ModuleDecl, ModuleItem, VarDeclarator,
+};
+use swc_ecma_utils::ExprFactory;
 use swc_ecma_visit::{VisitMut, VisitMutWith};
 
 use crate::{config::Config, import_analyzer::ImportMap};
@@ -27,7 +29,7 @@ where
         config,
         comments,
         imports: Default::default(),
-        ids_to_make_dynamic: Default::default(),
+        can_use_await: Default::default(),
     }
 }
 
@@ -43,7 +45,7 @@ where
     comments: C,
     imports: ImportMap,
 
-    ids_to_make_dynamic: FxHashMap<Id, Str>,
+    can_use_await: bool,
 }
 
 impl<C> VisitMut for SwcSdkTransform<C>
@@ -56,20 +58,39 @@ where
         node.visit_mut_children_with(self);
     }
 
-    fn visit_mut_module(&mut self, m: &mut Module) {
-        self.imports = ImportMap::analyze(m);
+    fn visit_mut_expr(&mut self, node: &mut Expr) {
+        node.visit_mut_children_with(self);
 
-        for item in &m.body {
-            if let ModuleItem::ModuleDecl(ModuleDecl::Import(import)) = item {
-                if self.comments.has_flag(import.span.lo, "DYNAMIC") {
-                    let ids: Vec<Id> = find_pat_ids(&import.specifiers);
-
-                    for id in ids {
-                        self.ids_to_make_dynamic.insert(id, *import.src.clone());
+        if let Expr::Ident(ident) = &*node {
+            if let Some((import_span, source, export_name)) = self.imports.should_make_dynamic(node)
+            {
+                let import = Expr::Await(AwaitExpr {
+                    span: DUMMY_SP,
+                    arg: CallExpr {
+                        span: import_span,
+                        callee: Callee::Import(Import {
+                            span: import_span,
+                            phase: Default::default(),
+                        }),
+                        args: vec![source.clone().as_arg()],
+                        ..Default::default()
                     }
-                }
+                    .into(),
+                });
+
+                let member_expr = MemberExpr {
+                    span: DUMMY_SP,
+                    obj: import.into(),
+                    prop: MemberProp::Ident(IdentName::new(export_name.clone(), ident.span)),
+                };
+
+                *node = Expr::Member(member_expr);
             }
         }
+    }
+
+    fn visit_mut_module(&mut self, m: &mut Module) {
+        self.imports = ImportMap::analyze(m, &self.comments);
 
         m.visit_mut_children_with(self);
     }
