@@ -286,13 +286,13 @@ where
             stmt.visit_mut_with(self);
 
             if !self.vars.is_empty() {
-                stmt = ModuleItem::Stmt(Stmt::Decl(Decl::Var(Box::new(VarDecl {
+                new_stmts.push(ModuleItem::Stmt(Stmt::Decl(Decl::Var(Box::new(VarDecl {
                     span: DUMMY_SP,
                     ctxt: Default::default(),
                     kind: VarDeclKind::Const,
                     declare: false,
                     decls: self.vars.take(),
-                }))));
+                })))));
             }
 
             new_stmts.push(stmt);
@@ -310,7 +310,7 @@ where
             stmt.visit_mut_with(self);
 
             if !self.vars.is_empty() {
-                stmts.push(Stmt::Decl(Decl::Var(Box::new(VarDecl {
+                new_stmts.push(Stmt::Decl(Decl::Var(Box::new(VarDecl {
                     span: DUMMY_SP,
                     ctxt: Default::default(),
                     kind: VarDeclKind::Const,
