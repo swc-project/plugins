@@ -60,77 +60,66 @@ where
         self.can_use_await = old_can_use_await;
     }
 
-    fn visit_mut_expr_stmt(&mut self, node: &mut ExprStmt) {
-        if let Expr::Call(CallExpr {
-            span,
-            callee: Callee::Expr(callee),
-            args,
-            ctxt,
-            ..
-        }) = &mut *node.expr
-        {}
-
-        node.visit_mut_children_with(self);
-    }
-
     fn visit_mut_expr(&mut self, node: &mut Expr) {
-        let dynamic_import = self.imports.should_make_dynamic(&*node);
-
         if let Expr::Call(call) = &mut *node {
-            if let Some((import_span, source, export_name)) = dynamic_import {
-                let module_param = private_ident!("module");
+            if let Callee::Expr(callee) = &mut call.callee {
+                if let Some((import_span, source, export_name)) =
+                    self.imports.should_make_dynamic(callee)
+                {
+                    let module_param = private_ident!("module");
 
-                let import_call = CallExpr {
-                    span: import_span,
-                    callee: Callee::Import(Import {
+                    let import_call = CallExpr {
                         span: import_span,
-                        phase: Default::default(),
-                    }),
-                    args: vec![source.clone().as_arg()],
-                    ..Default::default()
-                }
-                .into();
-
-                let then_arg = Expr::Arrow(ArrowExpr {
-                    span: DUMMY_SP,
-                    params: vec![module_param.clone().into()],
-                    body: Box::new(BlockStmtOrExpr::Expr(
-                        CallExpr {
-                            span: call.span,
-                            ctxt: call.ctxt,
-                            callee: MemberExpr {
-                                span: DUMMY_SP,
-                                obj: module_param.clone().into(),
-                                prop: MemberProp::Ident(IdentName::new(
-                                    export_name.clone(),
-                                    DUMMY_SP,
-                                )),
-                            }
-                            .as_callee(),
-                            args: call.args.take(),
-                            ..Default::default()
-                        }
-                        .into(),
-                    )),
-                    is_async: true,
-                    is_generator: false,
-                    ..Default::default()
-                });
-
-                let then_expr = Expr::Call(CallExpr {
-                    span: DUMMY_SP,
-                    callee: MemberExpr {
-                        span: DUMMY_SP,
-                        obj: import_call,
-                        prop: MemberProp::Ident("then".into()),
+                        callee: Callee::Import(Import {
+                            span: import_span,
+                            phase: Default::default(),
+                        }),
+                        args: vec![source.clone().as_arg()],
+                        ..Default::default()
                     }
-                    .as_callee(),
-                    args: vec![then_arg.as_arg()],
-                    ..Default::default()
-                });
+                    .into();
 
-                *node = then_expr;
-                return;
+                    let then_arg = Expr::Arrow(ArrowExpr {
+                        span: DUMMY_SP,
+                        params: vec![module_param.clone().into()],
+                        body: Box::new(BlockStmtOrExpr::Expr(
+                            CallExpr {
+                                span: call.span,
+                                ctxt: call.ctxt,
+                                callee: MemberExpr {
+                                    span: DUMMY_SP,
+                                    obj: module_param.clone().into(),
+                                    prop: MemberProp::Ident(IdentName::new(
+                                        export_name.clone(),
+                                        DUMMY_SP,
+                                    )),
+                                }
+                                .as_callee(),
+                                args: call.args.take(),
+                                ..Default::default()
+                            }
+                            .into(),
+                        )),
+                        is_async: true,
+                        is_generator: false,
+                        ..Default::default()
+                    });
+
+                    let then_expr = Expr::Call(CallExpr {
+                        span: DUMMY_SP,
+                        callee: MemberExpr {
+                            span: DUMMY_SP,
+                            obj: import_call,
+                            prop: MemberProp::Ident("then".into()),
+                        }
+                        .as_callee(),
+                        args: vec![then_arg.as_arg()],
+                        ..Default::default()
+                    });
+
+                    *node = then_expr;
+                    return;
+                }
             }
         }
 
