@@ -63,6 +63,8 @@ where
                 m.take();
                 return;
             }
+
+            if self.comments.has_flag(import.span.lo, "DYNAMIC") {}
         }
 
         m.visit_mut_children_with(self);
