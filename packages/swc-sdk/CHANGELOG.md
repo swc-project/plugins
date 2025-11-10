@@ -1,5 +1,11 @@
 # @swc/plugin-swc-sdk
 
+## 11.1.0
+
+### Minor Changes
+
+- 1928974: Add a feature to make imports dynamic
+
 ## 11.0.0
 
 ### Major Changes
