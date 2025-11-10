@@ -4,10 +4,11 @@
 use swc_common::{comments::Comments, errors::HANDLER, util::take::Take, Mark, DUMMY_SP};
 use swc_ecma_ast::{
     ArrowExpr, AwaitExpr, BlockStmtOrExpr, CallExpr, Callee, Decl, Expr, Function, Ident,
-    IdentName, Import, JSXElementName, MemberExpr, MemberProp, Module, ModuleDecl, ModuleItem,
-    Stmt, VarDecl, VarDeclKind, VarDeclarator,
+    IdentName, Import, ImportDecl, ImportNamedSpecifier, ImportSpecifier, JSXElementName,
+    MemberExpr, MemberProp, Module, ModuleDecl, ModuleExportName, ModuleItem, Stmt, Str, VarDecl,
+    VarDeclKind, VarDeclarator,
 };
-use swc_ecma_utils::{private_ident, ExprFactory};
+use swc_ecma_utils::{prepend_stmt, private_ident, ExprFactory};
 use swc_ecma_visit::{VisitMut, VisitMutWith};
 
 use crate::{config::Config, import_analyzer::ImportMap};
@@ -165,7 +166,11 @@ where
                     let lazy_component = CallExpr {
                         span: DUMMY_SP,
                         callee: lazy_import.clone().as_callee(),
-                        args: vec![then_expr.as_arg()],
+                        args: vec![ArrowExpr {
+                            body: Box::new(BlockStmtOrExpr::Expr(Box::new(then_expr))),
+                            ..Default::default()
+                        }
+                        .as_arg()],
                         ..Default::default()
                     };
 
@@ -265,6 +270,33 @@ where
         self.imports = ImportMap::analyze(m, &self.comments);
 
         m.visit_mut_children_with(self);
+
+        if let Some(lazy_import) = self.jsx_lazy_import.take() {
+            let specifier = ImportSpecifier::Named(ImportNamedSpecifier {
+                local: lazy_import.clone(),
+                imported: Some(ModuleExportName::Ident(
+                    self.config.dynamic_imports.lazy_jsx.name.clone().into(),
+                )),
+                span: DUMMY_SP,
+                is_type_only: false,
+            });
+
+            prepend_stmt(
+                &mut m.body,
+                ModuleItem::ModuleDecl(ModuleDecl::Import(ImportDecl {
+                    span: DUMMY_SP,
+                    specifiers: vec![specifier],
+                    src: Box::new(Str {
+                        value: self.config.dynamic_imports.lazy_jsx.module.clone(),
+                        span: DUMMY_SP,
+                        raw: None,
+                    }),
+                    type_only: Default::default(),
+                    with: Default::default(),
+                    phase: Default::default(),
+                })),
+            );
+        }
     }
 
     fn visit_mut_module_item(&mut self, m: &mut ModuleItem) {
