@@ -3,8 +3,8 @@
 
 use swc_common::{comments::Comments, errors::HANDLER, util::take::Take, Mark, DUMMY_SP};
 use swc_ecma_ast::{
-    ArrowExpr, AwaitExpr, BlockStmtOrExpr, CallExpr, Callee, Expr, ExprStmt, Function, IdentName,
-    Import, MemberExpr, MemberProp, Module, ModuleDecl, ModuleItem, VarDeclarator,
+    ArrowExpr, AwaitExpr, BlockStmtOrExpr, CallExpr, Callee, Expr, Function, IdentName, Import,
+    MemberExpr, MemberProp, Module, ModuleDecl, ModuleItem, VarDeclarator,
 };
 use swc_ecma_utils::{private_ident, ExprFactory};
 use swc_ecma_visit::{VisitMut, VisitMutWith};
