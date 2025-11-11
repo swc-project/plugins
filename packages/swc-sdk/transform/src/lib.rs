@@ -335,7 +335,7 @@ where
                 new_stmts.push(ModuleItem::Stmt(Stmt::Decl(Decl::Var(Box::new(VarDecl {
                     span: DUMMY_SP,
                     ctxt: Default::default(),
-                    kind: VarDeclKind::Const,
+                    kind: VarDeclKind::Let,
                     declare: false,
                     decls: self.top_level_vars.take(),
                 })))));
