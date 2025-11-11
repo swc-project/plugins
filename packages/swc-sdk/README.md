@@ -71,6 +71,12 @@ markAsPure(() => console.log("This will be removed by the SWC minifier"));
 
 # @swc/plugin-swc-sdk
 
+## 11.1.1
+
+### Patch Changes
+
+- 436381f: Fix jsx handling by using lazy init
+
 ## 11.1.0
 
 ### Minor Changes

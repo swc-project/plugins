@@ -3,10 +3,10 @@
 
 use swc_common::{comments::Comments, errors::HANDLER, util::take::Take, Mark, DUMMY_SP};
 use swc_ecma_ast::{
-    ArrowExpr, AwaitExpr, BlockStmtOrExpr, CallExpr, Callee, Decl, Expr, Function, Ident,
-    IdentName, Import, ImportDecl, ImportNamedSpecifier, ImportSpecifier, JSXElementName,
-    MemberExpr, MemberProp, Module, ModuleDecl, ModuleExportName, ModuleItem, Stmt, Str, VarDecl,
-    VarDeclKind, VarDeclarator,
+    ArrowExpr, AssignExpr, AssignOp, AssignTarget, AwaitExpr, BlockStmtOrExpr, CallExpr, Callee,
+    Decl, Expr, ExprStmt, Function, Ident, IdentName, Import, ImportDecl, ImportNamedSpecifier,
+    ImportSpecifier, JSXElementName, MemberExpr, MemberProp, Module, ModuleDecl, ModuleExportName,
+    ModuleItem, SimpleAssignTarget, Stmt, Str, VarDecl, VarDeclKind, VarDeclarator,
 };
 use swc_ecma_utils::{prepend_stmt, private_ident, ExprFactory};
 use swc_ecma_visit::{VisitMut, VisitMutWith};
@@ -33,7 +33,8 @@ where
         imports: Default::default(),
         can_use_await: Default::default(),
         jsx_lazy_import: Default::default(),
-        vars: Default::default(),
+        injected_stmts: Default::default(),
+        top_level_vars: Default::default(),
     }
 }
 
@@ -53,7 +54,8 @@ where
 
     can_use_await: bool,
 
-    vars: Vec<VarDeclarator>,
+    top_level_vars: Vec<VarDeclarator>,
+    injected_stmts: Vec<Stmt>,
 }
 
 impl<C> SwcSdkTransform<C>
@@ -176,12 +178,24 @@ where
 
                     let lazy_var_name = private_ident!("LazyComponent");
 
-                    self.vars.push(VarDeclarator {
+                    self.top_level_vars.push(VarDeclarator {
                         span: DUMMY_SP,
                         name: lazy_var_name.clone().into(),
-                        init: Some(lazy_component.into()),
+                        init: None,
                         definite: false,
                     });
+
+                    self.injected_stmts.push(Stmt::Expr(ExprStmt {
+                        span: DUMMY_SP,
+                        expr: Box::new(Expr::Assign(AssignExpr {
+                            span: DUMMY_SP,
+                            left: AssignTarget::Simple(SimpleAssignTarget::Ident(
+                                lazy_var_name.clone().into(),
+                            )),
+                            op: AssignOp::NullishAssign,
+                            right: lazy_component.into(),
+                        })),
+                    }));
 
                     jsx.opening.name = JSXElementName::Ident(lazy_var_name.clone());
                     return;
@@ -312,50 +326,48 @@ where
 
     fn visit_mut_module_items(&mut self, stmts: &mut Vec<ModuleItem>) {
         let mut new_stmts = Vec::with_capacity(stmts.len());
-        let old_vars = self.vars.take();
+        let old_vars = self.injected_stmts.take();
 
         for mut stmt in stmts.take() {
             stmt.visit_mut_with(self);
 
-            if !self.vars.is_empty() {
+            if !self.top_level_vars.is_empty() {
                 new_stmts.push(ModuleItem::Stmt(Stmt::Decl(Decl::Var(Box::new(VarDecl {
                     span: DUMMY_SP,
                     ctxt: Default::default(),
-                    kind: VarDeclKind::Const,
+                    kind: VarDeclKind::Let,
                     declare: false,
-                    decls: self.vars.take(),
+                    decls: self.top_level_vars.take(),
                 })))));
+            }
+
+            if !self.injected_stmts.is_empty() {
+                new_stmts.extend(self.injected_stmts.take().into_iter().map(ModuleItem::Stmt));
             }
 
             new_stmts.push(stmt);
         }
 
         *stmts = new_stmts;
-        self.vars = old_vars;
+        self.injected_stmts = old_vars;
     }
 
     fn visit_mut_stmts(&mut self, stmts: &mut Vec<Stmt>) {
         let mut new_stmts = Vec::with_capacity(stmts.len());
-        let old_vars = self.vars.take();
+        let old_vars = self.injected_stmts.take();
 
         for mut stmt in stmts.take() {
             stmt.visit_mut_with(self);
 
-            if !self.vars.is_empty() {
-                new_stmts.push(Stmt::Decl(Decl::Var(Box::new(VarDecl {
-                    span: DUMMY_SP,
-                    ctxt: Default::default(),
-                    kind: VarDeclKind::Const,
-                    declare: false,
-                    decls: self.vars.take(),
-                }))));
+            if !self.injected_stmts.is_empty() {
+                new_stmts.extend(self.injected_stmts.take().into_iter());
             }
 
             new_stmts.push(stmt);
         }
 
         *stmts = new_stmts;
-        self.vars = old_vars;
+        self.injected_stmts = old_vars;
     }
 
     fn visit_mut_var_declarator(&mut self, node: &mut VarDeclarator) {
