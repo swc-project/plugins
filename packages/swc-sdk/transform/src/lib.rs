@@ -5,10 +5,11 @@ use swc_common::{comments::Comments, errors::HANDLER, util::take::Take, Mark, DU
 use swc_ecma_ast::{
     ArrowExpr, AssignExpr, AssignOp, AssignTarget, AwaitExpr, BlockStmtOrExpr, CallExpr, Callee,
     Decl, Expr, ExprStmt, Function, Ident, IdentName, Import, ImportDecl, ImportNamedSpecifier,
-    ImportSpecifier, JSXElementName, MemberExpr, MemberProp, Module, ModuleDecl, ModuleExportName,
-    ModuleItem, SimpleAssignTarget, Stmt, Str, VarDecl, VarDeclKind, VarDeclarator,
+    ImportSpecifier, JSXElementName, KeyValueProp, MemberExpr, MemberProp, Module, ModuleDecl,
+    ModuleExportName, ModuleItem, ObjectLit, ParenExpr, Prop, PropOrSpread, SimpleAssignTarget,
+    Stmt, Str, VarDecl, VarDeclKind, VarDeclarator,
 };
-use swc_ecma_utils::{prepend_stmt, private_ident, ExprFactory};
+use swc_ecma_utils::{prepend_stmt, private_ident, quote_ident, ExprFactory};
 use swc_ecma_visit::{VisitMut, VisitMutWith};
 
 use crate::{config::Config, import_analyzer::ImportMap};
@@ -135,15 +136,29 @@ where
                     }
                     .into();
 
+                    let component_access = Box::new(Expr::Member(MemberExpr {
+                        span: DUMMY_SP,
+                        obj: module_param.clone().into(),
+                        prop: MemberProp::Ident(IdentName::new(export_name.clone(), DUMMY_SP)),
+                    }));
+
+                    let return_value = Box::new(Expr::Paren(ParenExpr {
+                        span: DUMMY_SP,
+                        expr: Box::new(Expr::Object(ObjectLit {
+                            span: DUMMY_SP,
+                            props: vec![PropOrSpread::Prop(Box::new(Prop::KeyValue(
+                                KeyValueProp {
+                                    key: quote_ident!("default").into(),
+                                    value: component_access,
+                                },
+                            )))],
+                        })),
+                    }));
+
                     let then_arg = Expr::Arrow(ArrowExpr {
                         span: DUMMY_SP,
                         params: vec![module_param.clone().into()],
-                        body: BlockStmtOrExpr::Expr(Box::new(Expr::Member(MemberExpr {
-                            span: DUMMY_SP,
-                            obj: module_param.clone().into(),
-                            prop: MemberProp::Ident(IdentName::new(export_name.clone(), DUMMY_SP)),
-                        })))
-                        .into(),
+                        body: BlockStmtOrExpr::Expr(return_value).into(),
                         is_async: true,
                         is_generator: false,
                         ..Default::default()

@@ -71,6 +71,12 @@ markAsPure(() => console.log("This will be removed by the SWC minifier"));
 
 # @swc/plugin-swc-sdk
 
+## 11.1.2
+
+### Patch Changes
+
+- dd17fda: Fix JSX support
+
 ## 11.1.1
 
 ### Patch Changes

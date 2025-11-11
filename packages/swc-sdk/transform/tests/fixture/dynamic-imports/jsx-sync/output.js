@@ -2,7 +2,9 @@
 let LazyComponent;
 export function App() {
     if (process.env.NODE_ENV !== "production") {
-        LazyComponent ??= lazy(()=>import("./stripped").then(async (module)=>module.Component));
+        LazyComponent ??= lazy(()=>import("./stripped").then(async (module)=>({
+                    default: module.Component
+                })));
         return <LazyComponent/>;
     }
     return <></>;
