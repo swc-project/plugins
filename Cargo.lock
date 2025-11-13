@@ -3504,6 +3504,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "swc_plugin_next_intl"
+version = "0.1.0"
+dependencies = [
+ "swc_common",
+ "swc_core",
+ "swc_ecma_ast",
+ "swc_ecma_utils",
+ "swc_ecma_visit",
+ "swc_plugin_macro",
+ "tracing",
+]
+
+[[package]]
 name = "swc_plugin_noop"
 version = "0.18.4"
 dependencies = [
