@@ -51,6 +51,12 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.13.9)
 
+  contrib/next-intl-plugin:
+    dependencies:
+      '@swc/counter':
+        specifier: ^0.1.3
+        version: 0.1.3
+
   packages/emotion:
     dependencies:
       '@swc/counter':
