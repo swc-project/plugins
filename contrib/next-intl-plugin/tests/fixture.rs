@@ -3,7 +3,10 @@ use std::path::PathBuf;
 use swc_common::Mark;
 use swc_core::ecma::{
     parser::{EsSyntax, Syntax},
-    transforms::{base::resolver, testing::test_fixture},
+    transforms::{
+        base::resolver,
+        testing::{test_fixture, FixtureTestConfig},
+    },
 };
 use swc_ecma_ast::Pass;
 use swc_ecma_visit::visit_mut_pass;
@@ -32,6 +35,10 @@ fn test(input: PathBuf) {
         &|_| tr(),
         &input,
         &output,
-        Default::default(),
+        FixtureTestConfig {
+            sourcemap: true,
+            allow_error: true,
+            ..Default::default()
+        },
     );
 }
