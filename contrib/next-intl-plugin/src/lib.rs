@@ -215,11 +215,7 @@ impl VisitMut for TransformVisitor {
                         }));
                     }
 
-                    Expr::Object(ObjectLit {
-                        span: obj_span,
-                        props,
-                        ..
-                    }) => {
+                    Expr::Object(ObjectLit { span: obj_span, .. }) => {
                         // Transform object expression to individual parameters
                         // Replace the object with the key as first argument
 
@@ -373,20 +369,21 @@ impl VisitMut for TransformVisitor {
                     }
 
                     Expr::Await(AwaitExpr {
-                        arg:
-                            box Expr::Call(
-                                arg @ CallExpr {
-                                    callee: Callee::Expr(box Expr::Ident(callee)),
-                                    ..
-                                },
-                            ),
+                        arg: box Expr::Call(arg),
                         ..
-                    }) => {
-                        if self.hook_local_name == Some(callee.to_id()) {
-                            arg.callee = Callee::Expr(self.hook_local_name.clone().unwrap().into());
-                            call_expr = Some(arg);
+                    }) => match &*arg {
+                        CallExpr {
+                            callee: Callee::Expr(box Expr::Ident(callee)),
+                            ..
+                        } => {
+                            if self.hook_local_name == Some(callee.to_id()) {
+                                arg.callee =
+                                    Callee::Expr(self.hook_local_name.clone().unwrap().into());
+                                call_expr = Some(arg);
+                            }
                         }
-                    }
+                        _ => {}
+                    },
 
                     _ => {}
                 }
