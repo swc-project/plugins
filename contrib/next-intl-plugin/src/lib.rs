@@ -23,9 +23,11 @@ fn next_intl_plugin(mut program: Program, data: TransformPluginProgramMetadata) 
 
     program.visit_mut_with(&mut TransformVisitor {
         is_development: config.is_development,
+        file_path: config.file_path,
         hook_type: Default::default(),
         hook_local_name: Default::default(),
         translator_map: Default::default(),
+        results: Default::default(),
     });
 
     program
@@ -36,15 +38,19 @@ const NAMESPACE_SEPARATOR: &str = ".";
 #[derive(Debug, Deserialize)]
 struct Config {
     is_development: bool,
+    file_path: String,
 }
 
 struct TransformVisitor {
     is_development: bool,
+    file_path: String,
 
     hook_type: Option<HookType>,
     hook_local_name: Option<Id>,
 
     translator_map: FxHashMap<Id, TranslatorInfo>,
+
+    results: Vec<StrictExtractedMessage>,
 }
 
 impl TransformVisitor {
@@ -57,6 +63,19 @@ impl TransformVisitor {
 #[derive(Debug, Clone)]
 struct TranslatorInfo {
     namespace: Option<Wtf8Atom>,
+}
+
+#[derive(Debug, Clone)]
+struct StrictExtractedMessage {
+    id: Wtf8Atom,
+    message: Wtf8Atom,
+    description: Option<Wtf8Atom>,
+    references: Vec<Reference>,
+}
+
+#[derive(Debug, Clone)]
+struct Reference {
+    path: String,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -170,12 +189,15 @@ impl VisitMut for TransformVisitor {
                 let message = StrictExtractedMessage {
                     id: full_key,
                     message: message_text.clone(),
-                    references: vec![Reference { path: filePath }],
+                    description: None,
+                    references: vec![Reference {
+                        path: self.file_path.clone(),
+                    }],
                 };
                 if let Some(description) = description {
-                    message.description = description;
+                    message.description = Some(description.clone());
                 }
-                results.push(message);
+                self.results.push(message);
 
                 // Transform the argument based on type
                 match &mut *call.args[0].expr {
