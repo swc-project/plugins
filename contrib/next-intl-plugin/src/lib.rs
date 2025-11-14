@@ -1,22 +1,16 @@
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 #![feature(box_patterns)]
 
+use swc_atoms::Wtf8Atom;
 use swc_core::plugin::proxies::TransformPluginProgramMetadata;
-use swc_ecma_ast::{
-    Id, ImportSpecifier, Module, ModuleDecl, ModuleExportName, ModuleItem, Program,
-};
+use swc_ecma_ast::*;
 use swc_ecma_utils::private_ident;
 use swc_ecma_visit::{VisitMut, VisitMutWith};
 use swc_plugin_macro::plugin_transform;
 
-use crate::import_map::ImportMap;
-
-mod import_map;
-
 #[plugin_transform]
 fn next_intl_plugin(mut program: Program, _: TransformPluginProgramMetadata) -> Program {
     program.visit_mut_with(&mut TransformVisitor {
-        imports: Default::default(),
         hook_type: Default::default(),
         hook_local_name: Default::default(),
     });
@@ -25,8 +19,6 @@ fn next_intl_plugin(mut program: Program, _: TransformPluginProgramMetadata) -> 
 }
 
 struct TransformVisitor {
-    imports: ImportMap,
-
     hook_type: Option<HookType>,
     hook_local_name: Option<Id>,
 }
@@ -39,8 +31,6 @@ enum HookType {
 
 impl VisitMut for TransformVisitor {
     fn visit_mut_module(&mut self, module: &mut Module) {
-        self.imports = ImportMap::analyze(module);
-
         for import in module.body.iter_mut() {
             if let ModuleItem::ModuleDecl(ModuleDecl::Import(import)) = import {
                 match import.src.value.as_bytes() {
@@ -101,4 +91,72 @@ impl VisitMut for TransformVisitor {
 
         module.visit_mut_children_with(self);
     }
+
+    fn visit_mut_var_declarator(&mut self, node: &mut VarDeclarator) {
+        if let Some(name) = node.name.as_ident() {
+            let mut call_expr = None;
+
+            // Handle direct CallExpression: const t = useExtracted();
+
+            if let Some(init) = &mut node.init {
+                match &mut **init {
+                    Expr::Call(init_call) => {
+                        if let Callee::Expr(box Expr::Ident(callee)) = &init_call.callee {
+                            if self.hook_local_name == Some(callee.to_id()) {
+                                init_call.callee =
+                                    Callee::Expr(self.hook_local_name.clone().unwrap().into());
+                                call_expr = Some(init_call);
+                            }
+                        }
+                    }
+
+                    Expr::Await(AwaitExpr {
+                        arg:
+                            box Expr::Call(
+                                arg @ CallExpr {
+                                    callee: Callee::Expr(box Expr::Ident(callee)),
+                                    ..
+                                },
+                            ),
+                        ..
+                    }) => {
+                        if self.hook_local_name == Some(callee.to_id()) {
+                            arg.callee = Callee::Expr(self.hook_local_name.clone().unwrap().into());
+                            call_expr = Some(arg);
+                        }
+                    }
+
+                    _ => {}
+                }
+            }
+
+            if let Some(call_expr) = call_expr {
+                let namespace = call_expr.args.first().and_then(|arg| match &*arg.expr {
+                    Expr::Lit(Lit::Str(str)) => Some(str.value.clone()),
+                    Expr::Object(ObjectLit { props: props, .. }) => props.iter().find_map(|prop| {
+                        let prop = prop.as_prop()?.as_key_value()?;
+                        match &prop.key {
+                            PropName::Ident(ident) => {
+                                if ident.sym == "namespace" {
+                                    Some(extract_static_string(&prop.value))
+                                } else {
+                                    None
+                                }
+                            }
+                            _ => None,
+                        }
+                    }),
+                    _ => None,
+                });
+
+                self.define(name.to_id(), "translator", namespace)
+            }
+        }
+
+        node.visit_mut_children_with(self);
+    }
+}
+
+fn extract_static_string(value: &Expr) -> Wtf8Atom {
+    todo!()
 }
