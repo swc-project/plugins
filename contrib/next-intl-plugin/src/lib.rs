@@ -68,7 +68,53 @@ impl VisitMut for TransformVisitor {
             _ => {}
         }
 
-        if is_translator_call {}
+        if is_translator_call {
+            let arg0 = call.args.first();
+
+            let mut message_text = None;
+            let mut explicit_id = None;
+            let mut description = None;
+            let mut values_node = None;
+            let mut formats_node = None;
+
+            if let Some(arg0) = arg0 {
+                // Handle object syntax: t({id: 'key', message: 'text'})
+                if let Expr::Object(ObjectLit { props, .. }) = &*arg0.expr {
+                    // Look for id, message, values, and formats properties
+                    for prop in props {
+                        if let PropOrSpread::Prop(box Prop::KeyValue(KeyValue {
+                            key, value, ..
+                        })) = prop
+                        {
+                            if let PropName::Ident(key) = key {
+                                let static_id = extract_static_string(value);
+                                if let Some(static_id) = static_id {
+                                    explicit_id = Some(static_id);
+                                }
+                            } else if key.sym == "message" {
+                                let static_message = extract_static_string(value);
+                                if let Some(static_message) = static_message {
+                                    message_text = Some(static_message);
+                                } else {
+                                    warn_dynamic_message(value);
+                                }
+                            } else if key.sym == "description" {
+                                let static_description = extract_static_string(value);
+                                if let Some(static_description) = static_description {
+                                    description = Some(static_description);
+                                } else {
+                                    warn_dynamic_message(value);
+                                }
+                            } else if key.sym == "values" {
+                                values_node = Some(value);
+                            } else if key.sym == "formats" {
+                                formats_node = Some(value);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         call.visit_mut_children_with(self);
     }
@@ -200,6 +246,6 @@ impl VisitMut for TransformVisitor {
     }
 }
 
-fn extract_static_string(value: &Expr) -> Wtf8Atom {
+fn extract_static_string(value: &Expr) -> Option<Wtf8Atom> {
     todo!()
 }
