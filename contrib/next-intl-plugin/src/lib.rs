@@ -1,17 +1,28 @@
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 #![feature(box_patterns)]
 
+use base64::Engine;
 use rustc_hash::FxHashMap;
+use serde::Deserialize;
 use swc_atoms::Wtf8Atom;
+use swc_common::DUMMY_SP;
 use swc_core::plugin::proxies::TransformPluginProgramMetadata;
 use swc_ecma_ast::*;
-use swc_ecma_utils::private_ident;
+use swc_ecma_utils::{private_ident, ExprFactory};
 use swc_ecma_visit::{VisitMut, VisitMutWith};
 use swc_plugin_macro::plugin_transform;
 
 #[plugin_transform]
-fn next_intl_plugin(mut program: Program, _: TransformPluginProgramMetadata) -> Program {
+fn next_intl_plugin(mut program: Program, data: TransformPluginProgramMetadata) -> Program {
+    let config = serde_json::from_str::<Config>(
+        &data
+            .get_transform_plugin_config()
+            .expect("failed to get plugin config for styled-jsx"),
+    )
+    .expect("invalid config for next-intl");
+
     program.visit_mut_with(&mut TransformVisitor {
+        is_development: config.is_development,
         hook_type: Default::default(),
         hook_local_name: Default::default(),
         translator_map: Default::default(),
@@ -20,11 +31,27 @@ fn next_intl_plugin(mut program: Program, _: TransformPluginProgramMetadata) -> 
     program
 }
 
+const NAMESPACE_SEPARATOR: &str = ".";
+
+#[derive(Debug, Deserialize)]
+struct Config {
+    is_development: bool,
+}
+
 struct TransformVisitor {
+    is_development: bool,
+
     hook_type: Option<HookType>,
     hook_local_name: Option<Id>,
 
     translator_map: FxHashMap<Id, TranslatorInfo>,
+}
+
+impl TransformVisitor {
+    fn define_translator(&mut self, name: Id, namespace: Option<Wtf8Atom>) {
+        self.translator_map
+            .insert(name, TranslatorInfo { namespace });
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -82,35 +109,37 @@ impl VisitMut for TransformVisitor {
                     // Handle object syntax: t({id: 'key', message: 'text'})
                     Expr::Object(ObjectLit { props, .. }) => {
                         for prop in props {
-                            if let PropOrSpread::Prop(box Prop::KeyValue(KeyValue {
+                            if let PropOrSpread::Prop(box Prop::KeyValue(KeyValueProp {
                                 key,
                                 value,
                                 ..
                             })) = prop
                             {
                                 if let PropName::Ident(key) = key {
-                                    let static_id = extract_static_string(value);
-                                    if let Some(static_id) = static_id {
-                                        explicit_id = Some(static_id);
+                                    if key.sym == "id" {
+                                        let static_id = extract_static_string(value);
+                                        if let Some(static_id) = static_id {
+                                            explicit_id = Some(static_id);
+                                        }
+                                    } else if key.sym == "message" {
+                                        let static_message = extract_static_string(value);
+                                        if let Some(static_message) = static_message {
+                                            message_text = Some(static_message);
+                                        } else {
+                                            warn_dynamic_expression(value);
+                                        }
+                                    } else if key.sym == "description" {
+                                        let static_description = extract_static_string(value);
+                                        if let Some(static_description) = static_description {
+                                            description = Some(static_description);
+                                        } else {
+                                            warn_dynamic_expression(value);
+                                        }
+                                    } else if key.sym == "values" {
+                                        values_node = Some(value);
+                                    } else if key.sym == "formats" {
+                                        formats_node = Some(value);
                                     }
-                                } else if key.sym == "message" {
-                                    let static_message = extract_static_string(value);
-                                    if let Some(static_message) = static_message {
-                                        message_text = Some(static_message);
-                                    } else {
-                                        warn_dynamic_expression(value);
-                                    }
-                                } else if key.sym == "description" {
-                                    let static_description = extract_static_string(value);
-                                    if let Some(static_description) = static_description {
-                                        description = Some(static_description);
-                                    } else {
-                                        warn_dynamic_expression(value);
-                                    }
-                                } else if key.sym == "values" {
-                                    values_node = Some(value);
-                                } else if key.sym == "formats" {
-                                    formats_node = Some(value);
                                 }
                             }
                         }
@@ -127,6 +156,113 @@ impl VisitMut for TransformVisitor {
                             warn_dynamic_expression(&*arg0.expr);
                         }
                     }
+                }
+            }
+
+            if let Some(message_text) = message_text {
+                let call_key =
+                    explicit_id.unwrap_or_else(|| KeyGenerator::generate(&message_text).into());
+                let full_key = namespace.map_or(call_key, |namespace| {
+                    vec![&*namespace.to_string_lossy(), &*call_key.to_string_lossy()]
+                        .join(NAMESPACE_SEPARATOR)
+                        .into()
+                });
+                let message = StrictExtractedMessage {
+                    id: full_key,
+                    message: message_text.clone(),
+                    references: vec![Reference { path: filePath }],
+                };
+                if let Some(description) = description {
+                    message.description = description;
+                }
+                results.push(message);
+
+                // Transform the argument based on type
+                match &mut *call.args[0].expr {
+                    Expr::Lit(Lit::Str(s)) => {
+                        s.value = call_key;
+                        s.raw = None;
+                    }
+
+                    Expr::Tpl(tpl) => {
+                        // Replace template literal with string literal
+                        *call.args[0].expr = Expr::Lit(Lit::Str(Str {
+                            span: tpl.span,
+                            value: call_key,
+                            raw: None,
+                        }));
+                    }
+
+                    Expr::Object(ObjectLit {
+                        span: obj_span,
+                        props,
+                        ..
+                    }) => {
+                        // Transform object expression to individual parameters
+                        // Replace the object with the key as first argument
+
+                        *call.args[0].expr = Expr::Lit(Lit::Str(Str {
+                            span: *obj_span,
+                            value: call_key,
+                            raw: None,
+                        }));
+
+                        // Add values as second argument if present
+                        if let Some(values_node) = values_node {
+                            if call.args.len() < 2 {
+                                call.args.push(ExprOrSpread {
+                                    spread: None,
+                                    expr: values_node.clone(),
+                                });
+                            } else {
+                                call.args[1].expr = values_node.clone();
+                            }
+                        }
+
+                        // Add formats as third argument if present
+                        if let Some(formats_node) = formats_node {
+                            while call.args.len() < 2 {
+                                call.args.push(Expr::undefined(DUMMY_SP).as_arg());
+                            }
+
+                            if call.args.len() < 3 {
+                                call.args.push(ExprOrSpread {
+                                    spread: None,
+                                    expr: formats_node.clone(),
+                                });
+                            } else {
+                                call.args[2].expr = formats_node.clone();
+                            }
+                        }
+                    }
+
+                    _ => {}
+                }
+
+                // Check if this is a t.has call (which doesn't need fallback)
+                let is_has_call = match &call.callee {
+                    Callee::Expr(box Expr::Member(MemberExpr {
+                        prop: MemberProp::Ident(prop),
+                        ..
+                    })) => prop.sym == "has",
+                    _ => false,
+                };
+
+                // Add fallback message as fourth parameter in development mode (except for
+                // t.has)
+                if self.is_development && !is_has_call {
+                    while call.args.len() < 3 {
+                        call.args.push(Expr::undefined(DUMMY_SP).as_arg());
+                    }
+
+                    call.args.push(
+                        Str {
+                            span: DUMMY_SP,
+                            value: message_text,
+                            raw: None,
+                        }
+                        .as_arg(),
+                    );
                 }
             }
         }
@@ -237,19 +373,21 @@ impl VisitMut for TransformVisitor {
             if let Some(call_expr) = call_expr {
                 let namespace = call_expr.args.first().and_then(|arg| match &*arg.expr {
                     Expr::Lit(Lit::Str(str)) => Some(str.value.clone()),
-                    Expr::Object(ObjectLit { props: props, .. }) => props.iter().find_map(|prop| {
-                        let prop = prop.as_prop()?.as_key_value()?;
-                        match &prop.key {
-                            PropName::Ident(ident) => {
-                                if ident.sym == "namespace" {
-                                    Some(extract_static_string(&prop.value))
-                                } else {
-                                    None
+                    Expr::Object(ObjectLit { props: props, .. }) => {
+                        props.iter().find_map(|prop| {
+                            let prop = prop.as_prop()?.as_key_value()?;
+                            match &prop.key {
+                                PropName::Ident(ident) => {
+                                    if ident.sym == "namespace" {
+                                        Some(extract_static_string(&prop.value))
+                                    } else {
+                                        None
+                                    }
                                 }
+                                _ => None,
                             }
-                            _ => None,
-                        }
-                    }),
+                        })?
+                    }
                     _ => None,
                 });
 
@@ -263,4 +401,14 @@ impl VisitMut for TransformVisitor {
 
 fn extract_static_string(value: &Expr) -> Option<Wtf8Atom> {
     todo!()
+}
+
+struct KeyGenerator;
+
+impl KeyGenerator {
+    fn generate(message: &Wtf8Atom) -> String {
+        let hash = sha512::digest(message);
+        let base64 = base64::engine::general_purpose::STANDARD.encode(hash);
+        base64.slice(0, 6)
+    }
 }
