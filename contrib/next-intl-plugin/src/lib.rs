@@ -311,7 +311,7 @@ impl VisitMut for TransformVisitor {
                                     .unwrap_or_else(|| named_spec.local.sym.clone())
                                     .clone();
 
-                                if orig_name == "getExtracted" {
+                                if orig_name == "useExtracted" {
                                     self.hook_type = Some(HookType::UseTranslation);
                                     self.hook_local_name = Some(named_spec.local.to_id());
 
