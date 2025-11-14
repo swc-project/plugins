@@ -78,38 +78,53 @@ impl VisitMut for TransformVisitor {
             let mut formats_node = None;
 
             if let Some(arg0) = arg0 {
-                // Handle object syntax: t({id: 'key', message: 'text'})
-                if let Expr::Object(ObjectLit { props, .. }) = &*arg0.expr {
-                    // Look for id, message, values, and formats properties
-                    for prop in props {
-                        if let PropOrSpread::Prop(box Prop::KeyValue(KeyValue {
-                            key, value, ..
-                        })) = prop
-                        {
-                            if let PropName::Ident(key) = key {
-                                let static_id = extract_static_string(value);
-                                if let Some(static_id) = static_id {
-                                    explicit_id = Some(static_id);
+                match &*arg0.expr {
+                    // Handle object syntax: t({id: 'key', message: 'text'})
+                    Expr::Object(ObjectLit { props, .. }) => {
+                        for prop in props {
+                            if let PropOrSpread::Prop(box Prop::KeyValue(KeyValue {
+                                key,
+                                value,
+                                ..
+                            })) = prop
+                            {
+                                if let PropName::Ident(key) = key {
+                                    let static_id = extract_static_string(value);
+                                    if let Some(static_id) = static_id {
+                                        explicit_id = Some(static_id);
+                                    }
+                                } else if key.sym == "message" {
+                                    let static_message = extract_static_string(value);
+                                    if let Some(static_message) = static_message {
+                                        message_text = Some(static_message);
+                                    } else {
+                                        warn_dynamic_expression(value);
+                                    }
+                                } else if key.sym == "description" {
+                                    let static_description = extract_static_string(value);
+                                    if let Some(static_description) = static_description {
+                                        description = Some(static_description);
+                                    } else {
+                                        warn_dynamic_expression(value);
+                                    }
+                                } else if key.sym == "values" {
+                                    values_node = Some(value);
+                                } else if key.sym == "formats" {
+                                    formats_node = Some(value);
                                 }
-                            } else if key.sym == "message" {
-                                let static_message = extract_static_string(value);
-                                if let Some(static_message) = static_message {
-                                    message_text = Some(static_message);
-                                } else {
-                                    warn_dynamic_message(value);
-                                }
-                            } else if key.sym == "description" {
-                                let static_description = extract_static_string(value);
-                                if let Some(static_description) = static_description {
-                                    description = Some(static_description);
-                                } else {
-                                    warn_dynamic_message(value);
-                                }
-                            } else if key.sym == "values" {
-                                values_node = Some(value);
-                            } else if key.sym == "formats" {
-                                formats_node = Some(value);
                             }
+                        }
+                    }
+
+                    // Handle string syntax: t('text') or t(`text`)
+                    _ => {
+                        let static_string = extract_static_string(&*arg0.expr);
+                        if let Some(static_string) = static_string {
+                            message_text = Some(static_string);
+                        } else {
+                            // Dynamic expression (Identifier, CallExpression, BinaryExpression,
+                            // etc.)
+                            warn_dynamic_expression(&*arg0.expr);
                         }
                     }
                 }
