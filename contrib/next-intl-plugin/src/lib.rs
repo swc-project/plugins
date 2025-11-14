@@ -22,14 +22,10 @@ fn next_intl_plugin(mut program: Program, data: TransformPluginProgramMetadata) 
     )
     .expect("invalid config for next-intl");
 
-    program.visit_mut_with(&mut TransformVisitor {
-        is_development: config.is_development,
-        file_path: config.file_path,
-        hook_type: Default::default(),
-        hook_local_name: Default::default(),
-        translator_map: Default::default(),
-        results: Default::default(),
-    });
+    program.visit_mut_with(&mut TransformVisitor::new(
+        config.is_development,
+        config.file_path,
+    ));
 
     program
 }
@@ -42,7 +38,7 @@ struct Config {
     file_path: String,
 }
 
-struct TransformVisitor {
+pub struct TransformVisitor {
     is_development: bool,
     file_path: String,
 
@@ -55,6 +51,17 @@ struct TransformVisitor {
 }
 
 impl TransformVisitor {
+    pub fn new(is_development: bool, file_path: String) -> Self {
+        Self {
+            is_development,
+            file_path,
+            hook_type: None,
+            hook_local_name: None,
+            translator_map: Default::default(),
+            results: Default::default(),
+        }
+    }
+
     fn define_translator(&mut self, name: Id, namespace: Option<Wtf8Atom>) {
         self.translator_map
             .insert(name, TranslatorInfo { namespace });
