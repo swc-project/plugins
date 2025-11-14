@@ -3507,6 +3507,8 @@ dependencies = [
 name = "swc_plugin_next_intl"
 version = "0.1.0"
 dependencies = [
+ "rustc-hash",
+ "swc_atoms",
  "swc_common",
  "swc_core",
  "swc_ecma_ast",
