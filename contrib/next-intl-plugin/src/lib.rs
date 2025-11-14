@@ -5,7 +5,7 @@ use base64::Engine;
 use rustc_hash::FxHashMap;
 use serde::Deserialize;
 use swc_atoms::Wtf8Atom;
-use swc_common::DUMMY_SP;
+use swc_common::{errors::HANDLER, Spanned, DUMMY_SP};
 use swc_core::plugin::proxies::TransformPluginProgramMetadata;
 use swc_ecma_ast::*;
 use swc_ecma_utils::{private_ident, ExprFactory};
@@ -181,12 +181,12 @@ impl VisitMut for TransformVisitor {
             if let Some(message_text) = message_text {
                 let call_key =
                     explicit_id.unwrap_or_else(|| KeyGenerator::generate(&message_text).into());
-                let full_key = namespace.map_or(call_key, |namespace| {
+                let full_key = namespace.map_or(call_key.clone(), |namespace| {
                     vec![&*namespace.to_string_lossy(), &*call_key.to_string_lossy()]
                         .join(NAMESPACE_SEPARATOR)
                         .into()
                 });
-                let message = StrictExtractedMessage {
+                let mut message = StrictExtractedMessage {
                     id: full_key,
                     message: message_text.clone(),
                     description: None,
@@ -304,7 +304,7 @@ impl VisitMut for TransformVisitor {
                                     .as_ref()
                                     .and_then(|x| match x {
                                         ModuleExportName::Ident(ident) => Some(ident.sym.clone()),
-                                        ModuleExportName::Str(str) => None,
+                                        ModuleExportName::Str(..) => None,
                                     })
                                     .unwrap_or_else(|| named_spec.local.sym.clone())
                                     .clone();
@@ -419,6 +419,19 @@ impl VisitMut for TransformVisitor {
 
         node.visit_mut_children_with(self);
     }
+}
+
+fn warn_dynamic_expression(expr: &Expr) {
+    HANDLER.with(|handler| {
+        handler
+            .struct_span_err(
+                expr.span(),
+                "Cannot extract message from dynamic expression, messages need to be statically \
+                 analyzable. If you need to provide runtime values, pass them as a separate \
+                 argument.",
+            )
+            .emit();
+    })
 }
 
 fn extract_static_string(value: &Expr) -> Option<Wtf8Atom> {
