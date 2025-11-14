@@ -3,7 +3,8 @@
 
 use base64::Engine;
 use rustc_hash::FxHashMap;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha512};
 use swc_atoms::Wtf8Atom;
 use swc_common::{errors::HANDLER, Spanned, DUMMY_SP};
 use swc_core::plugin::proxies::TransformPluginProgramMetadata;
@@ -65,7 +66,7 @@ struct TranslatorInfo {
     namespace: Option<Wtf8Atom>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 struct StrictExtractedMessage {
     id: Wtf8Atom,
     message: Wtf8Atom,
@@ -73,7 +74,7 @@ struct StrictExtractedMessage {
     references: Vec<Reference>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 struct Reference {
     path: String,
 }
@@ -129,36 +130,34 @@ impl VisitMut for TransformVisitor {
                     Expr::Object(ObjectLit { props, .. }) => {
                         for prop in props {
                             if let PropOrSpread::Prop(box Prop::KeyValue(KeyValueProp {
-                                key,
+                                key: PropName::Ident(key),
                                 value,
                                 ..
                             })) = prop
                             {
-                                if let PropName::Ident(key) = key {
-                                    if key.sym == "id" {
-                                        let static_id = extract_static_string(value);
-                                        if let Some(static_id) = static_id {
-                                            explicit_id = Some(static_id);
-                                        }
-                                    } else if key.sym == "message" {
-                                        let static_message = extract_static_string(value);
-                                        if let Some(static_message) = static_message {
-                                            message_text = Some(static_message);
-                                        } else {
-                                            warn_dynamic_expression(value);
-                                        }
-                                    } else if key.sym == "description" {
-                                        let static_description = extract_static_string(value);
-                                        if let Some(static_description) = static_description {
-                                            description = Some(static_description);
-                                        } else {
-                                            warn_dynamic_expression(value);
-                                        }
-                                    } else if key.sym == "values" {
-                                        values_node = Some(value.clone());
-                                    } else if key.sym == "formats" {
-                                        formats_node = Some(value.clone());
+                                if key.sym == "id" {
+                                    let static_id = extract_static_string(value);
+                                    if let Some(static_id) = static_id {
+                                        explicit_id = Some(static_id);
                                     }
+                                } else if key.sym == "message" {
+                                    let static_message = extract_static_string(value);
+                                    if let Some(static_message) = static_message {
+                                        message_text = Some(static_message);
+                                    } else {
+                                        warn_dynamic_expression(value);
+                                    }
+                                } else if key.sym == "description" {
+                                    let static_description = extract_static_string(value);
+                                    if let Some(static_description) = static_description {
+                                        description = Some(static_description);
+                                    } else {
+                                        warn_dynamic_expression(value);
+                                    }
+                                } else if key.sym == "values" {
+                                    values_node = Some(value.clone());
+                                } else if key.sym == "formats" {
+                                    formats_node = Some(value.clone());
                                 }
                             }
                         }
@@ -166,13 +165,13 @@ impl VisitMut for TransformVisitor {
 
                     // Handle string syntax: t('text') or t(`text`)
                     _ => {
-                        let static_string = extract_static_string(&*arg0.expr);
+                        let static_string = extract_static_string(&arg0.expr);
                         if let Some(static_string) = static_string {
                             message_text = Some(static_string);
                         } else {
                             // Dynamic expression (Identifier, CallExpression, BinaryExpression,
                             // etc.)
-                            warn_dynamic_expression(&*arg0.expr);
+                            warn_dynamic_expression(&arg0.expr);
                         }
                     }
                 }
@@ -182,7 +181,7 @@ impl VisitMut for TransformVisitor {
                 let call_key =
                     explicit_id.unwrap_or_else(|| KeyGenerator::generate(&message_text).into());
                 let full_key = namespace.map_or(call_key.clone(), |namespace| {
-                    vec![&*namespace.to_string_lossy(), &*call_key.to_string_lossy()]
+                    [&*namespace.to_string_lossy(), &*call_key.to_string_lossy()]
                         .join(NAMESPACE_SEPARATOR)
                         .into()
                 });
@@ -371,19 +370,19 @@ impl VisitMut for TransformVisitor {
                     Expr::Await(AwaitExpr {
                         arg: box Expr::Call(arg),
                         ..
-                    }) => match &*arg {
-                        CallExpr {
+                    }) => {
+                        if let CallExpr {
                             callee: Callee::Expr(box Expr::Ident(callee)),
                             ..
-                        } => {
+                        } = &*arg
+                        {
                             if self.hook_local_name == Some(callee.to_id()) {
                                 arg.callee =
                                     Callee::Expr(self.hook_local_name.clone().unwrap().into());
                                 call_expr = Some(arg);
                             }
                         }
-                        _ => {}
-                    },
+                    }
 
                     _ => {}
                 }
@@ -391,22 +390,20 @@ impl VisitMut for TransformVisitor {
 
             if let Some(call_expr) = call_expr {
                 let namespace = call_expr.args.first().and_then(|arg| match &*arg.expr {
-                    Expr::Lit(Lit::Str(str)) => Some(str.value.clone()),
-                    Expr::Object(ObjectLit { props: props, .. }) => {
-                        props.iter().find_map(|prop| {
-                            let prop = prop.as_prop()?.as_key_value()?;
-                            match &prop.key {
-                                PropName::Ident(ident) => {
-                                    if ident.sym == "namespace" {
-                                        Some(extract_static_string(&prop.value))
-                                    } else {
-                                        None
-                                    }
+                    Expr::Lit(Lit::Str(s)) => Some(s.value.clone()),
+                    Expr::Object(ObjectLit { props, .. }) => props.iter().find_map(|prop| {
+                        let prop = prop.as_prop()?.as_key_value()?;
+                        match &prop.key {
+                            PropName::Ident(ident) => {
+                                if ident.sym == "namespace" {
+                                    Some(extract_static_string(&prop.value))
+                                } else {
+                                    None
                                 }
-                                _ => None,
                             }
-                        })?
-                    }
+                            _ => None,
+                        }
+                    })?,
                     _ => None,
                 });
 
@@ -431,13 +428,29 @@ fn warn_dynamic_expression(expr: &Expr) {
     })
 }
 
-fn extract_static_string(value: &Expr) -> Option<Wtf8Atom> {}
+fn extract_static_string(value: &Expr) -> Option<Wtf8Atom> {
+    match value {
+        Expr::Lit(Lit::Str(s)) => Some(s.value.clone()),
+        Expr::Tpl(tpl) => {
+            if tpl.quasis.len() != 1 {
+                return None;
+            }
+
+            let quasi = &tpl.quasis[0];
+
+            let cooked = quasi.cooked.as_ref()?;
+            Some(cooked.clone())
+        }
+
+        _ => None,
+    }
+}
 
 struct KeyGenerator;
 
 impl KeyGenerator {
     fn generate(message: &Wtf8Atom) -> String {
-        let hash = sha512::digest(message);
+        let hash = Sha512::digest(message.as_bytes());
         let base64 = base64::engine::general_purpose::STANDARD.encode(hash);
         base64[..6].to_string()
     }
