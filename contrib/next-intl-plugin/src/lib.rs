@@ -1,6 +1,7 @@
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 #![feature(box_patterns)]
 
+use rustc_hash::FxHashMap;
 use swc_atoms::Wtf8Atom;
 use swc_core::plugin::proxies::TransformPluginProgramMetadata;
 use swc_ecma_ast::*;
@@ -13,6 +14,7 @@ fn next_intl_plugin(mut program: Program, _: TransformPluginProgramMetadata) -> 
     program.visit_mut_with(&mut TransformVisitor {
         hook_type: Default::default(),
         hook_local_name: Default::default(),
+        translator_map: Default::default(),
     });
 
     program
@@ -21,6 +23,13 @@ fn next_intl_plugin(mut program: Program, _: TransformPluginProgramMetadata) -> 
 struct TransformVisitor {
     hook_type: Option<HookType>,
     hook_local_name: Option<Id>,
+
+    translator_map: FxHashMap<Id, TranslatorInfo>,
+}
+
+#[derive(Debug, Clone)]
+struct TranslatorInfo {
+    namespace: Option<Wtf8Atom>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -30,6 +39,40 @@ enum HookType {
 }
 
 impl VisitMut for TransformVisitor {
+    fn visit_mut_call_expr(&mut self, call: &mut CallExpr) {
+        let mut is_translator_call = false;
+        let mut namespace = None;
+
+        // Handle Identifier case: t("message")
+        match &call.callee {
+            Callee::Expr(box Expr::Ident(ident)) => {
+                if let Some(translator) = self.translator_map.get(&ident.to_id()) {
+                    is_translator_call = true;
+                    namespace = translator.namespace.clone();
+                }
+            }
+
+            Callee::Expr(box Expr::Member(MemberExpr {
+                span,
+                obj: box Expr::Ident(obj),
+                prop: MemberProp::Ident(prop),
+            })) => {
+                if matches!(&*prop.sym, "rich" | "markup" | "has") {
+                    if let Some(translator) = self.translator_map.get(&obj.to_id()) {
+                        is_translator_call = true;
+                        namespace = translator.namespace.clone();
+                    }
+                }
+            }
+
+            _ => {}
+        }
+
+        if is_translator_call {}
+
+        call.visit_mut_children_with(self);
+    }
+
     fn visit_mut_module(&mut self, module: &mut Module) {
         for import in module.body.iter_mut() {
             if let ModuleItem::ModuleDecl(ModuleDecl::Import(import)) = import {
@@ -149,7 +192,7 @@ impl VisitMut for TransformVisitor {
                     _ => None,
                 });
 
-                self.define(name.to_id(), "translator", namespace)
+                self.define_translator(name.to_id(), namespace)
             }
         }
 
