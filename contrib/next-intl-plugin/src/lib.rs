@@ -99,9 +99,9 @@ impl VisitMut for TransformVisitor {
             }
 
             Callee::Expr(box Expr::Member(MemberExpr {
-                span,
                 obj: box Expr::Ident(obj),
                 prop: MemberProp::Ident(prop),
+                ..
             })) => {
                 if matches!(&*prop.sym, "rich" | "markup" | "has") {
                     if let Some(translator) = self.translator_map.get(&obj.to_id()) {
@@ -155,9 +155,9 @@ impl VisitMut for TransformVisitor {
                                             warn_dynamic_expression(value);
                                         }
                                     } else if key.sym == "values" {
-                                        values_node = Some(value);
+                                        values_node = Some(value.clone());
                                     } else if key.sym == "formats" {
-                                        formats_node = Some(value);
+                                        formats_node = Some(value.clone());
                                     }
                                 }
                             }
@@ -329,7 +329,7 @@ impl VisitMut for TransformVisitor {
                                     .as_ref()
                                     .and_then(|x| match x {
                                         ModuleExportName::Ident(ident) => Some(ident.sym.clone()),
-                                        ModuleExportName::Str(str) => None,
+                                        ModuleExportName::Str(_) => None,
                                     })
                                     .unwrap_or_else(|| named_spec.local.sym.clone())
                                     .clone();
@@ -434,9 +434,7 @@ fn warn_dynamic_expression(expr: &Expr) {
     })
 }
 
-fn extract_static_string(value: &Expr) -> Option<Wtf8Atom> {
-    todo!()
-}
+fn extract_static_string(value: &Expr) -> Option<Wtf8Atom> {}
 
 struct KeyGenerator;
 
@@ -444,6 +442,6 @@ impl KeyGenerator {
     fn generate(message: &Wtf8Atom) -> String {
         let hash = sha512::digest(message);
         let base64 = base64::engine::general_purpose::STANDARD.encode(hash);
-        base64.slice(0, 6)
+        base64[..6].to_string()
     }
 }
