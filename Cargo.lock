@@ -3507,6 +3507,7 @@ dependencies = [
 name = "swc_plugin_next_intl"
 version = "0.1.0"
 dependencies = [
+ "base64 0.22.1",
  "rustc-hash",
  "serde",
  "serde_json",
