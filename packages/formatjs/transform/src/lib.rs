@@ -301,108 +301,6 @@ impl Serialize for MessageDescriptionValue {
     }
 }
 
-fn get_jsx_icu_message_value(
-    message_path: Option<&JSXAttrValue>,
-    preserve_whitespace: bool,
-) -> String {
-    let message = message_path
-        .and_then(|path| get_jsx_message_descriptor_value(Some(path), Some(true)))
-        .unwrap_or("".to_string());
-
-    let message = if !preserve_whitespace {
-        let message = WHITESPACE_REGEX.replace_all(&message, " ");
-        message.trim().to_string()
-    } else {
-        message
-    };
-
-    if let Err(e) = parse(message.as_str()) {
-        let is_literal_err = if let Some(JSXAttrValue::Str(..)) = message_path {
-            message.contains("\\\\")
-        } else {
-            false
-        };
-
-        let handler = &swc_core::plugin::errors::HANDLER;
-
-        if is_literal_err {
-            {
-                handler.with(|handler| {
-                    handler
-                        .struct_err(
-                            r#"
-                    [React Intl] Message failed to parse.
-                    It looks like `\\`s were used for escaping,
-                    this won't work with JSX string literals.
-                    Wrap with `{{}}`.
-                    See: http://facebook.github.io/react/docs/jsx-gotchas.html
-                    "#,
-                        )
-                        .emit()
-                });
-            }
-        } else {
-            {
-                handler.with(|handler| {
-                    handler
-                        .struct_warn(
-                            r#"
-                    [React Intl] Message failed to parse.
-                    See: https://formatjs.io/docs/core-concepts/icu-syntax
-                    \n {:#?}
-                    "#,
-                        )
-                        .emit();
-                    handler
-                        .struct_err(&format!("SyntaxError: {}", e.kind))
-                        .emit()
-                });
-            }
-        }
-    }
-
-    message
-}
-
-fn get_call_expr_icu_message_value(
-    message_path: Option<&Expr>,
-    preserve_whitespace: bool,
-) -> String {
-    let message = message_path
-        .and_then(|path| get_call_expr_message_descriptor_value(Some(path), Some(true)))
-        .unwrap_or("".to_string());
-
-    let message = if !preserve_whitespace {
-        let message = WHITESPACE_REGEX.replace_all(&message, " ");
-        message.trim().to_string()
-    } else {
-        message
-    };
-
-    if let Err(e) = parse(message.as_str()) {
-        let handler = &swc_core::plugin::errors::HANDLER;
-
-        {
-            handler.with(|handler| {
-                handler
-                    .struct_warn(
-                        r#"
-                    [React Intl] Message failed to parse.
-                    See: https://formatjs.io/docs/core-concepts/icu-syntax
-                    \n {:#?}
-                    "#,
-                    )
-                    .emit();
-                handler
-                    .struct_err(&format!("SyntaxError: {}", e.kind))
-                    .emit()
-            });
-        }
-    }
-
-    message
-}
-
 fn interpolate_name(filename: &str, interpolate_pattern: &str, content: &str) -> Option<String> {
     let mut resource_path = filename.to_string();
     let mut basename = "file";
@@ -514,7 +412,7 @@ fn evaluate_jsx_message_descriptor_with_visitor(
     visitor: &FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
 ) -> MessageDescriptor {
     let id = get_jsx_message_descriptor_value(descriptor_path.id.as_ref(), None);
-    let default_message = get_jsx_icu_message_value(
+    let default_message = visitor.get_jsx_icu_message_value(
         descriptor_path.default_message.as_ref(),
         options.preserve_whitespace,
     );
@@ -594,7 +492,7 @@ fn evaluate_call_expr_message_descriptor_with_visitor(
     visitor: &FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
 ) -> MessageDescriptor {
     let id = get_call_expr_message_descriptor_value(descriptor_path.id.as_ref(), None);
-    let default_message = get_call_expr_icu_message_value(
+    let default_message = visitor.get_call_expr_icu_message_value(
         descriptor_path.default_message.as_ref(),
         options.preserve_whitespace,
     );
@@ -884,6 +782,157 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
         self.variable_bindings.get(&ident.to_id())
     }
 
+    fn get_jsx_icu_message_value(
+        &self,
+        message_path: Option<&JSXAttrValue>,
+        preserve_whitespace: bool,
+    ) -> String {
+        let message = if let Some(value) = message_path {
+            // Use resolution-aware method to handle binary expressions properly
+            match value {
+                JSXAttrValue::JSXExprContainer(container) => {
+                    match &container.expr {
+                        JSXExpr::Expr(expr) => {
+                            // If this is already compiled, no need to recompile it
+                            if let Expr::Array(..) = &**expr {
+                                return "".to_string();
+                            }
+
+                            // Use the resolution-aware method for proper binary expression handling
+                            match &**expr {
+                                Expr::Lit(Lit::Str(s)) => {
+                                    Some(s.value.as_str().expect("non-utf8 string").to_string())
+                                }
+                                Expr::Tpl(tpl) => Some(evaluate_template_literal_string(tpl)),
+                                Expr::Bin(bin_expr) => {
+                                    // Use resolution-aware binary expression evaluation
+                                    self.evaluate_binary_expr_with_resolution(bin_expr)
+                                        .and_then(|val| match val {
+                                            MessageDescriptionValue::Str(s) => Some(s),
+                                            _ => None,
+                                        })
+                                }
+                                _ => None,
+                            }
+                        }
+                        _ => None,
+                    }
+                }
+                JSXAttrValue::Str(s) => {
+                    Some(s.value.as_str().expect("non-utf8 string").to_string())
+                }
+                _ => None,
+            }
+        } else {
+            None
+        }
+        .unwrap_or("".to_string());
+
+        let message = if !preserve_whitespace {
+            let message = WHITESPACE_REGEX.replace_all(&message, " ");
+            message.trim().to_string()
+        } else {
+            message
+        };
+
+        if let Err(e) = parse(message.as_str()) {
+            let is_literal_err = if let Some(JSXAttrValue::Str(..)) = message_path {
+                message.contains("\\\\")
+            } else {
+                false
+            };
+
+            let handler = &swc_core::plugin::errors::HANDLER;
+
+            if is_literal_err {
+                {
+                    handler.with(|handler| {
+                        handler
+                            .struct_err(
+                                r#"
+                        [React Intl] Message failed to parse.
+                        It looks like `\\`s were used for escaping,
+                        this won't work with JSX string literals.
+                        Wrap with `{{}}`.
+                        See: http://facebook.github.io/react/docs/jsx-gotchas.html
+                        "#,
+                            )
+                            .emit()
+                    });
+                }
+            } else {
+                {
+                    handler.with(|handler| {
+                        handler
+                            .struct_warn(
+                                r#"
+                        [React Intl] Message failed to parse.
+                        See: https://formatjs.io/docs/core-concepts/icu-syntax
+                        \n {:#?}
+                        "#,
+                            )
+                            .emit();
+                        handler
+                            .struct_err(&format!("SyntaxError: {}", e.kind))
+                            .emit()
+                    });
+                }
+            }
+        }
+
+        message
+    }
+
+    fn get_call_expr_icu_message_value(
+        &self,
+        message_path: Option<&Expr>,
+        preserve_whitespace: bool,
+    ) -> String {
+        let message = message_path
+            .and_then(|path| {
+                // Use resolution-aware method to handle binary expressions properly
+                self.get_call_expr_message_descriptor_value_maybe_object_with_resolution(
+                    Some(path),
+                    Some(true),
+                )
+                .and_then(|val| match val {
+                    MessageDescriptionValue::Str(s) => Some(s),
+                    _ => None,
+                })
+            })
+            .unwrap_or("".to_string());
+
+        let message = if !preserve_whitespace {
+            let message = WHITESPACE_REGEX.replace_all(&message, " ");
+            message.trim().to_string()
+        } else {
+            message
+        };
+
+        if let Err(e) = parse(message.as_str()) {
+            let handler = &swc_core::plugin::errors::HANDLER;
+
+            {
+                handler.with(|handler| {
+                    handler
+                        .struct_warn(
+                            r#"
+                        [React Intl] Message failed to parse.
+                        See: https://formatjs.io/docs/core-concepts/icu-syntax
+                        \n {:#?}
+                        "#,
+                        )
+                        .emit();
+                    handler
+                        .struct_err(&format!("SyntaxError: {}", e.kind))
+                        .emit()
+                });
+            }
+        }
+
+        message
+    }
+
     fn get_jsx_message_descriptor_value_maybe_object_with_resolution(
         &self,
         value: Option<&JSXAttrValue>,
@@ -994,6 +1043,9 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
                         Expr::Lit(Lit::Str(s)) => Some(MessageDescriptionValue::Str(
                             s.value.to_atom_lossy().to_string(),
                         )),
+                        Expr::Tpl(tpl) => Some(MessageDescriptionValue::Str(
+                            evaluate_template_literal_string(tpl),
+                        )),
                         _ => None,
                     }
                 } else {
@@ -1003,6 +1055,9 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
             }
             Expr::Lit(Lit::Str(s)) => Some(MessageDescriptionValue::Str(
                 s.value.to_atom_lossy().to_string(),
+            )),
+            Expr::Tpl(tpl) => Some(MessageDescriptionValue::Str(
+                evaluate_template_literal_string(tpl),
             )),
             Expr::Object(object_lit) => Some(MessageDescriptionValue::Obj(object_lit.clone())),
             Expr::Bin(bin_expr) => self.evaluate_binary_expr_with_resolution(bin_expr),
