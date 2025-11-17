@@ -68,11 +68,13 @@ jobs:
 
       - run: corepack enable
 
-      # Source map format
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "yarn"
+          cache: "pnpm"
+
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: true
 
       # We explicitly do this to cache properly.
       - name: Install Rust
