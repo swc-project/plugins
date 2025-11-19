@@ -1,5 +1,5 @@
-// https://github.com/emotion-js/emotion/blob/main/packages/babel-plugin/__tests__/css-macro/__fixtures__/label-obj-property-literal.js
 import { jsx as _jsx } from "react/jsx-runtime";
+// https://github.com/emotion-js/emotion/blob/main/packages/babel-plugin/__tests__/css-macro/__fixtures__/label-obj-property-literal.js
 import { css } from "@emotion/react";
 const obj = {
     "red component": /*#__PURE__*/ _jsx("div", {
