@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-swc-magic",
-  "version": "11.0.0",
+  "version": "11.1.0",
   "publishConfig": {
     "access": "public",
     "provenance": true

@@ -1,5 +1,11 @@
 # @swc/plugin-styled-jsx
 
+## 12.1.0
+
+### Minor Changes
+
+- 7a0fbdb: Update swc_core to v48
+
 ## 12.0.1
 
 ### Patch Changes
