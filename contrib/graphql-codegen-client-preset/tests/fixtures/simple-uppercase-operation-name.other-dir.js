@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */ //@ts-ignore
 import { ADocument } from "./../graphql";
 import { BDocument } from "./../graphql";
 import { CFragmentDoc } from "./../graphql";
+/* eslint-disable @typescript-eslint/ban-ts-comment */ //@ts-ignore
 import gql from "gql-tag";
 //@ts-ignore
 const A = ADocument;

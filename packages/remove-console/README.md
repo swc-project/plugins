@@ -21,6 +21,12 @@ or
 
 # @swc/plugin-remove-console
 
+## 11.1.0
+
+### Minor Changes
+
+- 7a0fbdb: Update swc_core to v48
+
 ## 11.0.0
 
 ### Major Changes

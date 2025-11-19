@@ -1,7 +1,7 @@
+import _styled from "styled-components";
 /*
  * Basic fixtures
- */ import _styled from "styled-components";
-const StaticString = (p)=><_StyledP>A</_StyledP>;
+ */ const StaticString = (p)=><_StyledP>A</_StyledP>;
 const StaticTemplate = (p)=><_StyledP2>
     A
   </_StyledP2>;

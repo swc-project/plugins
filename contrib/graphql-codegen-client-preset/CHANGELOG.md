@@ -1,5 +1,11 @@
 # @swc-contrib/plugin-graphql-codegen-client-preset
 
+## 0.11.0
+
+### Minor Changes
+
+- 7a0fbdb: Update swc_core to v48
+
 ## 0.10.1
 
 ### Patch Changes
