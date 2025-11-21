@@ -133,6 +133,8 @@ pub(crate) fn key_from_export_name(n: &ModuleExportName) -> (Atom, Span) {
             },
             s.span,
         ),
+        #[cfg(swc_ast_unknown)]
+        _ => panic!("unknown node"),
     }
 }
 
@@ -143,6 +145,8 @@ pub(crate) fn local_ident_from_export_name(n: ModuleExportName) -> Ident {
             Some(s) => s.clone(),
             None => panic!("non-utf8 export name: {:?}", s.value),
         },
+        #[cfg(swc_ast_unknown)]
+        _ => panic!("unknown node"),
     };
 
     match Ident::verify_symbol(&name) {

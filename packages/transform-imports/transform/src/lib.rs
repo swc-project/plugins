@@ -179,6 +179,8 @@ impl Rewriter<'_> {
                     let name_str = match name_str {
                         ModuleExportName::Ident(x) => Cow::Borrowed(x.as_ref()),
                         ModuleExportName::Str(x) => x.value.to_string_lossy(),
+                        #[cfg(swc_ast_unknown)]
+                        _ => panic!("unknown node"),
                     };
 
                     let new_path = self.new_path(Some(name_str.as_ref()));
@@ -213,6 +215,8 @@ impl Rewriter<'_> {
                     let name_str = match &ns_spec.name {
                         ModuleExportName::Ident(x) => Cow::Borrowed(x.as_ref()),
                         ModuleExportName::Str(x) => x.value.to_string_lossy(),
+                        #[cfg(swc_ast_unknown)]
+                        _ => panic!("unknown node"),
                     };
                     let new_path = self.new_path(Some(name_str.as_ref()));
                     let specifier = ExportSpecifier::Namespace(ns_spec.clone());
@@ -255,6 +259,8 @@ impl Rewriter<'_> {
                         .map(|x| match x {
                             ModuleExportName::Ident(x) => Cow::Borrowed(x.as_ref()),
                             ModuleExportName::Str(x) => x.value.to_string_lossy(),
+                            #[cfg(swc_ast_unknown)]
+                            _ => panic!("unknown node"),
                         })
                         .unwrap_or_else(|| Cow::Borrowed(named_spec.local.as_ref()));
 

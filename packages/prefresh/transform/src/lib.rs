@@ -105,6 +105,8 @@ impl VisitMut for PrefreshPlugin {
                         let name = match imported {
                             ModuleExportName::Ident(ident) => &ident.sym,
                             ModuleExportName::Str(s) => &s.value.to_atom_lossy(),
+                            #[cfg(swc_ast_unknown)]
+                            _ => panic!("unknown node"),
                         };
                         if name == "createContext" {
                             self.local.insert(spec.local.to_id());
@@ -116,6 +118,8 @@ impl VisitMut for PrefreshPlugin {
                 ImportSpecifier::Namespace(spec) => {
                     self.lib_local.insert(spec.local.to_id());
                 }
+                #[cfg(swc_ast_unknown)]
+                _ => panic!("unknown node"),
             }
         }
     }

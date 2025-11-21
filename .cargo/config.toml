@@ -27,3 +27,8 @@ rustflags = ["-C", "target-feature=-crt-static", "-C", "link-arg=-lgcc"]
 
 [target.armv7-unknown-linux-gnueabihf]
 linker = "arm-linux-gnueabihf-gcc"
+
+[target.'cfg(target_arch = "wasm32")']
+rustflags = [
+  "--cfg=swc_ast_unknown"
+]

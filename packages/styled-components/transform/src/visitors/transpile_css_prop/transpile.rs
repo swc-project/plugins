@@ -323,6 +323,8 @@ impl VisitMut for TranspileCssProp<'_> {
                     }
                 }
                 JSXAttrOrSpread::SpreadElement(_) => {}
+                #[cfg(swc_ast_unknown)]
+                _ => panic!("unknown node"),
             }
         }
 
@@ -337,6 +339,8 @@ impl VisitMut for TranspileCssProp<'_> {
                     }
                 }
                 JSXAttrOrSpread::SpreadElement(_) => {}
+                #[cfg(swc_ast_unknown)]
+                _ => panic!("unknown node"),
             }
             true
         });
@@ -418,6 +422,8 @@ fn get_name_expr(name: &JSXElementName) -> Box<Expr> {
                 obj: get_name_expr_jsx_object(&n.obj),
                 prop: MemberProp::Ident(n.prop.clone()),
             })),
+            #[cfg(swc_ast_unknown)]
+            _ => panic!("unknown node"),
         }
     }
     match name {
@@ -430,6 +436,8 @@ fn get_name_expr(name: &JSXElementName) -> Box<Expr> {
         JSXElementName::JSXNamespacedName(..) => {
             unimplemented!("get_name_expr for JSXNamespacedName")
         }
+        #[cfg(swc_ast_unknown)]
+        _ => panic!("unknown node"),
     }
 }
 
@@ -542,6 +550,8 @@ impl PropertyReducer<'_> {
                     acc.push(property);
                 }
             }
+            #[cfg(swc_ast_unknown)]
+            _ => panic!("unknown node"),
         }
 
         acc
@@ -563,6 +573,8 @@ fn set_value_of_prop(prop: &mut Prop, value: Box<Expr>) {
         Prop::Getter(_p) => todo!(),
         Prop::Setter(_p) => todo!(),
         Prop::Method(_p) => todo!(),
+        #[cfg(swc_ast_unknown)]
+        _ => panic!("unknown node"),
     }
 }
 
@@ -574,6 +586,8 @@ fn take_prop_value(prop: &mut Prop) -> Box<Expr> {
         Prop::Getter(_p) => todo!(),
         Prop::Setter(_p) => todo!(),
         Prop::Method(_p) => todo!(),
+        #[cfg(swc_ast_unknown)]
+        _ => panic!("unknown node"),
     }
 }
 
@@ -627,6 +641,8 @@ fn get_name_of_jsx_obj(el: &JSXObject) -> Atom {
         JSXObject::JSXMemberExpr(e) => {
             format!("{}{}", get_name_of_jsx_obj(&e.obj), e.prop.sym).into()
         }
+        #[cfg(swc_ast_unknown)]
+        _ => panic!("unknown node"),
     }
 }
 
