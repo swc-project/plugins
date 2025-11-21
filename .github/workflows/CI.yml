@@ -102,6 +102,10 @@ jobs:
         run: |
           cargo test --all --color always
 
+      - name: Run cargo check (swc_ast_unknown)
+        run: |
+          RUSTFLAGS='--cfg swc_ast_unknown' cargo check --workspace --exclude swc_plugin_styled_jsx --exclude styled_jsx
+
   cargo-publish:
     name: "Publish"
     runs-on: ubuntu-latest
