@@ -28,3 +28,6 @@ swc_core = { workspace = true, features = [
 [dev-dependencies]
 swc_core = { workspace = true, features = ["testing_transform", "ecma_parser"] }
 testing  = { workspace = true }
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(swc_ast_unknown)'] }
