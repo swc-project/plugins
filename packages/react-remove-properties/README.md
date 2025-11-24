@@ -23,6 +23,12 @@ or
 
 # @swc/plugin-react-remove-properties
 
+## 11.1.1
+
+### Patch Changes
+
+- ad79e09: Update swc_core to v48.0.4
+
 ## 11.1.0
 
 ### Minor Changes
