@@ -1,5 +1,17 @@
 # @swc-contrib/plugin-graphql-codegen-client-preset
 
+## 0.12.0
+
+### Minor Changes
+
+- 6c46f86: feat: Enable backward-compatibility feature
+
+## 0.11.1
+
+### Patch Changes
+
+- ad79e09: Update swc_core to v48.0.4
+
 ## 0.11.0
 
 ### Minor Changes
