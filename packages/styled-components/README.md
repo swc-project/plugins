@@ -28,6 +28,12 @@ Then update your `.swcrc` file like below:
 
 # @swc/plugin-styled-components
 
+## 12.0.0
+
+### Major Changes
+
+- 6c46f86: feat: Enable backward-compatibility feature
+
 ## 11.1.1
 
 ### Patch Changes

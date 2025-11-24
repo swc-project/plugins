@@ -34,6 +34,12 @@ Source code for plugin itself (not transforms) are copied from https://github.co
 
 # @swc/plugin-emotion
 
+## 14.0.0
+
+### Major Changes
+
+- 6c46f86: feat: Enable backward-compatibility feature
+
 ## 13.1.1
 
 ### Patch Changes
