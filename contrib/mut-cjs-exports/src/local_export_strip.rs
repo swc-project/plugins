@@ -117,6 +117,8 @@ impl VisitMut for LocalExportStrip {
                         _ => list.push(module_decl.into()),
                     };
                 }
+                #[cfg(swc_ast_unknown)]
+                _ => panic!("unknown node"),
             };
         }
 
@@ -186,6 +188,8 @@ impl VisitMut for LocalExportStrip {
                     ModuleExportName::Str(_) => {
                         unreachable!(r#"`export {{ "foo" }}` without src is invalid"#)
                     }
+                    #[cfg(swc_ast_unknown)]
+                    _ => panic!("unknown node"),
                 };
 
                 if let Some(exported) = exported {
@@ -198,6 +202,8 @@ impl VisitMut for LocalExportStrip {
                             },
                             span,
                         ),
+                        #[cfg(swc_ast_unknown)]
+                        _ => panic!("unknown node"),
                     };
 
                     (export_name, ExportItem::new(export_name_span, orig))
@@ -205,7 +211,10 @@ impl VisitMut for LocalExportStrip {
                     (orig.sym.clone(), ExportItem::new(orig.span, orig))
                 }
             }
+            #[cfg(swc_ast_unknown)]
+            _ => panic!("unknown node"),
         }))
+
     }
 
     /// ```javascript
@@ -236,6 +245,8 @@ impl VisitMut for LocalExportStrip {
                 }
             }
             DefaultDecl::TsInterfaceDecl(_) => {}
+            #[cfg(swc_ast_unknown)]
+            _ => panic!("unknown node"),
         }
     }
 

@@ -8,7 +8,7 @@
   "description": "Noop SWC plugin, for debugging",
   "main": "swc_plugin_noop.wasm",
   "scripts": {
-    "prepack": "cargo build --release -p swc_plugin_noop --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/release/swc_plugin_noop.wasm ."
+    "prepack": "RUSTFLAGS='--cfg swc_ast_unknown' cargo build --release -p swc_plugin_noop --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/release/swc_plugin_noop.wasm ."
   },
   "homepage": "https://swc.rs",
   "repository": {

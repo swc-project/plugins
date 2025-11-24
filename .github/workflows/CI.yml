@@ -62,6 +62,25 @@ jobs:
         run: |
           pnpm test
 
+  cargo-check:
+    name: "Check (swc_ast_unknown)"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: "cargo-check"
+          cache-on-failure: true
+
+      - name: Run cargo check
+        env: 
+          RUSTFLAGS: "--cfg swc_ast_unknown"
+        run: |
+          cargo check --workspace --exclude swc_plugin_styled_jsx --exclude styled_jsx
+
   cargo-test:
     strategy:
       fail-fast: false
@@ -128,6 +147,7 @@ jobs:
   done:
     needs:
       - npm-test
+      - cargo-check
       - cargo-test
     if: >-
       ${{ always() }}

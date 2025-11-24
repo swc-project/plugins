@@ -32,3 +32,6 @@ swc_icu_messageformat_parser = { features = [
 
 [dev-dependencies]
 pretty_assertions = { workspace = true }
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(swc_ast_unknown)'] }

@@ -36,3 +36,6 @@ swc_ecma_parser             = { workspace = true }
 swc_ecma_transforms         = { workspace = true }
 swc_ecma_transforms_testing = { workspace = true }
 testing                     = { workspace = true }
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(swc_ast_unknown)'] }

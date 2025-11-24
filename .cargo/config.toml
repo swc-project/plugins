@@ -27,3 +27,10 @@ rustflags = ["-C", "target-feature=-crt-static", "-C", "link-arg=-lgcc"]
 
 [target.armv7-unknown-linux-gnueabihf]
 linker = "arm-linux-gnueabihf-gcc"
+
+# We have not adapt this cfg for swc_ecma_minifier, which styled_jsx depends on.
+# So we have to manually enable it for all crates except styled jsx.
+# [target.'cfg(target_arch = "wasm32")']
+# rustflags = [
+#   "--cfg=swc_ast_unknown"
+# ]

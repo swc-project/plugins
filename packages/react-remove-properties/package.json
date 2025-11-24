@@ -9,8 +9,8 @@
   "main": "swc_plugin_react_remove_properties.wasm",
   "scripts": {
     "prepack": "pnpm run build",
-    "build": "cargo build --release -p swc_plugin_react_remove_properties --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/release/swc_plugin_react_remove_properties.wasm .",
-    "build:debug": "cargo build -p swc_plugin_react_remove_properties --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/debug/swc_plugin_react_remove_properties.wasm .",
+    "build": "RUSTFLAGS='--cfg swc_ast_unknown' cargo build --release -p swc_plugin_react_remove_properties --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/release/swc_plugin_react_remove_properties.wasm .",
+    "build:debug": "RUSTFLAGS='--cfg swc_ast_unknown' cargo build -p swc_plugin_react_remove_properties --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/debug/swc_plugin_react_remove_properties.wasm .",
     "test": "pnpm run build:debug && vitest run --testTimeout=0"
   },
   "homepage": "https://swc.rs",
