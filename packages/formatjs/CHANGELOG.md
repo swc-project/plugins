@@ -1,5 +1,11 @@
 # @swc/plugin-formatjs
 
+## 9.0.0
+
+### Major Changes
+
+- 6c46f86: feat: Enable backward-compatibility feature
+
 ## 8.1.1
 
 ### Patch Changes

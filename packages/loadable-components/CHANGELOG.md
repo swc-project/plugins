@@ -1,5 +1,11 @@
 # @swc/plugin-loadable-components
 
+## 11.0.0
+
+### Major Changes
+
+- 6c46f86: feat: Enable backward-compatibility feature
+
 ## 10.1.1
 
 ### Patch Changes

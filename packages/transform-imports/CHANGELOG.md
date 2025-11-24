@@ -1,5 +1,11 @@
 # @swc/plugin-transform-imports
 
+## 12.0.0
+
+### Major Changes
+
+- 6c46f86: feat: Enable backward-compatibility feature
+
 ## 11.1.1
 
 ### Patch Changes
