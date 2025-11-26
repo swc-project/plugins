@@ -178,6 +178,23 @@ describe("formatjs swc plugin", () => {
     expect(output).toMatchSnapshot();
   });
 
+  it("should throw error on non-statically evaluate-able variables", async () => {
+    const input = `
+      import { defineMessage, formatMessage, FormattedMessage } from 'react-intl';
+
+      const part1 = "Hello, ";
+
+      const message = defineMessage({
+        defaultMessage: part1 + part2,
+        description: "static vars"
+      });
+    `;
+
+    expect(transformCode(input)).rejects.toThrow(
+      "[React Intl] Messages must be statically evaluate-able for extraction.",
+    );
+  });
+
   it("should transform to ast when enabled", async () => {
     const input = `
       import { defineMessage, formatMessage, FormattedMessage } from 'react-intl';

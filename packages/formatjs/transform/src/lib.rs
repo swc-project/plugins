@@ -242,8 +242,9 @@ fn evaluate_expression_with_visitor(
         }
         Expr::Ident(ident) => {
             // If it's an identifier, resolve it
-            let resolved_expr = visitor.resolve_identifier(ident)?;
-            return evaluate_expression_with_visitor(resolved_expr, visitor);
+            if let Some(resolved_expr) = visitor.resolve_identifier(ident) {
+                return evaluate_expression_with_visitor(resolved_expr, visitor);
+            }
         }
         _ => {}
     }
@@ -748,7 +749,22 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
     }
 
     fn resolve_identifier(&self, ident: &swc_core::ecma::ast::Ident) -> Option<&Expr> {
-        self.variable_bindings.get(&ident.to_id())
+        if let Some(expr) = self.variable_bindings.get(&ident.to_id()) {
+            Some(expr)
+        } else {
+            let handler = &swc_core::plugin::errors::HANDLER;
+
+            handler.with(|handler| {
+                handler
+                    .struct_span_err(
+                        ident.span,
+                        "[React Intl] Messages must be statically evaluate-able for
+            extraction.",
+                    )
+                    .emit()
+            });
+            None
+        }
     }
 
     fn create_message_descriptor_from_extractor<T: MessageDescriptorExtractor>(
