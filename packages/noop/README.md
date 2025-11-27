@@ -2,6 +2,12 @@
 
 # @swc/plugin-noop
 
+## 12.0.1
+
+### Patch Changes
+
+- a73246f: build: Update swc_core to v49.0.0
+
 ## 12.0.0
 
 ### Major Changes
