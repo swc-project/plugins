@@ -89,28 +89,14 @@ impl MessageDescriptorExtractor for JSXAttrOrSpread {
                                         Expr::Object(object_lit) => {
                                             Some(MessageDescriptionValue::Obj(object_lit.clone()))
                                         }
-                                        Expr::Lit(Lit::Str(s)) => {
-                                            Some(MessageDescriptionValue::Str(
-                                                s.value.to_string_lossy().into_owned(),
-                                            ))
+                                        _ => {
+                                            evaluate_expression_with_visitor(resolved_expr, visitor)
+                                                .map(MessageDescriptionValue::Str)
                                         }
-                                        Expr::Tpl(tpl) => {
-                                            evaluate_template_literal_string_with_visitor(
-                                                tpl, visitor,
-                                            )
-                                            .map(MessageDescriptionValue::Str)
-                                        }
-                                        _ => None,
                                     }
                                 } else {
                                     None
                                 }
-                            }
-                            Expr::Lit(Lit::Num(n)) => {
-                                Some(MessageDescriptionValue::Str(n.value.to_string()))
-                            }
-                            Expr::Lit(Lit::Bool(b)) => {
-                                Some(MessageDescriptionValue::Str(b.value.to_string()))
                             }
                             Expr::Object(obj) => Some(MessageDescriptionValue::Obj(obj.clone())),
                             expr => {
@@ -149,12 +135,9 @@ impl MessageDescriptorExtractor for PropOrSpread {
         if let PropOrSpread::Prop(prop) = self {
             if let Prop::KeyValue(key_value) = &**prop {
                 let key = match &key_value.key {
-                    PropName::Computed(prop_name) => match &*prop_name.expr {
-                        Expr::Tpl(tpl) => {
-                            evaluate_template_literal_string_with_visitor(tpl, visitor)
-                        }
-                        expr => evaluate_expression_with_visitor(expr, visitor),
-                    },
+                    PropName::Computed(prop_name) => {
+                        evaluate_expression_with_visitor(&prop_name.expr, visitor)
+                    }
                     PropName::Ident(ident) => Some(ident.sym.to_string()),
                     PropName::Str(s) => {
                         Some(s.value.as_str().expect("non-utf8 string").to_string())
@@ -232,6 +215,38 @@ fn get_message_descriptor_key_from_call_expr(name: &PropName) -> Option<&str> {
     // NOTE: Do not support evaluatePath()
 }
 
+fn evaluate_template_literal_string_with_visitor(
+    tpl: &Tpl,
+    visitor: &FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
+) -> Option<String> {
+    // if expressions exist
+    let mut result = String::new();
+    for (i, expr) in tpl.exprs.iter().enumerate() {
+        result += &tpl.quasis[i]
+            .cooked
+            .as_ref()
+            .map(|v| v.as_str().expect("non-utf8 string").to_string())
+            .unwrap_or_default();
+        if let Some(evaluated) = evaluate_expression_with_visitor(expr, visitor) {
+            result += evaluated.as_str();
+        }
+    }
+    result += &tpl
+        .quasis
+        .last()
+        .unwrap()
+        .cooked
+        .as_ref()
+        .map(|v| v.as_str().expect("non-utf8 string").to_string())
+        .unwrap_or_default();
+    Some(result)
+}
+
+enum TraversalExpr {
+    Bin,
+    Str(String),
+}
+
 fn evaluate_expression_with_visitor(
     root: &Expr,
     visitor: &FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
@@ -244,29 +259,62 @@ fn evaluate_expression_with_visitor(
             // If it's an identifier, resolve it
             if let Some(resolved_expr) = visitor.resolve_identifier(ident) {
                 return evaluate_expression_with_visitor(resolved_expr, visitor);
+            } else {
+                emit_non_evaluable_error(root);
+                return None;
             }
         }
-        _ => {}
+        Expr::Bin(_) | Expr::Tpl(_) => {}
+        _ => {
+            emit_non_evaluable_error(root);
+            return None;
+        }
     }
+
     // Step 1: Create a post-order representation of the tree using a traversal
     // stack. This process simulates recursion iteratively. The resulting
     // `post_order_nodes` vector, when read in reverse, gives the correct order
     // for evaluation.
-    let mut post_order_nodes: Vec<&Expr> = Vec::new();
+    let mut post_order_nodes: Vec<TraversalExpr> = Vec::new();
     let mut traversal_stack: Vec<&Expr> = vec![root];
 
     while let Some(node) = traversal_stack.pop() {
-        post_order_nodes.push(node);
         match node {
+            Expr::Lit(Lit::Str(s)) => {
+                // Literal strings are terminal nodes.
+                post_order_nodes.push(TraversalExpr::Str(
+                    s.value.as_str().expect("non-utf8 string").to_string(),
+                ));
+            }
+            Expr::Ident(ident) => {
+                // If it's an identifier, resolve it
+                if let Some(resolved_expr) = visitor.resolve_identifier(ident) {
+                    traversal_stack.push(resolved_expr);
+                } else {
+                    emit_non_evaluable_error(root);
+                    return None;
+                }
+            }
             Expr::Bin(bin) => {
-                // If the node is a binary expression, we need to traverse its
-                // left and right children.
+                // Validate the operation. Only '+' is allowed.
+                if bin.op != swc_core::ecma::ast::BinaryOp::Add {
+                    return None;
+                }
+                // Traverse its left and right children.
+                post_order_nodes.push(TraversalExpr::Bin);
                 traversal_stack.push(&bin.left);
                 traversal_stack.push(&bin.right);
             }
+            Expr::Tpl(tpl) => {
+                if let Some(res) = evaluate_template_literal_string_with_visitor(tpl, visitor) {
+                    post_order_nodes.push(TraversalExpr::Str(res));
+                } else {
+                    return None;
+                }
+            }
             _ => {
-                // For all other expression types, we don't need to traverse
-                // further, as they are terminal nodes in our evaluation.
+                // For all other expression types, we cannot evaluate them.
+                emit_non_evaluable_error(root);
             }
         }
     }
@@ -280,56 +328,11 @@ fn evaluate_expression_with_visitor(
     for node in post_order_nodes.iter().rev() {
         match &&node {
             // If it's a literal, just push its value onto the result stack.
-            Expr::Lit(Lit::Str(s)) => {
-                result_stack.push(s.value.as_str().expect("non-utf8 string").to_string());
-            }
-            Expr::Ident(ident) => {
-                // If it's an identifier, push its name onto the result stack.
-                let Some(resolved_expr) = visitor.resolve_identifier(ident) else {
-                    continue;
-                };
-                let Some(evaluated) = evaluate_expression_with_visitor(resolved_expr, &visitor)
-                else {
-                    continue;
-                };
-                result_stack.push(evaluated);
-            }
-            Expr::Tpl(tpl) => {
-                //NOTE: This doesn't fully evaluate templates
-                let mut res: String = tpl.quasis[0]
-                    .cooked
-                    .as_ref()
-                    .map(|v| v.as_str().expect("non-utf8 string").to_string())
-                    .unwrap_or_else(|| "".to_string());
-                // for loop with index number
-                for (i, q) in tpl.quasis.iter().enumerate() {
-                    if i == 0 {
-                        // Skip the first one since we already handled it
-                        continue;
-                    }
-                    // If there are expressions, we need to evaluate them.
-                    if let Some(expr) = &tpl.exprs.get(i - 1) {
-                        if let Some(evaluated) = evaluate_expression_with_visitor(expr, &visitor) {
-                            res += &evaluated;
-                        } else {
-                            return None; // Malformed expression
-                        }
-                    }
-                    res += &q
-                        .cooked
-                        .as_ref()
-                        .map(|v| v.as_str().expect("non-utf8 string").to_string())
-                        .unwrap_or_else(|| "".to_string());
-                }
-                result_stack.push(res);
+            TraversalExpr::Str(s) => {
+                result_stack.push(s.clone());
             }
             // If it's a binary expression, evaluate it.
-            Expr::Bin(bin) => {
-                // Validate the operation. Only '+' is allowed.
-                if bin.op != swc_core::ecma::ast::BinaryOp::Add {
-                    return None;
-                }
-
+            TraversalExpr::Bin => {
                 // A binary operation requires two operands. If we don't have them,
                 // the tree is malformed (e.g., an operator with only one child).
                 if result_stack.len() < 2 {
@@ -338,14 +341,11 @@ fn evaluate_expression_with_visitor(
 
                 // Pop the operands, concatenate, and push the result.
                 // Note: The right value was processed last, so it's at the top of the stack.
-                let right_val = result_stack.pop().unwrap();
-                let left_val = result_stack.pop().unwrap();
+                let right_val = result_stack.pop().unwrap_or_default();
+                let left_val = result_stack.pop().unwrap_or_default();
 
                 result_stack.push(format!("{left_val}{right_val}"));
             }
-            // Per the requirements, if we find any node that is not a Literal or Bin,
-            // the tree is invalid. This branch handles `Expr::Unary` and any other future types.
-            _ => return None,
         }
     }
 
@@ -615,32 +615,6 @@ fn assert_object_expression(expr: &Option<&mut Expr>, callee: &Callee) {
     }
 }
 
-fn evaluate_template_literal_string_with_visitor(
-    tpl: &Tpl,
-    visitor: &FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
-) -> Option<String> {
-    // if expressions exist
-    let mut result = String::new();
-    for (i, expr) in tpl.exprs.iter().enumerate() {
-        result += &tpl.quasis[i]
-            .cooked
-            .as_ref()
-            .map(|v| v.as_str().expect("non-utf8 string").to_string())
-            .unwrap_or_default();
-        if let Some(evaluated) = evaluate_expression_with_visitor(expr, visitor) {
-            result += evaluated.as_str();
-        }
-    }
-    result += &tpl
-        .quasis
-        .last()
-        .unwrap()
-        .cooked
-        .as_ref()
-        .map(|v| v.as_str().expect("non-utf8 string").to_string())
-        .unwrap_or_default();
-    Some(result)
-}
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct ExtractedMessage {
@@ -749,22 +723,7 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
     }
 
     fn resolve_identifier(&self, ident: &swc_core::ecma::ast::Ident) -> Option<&Expr> {
-        if let Some(expr) = self.variable_bindings.get(&ident.to_id()) {
-            Some(expr)
-        } else {
-            let handler = &swc_core::plugin::errors::HANDLER;
-
-            handler.with(|handler| {
-                handler
-                    .struct_span_err(
-                        ident.span,
-                        "[React Intl] Messages must be statically evaluate-able for
-            extraction.",
-                    )
-                    .emit()
-            });
-            None
-        }
+        self.variable_bindings.get(&ident.to_id())
     }
 
     fn create_message_descriptor_from_extractor<T: MessageDescriptorExtractor>(
@@ -1101,6 +1060,19 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
 
         obj.props = props;
     }
+}
+
+fn emit_non_evaluable_error(ident: &swc_core::ecma::ast::Expr) {
+    let handler = &swc_core::plugin::errors::HANDLER;
+
+    handler.with(|handler| {
+        handler
+            .struct_span_err(
+                ident.span(),
+                "[React Intl] Messages must be statically evaluate-able for extraction.",
+            )
+            .emit()
+    });
 }
 
 impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {

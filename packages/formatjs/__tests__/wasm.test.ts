@@ -154,8 +154,8 @@ describe("formatjs swc plugin", () => {
     const input = `
       import { defineMessage, formatMessage, FormattedMessage } from 'react-intl';
 
-      const part1 = "Hello, ";
-      const part2 = "world!";
+      const part1 = "Hello";
+      const part2 = "world";
 
       const message = defineMessage({
         defaultMessage: part1 + part2,
@@ -167,7 +167,7 @@ describe("formatjs swc plugin", () => {
           description: "static vars in function"
         });
         const templateMessage = formatMessage({
-          defaultMessage: \`\${part1}\${part2}\`,
+          defaultMessage: \`~\${part1}, \${part2}!\`,
           description: "static string"
         });
         return (<FormattedMessage defaultMessage={part1 + part2} />);
