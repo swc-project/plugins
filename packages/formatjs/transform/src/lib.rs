@@ -24,11 +24,12 @@ use swc_core::{
             IdentName, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElementName,
             JSXExpr, JSXExprContainer, JSXNamespacedName, JSXOpeningElement, KeyValueProp, Lit,
             MemberProp, ModuleItem, Number, ObjectLit, Pat, Prop, PropName, PropOrSpread,
-            SimpleAssignTarget, Str, Tpl, VarDeclarator,
+            SimpleAssignTarget, Str, VarDeclarator,
         },
         visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
     },
 };
+use swc_ecma_minifier::eval::{EvalResult, Evaluator};
 use swc_icu_messageformat_parser::{Parser, ParserOptions};
 
 pub static WHITESPACE_REGEX: Lazy<Regexp> = Lazy::new(|| Regexp::new(r"\s+").unwrap());
@@ -47,10 +48,27 @@ pub struct FormatJSPluginOptions {
     pub additional_component_names: Vec<String>,
 }
 
+fn evaluate_expr(evaluator: &mut Evaluator, expr: &Expr) -> Option<String> {
+    let result = match expr {
+        Expr::Tpl(tpl) => evaluator.eval_tpl(tpl),
+        _ => evaluator.eval(expr),
+    };
+
+    match result {
+        Some(EvalResult::Lit(Lit::Str(s))) => {
+            Some(s.value.as_str().expect("non-utf8 string").to_string())
+        }
+        _ => {
+            emit_non_evaluable_error(expr.span());
+            None
+        }
+    }
+}
+
 trait MessageDescriptorExtractor {
     fn get_key_value_with_visitor(
         &self,
-        _visitor: &FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
+        _visitor: &mut FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
     ) -> Option<(String, MessageDescriptionValue)> {
         None
     }
@@ -62,7 +80,7 @@ trait MessageDescriptorExtractor {
 impl MessageDescriptorExtractor for JSXAttrOrSpread {
     fn get_key_value_with_visitor(
         &self,
-        visitor: &FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
+        visitor: &mut FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
     ) -> Option<(String, MessageDescriptionValue)> {
         if let JSXAttrOrSpread::JSXAttr(JSXAttr {
             name,
@@ -84,15 +102,14 @@ impl MessageDescriptorExtractor for JSXAttrOrSpread {
                     if let JSXExpr::Expr(expr) = &container.expr {
                         match &**expr {
                             Expr::Ident(ident) => {
-                                if let Some(resolved_expr) = visitor.resolve_identifier(ident) {
+                                let resolved = visitor.resolve_identifier(ident).cloned();
+                                if let Some(resolved_expr) = resolved {
                                     match resolved_expr {
                                         Expr::Object(object_lit) => {
-                                            Some(MessageDescriptionValue::Obj(object_lit.clone()))
+                                            Some(MessageDescriptionValue::Obj(object_lit))
                                         }
-                                        _ => {
-                                            evaluate_expression_with_visitor(resolved_expr, visitor)
-                                                .map(MessageDescriptionValue::Str)
-                                        }
+                                        expr => evaluate_expression_with_visitor(&expr, visitor)
+                                            .map(MessageDescriptionValue::Str),
                                     }
                                 } else {
                                     None
@@ -101,8 +118,8 @@ impl MessageDescriptorExtractor for JSXAttrOrSpread {
                             Expr::Object(obj) => Some(MessageDescriptionValue::Obj(obj.clone())),
                             expr => {
                                 // Evaluate the binary expression
-                                let evaluated = evaluate_expression_with_visitor(expr, visitor);
-                                evaluated.map(MessageDescriptionValue::Str)
+                                evaluate_expression_with_visitor(expr, visitor)
+                                    .map(MessageDescriptionValue::Str)
                             }
                         }
                     } else {
@@ -130,7 +147,7 @@ impl MessageDescriptorExtractor for JSXAttrOrSpread {
 impl MessageDescriptorExtractor for PropOrSpread {
     fn get_key_value_with_visitor(
         &self,
-        visitor: &FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
+        visitor: &mut FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
     ) -> Option<(String, MessageDescriptionValue)> {
         if let PropOrSpread::Prop(prop) = self {
             if let Prop::KeyValue(key_value) = &**prop {
@@ -142,14 +159,15 @@ impl MessageDescriptorExtractor for PropOrSpread {
                     PropName::Str(s) => {
                         Some(s.value.as_str().expect("non-utf8 string").to_string())
                     }
-                    _ => None,
+                    prop_name => {
+                        emit_non_evaluable_error(prop_name.span());
+                        None
+                    }
                 };
                 let value = match &*key_value.value {
                     Expr::Object(obj) => Some(MessageDescriptionValue::Obj(obj.clone())),
-                    expr => {
-                        let evaluated = evaluate_expression_with_visitor(expr, visitor);
-                        evaluated.map(MessageDescriptionValue::Str)
-                    }
+                    expr => evaluate_expression_with_visitor(expr, visitor)
+                        .map(MessageDescriptionValue::Str),
                 };
                 if let (Some(key), Some(value)) = (key, value) {
                     Some((key, value))
@@ -215,33 +233,6 @@ fn get_message_descriptor_key_from_call_expr(name: &PropName) -> Option<&str> {
     // NOTE: Do not support evaluatePath()
 }
 
-fn evaluate_template_literal_string_with_visitor(
-    tpl: &Tpl,
-    visitor: &FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
-) -> Option<String> {
-    // if expressions exist
-    let mut result = String::new();
-    for (i, expr) in tpl.exprs.iter().enumerate() {
-        result += &tpl.quasis[i]
-            .cooked
-            .as_ref()
-            .map(|v| v.as_str().expect("non-utf8 string").to_string())
-            .unwrap_or_default();
-        if let Some(evaluated) = evaluate_expression_with_visitor(expr, visitor) {
-            result += evaluated.as_str();
-        }
-    }
-    result += &tpl
-        .quasis
-        .last()
-        .unwrap()
-        .cooked
-        .as_ref()
-        .map(|v| v.as_str().expect("non-utf8 string").to_string())
-        .unwrap_or_default();
-    Some(result)
-}
-
 enum TraversalExpr {
     Bin,
     Str(String),
@@ -249,25 +240,12 @@ enum TraversalExpr {
 
 fn evaluate_expression_with_visitor(
     root: &Expr,
-    visitor: &FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
+    visitor: &mut FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
 ) -> Option<String> {
     match root {
-        Expr::Lit(Lit::Str(s)) => {
-            return Some(s.value.as_str().expect("non-utf8 string").to_string())
-        }
-        Expr::Ident(ident) => {
-            // If it's an identifier, resolve it
-            if let Some(resolved_expr) = visitor.resolve_identifier(ident) {
-                return evaluate_expression_with_visitor(resolved_expr, visitor);
-            } else {
-                emit_non_evaluable_error(root);
-                return None;
-            }
-        }
-        Expr::Bin(_) | Expr::Tpl(_) => {}
+        Expr::Bin(_) => {}
         _ => {
-            emit_non_evaluable_error(root);
-            return None;
+            return evaluate_expr(visitor.evaluator, root);
         }
     }
 
@@ -280,21 +258,6 @@ fn evaluate_expression_with_visitor(
 
     while let Some(node) = traversal_stack.pop() {
         match node {
-            Expr::Lit(Lit::Str(s)) => {
-                // Literal strings are terminal nodes.
-                post_order_nodes.push(TraversalExpr::Str(
-                    s.value.as_str().expect("non-utf8 string").to_string(),
-                ));
-            }
-            Expr::Ident(ident) => {
-                // If it's an identifier, resolve it
-                if let Some(resolved_expr) = visitor.resolve_identifier(ident) {
-                    traversal_stack.push(resolved_expr);
-                } else {
-                    emit_non_evaluable_error(root);
-                    return None;
-                }
-            }
             Expr::Bin(bin) => {
                 // Validate the operation. Only '+' is allowed.
                 if bin.op != swc_core::ecma::ast::BinaryOp::Add {
@@ -305,8 +268,8 @@ fn evaluate_expression_with_visitor(
                 traversal_stack.push(&bin.left);
                 traversal_stack.push(&bin.right);
             }
-            Expr::Tpl(tpl) => {
-                if let Some(res) = evaluate_template_literal_string_with_visitor(tpl, visitor) {
+            Expr::Tpl(_) | Expr::Ident(_) | Expr::Lit(_) => {
+                if let Some(res) = evaluate_expr(visitor.evaluator, node) {
                     post_order_nodes.push(TraversalExpr::Str(res));
                 } else {
                     return None;
@@ -314,7 +277,7 @@ fn evaluate_expression_with_visitor(
             }
             _ => {
                 // For all other expression types, we cannot evaluate them.
-                emit_non_evaluable_error(root);
+                emit_non_evaluable_error(root.span());
             }
         }
     }
@@ -641,7 +604,7 @@ pub struct Location {
     pub col: usize,
 }
 
-pub struct FormatJSVisitor<C: Clone + Comments, S: SourceMapper> {
+pub struct FormatJSVisitor<'a, C: Clone + Comments, S: SourceMapper> {
     // We may not need Arc in the plugin context - this is only to preserve isomorphic interface
     // between plugin & custom transform pass.
     source_map: std::sync::Arc<S>,
@@ -654,14 +617,16 @@ pub struct FormatJSVisitor<C: Clone + Comments, S: SourceMapper> {
     function_names: HashSet<String>,
     // Variable tracking for React Compiler optimizations
     variable_bindings: HashMap<Id, Expr>,
+    evaluator: &'a mut Evaluator,
 }
 
-impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
+impl<'a, C: Clone + Comments, S: SourceMapper> FormatJSVisitor<'a, C, S> {
     fn new(
         source_map: std::sync::Arc<S>,
         comments: C,
         plugin_options: FormatJSPluginOptions,
         filename: &str,
+        evaluator: &'a mut Evaluator,
     ) -> Self {
         let mut function_names: HashSet<String> = Default::default();
         plugin_options
@@ -692,6 +657,7 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
             component_names,
             function_names,
             variable_bindings: Default::default(),
+            evaluator,
         }
     }
 
@@ -727,7 +693,7 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
     }
 
     fn create_message_descriptor_from_extractor<T: MessageDescriptorExtractor>(
-        &self,
+        &mut self,
         nodes: &Vec<T>,
     ) -> MessageDescriptor {
         let mut ret = MessageDescriptor::default();
@@ -738,16 +704,14 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
 
             match key.as_str() {
                 "id" => {
-                    ret.id = match value {
-                        MessageDescriptionValue::Str(s) => Some(s),
-                        _ => None,
-                    };
+                    if let MessageDescriptionValue::Str(s) = value {
+                        ret.id = Some(s)
+                    }
                 }
                 "defaultMessage" => {
-                    ret.default_message = match value {
-                        MessageDescriptionValue::Str(s) => Some(s),
-                        _ => None,
-                    };
+                    if let MessageDescriptionValue::Str(s) = value {
+                        ret.default_message = Some(s)
+                    }
                 }
                 "description" => {
                     ret.description = match value {
@@ -829,10 +793,10 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
     }
 
     fn evaluate_message_descriptor(
-        &self,
+        &mut self,
         descriptor: &mut MessageDescriptor,
-        options: &FormatJSPluginOptions,
-        filename: &str,
+        // options: &FormatJSPluginOptions,
+        // filename: &str,
     ) {
         let id = &descriptor.id;
         let default_message = descriptor.default_message.clone().unwrap_or_default();
@@ -842,7 +806,7 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
         // Note: do not support override fn
         let id = if id.is_none() && !default_message.is_empty() {
             let interpolate_pattern =
-                if let Some(interpolate_pattern) = &options.id_interpolation_pattern {
+                if let Some(interpolate_pattern) = &self.options.id_interpolation_pattern {
                     interpolate_pattern.as_str()
                 } else {
                     "[sha512:contenthash:base64:6]"
@@ -918,7 +882,7 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
                 _ => default_message.clone(),
             };
 
-            interpolate_name(filename, interpolate_pattern, &content)
+            interpolate_name(&self.filename, interpolate_pattern, &content)
         } else {
             id.clone()
         };
@@ -944,7 +908,7 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
             return;
         }
 
-        self.evaluate_message_descriptor(&mut descriptor, &self.options, &self.filename);
+        self.evaluate_message_descriptor(&mut descriptor);
 
         let source_location = if self.options.extract_source_location {
             Some((
@@ -1062,20 +1026,20 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
     }
 }
 
-fn emit_non_evaluable_error(ident: &swc_core::ecma::ast::Expr) {
+fn emit_non_evaluable_error(span: Span) {
     let handler = &swc_core::plugin::errors::HANDLER;
 
     handler.with(|handler| {
         handler
             .struct_span_err(
-                ident.span(),
+                span,
                 "[React Intl] Messages must be statically evaluate-able for extraction.",
             )
             .emit()
     });
 }
 
-impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
+impl<'a, C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<'a, C, S> {
     noop_visit_mut_type!(fail);
 
     fn visit_mut_var_declarator(&mut self, var_declarator: &mut VarDeclarator) {
@@ -1148,7 +1112,7 @@ impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
 
         // Evaluate the Message Descriptor values in a JSX
         // context, then store it.
-        self.evaluate_message_descriptor(&mut descriptor, &self.options, &self.filename);
+        self.evaluate_message_descriptor(&mut descriptor);
 
         let source_location = if self.options.extract_source_location {
             Some((
@@ -1408,11 +1372,12 @@ fn json_value_to_expr(json_value: &serde_json::Value) -> Box<Expr> {
     })
 }
 
-pub fn create_formatjs_visitor<C: Clone + Comments, S: SourceMapper>(
+pub fn create_formatjs_visitor<'a, C: Clone + Comments, S: SourceMapper>(
     source_map: std::sync::Arc<S>,
     comments: C,
     plugin_options: FormatJSPluginOptions,
     filename: &str,
-) -> FormatJSVisitor<C, S> {
-    FormatJSVisitor::new(source_map, comments, plugin_options, filename)
+    evaluator: &'a mut Evaluator,
+) -> FormatJSVisitor<'a, C, S> {
+    FormatJSVisitor::new(source_map, comments, plugin_options, filename, evaluator)
 }
