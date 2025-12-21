@@ -20,11 +20,11 @@ use swc_core::{
     },
     ecma::{
         ast::{
-            ArrayLit, AssignExpr, AssignTarget, Bool, CallExpr, Callee, Expr, ExprOrSpread, Id,
+            ArrayLit, AssignExpr, AssignTarget, Bool, CallExpr, Callee, Expr, ExprOrSpread, Ident,
             IdentName, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElementName,
             JSXExpr, JSXExprContainer, JSXNamespacedName, JSXOpeningElement, KeyValueProp, Lit,
-            MemberProp, ModuleItem, Number, ObjectLit, Pat, Prop, PropName, PropOrSpread,
-            SimpleAssignTarget, Str, VarDeclarator,
+            MemberProp, ModuleItem, Number, ObjectLit, Prop, PropName, PropOrSpread,
+            SimpleAssignTarget, Str,
         },
         visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
     },
@@ -48,7 +48,7 @@ pub struct FormatJSPluginOptions {
     pub additional_component_names: Vec<String>,
 }
 
-fn evaluate_expr(evaluator: &mut Evaluator, expr: &Expr) -> Option<String> {
+fn evaluate_expr(expr: &Expr, evaluator: &mut Evaluator) -> Option<String> {
     let result = match expr {
         Expr::Tpl(tpl) => evaluator.eval_tpl(tpl),
         _ => evaluator.eval(expr),
@@ -102,13 +102,13 @@ impl MessageDescriptorExtractor for JSXAttrOrSpread {
                     if let JSXExpr::Expr(expr) = &container.expr {
                         match &**expr {
                             Expr::Ident(ident) => {
-                                let resolved = visitor.resolve_identifier(ident).cloned();
+                                let resolved = visitor.resolve_identifier(ident);
                                 if let Some(resolved_expr) = resolved {
                                     match resolved_expr {
                                         Expr::Object(object_lit) => {
                                             Some(MessageDescriptionValue::Obj(object_lit))
                                         }
-                                        expr => evaluate_expression_with_visitor(&expr, visitor)
+                                        expr => evaluate_expr(&expr, visitor.evaluator)
                                             .map(MessageDescriptionValue::Str),
                                     }
                                 } else {
@@ -116,11 +116,8 @@ impl MessageDescriptorExtractor for JSXAttrOrSpread {
                                 }
                             }
                             Expr::Object(obj) => Some(MessageDescriptionValue::Obj(obj.clone())),
-                            expr => {
-                                // Evaluate the binary expression
-                                evaluate_expression_with_visitor(expr, visitor)
-                                    .map(MessageDescriptionValue::Str)
-                            }
+                            expr => evaluate_expr(expr, visitor.evaluator)
+                                .map(MessageDescriptionValue::Str),
                         }
                     } else {
                         None
@@ -153,7 +150,7 @@ impl MessageDescriptorExtractor for PropOrSpread {
             if let Prop::KeyValue(key_value) = &**prop {
                 let key = match &key_value.key {
                     PropName::Computed(prop_name) => {
-                        evaluate_expression_with_visitor(&prop_name.expr, visitor)
+                        evaluate_expr(&prop_name.expr, visitor.evaluator)
                     }
                     PropName::Ident(ident) => Some(ident.sym.to_string()),
                     PropName::Str(s) => {
@@ -166,8 +163,9 @@ impl MessageDescriptorExtractor for PropOrSpread {
                 };
                 let value = match &*key_value.value {
                     Expr::Object(obj) => Some(MessageDescriptionValue::Obj(obj.clone())),
-                    expr => evaluate_expression_with_visitor(expr, visitor)
-                        .map(MessageDescriptionValue::Str),
+                    expr => {
+                        evaluate_expr(expr, visitor.evaluator).map(MessageDescriptionValue::Str)
+                    }
                 };
                 if let (Some(key), Some(value)) = (key, value) {
                     Some((key, value))
@@ -231,95 +229,6 @@ fn get_message_descriptor_key_from_call_expr(name: &PropName) -> Option<&str> {
     }
 
     // NOTE: Do not support evaluatePath()
-}
-
-enum TraversalExpr {
-    Bin,
-    Str(String),
-}
-
-fn evaluate_expression_with_visitor(
-    root: &Expr,
-    visitor: &mut FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
-) -> Option<String> {
-    match root {
-        Expr::Bin(_) => {}
-        _ => {
-            return evaluate_expr(visitor.evaluator, root);
-        }
-    }
-
-    // Step 1: Create a post-order representation of the tree using a traversal
-    // stack. This process simulates recursion iteratively. The resulting
-    // `post_order_nodes` vector, when read in reverse, gives the correct order
-    // for evaluation.
-    let mut post_order_nodes: Vec<TraversalExpr> = Vec::new();
-    let mut traversal_stack: Vec<&Expr> = vec![root];
-
-    while let Some(node) = traversal_stack.pop() {
-        match node {
-            Expr::Bin(bin) => {
-                // Validate the operation. Only '+' is allowed.
-                if bin.op != swc_core::ecma::ast::BinaryOp::Add {
-                    return None;
-                }
-                // Traverse its left and right children.
-                post_order_nodes.push(TraversalExpr::Bin);
-                traversal_stack.push(&bin.left);
-                traversal_stack.push(&bin.right);
-            }
-            Expr::Tpl(_) | Expr::Ident(_) | Expr::Lit(_) => {
-                if let Some(res) = evaluate_expr(visitor.evaluator, node) {
-                    post_order_nodes.push(TraversalExpr::Str(res));
-                } else {
-                    return None;
-                }
-            }
-            _ => {
-                // For all other expression types, we cannot evaluate them.
-                emit_non_evaluable_error(root.span());
-            }
-        }
-    }
-
-    // Step 2: Evaluate the expression from the post-order list.
-    // We use a `result_stack` to hold intermediate string values.
-    let mut result_stack: Vec<String> = Vec::new();
-
-    // We iterate through our collected nodes in reverse to get the correct
-    // post-order.
-    for node in post_order_nodes.iter().rev() {
-        match &&node {
-            // If it's a literal, just push its value onto the result stack.
-            TraversalExpr::Str(s) => {
-                result_stack.push(s.clone());
-            }
-            // If it's a binary expression, evaluate it.
-            TraversalExpr::Bin => {
-                // A binary operation requires two operands. If we don't have them,
-                // the tree is malformed (e.g., an operator with only one child).
-                if result_stack.len() < 2 {
-                    return None;
-                }
-
-                // Pop the operands, concatenate, and push the result.
-                // Note: The right value was processed last, so it's at the top of the stack.
-                let right_val = result_stack.pop().unwrap_or_default();
-                let left_val = result_stack.pop().unwrap_or_default();
-
-                result_stack.push(format!("{left_val}{right_val}"));
-            }
-        }
-    }
-
-    // Step 3: Final validation and return.
-    // A correctly formed expression tree will result in exactly one value on the
-    // stack.
-    if result_stack.len() == 1 {
-        Some(result_stack.pop().unwrap())
-    } else {
-        None
-    }
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -615,8 +524,6 @@ pub struct FormatJSVisitor<'a, C: Clone + Comments, S: SourceMapper> {
     meta: HashMap<String, String>,
     component_names: HashSet<String>,
     function_names: HashSet<String>,
-    // Variable tracking for React Compiler optimizations
-    variable_bindings: HashMap<Id, Expr>,
     evaluator: &'a mut Evaluator,
 }
 
@@ -656,7 +563,6 @@ impl<'a, C: Clone + Comments, S: SourceMapper> FormatJSVisitor<'a, C, S> {
             meta: Default::default(),
             component_names,
             function_names,
-            variable_bindings: Default::default(),
             evaluator,
         }
     }
@@ -688,8 +594,8 @@ impl<'a, C: Clone + Comments, S: SourceMapper> FormatJSVisitor<'a, C, S> {
         }
     }
 
-    fn resolve_identifier(&self, ident: &swc_core::ecma::ast::Ident) -> Option<&Expr> {
-        self.variable_bindings.get(&ident.to_id())
+    fn resolve_identifier(&mut self, ident: &Ident) -> Option<Expr> {
+        self.evaluator.resolve_identifier(ident).as_deref().cloned()
     }
 
     fn create_message_descriptor_from_extractor<T: MessageDescriptorExtractor>(
@@ -792,12 +698,7 @@ impl<'a, C: Clone + Comments, S: SourceMapper> FormatJSVisitor<'a, C, S> {
         ret
     }
 
-    fn evaluate_message_descriptor(
-        &mut self,
-        descriptor: &mut MessageDescriptor,
-        // options: &FormatJSPluginOptions,
-        // filename: &str,
-    ) {
+    fn evaluate_message_descriptor(&mut self, descriptor: &mut MessageDescriptor) {
         let id = &descriptor.id;
         let default_message = descriptor.default_message.clone().unwrap_or_default();
 
@@ -805,12 +706,11 @@ impl<'a, C: Clone + Comments, S: SourceMapper> FormatJSVisitor<'a, C, S> {
 
         // Note: do not support override fn
         let id = if id.is_none() && !default_message.is_empty() {
-            let interpolate_pattern =
-                if let Some(interpolate_pattern) = &self.options.id_interpolation_pattern {
-                    interpolate_pattern.as_str()
-                } else {
-                    "[sha512:contenthash:base64:6]"
-                };
+            let interpolate_pattern = self
+                .options
+                .id_interpolation_pattern
+                .clone()
+                .unwrap_or("[sha512:contenthash:base64:6]".to_string());
 
             let content = match &description {
                 Some(MessageDescriptionValue::Str(description)) => {
@@ -882,7 +782,7 @@ impl<'a, C: Clone + Comments, S: SourceMapper> FormatJSVisitor<'a, C, S> {
                 _ => default_message.clone(),
             };
 
-            interpolate_name(&self.filename, interpolate_pattern, &content)
+            interpolate_name(&self.filename, &interpolate_pattern, &content)
         } else {
             id.clone()
         };
@@ -1042,19 +942,6 @@ fn emit_non_evaluable_error(span: Span) {
 impl<'a, C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<'a, C, S> {
     noop_visit_mut_type!(fail);
 
-    fn visit_mut_var_declarator(&mut self, var_declarator: &mut VarDeclarator) {
-        var_declarator.visit_mut_children_with(self);
-
-        // Track variable declarations for React Compiler optimizations
-        if let (Pat::Ident(binding_ident), Some(init)) =
-            (&var_declarator.name, &var_declarator.init)
-        {
-            // Store the variable binding
-            self.variable_bindings
-                .insert(binding_ident.id.to_id(), *init.clone());
-        }
-    }
-
     fn visit_mut_assign_expr(&mut self, assign_expr: &mut AssignExpr) {
         assign_expr.visit_mut_children_with(self);
 
@@ -1064,7 +951,7 @@ impl<'a, C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<'a, 
             let variable_id = ident.id.to_id();
 
             // Check if we already have a binding for this variable
-            let should_update = match self.variable_bindings.get(&variable_id) {
+            let should_update = match self.resolve_identifier(ident) {
                 Some(existing_expr) => {
                     // Only overwrite if the new expression is an object literal
                     // and the existing one is not, or if both are object literals
@@ -1081,8 +968,7 @@ impl<'a, C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<'a, 
             };
 
             if should_update {
-                self.variable_bindings
-                    .insert(variable_id, *assign_expr.right.clone());
+                self.evaluator.store(variable_id, &assign_expr.right);
             }
         }
     }
