@@ -1,5 +1,11 @@
 # @swc/plugin-emotion
 
+## 14.2.0
+
+### Minor Changes
+
+- 3799fa4: Update swc_core to v53.0.0
+
 ## 14.1.0
 
 ### Minor Changes
