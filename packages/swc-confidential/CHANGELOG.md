@@ -1,5 +1,11 @@
 # @swc/plugin-swc-confidential
 
+## 11.2.0
+
+### Minor Changes
+
+- 3799fa4: Update swc_core to v53.0.0
+
 ## 11.1.0
 
 ### Minor Changes
