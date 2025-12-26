@@ -1620,8 +1620,8 @@ dependencies = [
  "swc_cached",
  "swc_common",
  "swc_ecma_ast",
- "swc_ecma_parser 31.0.0",
- "swc_ecma_transforms_testing 37.0.0",
+ "swc_ecma_parser",
+ "swc_ecma_transforms_testing",
  "swc_ecma_visit",
  "testing",
 ]
@@ -2140,9 +2140,9 @@ dependencies = [
  "swc_cached",
  "swc_common",
  "swc_ecma_ast",
- "swc_ecma_parser 31.0.0",
- "swc_ecma_transforms_base 34.0.0",
- "swc_ecma_transforms_testing 37.0.0",
+ "swc_ecma_parser",
+ "swc_ecma_transforms_base",
+ "swc_ecma_transforms_testing",
  "swc_ecma_visit",
  "testing",
 ]
@@ -2210,9 +2210,9 @@ dependencies = [
  "swc_cached",
  "swc_common",
  "swc_ecma_ast",
- "swc_ecma_parser 31.0.0",
- "swc_ecma_transforms_base 34.0.0",
- "swc_ecma_transforms_testing 37.0.0",
+ "swc_ecma_parser",
+ "swc_ecma_transforms_base",
+ "swc_ecma_transforms_testing",
  "swc_ecma_visit",
  "testing",
 ]
@@ -2641,9 +2641,9 @@ dependencies = [
  "swc_atoms",
  "swc_common",
  "swc_ecma_ast",
- "swc_ecma_parser 31.0.0",
+ "swc_ecma_parser",
  "swc_ecma_transforms",
- "swc_ecma_transforms_testing 37.0.0",
+ "swc_ecma_transforms_testing",
  "swc_ecma_utils",
  "swc_ecma_visit",
  "testing",
@@ -2672,10 +2672,10 @@ dependencies = [
  "swc_css_visit",
  "swc_ecma_ast",
  "swc_ecma_minifier",
- "swc_ecma_parser 31.0.0",
+ "swc_ecma_parser",
  "swc_ecma_transforms",
- "swc_ecma_transforms_base 34.0.0",
- "swc_ecma_transforms_testing 37.0.0",
+ "swc_ecma_transforms_base",
+ "swc_ecma_transforms_testing",
  "swc_ecma_utils",
  "swc_ecma_visit",
  "swc_plugin_macro",
@@ -2767,9 +2767,9 @@ dependencies = [
  "swc_atoms",
  "swc_common",
  "swc_ecma_ast",
- "swc_ecma_parser 31.0.0",
- "swc_ecma_transforms_base 34.0.0",
- "swc_ecma_transforms_testing 37.0.0",
+ "swc_ecma_parser",
+ "swc_ecma_transforms_base",
+ "swc_ecma_transforms_testing",
  "swc_ecma_utils",
  "swc_ecma_visit",
  "testing",
@@ -2810,18 +2810,18 @@ dependencies = [
 
 [[package]]
 name = "swc_core"
-version = "52.0.0"
+version = "53.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "33540bdcbf752611f66dcd5576272ce25141356c2d6e7b7ae63a801633a21f02"
+checksum = "44dce45a8b694039e2e3f435c46c855c72458e5aec5e962db222c161bf0ad5c0"
 dependencies = [
  "swc_allocator",
  "swc_atoms",
  "swc_common",
  "swc_ecma_ast",
- "swc_ecma_parser 30.0.0",
+ "swc_ecma_parser",
  "swc_ecma_quote_macros",
- "swc_ecma_transforms_base 33.0.1",
- "swc_ecma_transforms_testing 36.0.0",
+ "swc_ecma_transforms_base",
+ "swc_ecma_transforms_testing",
  "swc_ecma_utils",
  "swc_ecma_visit",
  "swc_plugin",
@@ -3042,34 +3042,13 @@ dependencies = [
  "swc_config",
  "swc_ecma_ast",
  "swc_ecma_codegen",
- "swc_ecma_parser 31.0.0",
- "swc_ecma_transforms_base 34.0.0",
+ "swc_ecma_parser",
+ "swc_ecma_transforms_base",
  "swc_ecma_transforms_optimization",
  "swc_ecma_usage_analyzer",
  "swc_ecma_utils",
  "swc_ecma_visit",
  "swc_timer",
- "tracing",
-]
-
-[[package]]
-name = "swc_ecma_parser"
-version = "30.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3fb84a1b1b605c85c38a982f8f6dac4908ca73721aee9f9924d6a60e27339290"
-dependencies = [
- "bitflags",
- "either",
- "num-bigint",
- "phf",
- "rustc-hash",
- "seq-macro",
- "serde",
- "smartstring",
- "stacker",
- "swc_atoms",
- "swc_common",
- "swc_ecma_ast",
  "tracing",
 ]
 
@@ -3096,9 +3075,9 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_quote_macros"
-version = "30.0.0"
+version = "31.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "59e70950089780630e25b644b0a69c25fb2bd0ffda3f6856f1afa7fa18611ffe"
+checksum = "fc51e14ec233f90b5d27fef0a437a46379b39f11f3c2fe14bf2f39bd9ded099b"
 dependencies = [
  "anyhow",
  "proc-macro2",
@@ -3107,7 +3086,7 @@ dependencies = [
  "swc_atoms",
  "swc_common",
  "swc_ecma_ast",
- "swc_ecma_parser 30.0.0",
+ "swc_ecma_parser",
  "swc_macros_common",
  "syn 2.0.87",
 ]
@@ -3134,30 +3113,8 @@ dependencies = [
  "par-core",
  "swc_common",
  "swc_ecma_ast",
- "swc_ecma_transforms_base 34.0.0",
+ "swc_ecma_transforms_base",
  "swc_ecma_utils",
-]
-
-[[package]]
-name = "swc_ecma_transforms_base"
-version = "33.0.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "00691748cc689f93316bb699051eadf058852b6326930c0355fe375110318ab5"
-dependencies = [
- "better_scoped_tls",
- "indexmap",
- "once_cell",
- "par-core",
- "phf",
- "rustc-hash",
- "serde",
- "swc_atoms",
- "swc_common",
- "swc_ecma_ast",
- "swc_ecma_parser 30.0.0",
- "swc_ecma_utils",
- "swc_ecma_visit",
- "tracing",
 ]
 
 [[package]]
@@ -3176,7 +3133,7 @@ dependencies = [
  "swc_atoms",
  "swc_common",
  "swc_ecma_ast",
- "swc_ecma_parser 31.0.0",
+ "swc_ecma_parser",
  "swc_ecma_utils",
  "swc_ecma_visit",
  "tracing",
@@ -3199,8 +3156,8 @@ dependencies = [
  "swc_atoms",
  "swc_common",
  "swc_ecma_ast",
- "swc_ecma_parser 31.0.0",
- "swc_ecma_transforms_base 34.0.0",
+ "swc_ecma_parser",
+ "swc_ecma_transforms_base",
  "swc_ecma_utils",
  "swc_ecma_visit",
  "tracing",
@@ -3224,36 +3181,10 @@ dependencies = [
  "swc_common",
  "swc_config",
  "swc_ecma_ast",
- "swc_ecma_parser 31.0.0",
- "swc_ecma_transforms_base 34.0.0",
+ "swc_ecma_parser",
+ "swc_ecma_transforms_base",
  "swc_ecma_utils",
  "swc_ecma_visit",
-]
-
-[[package]]
-name = "swc_ecma_transforms_testing"
-version = "36.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ed56a0a8db4ca1b74436d44731d73be78182b9723247981a54f8a4834ef743bb"
-dependencies = [
- "ansi_term",
- "anyhow",
- "base64 0.22.1",
- "hex",
- "serde",
- "serde_json",
- "sha2 0.10.8",
- "swc_common",
- "swc_ecma_ast",
- "swc_ecma_codegen",
- "swc_ecma_parser 30.0.0",
- "swc_ecma_testing",
- "swc_ecma_transforms_base 33.0.1",
- "swc_ecma_utils",
- "swc_ecma_visit",
- "swc_sourcemap",
- "tempfile",
- "testing",
 ]
 
 [[package]]
@@ -3272,9 +3203,9 @@ dependencies = [
  "swc_common",
  "swc_ecma_ast",
  "swc_ecma_codegen",
- "swc_ecma_parser 31.0.0",
+ "swc_ecma_parser",
  "swc_ecma_testing",
- "swc_ecma_transforms_base 34.0.0",
+ "swc_ecma_transforms_base",
  "swc_ecma_utils",
  "swc_ecma_visit",
  "swc_sourcemap",
@@ -3351,10 +3282,10 @@ dependencies = [
  "swc_common",
  "swc_ecma_ast",
  "swc_ecma_codegen",
- "swc_ecma_parser 31.0.0",
+ "swc_ecma_parser",
  "swc_ecma_transforms",
  "swc_ecma_transforms_react",
- "swc_ecma_transforms_testing 37.0.0",
+ "swc_ecma_transforms_testing",
  "swc_ecma_utils",
  "swc_ecma_visit",
  "swc_sourcemap",
@@ -3400,9 +3331,9 @@ dependencies = [
  "swc_core",
  "swc_ecma_ast",
  "swc_ecma_codegen",
- "swc_ecma_parser 31.0.0",
- "swc_ecma_transforms_base 34.0.0",
- "swc_ecma_transforms_testing 37.0.0",
+ "swc_ecma_parser",
+ "swc_ecma_transforms_base",
+ "swc_ecma_transforms_testing",
  "swc_ecma_visit",
  "testing",
 ]
@@ -3461,9 +3392,9 @@ dependencies = [
  "swc_atoms",
  "swc_common",
  "swc_ecma_ast",
- "swc_ecma_parser 31.0.0",
- "swc_ecma_transforms_base 34.0.0",
- "swc_ecma_transforms_testing 37.0.0",
+ "swc_ecma_parser",
+ "swc_ecma_transforms_base",
+ "swc_ecma_transforms_testing",
  "swc_ecma_utils",
  "swc_ecma_visit",
  "testing",
@@ -3689,8 +3620,8 @@ dependencies = [
  "swc_core",
  "swc_ecma_ast",
  "swc_ecma_minifier",
- "swc_ecma_parser 31.0.0",
- "swc_ecma_transforms_testing 37.0.0",
+ "swc_ecma_parser",
+ "swc_ecma_transforms_testing",
  "swc_ecma_utils",
  "swc_ecma_visit",
  "swc_plugin_macro",
@@ -3749,9 +3680,9 @@ dependencies = [
  "swc_common",
  "swc_core",
  "swc_ecma_ast",
- "swc_ecma_parser 31.0.0",
- "swc_ecma_transforms_base 34.0.0",
- "swc_ecma_transforms_testing 37.0.0",
+ "swc_ecma_parser",
+ "swc_ecma_transforms_base",
+ "swc_ecma_transforms_testing",
  "swc_ecma_visit",
  "testing",
 ]
@@ -3767,7 +3698,7 @@ dependencies = [
  "swc_atoms",
  "swc_common",
  "swc_ecma_ast",
- "swc_ecma_transforms_testing 37.0.0",
+ "swc_ecma_transforms_testing",
  "swc_ecma_utils",
  "swc_ecma_visit",
  "testing",
@@ -3784,9 +3715,9 @@ dependencies = [
  "swc_atoms",
  "swc_common",
  "swc_ecma_ast",
- "swc_ecma_parser 31.0.0",
- "swc_ecma_transforms_base 34.0.0",
- "swc_ecma_transforms_testing 37.0.0",
+ "swc_ecma_parser",
+ "swc_ecma_transforms_base",
+ "swc_ecma_transforms_testing",
  "swc_ecma_utils",
  "swc_ecma_visit",
  "testing",
