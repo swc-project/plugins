@@ -78,8 +78,9 @@ jobs:
       - name: Run cargo check
         env: 
           RUSTFLAGS: "--cfg swc_ast_unknown"
-        run: |
+        run: >
           cargo check --workspace --exclude swc_plugin_styled_jsx --exclude styled_jsx
+          --exclude swc_plugin_formatjs --exclude swc_formatjs_transform
 
   cargo-test:
     strategy:

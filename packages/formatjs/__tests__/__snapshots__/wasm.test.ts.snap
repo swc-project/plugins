@@ -1,5 +1,30 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`formatjs swc plugin > should handle statically evaluate-able variables 1`] = `
+"import { defineMessage, formatMessage, FormattedMessage } from 'react-intl';
+var part1 = "Hello";
+var part2 = "world";
+var message = defineMessage({
+    id: "neWvNv",
+    defaultMessage: "Helloworld"
+});
+function Greeting() {
+    var message2 = formatMessage({
+        id: "emocAR",
+        defaultMessage: "Helloworld"
+    });
+    var templateMessage = formatMessage({
+        id: "cxaV5O",
+        defaultMessage: "~Hello, world!"
+    });
+    return /*#__PURE__*/ React.createElement(FormattedMessage, {
+        id: "mLV+F/",
+        defaultMessage: "Helloworld"
+    });
+}
+"
+`;
+
 exports[`formatjs swc plugin > should quote plural keys correctly when ast enabled 1`] = `
 "import { formatMessage } from 'react-intl';
 formatMessage({
