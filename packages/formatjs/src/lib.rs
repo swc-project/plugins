@@ -25,7 +25,13 @@ pub fn process(mut program: Program, metadata: TransformPluginProgramMetadata) -
     };
 
     if let Some(module) = program.as_module() {
-        let evaluator = &mut Evaluator::new(module.clone(), Marks::new());
+        let evaluator = &mut Evaluator::new(
+            module.clone(),
+            Marks {
+                unresolved_mark: metadata.unresolved_mark,
+                ..Marks::new()
+            },
+        );
         let mut visitor = create_formatjs_visitor(
             std::sync::Arc::new(metadata.source_map),
             metadata.comments.as_ref(),
