@@ -3354,6 +3354,7 @@ dependencies = [
  "sha1",
  "sha2 0.10.8",
  "swc_core",
+ "swc_ecma_minifier",
  "swc_icu_messageformat_parser",
 ]
 
@@ -3443,6 +3444,7 @@ dependencies = [
  "serde",
  "serde_json",
  "swc_core",
+ "swc_ecma_minifier",
  "swc_formatjs_transform",
 ]
 
