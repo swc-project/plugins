@@ -1,0 +1,29 @@
+[package]
+
+description = "SWC plugin for removing assert statements in production builds"
+
+
+authors      = { workspace = true }
+edition      = { workspace = true }
+homepage     = { workspace = true }
+license      = { workspace = true }
+name         = "swc_plugin_remove_assert"
+publish      = false
+repository   = { workspace = true }
+rust-version = { workspace = true }
+version      = "0.19.4"
+
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+remove_assert    = { path = "./transform" }
+serde_json       = { workspace = true }
+swc_common       = { workspace = true, features = ["concurrent"] }
+swc_core         = { workspace = true, features = ["ecma_plugin_transform"] }
+swc_ecma_ast     = { workspace = true }
+swc_ecma_utils   = { workspace = true }
+swc_ecma_visit   = { workspace = true }
+swc_plugin_macro = { workspace = true }
+tracing          = { workspace = true, features = ["release_max_level_off"] }

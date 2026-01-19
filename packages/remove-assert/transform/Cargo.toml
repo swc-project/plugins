@@ -1,0 +1,31 @@
+[package]
+
+description = "AST Transforms for removing assert statements"
+
+
+name = "remove_assert"
+
+authors      = { workspace = true }
+edition      = { workspace = true }
+homepage     = { workspace = true }
+license      = { workspace = true }
+repository   = { workspace = true }
+rust-version = { workspace = true }
+version      = "0.63.0"
+
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde          = { workspace = true, features = ["derive"] }
+swc_atoms      = { workspace = true }
+swc_cached     = { workspace = true }
+swc_common     = { workspace = true }
+swc_ecma_ast   = { workspace = true }
+swc_ecma_visit = { workspace = true }
+
+[dev-dependencies]
+swc_ecma_parser             = { workspace = true }
+swc_ecma_transforms_base    = { workspace = true }
+swc_ecma_transforms_testing = { workspace = true }
+testing                     = { workspace = true }
