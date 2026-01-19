@@ -23,8 +23,8 @@ fn fixture(input: PathBuf) {
 
             (
                 resolver(unresolved_mark, top_level_mark, false),
-                remove_console::remove_console(
-                    remove_console::Config::All(true),
+                remove_assert::remove_assert(
+                    remove_assert::Config::All(true),
                     SyntaxContext::empty().apply_mark(unresolved_mark),
                 ),
             )
