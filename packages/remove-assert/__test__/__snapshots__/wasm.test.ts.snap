@@ -1,0 +1,38 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Should load remove-assert wasm plugin correctly 1`] = `
+";
+export function shouldRemove() {
+    ;
+    const result = compute();
+    ;
+    return result;
+}
+export function locallyDefinedAssert() {
+    const assert = ()=>{};
+    assert(true);
+}
+export function capturedAssert() {
+    const assert = ()=>{};
+    function innerFunc() {
+        assert(true);
+    }
+}
+export function overrideInParam(assert) {
+    assert(true);
+}
+export function complexLogic() {
+    if (x > 0) {
+        ;
+        process(x);
+    }
+    const arr = [
+        1,
+        2,
+        3
+    ];
+    ;
+    return arr;
+}
+"
+`;
