@@ -1,9 +1,7 @@
-let console = {
-  log: (msg) => {},
-};
+let assert = () => {};
 
 function func1() {
-  console.log("remove console test in function");
+  assert(true);
 }
 
-console.log("remove console test at top level");
+assert(true, "top level assertion");

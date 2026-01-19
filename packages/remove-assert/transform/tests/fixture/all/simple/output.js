@@ -1,34 +1,32 @@
 ;
 export function shouldRemove() {
     ;
+    const result = compute();
     ;
+    return result;
 }
-export function locallyDefinedConsole() {
-    let console = {
-        log: ()=>{}
-    };
-    console.log();
+export function locallyDefinedAssert() {
+    let assert = () => {};
+    assert(true);
 }
-export function capturedConsole() {
-    let console = {
-        log: ()=>{}
-    };
+export function capturedAssert() {
+    let assert = () => {};
     function innerFunc() {
-        console.log();
+        assert(true);
     }
 }
-export function overrideInParam(console) {
-    console.log("");
+export function overrideInParam(assert) {
+    assert(true);
 }
-export function overrideInParamObjectPatPropAssign({ console }) {
-    console.log("");
+export function overrideInParamObjectPatPropAssign({ assert }) {
+    assert(true);
 }
-export function overrideInParamObjectPatPropKeyValue({ c: console }) {
-    console.log("");
+export function overrideInParamObjectPatPropKeyValue({ c: assert }) {
+    assert(true);
 }
-export function overrideInParamObjectPatPropKeyValueNested({ c: { console } }) {
-    console.log("");
+export function overrideInParamObjectPatPropKeyValueNested({ c: { assert } }) {
+    assert(true);
 }
-export function overrideInParamArray([console]) {
-    console.log("");
+export function overrideInParamArray([assert]) {
+    assert(true);
 }
