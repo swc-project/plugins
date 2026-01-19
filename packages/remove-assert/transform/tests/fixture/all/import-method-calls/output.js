@@ -1,6 +1,10 @@
-import assert from 'node:assert';
+import assert from 'assert';
+;
+;
+;
 ;
 export function shouldRemove() {
+    ;
     ;
     const result = compute();
     ;

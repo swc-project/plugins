@@ -1,12 +1,28 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`Should handle assert method calls like assert.ok(), assert.strictEqual() 1`] = `
+"import assert from 'assert';
+;
+;
+;
+;
+export function shouldRemove() {
+    ;
+    ;
+    const result = compute();
+    ;
+    return result;
+}
+"
+`;
+
 exports[`Should handle import * as assert from 'assert' 1`] = `
 "import * as assert from 'assert';
-assert(true, "top level assertion");
+;
 export function shouldRemove() {
-    assert(x > 0, "x must be positive");
+    ;
     const result = compute();
-    assert(result !== null, "result cannot be null");
+    ;
     return result;
 }
 "
@@ -14,13 +30,13 @@ export function shouldRemove() {
 
 exports[`Should handle import { assert, fail } from 'assert' 1`] = `
 "import { assert, fail } from 'assert';
-assert(true, "top level assertion");
-fail("should not reach here");
+;
+;
 export function shouldRemove() {
-    assert(x > 0, "x must be positive");
+    ;
     const result = compute();
-    assert(result !== null, "result cannot be null");
-    fail("unreachable");
+    ;
+    ;
     return result;
 }
 "
@@ -29,13 +45,13 @@ export function shouldRemove() {
 exports[`Should handle import { fail } and import * as assert 1`] = `
 "import { fail } from 'assert';
 import * as assert from 'assert';
-assert(true, "top level assertion");
-fail("should not reach here");
+;
+;
 export function shouldRemove() {
-    assert(x > 0, "x must be positive");
+    ;
     const result = compute();
-    assert(result !== null, "result cannot be null");
-    fail("unreachable");
+    ;
+    ;
     return result;
 }
 "
@@ -43,11 +59,11 @@ export function shouldRemove() {
 
 exports[`Should handle import from 'node:assert' 1`] = `
 "import assert from 'node:assert';
-assert(true, "top level assertion");
+;
 export function shouldRemove() {
-    assert(x > 0, "x must be positive");
+    ;
     const result = compute();
-    assert(result !== null, "result cannot be null");
+    ;
     return result;
 }
 "
@@ -56,13 +72,13 @@ export function shouldRemove() {
 exports[`Should handle separate import { assert } and import { fail } 1`] = `
 "import { assert } from 'assert';
 import { fail } from 'assert';
-assert(true, "top level assertion");
-fail("should not reach here");
+;
+;
 export function shouldRemove() {
-    assert(x > 0, "x must be positive");
+    ;
     const result = compute();
-    assert(result !== null, "result cannot be null");
-    fail("unreachable");
+    ;
+    ;
     return result;
 }
 "
