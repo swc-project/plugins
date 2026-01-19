@@ -1,5 +1,3 @@
-import { fail } from 'assert';
-import * as assert from 'assert';
 ;
 ;
 export function shouldRemove() {

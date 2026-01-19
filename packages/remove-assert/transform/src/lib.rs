@@ -106,6 +106,23 @@ impl Fold for RemoveAssert {
         module.fold_children_with(self)
     }
 
+    fn fold_module_items(&mut self, items: Vec<ModuleItem>) -> Vec<ModuleItem> {
+        items
+            .into_iter()
+            .filter_map(|item| {
+                // Remove import declarations from assert modules
+                if let ModuleItem::ModuleDecl(ModuleDecl::Import(ref import)) = item {
+                    if let Some(src) = import.src.value.as_str() {
+                        if Self::is_assert_module(src) {
+                            return None;
+                        }
+                    }
+                }
+                Some(item.fold_children_with(self))
+            })
+            .collect()
+    }
+
     fn fold_stmt(&mut self, stmt: Stmt) -> Stmt {
         if let Stmt::Expr(e) = &stmt {
             if let Expr::Call(c) = &*e.expr {

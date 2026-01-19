@@ -1,8 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Should handle assert method calls like assert.ok(), assert.strictEqual() 1`] = `
-"import assert from 'assert';
-;
+";
 ;
 ;
 ;
@@ -17,8 +16,7 @@ export function shouldRemove() {
 `;
 
 exports[`Should handle import * as assert from 'assert' 1`] = `
-"import * as assert from 'assert';
-;
+";
 export function shouldRemove() {
     ;
     const result = compute();
@@ -29,8 +27,7 @@ export function shouldRemove() {
 `;
 
 exports[`Should handle import { assert, fail } from 'assert' 1`] = `
-"import { assert, fail } from 'assert';
-;
+";
 ;
 export function shouldRemove() {
     ;
@@ -43,9 +40,7 @@ export function shouldRemove() {
 `;
 
 exports[`Should handle import { fail } and import * as assert 1`] = `
-"import { fail } from 'assert';
-import * as assert from 'assert';
-;
+";
 ;
 export function shouldRemove() {
     ;
@@ -58,8 +53,7 @@ export function shouldRemove() {
 `;
 
 exports[`Should handle import from 'node:assert' 1`] = `
-"import assert from 'node:assert';
-;
+";
 export function shouldRemove() {
     ;
     const result = compute();
@@ -70,9 +64,7 @@ export function shouldRemove() {
 `;
 
 exports[`Should handle separate import { assert } and import { fail } 1`] = `
-"import { assert } from 'assert';
-import { fail } from 'assert';
-;
+";
 ;
 export function shouldRemove() {
     ;
