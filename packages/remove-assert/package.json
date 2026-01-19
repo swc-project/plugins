@@ -1,0 +1,37 @@
+{
+  "name": "@swc/plugin-remove-assert",
+  "version": "1.0.0",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "description": "SWC plugin for removing assert statements in production builds",
+  "main": "swc_plugin_remove_assert.wasm",
+  "scripts": {
+    "prepack": "pnpm run build",
+    "build": "RUSTFLAGS='--cfg swc_ast_unknown' cargo build --release -p swc_plugin_remove_assert --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/release/swc_plugin_remove_assert.wasm .",
+    "build:debug": "RUSTFLAGS='--cfg swc_ast_unknown' cargo build -p swc_plugin_remove_assert --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/debug/swc_plugin_remove_assert.wasm .",
+    "test": "pnpm run build:debug && vitest run --testTimeout=0"
+  },
+  "homepage": "https://swc.rs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/swc-project/plugins.git",
+    "directory": "packages/remove-assert"
+  },
+  "bugs": {
+    "url": "https://github.com/swc-project/plugins/issues"
+  },
+  "author": "강동윤 <kdy1997.dev@gmail.com>",
+  "keywords": [
+    "swc",
+    "swc-plugin",
+    "assert",
+    "dead-code-elimination"
+  ],
+  "license": "Apache-2.0",
+  "preferUnplugged": true,
+  "dependencies": {
+    "@swc/counter": "^0.1.3"
+  }
+}
