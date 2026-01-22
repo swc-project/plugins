@@ -1,0 +1,23 @@
+[package]
+description = "SWC plugin for feature flag transformation"
+name        = "swc_plugin_feature_flags"
+version     = "0.1.0"
+
+authors      = { workspace = true }
+edition      = { workspace = true }
+homepage     = { workspace = true }
+license      = { workspace = true }
+publish      = false
+repository   = { workspace = true }
+rust-version = { workspace = true }
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+serde_json        = { workspace = true }
+swc_common        = { workspace = true, features = ["concurrent"] }
+swc_core          = { workspace = true, features = ["ecma_plugin_transform"] }
+swc_ecma_ast      = { workspace = true }
+swc_ecma_visit    = { workspace = true }
+swc_feature_flags = { path = "../../crates/swc_feature_flags" }

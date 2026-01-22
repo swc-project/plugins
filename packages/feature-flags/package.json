@@ -1,0 +1,39 @@
+{
+  "name": "@swc/plugin-feature-flags",
+  "version": "0.1.0",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "description": "SWC plugin for feature flag transformation - build-time marking and runtime dead code elimination",
+  "main": "swc_plugin_feature_flags.wasm",
+  "types": "types.d.ts",
+  "scripts": {
+    "prepack": "pnpm run build",
+    "build": "RUSTFLAGS='--cfg swc_ast_unknown' cargo build --release -p swc_plugin_feature_flags --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/release/swc_plugin_feature_flags.wasm .",
+    "build:debug": "RUSTFLAGS='--cfg swc_ast_unknown' cargo build -p swc_plugin_feature_flags --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/debug/swc_plugin_feature_flags.wasm .",
+    "test": "pnpm run build:debug && vitest run --testTimeout=0"
+  },
+  "homepage": "https://swc.rs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/swc-project/plugins.git",
+    "directory": "packages/feature-flags"
+  },
+  "bugs": {
+    "url": "https://github.com/swc-project/plugins/issues"
+  },
+  "author": "강동윤 <kdy1997.dev@gmail.com>",
+  "keywords": [
+    "swc",
+    "feature-flags",
+    "dead-code-elimination",
+    "tree-shaking",
+    "optimization"
+  ],
+  "license": "Apache-2.0",
+  "preferUnplugged": true,
+  "dependencies": {
+    "@swc/counter": "^0.1.3"
+  }
+}

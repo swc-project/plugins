@@ -3339,6 +3339,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "swc_feature_flags"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "swc_atoms",
+ "swc_common",
+ "swc_ecma_ast",
+ "swc_ecma_codegen",
+ "swc_ecma_parser",
+ "swc_ecma_transforms_base",
+ "swc_ecma_transforms_testing",
+ "swc_ecma_visit",
+ "testing",
+]
+
+[[package]]
 name = "swc_formatjs_transform"
 version = "19.0.0"
 dependencies = [
@@ -3435,6 +3451,18 @@ dependencies = [
  "swc_plugin_macro",
  "swc_plugin_proxy",
  "tracing",
+]
+
+[[package]]
+name = "swc_plugin_feature_flags"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "swc_common",
+ "swc_core",
+ "swc_ecma_ast",
+ "swc_ecma_visit",
+ "swc_feature_flags",
 ]
 
 [[package]]
