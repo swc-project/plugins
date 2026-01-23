@@ -1,5 +1,11 @@
 # @swc/plugin-experimental-feature-flags
 
+## 0.3.0
+
+### Minor Changes
+
+- 7c9c588: feat: Support both modes
+
 ## 0.2.0
 
 ### Minor Changes
