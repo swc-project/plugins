@@ -12,7 +12,7 @@
     "prepack": "pnpm run build",
     "build": "RUSTFLAGS='--cfg swc_ast_unknown' cargo build --release -p swc_plugin_experimental_feature_flags --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/release/swc_plugin_experimental_feature_flags.wasm .",
     "build:debug": "RUSTFLAGS='--cfg swc_ast_unknown' cargo build -p swc_plugin_experimental_feature_flags --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/debug/swc_plugin_experimental_feature_flags.wasm .",
-    "test": "vitest run"
+    "test": "pnpm run build:debug && vitest run"
   },
   "homepage": "https://swc.rs",
   "repository": {
