@@ -21,6 +21,12 @@ or
 
 # @swc/plugin-remove-console
 
+## 12.4.0
+
+### Minor Changes
+
+- 66f5258: build: Update swc_core to v55.x.x
+
 ## 12.3.0
 
 ### Minor Changes

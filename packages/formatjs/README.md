@@ -95,6 +95,13 @@ Will extract the metadata: `{project: "web", locale: "en", region: "us"}` that g
 
 # @swc/plugin-formatjs
 
+## 9.4.0
+
+### Minor Changes
+
+- 15f32da: fix(formatjs): Variable evaluate concatenation
+- 66f5258: build: Update swc_core to v55.x.x
+
 ## 9.3.0
 
 ### Minor Changes
