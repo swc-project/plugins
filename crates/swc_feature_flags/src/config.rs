@@ -2,6 +2,56 @@ use std::collections::HashMap;
 
 use serde::Deserialize;
 
+/// Transform mode for feature flags
+#[derive(Clone, Debug, Deserialize, PartialEq)]
+#[serde(rename_all = "lowercase")]
+pub enum TransformMode {
+    /// Mark mode: marks flags with __SWC_FLAGS__ markers for later substitution
+    Mark,
+    /// Shake mode: directly substitutes flag values and performs DCE (dead code
+    /// elimination)
+    Shake,
+}
+
+impl Default for TransformMode {
+    fn default() -> Self {
+        Self::Mark
+    }
+}
+
+/// Unified configuration for feature flag transformation
+#[derive(Clone, Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FeatureFlagsConfig {
+    /// Transform mode (default: "mark")
+    #[serde(default)]
+    pub mode: TransformMode,
+
+    /// Library configurations: library name -> config
+    /// Required in mark mode, not used in shake mode
+    #[serde(default)]
+    pub libraries: HashMap<String, LibraryConfig>,
+
+    /// Flags to exclude from processing
+    #[serde(default)]
+    pub exclude_flags: Vec<String>,
+
+    /// Global object name for markers (default: "__SWC_FLAGS__")
+    /// Only used in mark mode
+    #[serde(default = "default_marker_object")]
+    pub marker_object: String,
+
+    /// Flag values to apply (flag_name -> boolean)
+    /// Required in shake mode
+    #[serde(default)]
+    pub flag_values: HashMap<String, bool>,
+
+    /// Whether to collect statistics (default: true)
+    /// Only used in shake mode
+    #[serde(default = "default_true")]
+    pub collect_stats: bool,
+}
+
 /// Configuration for build-time feature flag transformation
 #[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -73,6 +123,19 @@ impl Default for RuntimeConfig {
             remove_markers: true,
             collect_stats: true,
             marker_object: default_marker_object(),
+        }
+    }
+}
+
+impl Default for FeatureFlagsConfig {
+    fn default() -> Self {
+        Self {
+            mode: TransformMode::default(),
+            libraries: HashMap::new(),
+            exclude_flags: Vec::new(),
+            marker_object: default_marker_object(),
+            flag_values: HashMap::new(),
+            collect_stats: true,
         }
     }
 }

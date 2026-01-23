@@ -4,7 +4,11 @@ SWC plugin for build-time feature flag transformation. Part of the SWC Feature F
 
 ## Overview
 
-This plugin performs build-time marking of feature flags by replacing flag identifiers with `__SWC_FLAGS__` markers. This enables aggressive dead code elimination in subsequent build steps.
+This plugin provides two modes for feature flag transformation:
+
+- **Mark mode** (default): Marks flags with `__SWC_FLAGS__` markers for later substitution. Use this when you want to perform flag substitution in a separate build step.
+
+- **Shake mode**: Directly substitutes flag values with boolean literals and performs dead code elimination in a single pass. Use this when you know the flag values at build time.
 
 ## Installation
 
@@ -14,7 +18,9 @@ npm install @swc/plugin-experimental-feature-flags
 
 ## Usage
 
-Add to your `.swcrc`:
+### Mark Mode (Default - Marker Generation)
+
+Use mark mode to mark flags for later substitution:
 
 ```json
 {
@@ -22,6 +28,7 @@ Add to your `.swcrc`:
     "experimental": {
       "plugins": [
         ["@swc/plugin-experimental-feature-flags", {
+          "mode": "mark",
           "libraries": {
             "@their/library": {
               "functions": ["useExperimentalFlags"]
@@ -34,9 +41,38 @@ Add to your `.swcrc`:
 }
 ```
 
+### Shake Mode (Direct Optimization with DCE)
+
+Use shake mode to directly substitute flag values and eliminate dead code:
+
+```json
+{
+  "jsc": {
+    "experimental": {
+      "plugins": [
+        ["@swc/plugin-experimental-feature-flags", {
+          "mode": "shake",
+          "libraries": {
+            "@their/library": {
+              "functions": ["useExperimentalFlags"]
+            }
+          },
+          "flagValues": {
+            "featureA": true,
+            "featureB": false
+          }
+        }]
+      ]
+    }
+  }
+}
+```
+
 ## How It Works
 
-**Before:**
+### Mark Mode Example
+
+**Input:**
 ```javascript
 import { useExperimentalFlags } from '@their/library';
 
@@ -51,7 +87,7 @@ function App() {
 }
 ```
 
-**After:**
+**Output:**
 ```javascript
 function App() {
   if (__SWC_FLAGS__.featureA) {
@@ -62,16 +98,47 @@ function App() {
 }
 ```
 
-The plugin:
+The plugin in mark mode:
 1. Removes import statements from configured libraries
 2. Detects destructuring patterns from configured functions
 3. Replaces all flag identifier references with `__SWC_FLAGS__.flagName`
 4. Removes the hook call statements
 
+### Shake Mode Example
+
+**Input:** (same as above)
+
+**Output (with `featureA: true, featureB: false`):**
+```javascript
+function App() {
+  console.log('Feature A enabled');
+  return 'Stable';
+}
+```
+
+The plugin in shake mode:
+1. Removes import statements from configured libraries
+2. Detects destructuring patterns from configured functions
+3. Directly substitutes flag identifiers with boolean literals
+4. Performs dead code elimination (DCE)
+5. Removes the hook call statements
+
 ## Configuration
 
 ```typescript
-interface BuildTimeConfig {
+interface FeatureFlagsConfig {
+  /**
+   * Transform mode
+   *
+   * - "mark" (default): Marker-based - replaces flags with __SWC_FLAGS__.flagName
+   *   for later substitution
+   * - "shake": Direct optimization - substitutes flags with boolean values
+   *   and performs DCE immediately
+   *
+   * @default "mark"
+   */
+  mode?: "mark" | "shake";
+
   /**
    * Library configurations: library name -> config
    *
@@ -88,10 +155,7 @@ interface BuildTimeConfig {
   libraries: Record<string, LibraryConfig>;
 
   /**
-   * Flags to exclude from build-time marking
-   *
-   * These flags will not be transformed and will remain as-is.
-   * Useful for flags that don't need dead code elimination.
+   * Flags to exclude from transformation
    *
    * @default []
    */
@@ -99,10 +163,31 @@ interface BuildTimeConfig {
 
   /**
    * Global object name for markers
+   * Only used in shake mode
    *
    * @default "__SWC_FLAGS__"
    */
   markerObject?: string;
+
+  /**
+   * Flag values to apply (flag_name -> boolean)
+   * Required in transform mode, not used in shake mode
+   *
+   * @example
+   * {
+   *   "featureA": true,
+   *   "featureB": false
+   * }
+   */
+  flagValues?: Record<string, boolean>;
+
+  /**
+   * Whether to collect transformation statistics
+   * Only used in transform mode
+   *
+   * @default true
+   */
+  collectStats?: boolean;
 }
 
 interface LibraryConfig {
@@ -188,6 +273,66 @@ You can customize the marker object name:
 }
 ```
 
+## Two-Phase Workflow
+
+This plugin uses a **two-phase approach** for feature flag transformation:
+
+1. **Phase 1 (Mark mode)**: Convert flag variables to `__SWC_FLAGS__` markers
+2. **Phase 2 (Shake mode)**: Substitute markers with boolean values and eliminate dead code
+
+### When to Use Each Mode
+
+**Mark Mode (Phase 1)**
+- Use in your initial build/compilation step
+- Converts flag variables from your flag library into markers
+- Output code still contains conditional logic (no DCE yet)
+- Run this on your source code before bundling
+
+**Shake Mode (Phase 2)**
+- Use after mark mode, when you know flag values
+- Substitutes `__SWC_FLAGS__` markers with actual boolean values
+- Performs dead code elimination (DCE)
+- Run this in your build pipeline with environment-specific flag values
+
+### Example Workflow
+
+```bash
+# Phase 1: Mark flags in source code
+# swc.config.json
+{
+  "jsc": {
+    "experimental": {
+      "plugins": [
+        ["@swc/plugin-experimental-feature-flags", {
+          "mode": "mark",
+          "libraries": {
+            "@your/flags": { "functions": ["useFlags"] }
+          }
+        }]
+      ]
+    }
+  }
+}
+
+# Phase 2: Shake (DCE) with environment-specific values
+# swc.prod.config.json
+{
+  "jsc": {
+    "experimental": {
+      "plugins": [
+        ["@swc/plugin-experimental-feature-flags", {
+          "mode": "shake",
+          "flagValues": {
+            "featureA": true,
+            "featureB": false
+          }
+        }]
+      ]
+    }
+  }
+}
+```
+
 ## Scope Safety
 
 The plugin correctly handles variable shadowing using SWC's syntax context system:
@@ -198,7 +343,7 @@ import { useExperimentalFlags } from '@their/library';
 function App() {
   const { featureA } = useExperimentalFlags();
 
-  if (featureA) {  // Replaced with __SWC_FLAGS__.featureA
+  if (featureA) {  // Replaced (mode dependent)
     const featureA = false;  // Shadowed variable
     if (featureA) {  // NOT replaced - uses local variable
       console.log('This uses the local featureA');
@@ -207,14 +352,44 @@ function App() {
 }
 ```
 
-## Next Steps: Runtime Dead Code Elimination
+## Complete Two-Phase Example
 
-After build-time transformation, use the `swc_feature_flags` Rust crate to:
-1. Substitute `__SWC_FLAGS__.flagName` with actual boolean values
-2. Eliminate dead code branches (if statements, ternary, logical operators)
-3. Track statistics (bytes removed, branches eliminated)
+Here's a complete workflow showing both phases:
 
-See the [`swc_feature_flags` crate documentation](../../crates/swc_feature_flags/README.md) for more details.
+**Step 1: Source Code**
+```javascript
+import { useFlags } from '@your/flags';
+
+function App() {
+  const { newUI, betaFeature } = useFlags();
+
+  if (newUI) {
+    return <NewDashboard />;
+  }
+
+  return betaFeature ? <BetaApp /> : <StableApp />;
+}
+```
+
+**Step 2: After Mark Mode**
+```javascript
+function App() {
+  if (__SWC_FLAGS__.newUI) {
+    return <NewDashboard />;
+  }
+
+  return __SWC_FLAGS__.betaFeature ? <BetaApp /> : <StableApp />;
+}
+```
+
+**Step 3: After Shake Mode (with `newUI: true, betaFeature: false`)**
+```javascript
+function App() {
+  return <NewDashboard />;
+}
+```
+
+All dead code has been eliminated!
 
 ## TypeScript Support
 
@@ -222,7 +397,13 @@ This package includes TypeScript definitions. See `types.d.ts` for the full API.
 
 # CHANGELOG
 
-$CHANGELOG
+# @swc/plugin-experimental-feature-flags
+
+## 0.2.0
+
+### Minor Changes
+
+- 66f5258: build: Update swc_core to v55.x.x
 
 ## License
 

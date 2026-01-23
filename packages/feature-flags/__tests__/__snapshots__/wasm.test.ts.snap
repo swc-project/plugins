@@ -1,0 +1,75 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Configuration defaults > Should default to mark mode when mode is not specified 1`] = `
+"function App() {
+    return __SWC_FLAGS__.featureA ? 'On' : 'Off';
+}
+"
+`;
+
+exports[`Edge cases > Should handle exclude flags in mark mode 1`] = `
+"function App() {
+    if (__SWC_FLAGS__.includedFlag) {
+        console.log('Included');
+    }
+    if (excludedFlag) {
+        console.log('Excluded');
+    }
+}
+"
+`;
+
+exports[`Edge cases > Should handle nested scopes correctly in mark mode 1`] = `
+"function App() {
+    if (__SWC_FLAGS__.featureA) {
+        const featureA = false; // Shadowed variable
+        if (featureA) {
+            console.log('This uses the local featureA');
+        }
+    }
+}
+"
+`;
+
+exports[`Mark mode (default) - marker generation > Should mark flags with __SWC_FLAGS__ markers 1`] = `
+"function App() {
+    if (__SWC_FLAGS__.featureA) {
+        console.log('Feature A is enabled');
+    }
+    return __SWC_FLAGS__.featureB ? 'Beta' : 'Stable';
+}
+"
+`;
+
+exports[`Mark mode (default) - marker generation > Should support custom marker object 1`] = `
+"function App() {
+    return __CUSTOM_FLAGS__.featureA ? 'On' : 'Off';
+}
+"
+`;
+
+exports[`Multiple libraries > Should handle multiple library sources in mark mode 1`] = `
+"function App() {
+    return __SWC_FLAGS__.featureA && __SWC_FLAGS__.featureB ? 'Both' : 'Neither';
+}
+"
+`;
+
+exports[`Shake mode - DCE on markers > Should handle complex logical operations 1`] = `
+"function App() {
+    // Logical AND with true
+    const useNew = hasPermission();
+    // Logical OR with false
+    const useLegacy = !isModern();
+    return 'feature-only';
+}
+"
+`;
+
+exports[`Shake mode - DCE on markers > Should substitute markers and eliminate dead code 1`] = `
+"function App() {
+    console.log('Feature A is enabled');
+    return 'Stable';
+}
+"
+`;
