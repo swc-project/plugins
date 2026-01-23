@@ -4,7 +4,7 @@
  * This plugin performs build-time transformation of feature flags.
  */
 
-declare module "@swc/plugin-feature-flags" {
+declare module "@swc/plugin-experimental-feature-flags" {
   /**
    * Configuration for a single library
    */
@@ -69,7 +69,7 @@ declare module "@swc/plugin-feature-flags" {
  *   "jsc": {
  *     "experimental": {
  *       "plugins": [
- *         ["@swc/plugin-feature-flags", {
+ *         ["@swc/plugin-experimental-feature-flags", {
  *           "libraries": {
  *             "@their/library": {
  *               "functions": ["useExperimentalFlags"]

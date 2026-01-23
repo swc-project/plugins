@@ -1,6 +1,6 @@
 [package]
 description = "SWC plugin for feature flag transformation"
-name        = "swc_plugin_feature_flags"
+name        = "swc_plugin_experimental_feature_flags"
 version     = "0.1.0"
 
 authors      = { workspace = true }

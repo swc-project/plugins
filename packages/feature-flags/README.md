@@ -1,4 +1,4 @@
-# @swc/plugin-feature-flags
+# @swc/plugin-experimental-feature-flags
 
 SWC plugin for build-time feature flag transformation. Part of the SWC Feature Flags system.
 
@@ -9,7 +9,7 @@ This plugin performs build-time marking of feature flags by replacing flag ident
 ## Installation
 
 ```bash
-npm install @swc/plugin-feature-flags
+npm install @swc/plugin-experimental-feature-flags
 ```
 
 ## Usage
@@ -21,7 +21,7 @@ Add to your `.swcrc`:
   "jsc": {
     "experimental": {
       "plugins": [
-        ["@swc/plugin-feature-flags", {
+        ["@swc/plugin-experimental-feature-flags", {
           "libraries": {
             "@their/library": {
               "functions": ["useExperimentalFlags"]
@@ -123,7 +123,7 @@ You can configure multiple libraries:
   "jsc": {
     "experimental": {
       "plugins": [
-        ["@swc/plugin-feature-flags", {
+        ["@swc/plugin-experimental-feature-flags", {
           "libraries": {
             "@their/library": {
               "functions": ["useExperimentalFlags", "getExperimentalFlags"]
@@ -151,7 +151,7 @@ You can exclude specific flags from transformation:
   "jsc": {
     "experimental": {
       "plugins": [
-        ["@swc/plugin-feature-flags", {
+        ["@swc/plugin-experimental-feature-flags", {
           "libraries": {
             "@their/library": {
               "functions": ["useExperimentalFlags"]
@@ -174,7 +174,7 @@ You can customize the marker object name:
   "jsc": {
     "experimental": {
       "plugins": [
-        ["@swc/plugin-feature-flags", {
+        ["@swc/plugin-experimental-feature-flags", {
           "libraries": {
             "@their/library": {
               "functions": ["useExperimentalFlags"]
