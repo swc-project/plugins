@@ -128,7 +128,7 @@ The plugin in shake mode:
 ```typescript
 interface FeatureFlagsConfig {
   /**
-   * Transform mode
+   * Transformation mode
    *
    * - "mark" (default): Marker-based - replaces flags with __SWC_FLAGS__.flagName
    *   for later substitution
@@ -163,7 +163,7 @@ interface FeatureFlagsConfig {
 
   /**
    * Global object name for markers
-   * Only used in shake mode
+   * Only used in mark mode
    *
    * @default "__SWC_FLAGS__"
    */
@@ -171,7 +171,7 @@ interface FeatureFlagsConfig {
 
   /**
    * Flag values to apply (flag_name -> boolean)
-   * Required in transform mode, not used in shake mode
+   * Required in shake mode, not used in mark mode
    *
    * @example
    * {
@@ -183,7 +183,7 @@ interface FeatureFlagsConfig {
 
   /**
    * Whether to collect transformation statistics
-   * Only used in transform mode
+   * Only used in shake mode
    *
    * @default true
    */
@@ -395,15 +395,9 @@ All dead code has been eliminated!
 
 This package includes TypeScript definitions. See `types.d.ts` for the full API.
 
-# CHANGELOG
+# ChangeLog
 
-# @swc/plugin-experimental-feature-flags
-
-## 0.2.0
-
-### Minor Changes
-
-- 66f5258: build: Update swc_core to v55.x.x
+$CHANGELOG
 
 ## License
 

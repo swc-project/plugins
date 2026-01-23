@@ -214,7 +214,6 @@ impl VisitMut for LocalExportStrip {
             #[cfg(swc_ast_unknown)]
             _ => panic!("unknown node"),
         }))
-
     }
 
     /// ```javascript
