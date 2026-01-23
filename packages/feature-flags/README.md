@@ -220,6 +220,16 @@ See the [`swc_feature_flags` crate documentation](../../crates/swc_feature_flags
 
 This package includes TypeScript definitions. See `types.d.ts` for the full API.
 
+# CHANGELOG
+
+# @swc/plugin-experimental-feature-flags
+
+## 0.2.0
+
+### Minor Changes
+
+- 66f5258: build: Update swc_core to v55.x.x
+
 ## License
 
 Apache-2.0
