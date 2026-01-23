@@ -1,0 +1,26 @@
+[package]
+description = "Feature flag transformation for SWC - build-time marking and runtime dead code elimination"
+name        = "swc_feature_flags"
+version     = "0.1.0"
+
+authors      = { workspace = true }
+edition      = { workspace = true }
+homepage     = { workspace = true }
+license      = { workspace = true }
+repository   = { workspace = true }
+rust-version = { workspace = true }
+
+[dependencies]
+serde            = { workspace = true, features = ["derive"] }
+swc_atoms        = { workspace = true }
+swc_common       = { workspace = true }
+swc_ecma_ast     = { workspace = true }
+swc_ecma_codegen = { workspace = true }
+swc_ecma_visit   = { workspace = true }
+
+[dev-dependencies]
+swc_ecma_codegen            = { workspace = true }
+swc_ecma_parser             = { workspace = true }
+swc_ecma_transforms_base    = { workspace = true }
+swc_ecma_transforms_testing = { workspace = true }
+testing                     = { workspace = true }
