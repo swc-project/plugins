@@ -111,6 +111,7 @@ pub fn estimate_expr_size(expr: &Expr) -> usize {
             Lit::BigInt(_) => 15,             // approximate
             Lit::Regex(_) => 20,              // approximate
             Lit::JSXText(_) => 20,            // approximate
+            _ => 15,                          // approximate for other literal types
         },
         Expr::Ident(_) => 10, // average identifier length
         Expr::Member(member) => {
@@ -160,5 +161,6 @@ fn estimate_callee_size(callee: &Callee) -> usize {
         Callee::Expr(expr) => estimate_expr_size(expr),
         Callee::Super(_) => 5,  // 'super'
         Callee::Import(_) => 6, // 'import'
+        _ => 10,                // approximate for other callee types
     }
 }
