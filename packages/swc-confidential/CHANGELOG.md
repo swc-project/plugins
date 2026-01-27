@@ -1,5 +1,11 @@
 # @swc/plugin-swc-confidential
 
+## 11.5.0
+
+### Minor Changes
+
+- 870774a: build: Update swc_core to v56
+
 ## 11.4.0
 
 ### Minor Changes
