@@ -104,6 +104,12 @@ In this example typescript graphql files will output transpiled import path of `
 
 # @swc/plugin-relay
 
+## 12.5.0
+
+### Minor Changes
+
+- 870774a: build: Update swc_core to v56
+
 ## 12.4.0
 
 ### Minor Changes
