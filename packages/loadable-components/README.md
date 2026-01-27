@@ -23,6 +23,12 @@ By default `loadable-components` are configured to transform dynamic imports use
 
 # @swc/plugin-loadable-components
 
+## 11.5.0
+
+### Minor Changes
+
+- 870774a: build: Update swc_core to v56
+
 ## 11.4.0
 
 ### Minor Changes

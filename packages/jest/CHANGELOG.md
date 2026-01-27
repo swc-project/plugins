@@ -1,5 +1,11 @@
 # @swc/plugin-jest
 
+## 12.5.0
+
+### Minor Changes
+
+- 870774a: build: Update swc_core to v56
+
 ## 12.4.0
 
 ### Minor Changes
