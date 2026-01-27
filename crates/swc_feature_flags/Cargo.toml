@@ -1,7 +1,7 @@
 [package]
 description = "Feature flag transformation for SWC - build-time marking and runtime dead code elimination"
 name        = "swc_feature_flags"
-version     = "0.2.0"
+version     = "0.3.0"
 
 authors      = { workspace = true }
 edition      = { workspace = true }
