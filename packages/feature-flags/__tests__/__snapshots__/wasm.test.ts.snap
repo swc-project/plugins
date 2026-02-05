@@ -7,18 +7,6 @@ exports[`Configuration defaults > Should default to mark mode when mode is not s
 "
 `;
 
-exports[`Edge cases > Should handle exclude flags in mark mode 1`] = `
-"function App() {
-    if (__SWC_FLAGS__.includedFlag) {
-        console.log('Included');
-    }
-    if (excludedFlag) {
-        console.log('Excluded');
-    }
-}
-"
-`;
-
 exports[`Edge cases > Should handle nested scopes correctly in mark mode 1`] = `
 "function App() {
     if (__SWC_FLAGS__.featureA) {
