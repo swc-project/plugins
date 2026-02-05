@@ -13,7 +13,6 @@ This library enables powerful feature flag management with aggressive dead code 
 
 - ✅ **Multiple usage patterns**: Direct destructuring, indirect destructuring, and property access
 - ✅ **Customizable function names**: Not hardcoded to specific function names
-- ✅ **Selective processing**: Exclude specific flags from transformation
 - ✅ **Scope-safe**: Uses SWC's `Id` system to handle variable shadowing correctly
 - ✅ **Dead code elimination**: Removes unreachable code branches
 - ✅ **Statistics tracking**: Reports bytes removed and branches eliminated
@@ -164,7 +163,6 @@ libraries.insert(
 
 let build_config = BuildTimeConfig {
     libraries,
-    exclude_flags: vec![],
     marker_object: "__SWC_FLAGS__".to_string(),
 };
 
@@ -208,7 +206,6 @@ program = program.apply(runtime_pass(runtime_config));
               "functions": ["useFeatures"]
             }
           },
-          "excludeFlags": ["quickToggle"],
           "markerObject": "__SWC_FLAGS__"
         }]
       ]
@@ -225,9 +222,6 @@ program = program.apply(runtime_pass(runtime_config));
 interface BuildTimeConfig {
   /** Library configurations: library name -> config */
   libraries: Record<string, LibraryConfig>;
-
-  /** Flags to exclude from build-time marking */
-  excludeFlags?: string[];
 
   /** Global object name for markers (default: "__SWC_FLAGS__") */
   markerObject?: string;

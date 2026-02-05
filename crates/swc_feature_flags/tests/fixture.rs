@@ -1,6 +1,5 @@
-use std::{collections::HashMap, fs, path::PathBuf};
+use std::{collections::HashMap, path::PathBuf};
 
-use serde::Deserialize;
 use swc_common::Mark;
 use swc_ecma_parser::{EsSyntax, Syntax};
 use swc_ecma_transforms_base::resolver;
@@ -8,12 +7,6 @@ use swc_ecma_transforms_testing::{test_fixture, FixtureTestConfig};
 use swc_feature_flags::{
     build_time_pass, runtime_pass, BuildTimeConfig, LibraryConfig, RuntimeConfig,
 };
-
-#[derive(Debug, Deserialize, Default)]
-struct TestOptions {
-    #[serde(default)]
-    exclude_flags: Vec<String>,
-}
 
 fn syntax() -> Syntax {
     Syntax::Es(EsSyntax {
@@ -25,16 +18,6 @@ fn syntax() -> Syntax {
 #[testing::fixture("tests/fixture/build-time/**/input.js")]
 fn build_time_fixture(input: PathBuf) {
     let output = input.parent().unwrap().join("output.js");
-    let options_path = input.parent().unwrap().join("options.json");
-
-    // Read test-specific options if they exist
-    let test_options = if options_path.exists() {
-        let options_content =
-            fs::read_to_string(&options_path).expect("Failed to read options.json");
-        serde_json::from_str::<TestOptions>(&options_content).expect("Failed to parse options.json")
-    } else {
-        TestOptions::default()
-    };
 
     let mut libraries = HashMap::new();
     libraries.insert(
@@ -46,7 +29,6 @@ fn build_time_fixture(input: PathBuf) {
 
     let config = BuildTimeConfig {
         libraries,
-        exclude_flags: test_options.exclude_flags,
         marker_object: "__SWC_FLAGS__".to_string(),
     };
 

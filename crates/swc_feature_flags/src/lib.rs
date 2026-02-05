@@ -21,7 +21,6 @@
 //!
 //! let build_config = BuildTimeConfig {
 //!     libraries,
-//!     exclude_flags: vec![],
 //!     marker_object: "__SWC_FLAGS__".to_string(),
 //! };
 //!
@@ -77,7 +76,6 @@ use swc_ecma_visit::visit_mut_pass;
 ///             functions: vec!["useExperimentalFlags".to_string()],
 ///         }),
 ///     ]),
-///     exclude_flags: vec![],
 ///     marker_object: "__SWC_FLAGS__".to_string(),
 /// };
 ///
@@ -143,7 +141,6 @@ pub fn runtime_pass(config: RuntimeConfig) -> impl Pass {
 ///             functions: vec!["useExperimentalFlags".to_string()],
 ///         }),
 ///     ]),
-///     exclude_flags: vec![],
 ///     marker_object: "__SWC_FLAGS__".to_string(),
 ///     flag_values: HashMap::new(), // Not used in mark mode
 ///     collect_stats: false,
@@ -155,7 +152,6 @@ pub fn runtime_pass(config: RuntimeConfig) -> impl Pass {
 /// let shake_config = FeatureFlagsConfig {
 ///     mode: TransformMode::Shake,
 ///     libraries: HashMap::new(), // Not used in shake mode
-///     exclude_flags: vec![],
 ///     marker_object: "__SWC_FLAGS__".to_string(),
 ///     flag_values: HashMap::from([
 ///         ("featureA".to_string(), true),
@@ -172,7 +168,6 @@ pub fn feature_flags_pass(config: FeatureFlagsConfig) -> Box<dyn Pass> {
             // Phase 1: Mark flags with __SWC_FLAGS__ markers
             let build_config = BuildTimeConfig {
                 libraries: config.libraries,
-                exclude_flags: config.exclude_flags,
                 marker_object: config.marker_object,
             };
             Box::new(visit_mut_pass(BuildTimeTransform::new(build_config)))

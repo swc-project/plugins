@@ -32,10 +32,6 @@ pub struct FeatureFlagsConfig {
     #[serde(default)]
     pub libraries: HashMap<String, LibraryConfig>,
 
-    /// Flags to exclude from processing
-    #[serde(default)]
-    pub exclude_flags: Vec<String>,
-
     /// Global object name for markers (default: "__SWC_FLAGS__")
     /// Only used in mark mode
     #[serde(default = "default_marker_object")]
@@ -58,11 +54,6 @@ pub struct FeatureFlagsConfig {
 pub struct BuildTimeConfig {
     /// Library configurations: library name -> config
     pub libraries: HashMap<String, LibraryConfig>,
-
-    /// Flags to exclude from build-time marking (one-liners that don't need
-    /// DCE)
-    #[serde(default)]
-    pub exclude_flags: Vec<String>,
 
     /// Global object name for markers (default: "__SWC_FLAGS__")
     #[serde(default = "default_marker_object")]
@@ -110,7 +101,6 @@ impl Default for BuildTimeConfig {
     fn default() -> Self {
         Self {
             libraries: HashMap::new(),
-            exclude_flags: Vec::new(),
             marker_object: default_marker_object(),
         }
     }
@@ -132,7 +122,6 @@ impl Default for FeatureFlagsConfig {
         Self {
             mode: TransformMode::default(),
             libraries: HashMap::new(),
-            exclude_flags: Vec::new(),
             marker_object: default_marker_object(),
             flag_values: HashMap::new(),
             collect_stats: true,

@@ -86,11 +86,6 @@ impl BuildTimeTransform {
                     _ => continue,
                 };
 
-                // Skip if excluded
-                if self.config.exclude_flags.contains(&flag_name) {
-                    continue;
-                }
-
                 // Extract the local binding identifier
                 if let Pat::Ident(binding_ident) = &*kv.value {
                     let flag_id = binding_ident.id.to_id();
@@ -100,11 +95,6 @@ impl BuildTimeTransform {
             } else if let ObjectPatProp::Assign(assign_prop) = prop {
                 // Shorthand: { flagA } = useFlags()
                 let flag_name = assign_prop.key.sym.to_string();
-
-                // Skip if excluded
-                if self.config.exclude_flags.contains(&flag_name) {
-                    continue;
-                }
 
                 let flag_id = assign_prop.key.to_id();
                 self.flag_map.insert(flag_id, flag_name);
@@ -261,13 +251,10 @@ impl VisitMut for BuildTimeTransform {
                     if let MemberProp::Ident(prop_ident) = &member_expr.prop {
                         let flag_name = prop_ident.sym.to_string();
 
-                        // Skip if excluded
-                        if !self.config.exclude_flags.contains(&flag_name) {
-                            // Mark the flag object declaration for removal since we're transforming
-                            // this usage
-                            self.declarators_to_remove.insert(info.span_lo);
-                            *expr = self.create_flag_member_expr(&flag_name);
-                        }
+                        // Mark the flag object declaration for removal since we're transforming
+                        // this usage
+                        self.declarators_to_remove.insert(info.span_lo);
+                        *expr = self.create_flag_member_expr(&flag_name);
                     }
                 }
             }
