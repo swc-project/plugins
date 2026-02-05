@@ -29,7 +29,6 @@ fn build_time_fixture(input: PathBuf) {
 
     let config = BuildTimeConfig {
         libraries,
-        exclude_flags: vec![],
         marker_object: "__SWC_FLAGS__".to_string(),
     };
 

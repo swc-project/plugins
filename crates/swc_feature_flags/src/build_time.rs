@@ -7,12 +7,20 @@ use swc_ecma_visit::{noop_visit_mut_type, VisitMut, VisitMutWith};
 
 use crate::config::BuildTimeConfig;
 
+/// Information about a flag object variable (e.g., `const flags = useFlags()`)
+struct FlagObjectInfo {
+    span_lo: u32, // For removal tracking
+}
+
 /// Build-time transformer that replaces feature flag identifiers with
 /// __SWC_FLAGS__ markers
 pub struct BuildTimeTransform {
     config: BuildTimeConfig,
     /// Map of flag identifier Id -> flag name
     flag_map: HashMap<Id, String>,
+    /// Map of flag object variable Id -> info (for tracking `const flags =
+    /// useFlags()`)
+    flag_object_map: HashMap<Id, FlagObjectInfo>,
     /// Import sources to remove (library names)
     imports_to_remove: HashSet<Atom>,
     /// Call expressions to remove (span-based tracking)
@@ -33,6 +41,7 @@ impl BuildTimeTransform {
         Self {
             config,
             flag_map: HashMap::new(),
+            flag_object_map: HashMap::new(),
             imports_to_remove,
             declarators_to_remove: HashSet::new(),
         }
@@ -53,62 +62,103 @@ impl BuildTimeTransform {
         false
     }
 
+    /// Extract flags from an object pattern and add them to flag_map
+    /// Returns true if any flags were extracted
+    fn extract_flags_from_object_pattern(&mut self, obj_pat: &ObjectPat) -> bool {
+        let mut extracted_any = false;
+
+        for prop in &obj_pat.props {
+            if let ObjectPatProp::KeyValue(kv) = prop {
+                // Extract the flag name from the key
+                let flag_name = match &kv.key {
+                    PropName::Ident(ident_name) => ident_name.sym.as_ref().to_string(),
+                    PropName::Str(str_name) => {
+                        // Convert Wtf8Atom to String
+                        str_name
+                            .value
+                            .as_str()
+                            .map(|s| s.to_string())
+                            .unwrap_or_else(|| {
+                                // If not valid UTF-8, use lossy conversion
+                                str_name.value.to_atom_lossy().to_string()
+                            })
+                    }
+                    _ => continue,
+                };
+
+                // Extract the local binding identifier
+                if let Pat::Ident(binding_ident) = &*kv.value {
+                    let flag_id = binding_ident.id.to_id();
+                    self.flag_map.insert(flag_id, flag_name);
+                    extracted_any = true;
+                }
+            } else if let ObjectPatProp::Assign(assign_prop) = prop {
+                // Shorthand: { flagA } = useFlags()
+                let flag_name = assign_prop.key.sym.to_string();
+
+                let flag_id = assign_prop.key.to_id();
+                self.flag_map.insert(flag_id, flag_name);
+                extracted_any = true;
+            }
+        }
+
+        extracted_any
+    }
+
     /// Analyze a variable declarator to detect flag destructuring
     fn analyze_declarator(&mut self, declarator: &VarDeclarator) {
-        // Look for pattern: const { flagA, flagB } = useFlags()
+        // Pattern 1: const { flagA, flagB } = useFlags()
         if let Some(init) = &declarator.init {
             if let Expr::Call(call_expr) = &**init {
                 if self.is_flag_function_call(&call_expr.callee) {
-                    // This is a flag function call, extract flag names from pattern
-                    if let Pat::Object(obj_pat) = &declarator.name {
-                        for prop in &obj_pat.props {
-                            if let ObjectPatProp::KeyValue(kv) = prop {
-                                // Extract the flag name from the key
-                                let flag_name = match &kv.key {
-                                    PropName::Ident(ident_name) => {
-                                        ident_name.sym.as_ref().to_string()
-                                    }
-                                    PropName::Str(str_name) => {
-                                        // Convert Wtf8Atom to String
-                                        str_name
-                                            .value
-                                            .as_str()
-                                            .map(|s| s.to_string())
-                                            .unwrap_or_else(|| {
-                                                // If not valid UTF-8, use lossy conversion
-                                                str_name.value.to_atom_lossy().to_string()
-                                            })
-                                    }
-                                    _ => continue,
-                                };
-
-                                // Skip if excluded
-                                if self.config.exclude_flags.contains(&flag_name) {
-                                    continue;
-                                }
-
-                                // Extract the local binding identifier
-                                if let Pat::Ident(binding_ident) = &*kv.value {
-                                    let flag_id = binding_ident.id.to_id();
-                                    self.flag_map.insert(flag_id, flag_name);
-                                }
-                            } else if let ObjectPatProp::Assign(assign_prop) = prop {
-                                // Shorthand: { flagA } = useFlags()
-                                let flag_name = assign_prop.key.sym.to_string();
-
-                                // Skip if excluded
-                                if self.config.exclude_flags.contains(&flag_name) {
-                                    continue;
-                                }
-
-                                let flag_id = assign_prop.key.to_id();
-                                self.flag_map.insert(flag_id, flag_name);
+                    match &declarator.name {
+                        // Direct destructuring from flag function call
+                        Pat::Object(obj_pat) => {
+                            let extracted = self.extract_flags_from_object_pattern(obj_pat);
+                            // Only remove if we actually extracted flags
+                            if extracted {
+                                self.declarators_to_remove.insert(declarator.span.lo.0);
                             }
                         }
+                        // Pattern 2: const flags = useFlags()
+                        Pat::Ident(ident) => {
+                            let flag_id = ident.id.to_id();
+                            self.flag_object_map.insert(
+                                flag_id,
+                                FlagObjectInfo {
+                                    span_lo: declarator.span.lo.0,
+                                },
+                            );
+                            // Don't remove yet - we'll remove only if flags are
+                            // used
+                        }
+                        _ => {}
                     }
+                    return;
+                }
+            }
+        }
 
-                    // Mark this declarator for removal
-                    self.declarators_to_remove.insert(declarator.span.lo.0);
+        // Pattern 3: const { flagA } = flags (indirect destructuring)
+        if let Pat::Object(obj_pat) = &declarator.name {
+            if let Some(init) = &declarator.init {
+                if let Expr::Ident(ident) = &**init {
+                    let source_id = ident.to_id();
+                    // Get span_lo before calling extract method to avoid borrow checker issues
+                    let source_span_lo = self
+                        .flag_object_map
+                        .get(&source_id)
+                        .map(|info| info.span_lo);
+
+                    if let Some(source_span) = source_span_lo {
+                        let extracted = self.extract_flags_from_object_pattern(obj_pat);
+                        // Only remove if we actually extracted flags
+                        if extracted {
+                            // Remove both the destructuring declaration and the source flag object
+                            self.declarators_to_remove.insert(declarator.span.lo.0);
+                            self.declarators_to_remove.insert(source_span);
+                        }
+                    }
                 }
             }
         }
@@ -189,6 +239,24 @@ impl VisitMut for BuildTimeTransform {
         if let Expr::Ident(ident) = expr {
             if let Some(flag_name) = self.flag_map.get(&ident.to_id()) {
                 *expr = self.create_flag_member_expr(flag_name);
+            }
+        }
+
+        // Handle member expressions: flags.featureA → __SWC_FLAGS__.featureA
+        if let Expr::Member(member_expr) = expr {
+            if let Expr::Ident(obj_ident) = &*member_expr.obj {
+                let obj_id = obj_ident.to_id();
+
+                if let Some(info) = self.flag_object_map.get(&obj_id) {
+                    if let MemberProp::Ident(prop_ident) = &member_expr.prop {
+                        let flag_name = prop_ident.sym.to_string();
+
+                        // Mark the flag object declaration for removal since we're transforming
+                        // this usage
+                        self.declarators_to_remove.insert(info.span_lo);
+                        *expr = self.create_flag_member_expr(&flag_name);
+                    }
+                }
             }
         }
     }

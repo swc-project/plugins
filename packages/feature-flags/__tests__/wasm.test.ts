@@ -207,39 +207,6 @@ function App() {
 });
 
 describe("Edge cases", () => {
-  test("Should handle exclude flags in mark mode", async () => {
-    const input = `import { useExperimentalFlags } from '@their/library';
-
-function App() {
-  const { includedFlag, excludedFlag } = useExperimentalFlags();
-
-  if (includedFlag) {
-    console.log('Included');
-  }
-
-  if (excludedFlag) {
-    console.log('Excluded');
-  }
-}`;
-
-    const { code } = await transformCode(input, {
-      mode: "mark",
-      libraries: {
-        "@their/library": {
-          functions: ["useExperimentalFlags"],
-        },
-      },
-      excludeFlags: ["excludedFlag"],
-    });
-
-    expect(code).toMatchSnapshot();
-    // includedFlag should be marked
-    expect(code).toContain("__SWC_FLAGS__.includedFlag");
-    // excludedFlag should remain as variable
-    expect(code).toContain("excludedFlag");
-    expect(code).not.toContain("__SWC_FLAGS__.excludedFlag");
-  });
-
   test("Should handle nested scopes correctly in mark mode", async () => {
     const input = `import { useExperimentalFlags } from '@their/library';
 

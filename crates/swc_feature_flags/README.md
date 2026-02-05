@@ -11,9 +11,8 @@ This library enables powerful feature flag management with aggressive dead code 
 
 ## Features
 
-- ✅ **Destructuring support**: `const { featureA, featureB } = useExperimentalFlags()`
+- ✅ **Multiple usage patterns**: Direct destructuring, indirect destructuring, and property access
 - ✅ **Customizable function names**: Not hardcoded to specific function names
-- ✅ **Selective processing**: Exclude specific flags from transformation
 - ✅ **Scope-safe**: Uses SWC's `Id` system to handle variable shadowing correctly
 - ✅ **Dead code elimination**: Removes unreachable code branches
 - ✅ **Statistics tracking**: Reports bytes removed and branches eliminated
@@ -56,6 +55,43 @@ The plugin:
 2. Detects destructuring from configured flag functions
 3. Replaces flag identifiers with `__SWC_FLAGS__.flagName` markers
 4. Removes import statements and hook calls
+
+### Supported Usage Patterns
+
+The build-time plugin supports multiple ways of accessing feature flags:
+
+#### Pattern 1: Direct Destructuring
+```javascript
+import { useExperimentalFlags } from '@their/library';
+
+const { featureA, featureB } = useExperimentalFlags();
+if (featureA) {
+  // Transformed to: if (__SWC_FLAGS__.featureA)
+}
+```
+
+#### Pattern 2: Indirect Destructuring
+```javascript
+import { useExperimentalFlags } from '@their/library';
+
+const flags = useExperimentalFlags();
+const { featureA } = flags;
+if (featureA) {
+  // Transformed to: if (__SWC_FLAGS__.featureA)
+}
+```
+
+#### Pattern 3: Property Access
+```javascript
+import { useExperimentalFlags } from '@their/library';
+
+const flags = useExperimentalFlags();
+if (flags.featureA) {
+  // Transformed to: if (__SWC_FLAGS__.featureA)
+}
+```
+
+All three patterns are transformed identically and can be mixed in the same file.
 
 ### Phase 2: Runtime Transformation
 
@@ -127,7 +163,6 @@ libraries.insert(
 
 let build_config = BuildTimeConfig {
     libraries,
-    exclude_flags: vec![],
     marker_object: "__SWC_FLAGS__".to_string(),
 };
 
@@ -171,7 +206,6 @@ program = program.apply(runtime_pass(runtime_config));
               "functions": ["useFeatures"]
             }
           },
-          "excludeFlags": ["quickToggle"],
           "markerObject": "__SWC_FLAGS__"
         }]
       ]
@@ -188,9 +222,6 @@ program = program.apply(runtime_pass(runtime_config));
 interface BuildTimeConfig {
   /** Library configurations: library name -> config */
   libraries: Record<string, LibraryConfig>;
-
-  /** Flags to exclude from build-time marking */
-  excludeFlags?: string[];
 
   /** Global object name for markers (default: "__SWC_FLAGS__") */
   markerObject?: string;

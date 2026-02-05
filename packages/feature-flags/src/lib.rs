@@ -33,7 +33,6 @@ fn swc_plugin_feature_flags(mut program: Program, data: TransformPluginProgramMe
                 // Phase 1: Mark flags with __SWC_FLAGS__ markers
                 let build_config = BuildTimeConfig {
                     libraries: config.libraries,
-                    exclude_flags: config.exclude_flags,
                     marker_object: config.marker_object,
                 };
                 let mut transform = BuildTimeTransform::new(build_config);
