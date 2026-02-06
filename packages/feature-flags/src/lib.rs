@@ -9,6 +9,45 @@ use swc_feature_flags::{
     TransformMode,
 };
 
+fn validate_feature_flags_config(config: &FeatureFlagsConfig) {
+    match config.mode {
+        TransformMode::Mark => {
+            if config.libraries.is_empty() {
+                panic!("FeatureFlagsConfig: \"libraries\" is required in mark mode");
+            }
+        }
+        TransformMode::Shake => {
+            if config.flag_values.is_empty() {
+                panic!("FeatureFlagsConfig: \"flagValues\" is required in shake mode");
+            }
+        }
+    }
+
+    for (library, library_config) in &config.libraries {
+        if library_config.functions.is_empty() {
+            panic!(
+                "FeatureFlagsConfig: \"functions\" must not be empty for library \"{}\"",
+                library
+            );
+        }
+    }
+}
+
+fn validate_build_time_config(config: &BuildTimeConfig) {
+    if config.libraries.is_empty() {
+        panic!("BuildTimeConfig: \"libraries\" is required");
+    }
+
+    for (library, library_config) in &config.libraries {
+        if library_config.functions.is_empty() {
+            panic!(
+                "BuildTimeConfig: \"functions\" must not be empty for library \"{}\"",
+                library
+            );
+        }
+    }
+}
+
 /// SWC plugin entry point for feature flag transformation
 ///
 /// This plugin supports two modes:
@@ -28,6 +67,7 @@ fn swc_plugin_feature_flags(mut program: Program, data: TransformPluginProgramMe
 
     // Try to parse as new unified config first
     if let Ok(config) = serde_json::from_str::<FeatureFlagsConfig>(config_str) {
+        validate_feature_flags_config(&config);
         match config.mode {
             TransformMode::Mark => {
                 // Phase 1: Mark flags with __SWC_FLAGS__ markers
@@ -54,6 +94,7 @@ fn swc_plugin_feature_flags(mut program: Program, data: TransformPluginProgramMe
         // Fall back to old BuildTimeConfig for backward compatibility
         let config = serde_json::from_str::<BuildTimeConfig>(config_str)
             .expect("invalid config: must be either FeatureFlagsConfig or BuildTimeConfig");
+        validate_build_time_config(&config);
 
         let mut transform = BuildTimeTransform::new(config);
         program.visit_mut_with(&mut transform);
