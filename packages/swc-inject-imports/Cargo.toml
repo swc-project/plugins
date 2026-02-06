@@ -1,0 +1,25 @@
+[package]
+
+description = "SWC Plugin for swc-experimental-inject-imports"
+
+
+authors      = { workspace = true }
+edition      = { workspace = true }
+homepage     = { workspace = true }
+license      = { workspace = true }
+name         = "swc_plugin_swc_inject_imports"
+publish      = false
+repository   = { workspace = true }
+rust-version = { workspace = true }
+version      = "0.7.4"
+
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+serde_json = { workspace = true }
+swc_core   = { workspace = true, features = ["ecma_plugin_transform"] }
+
+
+swc_inject_imports = { path = "./transform" }
