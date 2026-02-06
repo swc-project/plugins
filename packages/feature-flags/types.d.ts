@@ -76,6 +76,7 @@ declare module "@swc/plugin-experimental-feature-flags" {
     /**
      * Library configurations: library name -> config
      *
+     * Required in mark mode, not used in shake mode.
      * The plugin will track imports from these libraries and
      * transform calls to the specified functions.
      *
@@ -90,16 +91,6 @@ declare module "@swc/plugin-experimental-feature-flags" {
      * }
      */
     libraries: Record<string, LibraryConfig>;
-
-    /**
-     * Flags to exclude from transformation
-     *
-     * These flags will not be transformed and will remain as-is.
-     * Useful for flags that don't need optimization.
-     *
-     * @default []
-     */
-    excludeFlags?: string[];
 
     /**
      * Global object name for markers
@@ -162,16 +153,6 @@ declare module "@swc/plugin-experimental-feature-flags" {
      * }
      */
     libraries: Record<string, LibraryConfig>;
-
-    /**
-     * Flags to exclude from build-time marking
-     *
-     * These flags will not be transformed and will remain as-is.
-     * Useful for flags that don't need dead code elimination.
-     *
-     * @default []
-     */
-    excludeFlags?: string[];
 
     /**
      * Global object name for markers

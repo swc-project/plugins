@@ -43,7 +43,8 @@ Use mark mode to mark flags for later substitution:
 
 ### Shake Mode (Direct Optimization with DCE)
 
-Use shake mode to directly substitute flag values and eliminate dead code:
+Use shake mode to directly substitute flag values and eliminate dead code.
+This mode operates on `__SWC_FLAGS__` markers and does not use `libraries`:
 
 ```json
 {
@@ -52,11 +53,6 @@ Use shake mode to directly substitute flag values and eliminate dead code:
       "plugins": [
         ["@swc/plugin-experimental-feature-flags", {
           "mode": "shake",
-          "libraries": {
-            "@their/library": {
-              "functions": ["useExperimentalFlags"]
-            }
-          },
           "flagValues": {
             "featureA": true,
             "featureB": false
@@ -117,11 +113,8 @@ function App() {
 ```
 
 The plugin in shake mode:
-1. Removes import statements from configured libraries
-2. Detects destructuring patterns from configured functions
-3. Directly substitutes flag identifiers with boolean literals
-4. Performs dead code elimination (DCE)
-5. Removes the hook call statements
+1. Substitutes `__SWC_FLAGS__` markers with boolean literals
+2. Performs dead code elimination (DCE)
 
 ## Configuration
 
@@ -141,6 +134,7 @@ interface FeatureFlagsConfig {
 
   /**
    * Library configurations: library name -> config
+   * Required in mark mode, not used in shake mode
    *
    * @example
    * {
@@ -153,13 +147,6 @@ interface FeatureFlagsConfig {
    * }
    */
   libraries: Record<string, LibraryConfig>;
-
-  /**
-   * Flags to exclude from transformation
-   *
-   * @default []
-   */
-  excludeFlags?: string[];
 
   /**
    * Global object name for markers
@@ -220,29 +207,6 @@ You can configure multiple libraries:
               "functions": ["getFlags", "useFlags"]
             }
           }
-        }]
-      ]
-    }
-  }
-}
-```
-
-## Excluding Flags
-
-You can exclude specific flags from transformation:
-
-```json
-{
-  "jsc": {
-    "experimental": {
-      "plugins": [
-        ["@swc/plugin-experimental-feature-flags", {
-          "libraries": {
-            "@their/library": {
-              "functions": ["useExperimentalFlags"]
-            }
-          },
-          "excludeFlags": ["quickToggle", "tempDebugFlag"]
         }]
       ]
     }

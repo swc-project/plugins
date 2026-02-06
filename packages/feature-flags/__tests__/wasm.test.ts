@@ -173,6 +173,38 @@ function App() {
   });
 });
 
+describe("Configuration validation", () => {
+  test("Should require libraries in mark mode", async () => {
+    const input = "const value = 1;";
+
+    await expect(transformCode(input, { mode: "mark" })).rejects.toThrow(
+      /failed to invoke plugin/i,
+    );
+  });
+
+  test("Should require flagValues in shake mode", async () => {
+    const input = "const value = 1;";
+
+    await expect(transformCode(input, { mode: "shake" })).rejects.toThrow(
+      /failed to invoke plugin/i,
+    );
+  });
+
+  test("Should require functions to be non-empty", async () => {
+    const input = "const value = 1;";
+    await expect(
+      transformCode(input, {
+        mode: "mark",
+        libraries: {
+          "@their/library": {
+            functions: [],
+          },
+        },
+      }),
+    ).rejects.toThrow(/failed to invoke plugin/i);
+  });
+});
+
 describe("Multiple libraries", () => {
   test("Should handle multiple library sources in mark mode", async () => {
     const input = `import { useExperimentalFlags } from '@their/library';
