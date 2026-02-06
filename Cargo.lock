@@ -2702,6 +2702,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "swc_ast_grep"
+version = "0.1.0"
+dependencies = [
+ "default-from-serde",
+ "rustc-hash 2.1.0",
+ "serde",
+ "swc_atoms",
+ "swc_common",
+ "swc_ecma_ast",
+ "swc_ecma_codegen",
+ "swc_ecma_parser",
+ "swc_ecma_transforms_base",
+ "swc_ecma_transforms_testing",
+ "swc_ecma_utils",
+ "swc_ecma_visit",
+ "testing",
+]
+
+[[package]]
 name = "swc_atoms"
 version = "9.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3452,6 +3471,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "92b27449420554de6ad8d49004ad3d36e6ac64ecb51d1b0fe1002afcd7a45d85"
 dependencies = [
  "once_cell",
+]
+
+[[package]]
+name = "swc_plugin_ast_grep"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "swc_ast_grep",
+ "swc_core",
 ]
 
 [[package]]
