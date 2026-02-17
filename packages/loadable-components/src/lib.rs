@@ -636,29 +636,34 @@ where
 {
     fn visit_mut_import_decl(&mut self, import_decl: &mut ImportDecl) {
         for signature in self.signatures.iter() {
-            if signature.from == *import_decl.src.value {
-                for specifier in import_decl.specifiers.iter() {
-                    match specifier {
-                        ImportSpecifier::Default(default_spec) => {
-                            if signature.is_default_specifier() {
-                                self.specifiers.insert(default_spec.local.sym.clone());
-                            }
+            // Skip source check if from is None (match any source)
+            if let Some(ref from) = signature.from {
+                if from != &*import_decl.src.value {
+                    continue;
+                }
+            }
+
+            for specifier in import_decl.specifiers.iter() {
+                match specifier {
+                    ImportSpecifier::Default(default_spec) => {
+                        if signature.is_default_specifier() {
+                            self.specifiers.insert(default_spec.local.sym.clone());
                         }
-                        ImportSpecifier::Named(named_specifier) => {
-                            if let Some(ModuleExportName::Ident(imported)) =
-                                &named_specifier.imported
-                            {
-                                if imported.sym == signature.name {
-                                    self.specifiers.insert(named_specifier.local.sym.clone());
-                                    return;
-                                }
-                            }
-                            if named_specifier.local.sym == signature.name {
-                                self.specifiers.insert(named_specifier.local.sym.clone());
-                            }
-                        }
-                        _ => (),
                     }
+                    ImportSpecifier::Named(named_specifier) => {
+                        if let Some(ModuleExportName::Ident(imported)) =
+                            &named_specifier.imported
+                        {
+                            if imported.sym == signature.name {
+                                self.specifiers.insert(named_specifier.local.sym.clone());
+                                return;
+                            }
+                        }
+                        if named_specifier.local.sym == signature.name {
+                            self.specifiers.insert(named_specifier.local.sym.clone());
+                        }
+                    }
+                    _ => (),
                 }
             }
         }
@@ -776,14 +781,15 @@ fn clone_params(e: &Expr) -> Vec<Param> {
 #[derive(Debug, Clone, Deserialize, PartialEq)]
 pub struct Signature {
     pub name: Atom,
-    pub from: Wtf8Atom,
+    #[serde(default)]
+    pub from: Option<Wtf8Atom>,
 }
 
 impl Default for Signature {
     fn default() -> Self {
         Signature {
             name: "default".into(),
-            from: "@loadable/component".into(),
+            from: Some("@loadable/component".into()),
         }
     }
 }
@@ -796,7 +802,7 @@ impl Signature {
     pub fn default_lazy() -> Self {
         Signature {
             name: "lazy".into(),
-            from: "@loadable/component".into(),
+            from: Some("@loadable/component".into()),
         }
     }
 }
@@ -836,7 +842,7 @@ mod tests {
             "signatures": [
                 {
                     "from": "myLoadableWrapper",
-                    "name": "lazy" 
+                    "name": "lazy"
                 }
             ]
         }"#,
@@ -844,8 +850,28 @@ mod tests {
         assert_eq!(
             config.signatures,
             vec![Signature {
-                from: "myLoadableWrapper".into(),
+                from: Some("myLoadableWrapper".into()),
                 name: "lazy".into()
+            }]
+        )
+    }
+
+    #[test]
+    fn should_support_signatures_without_from() {
+        let config = get_config(
+            r#"{
+            "signatures": [
+                {
+                    "name": "loadable"
+                }
+            ]
+        }"#,
+        );
+        assert_eq!(
+            config.signatures,
+            vec![Signature {
+                from: None,
+                name: "loadable".into()
             }]
         )
     }
