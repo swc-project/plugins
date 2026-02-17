@@ -129,6 +129,12 @@ importers:
         specifier: ^0.1.3
         version: 0.1.3
 
+  packages/swc-inject-imports:
+    dependencies:
+      '@swc/counter':
+        specifier: ^0.1.3
+        version: 0.1.3
+
   packages/swc-magic:
     dependencies:
       '@swc/counter':
