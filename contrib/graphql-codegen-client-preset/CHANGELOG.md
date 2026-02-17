@@ -1,5 +1,11 @@
 # @swc-contrib/plugin-graphql-codegen-client-preset
 
+## 0.18.0
+
+### Minor Changes
+
+- 2113ddb: build: Update swc_core to v57
+
 ## 0.17.0
 
 ### Minor Changes
