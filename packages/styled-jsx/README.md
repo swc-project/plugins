@@ -2,6 +2,12 @@
 
 # @swc/plugin-styled-jsx
 
+## 13.6.0
+
+### Minor Changes
+
+- 2113ddb: build: Update swc_core to v57
+
 ## 13.5.0
 
 ### Minor Changes
