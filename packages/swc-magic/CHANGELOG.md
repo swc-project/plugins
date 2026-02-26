@@ -1,5 +1,11 @@
 # @swc/plugin-swc-magic
 
+## 12.7.0
+
+### Minor Changes
+
+- 1cbeb5a: build: Update swc_core to v58.0.1
+
 ## 12.6.0
 
 ### Minor Changes
