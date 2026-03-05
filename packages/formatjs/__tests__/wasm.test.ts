@@ -553,6 +553,50 @@ describe("formatjs swc plugin", () => {
     expect(code).toMatchSnapshot();
   });
 
+  it("should not break on JSX outside formatjs calls", async () => {
+    const input = `
+      import React from 'react';
+
+      const Loading = () => <div>Loading...</div>;
+
+      function App() {
+        return (
+          <React.Suspense fallback={<Loading />}>
+            <div>Content</div>
+          </React.Suspense>
+        );
+      }
+    `;
+
+    const output = await transformCode(input);
+
+    // Build should succeed; no formatjs ids should be generated
+    expect(output).toBeTruthy();
+    expect(output).not.toMatch(/id:/);
+    // The original JSX structure should be preserved
+    expect(output).toMatch(/React\.Suspense/);
+    expect(output).toMatch(/Loading/);
+  });
+
+  it("should not break on conditional JSX rendering outside formatjs calls", async () => {
+    const input = `
+      import React from 'react';
+
+      function App({ show }) {
+        return show ? <div>Hello</div> : <span>World</span>;
+      }
+    `;
+
+    const output = await transformCode(input);
+
+    // Build should succeed; no formatjs ids should be generated
+    expect(output).toBeTruthy();
+    expect(output).not.toMatch(/id:/);
+    // The original JSX structure should be preserved
+    expect(output).toMatch(/Hello/);
+    expect(output).toMatch(/World/);
+  });
+
   it("should generate same id even if description is an template literal string", async () => {
     const input1 = `
       import { FormattedMessage } from 'react-intl';

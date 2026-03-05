@@ -94,6 +94,14 @@ impl MessageDescriptorExtractor for JSXAttrOrSpread {
                     Some(name.sym.to_string())
                 }
             };
+            // Only evaluate expressions for known formatjs attribute names to avoid
+            // spurious "must be statically evaluate-able" errors on unrelated attributes.
+            if !matches!(
+                key.as_deref(),
+                Some("id") | Some("defaultMessage") | Some("description")
+            ) {
+                return None;
+            }
             let value = match value {
                 JSXAttrValue::Str(s) => Some(MessageDescriptionValue::Str(
                     s.value.as_str().expect("non-utf8 string").to_string(),
@@ -161,6 +169,14 @@ impl MessageDescriptorExtractor for PropOrSpread {
                         None
                     }
                 };
+                // Only evaluate expressions for known formatjs prop names to avoid
+                // spurious "must be statically evaluate-able" errors on unrelated props.
+                if !matches!(
+                    key.as_deref(),
+                    Some("id") | Some("defaultMessage") | Some("description")
+                ) {
+                    return None;
+                }
                 let value = match &*key_value.value {
                     Expr::Object(obj) => Some(MessageDescriptionValue::Obj(obj.clone())),
                     expr => {
@@ -978,10 +994,15 @@ impl<'a, C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<'a, 
 
         let name = &jsx_opening_elem.name;
 
-        if let JSXElementName::Ident(ident) = name {
-            if !self.component_names.contains(&*ident.sym) {
-                return;
+        match name {
+            JSXElementName::Ident(ident) => {
+                if !self.component_names.contains(&*ident.sym) {
+                    return;
+                }
             }
+            // Member expressions (e.g. React.Suspense) and namespaced names are never
+            // formatjs components, so skip processing their attributes entirely.
+            _ => return,
         }
 
         let mut descriptor = self.create_message_descriptor_from_extractor(&jsx_opening_elem.attrs);
