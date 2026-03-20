@@ -609,4 +609,63 @@ describe("formatjs swc plugin", () => {
     expect(code2).toMatch(/id: "Ae\/S0P"/);
     expect(code3).toMatch(/id: "Ae\/S0P"/);
   });
+
+  it("should not error on valid JSX outside formatjs calls (issue #588)", async () => {
+    // Member expression JSX names like React.Suspense with JSX fallback props
+    // should not trigger the static evaluation error.
+    const input = `
+      import React from 'react';
+
+      const Loading = () => <div>Loading...</div>;
+
+      function App() {
+        return (
+          <React.Suspense fallback={<Loading />}>
+            <div>Content</div>
+          </React.Suspense>
+        );
+      }
+    `;
+
+    // Should succeed without throwing "must be statically evaluate-able" error
+    await expect(transformCode(input)).resolves.toBeDefined();
+  });
+
+  it("should not error on conditional JSX outside formatjs calls", async () => {
+    // Conditional JSX expressions unrelated to formatjs should not be evaluated
+    const input = `
+      import React from 'react';
+
+      function App({ isLoading }: { isLoading: boolean }) {
+        return (
+          <div>
+            {isLoading ? <span>Loading...</span> : <span>Done</span>}
+          </div>
+        );
+      }
+    `;
+
+    await expect(transformCode(input)).resolves.toBeDefined();
+  });
+
+  it("should not error on FormattedMessage with JSX values prop", async () => {
+    // FormattedMessage with a `values` prop containing JSX should not error,
+    // since `values` is not a known formatjs descriptor key.
+    const input = `
+      import React from 'react';
+      import { FormattedMessage } from 'react-intl';
+
+      function App() {
+        return (
+          <FormattedMessage
+            defaultMessage="Hello <b>{name}</b>"
+            values={{ b: (chunks) => <b>{chunks}</b>, name: "World" }}
+          />
+        );
+      }
+    `;
+
+    const output = await transformCode(input);
+    expect(output).toMatch(/defaultMessage/);
+  });
 });

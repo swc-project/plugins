@@ -91,9 +91,17 @@ impl MessageDescriptorExtractor for JSXAttrOrSpread {
             let key = match name {
                 JSXAttrName::Ident(name)
                 | JSXAttrName::JSXNamespacedName(JSXNamespacedName { name, .. }) => {
-                    Some(name.sym.to_string())
+                    name.sym.to_string()
                 }
             };
+
+            // Only evaluate values for known formatjs message descriptor keys.
+            // Attributes like `values`, `fallback`, etc. may contain JSX
+            // expressions that cannot (and should not) be statically evaluated.
+            if !matches!(key.as_str(), "id" | "defaultMessage" | "description") {
+                return None;
+            }
+
             let value = match value {
                 JSXAttrValue::Str(s) => Some(MessageDescriptionValue::Str(
                     s.value.as_str().expect("non-utf8 string").to_string(),
@@ -126,7 +134,7 @@ impl MessageDescriptorExtractor for JSXAttrOrSpread {
                 _ => None,
             };
 
-            if let (Some(key), Some(value)) = (key, value) {
+            if let Some(value) = value {
                 Some((key, value))
             } else {
                 None
@@ -978,10 +986,17 @@ impl<'a, C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<'a, 
 
         let name = &jsx_opening_elem.name;
 
-        if let JSXElementName::Ident(ident) = name {
-            if !self.component_names.contains(&*ident.sym) {
-                return;
+        // Only process known formatjs component names (simple identifiers).
+        // Member expressions (e.g. `React.Suspense`) and namespaced names are
+        // never formatjs components, so return early to avoid evaluating their
+        // attributes.
+        match name {
+            JSXElementName::Ident(ident) => {
+                if !self.component_names.contains(&*ident.sym) {
+                    return;
+                }
             }
+            _ => return,
         }
 
         let mut descriptor = self.create_message_descriptor_from_extractor(&jsx_opening_elem.attrs);
