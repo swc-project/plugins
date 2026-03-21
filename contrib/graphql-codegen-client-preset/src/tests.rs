@@ -17,6 +17,17 @@ fn get_test_code_visitor() -> GraphQLVisitor {
         cwd: "/home/faketestproject".to_string(),
         artifact_directory: "./src/gql".to_string(),
         gql_tag_name: "gql".to_string(),
+        naming_convention: "change-case-all#pascalCase".to_string(),
+    })
+}
+
+fn get_test_code_visitor_upper_case_first() -> GraphQLVisitor {
+    GraphQLVisitor::new(GraphQLCodegenOptions {
+        filename: "test.ts".to_string(),
+        cwd: "/home/faketestproject".to_string(),
+        artifact_directory: "./src/gql".to_string(),
+        gql_tag_name: "gql".to_string(),
+        naming_convention: "change-case-all#upperCaseFirst".to_string(),
     })
 }
 
@@ -40,6 +51,7 @@ fn import_files_from_same_directory(input_path: PathBuf) {
                 cwd: cwd.to_string_lossy().to_string(),
                 artifact_directory: "./tests/fixtures".to_string(),
                 gql_tag_name: "gql".to_string(),
+                naming_convention: "change-case-all#pascalCase".to_string(),
             }))
         },
         &input_path,
@@ -71,6 +83,7 @@ fn import_files_from_other_directory(input_path: PathBuf) {
                 cwd: cwd.to_string_lossy().to_string(),
                 artifact_directory: cwd.to_string_lossy().to_string(),
                 gql_tag_name: "gql".to_string(),
+                naming_convention: "change-case-all#pascalCase".to_string(),
             }))
         },
         &input_path,
@@ -141,6 +154,32 @@ test!(
 const GetData = gql(`
   query GetData {
     data
+  }
+`);"#
+);
+
+test!(
+    Default::default(),
+    |_| visit_mut_pass(get_test_code_visitor()),
+    pascal_case_converts_eg_word_boundaries,
+    r#"import gql from "gql-tag";
+
+const SomeEGRockets = gql(`
+  query SomeEGRockets {
+    rockets
+  }
+`);"#
+);
+
+test!(
+    Default::default(),
+    |_| visit_mut_pass(get_test_code_visitor_upper_case_first()),
+    upper_case_first_preserves_uppercase_sequences,
+    r#"import gql from "gql-tag";
+
+const SomeEGRockets = gql(`
+  query SomeEGRockets {
+    rockets
   }
 `);"#
 );
