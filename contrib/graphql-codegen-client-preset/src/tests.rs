@@ -87,6 +87,7 @@ fn get_windows_path_visitor() -> GraphQLVisitor {
         cwd: "C:\\Users\\user\\project".to_string(),
         artifact_directory: "C:\\Users\\user\\project\\src\\gql".to_string(),
         gql_tag_name: "gql".to_string(),
+        naming_convention: "change-case-all#pascalCase".to_string(),
     })
 }
 
