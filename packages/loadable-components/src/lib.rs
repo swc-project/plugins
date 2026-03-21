@@ -138,24 +138,40 @@ where
             _ => return false,
         };
 
-        obj.props.iter().any(|prop| match prop {
-            PropOrSpread::Prop(prop) => match prop.as_ref() {
-                Prop::KeyValue(kv) => {
-                    let is_ssr_key = match &kv.key {
-                        PropName::Ident(i) => &*i.sym == "ssr",
-                        PropName::Str(s) => s.value == "ssr",
-                        _ => false,
-                    };
-                    is_ssr_key
-                        && matches!(
+        // Object literals are order-sensitive. Walk from right to left to find
+        // the last effective `ssr` assignment. We can only skip when it is
+        // definitely `false`.
+        for prop in obj.props.iter().rev() {
+            match prop {
+                PropOrSpread::Prop(prop) => match prop.as_ref() {
+                    Prop::KeyValue(kv) => {
+                        let is_ssr_key = match &kv.key {
+                            PropName::Ident(i) => &*i.sym == "ssr",
+                            PropName::Str(s) => s.value == "ssr",
+                            _ => false,
+                        };
+
+                        if !is_ssr_key {
+                            continue;
+                        }
+
+                        return matches!(
                             kv.value.as_ref(),
                             Expr::Lit(Lit::Bool(Bool { value: false, .. }))
-                        )
-                }
-                _ => false,
-            },
-            _ => false,
-        })
+                        );
+                    }
+                    Prop::Shorthand(ident) if &*ident.sym == "ssr" => {
+                        // Dynamic shorthand value: cannot guarantee false.
+                        return false;
+                    }
+                    _ => {}
+                },
+                // A spread may provide/override `ssr` dynamically.
+                PropOrSpread::Spread(_) => return false,
+            }
+        }
+
+        false
     }
 
     fn transform_import_expr(&mut self, call: &mut CallExpr) {
