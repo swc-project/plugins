@@ -7,13 +7,15 @@ use regex::{Regex, RegexBuilder};
 use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
 use swc_atoms::{atom, Atom, Wtf8Atom};
-use swc_common::{comments::Comments, util::take::Take, BytePos, SourceMapperDyn, DUMMY_SP};
+use swc_common::{
+    comments::Comments, util::take::Take, BytePos, SourceMapperDyn, Span, Spanned, DUMMY_SP,
+};
 use swc_ecma_ast::{
     fn_pass, ArrayLit, CallExpr, Callee, ClassDecl, ClassMethod, ClassProp, Expr, ExprOrSpread,
     FnDecl, Id, Ident, IdentName, ImportDecl, ImportSpecifier, JSXAttr, JSXAttrName,
     JSXAttrOrSpread, JSXAttrValue, JSXElement, JSXElementName, JSXExpr, JSXExprContainer,
-    JSXObject, KeyValueProp, Lit, MemberProp, MethodProp, ModuleExportName, ObjectLit, Pass, Pat,
-    Prop, PropName, PropOrSpread, SourceMapperExt, SpreadElement, Tpl, VarDeclarator,
+    JSXObject, KeyValueProp, Lit, MemberExpr, MemberProp, MethodProp, ModuleExportName, ObjectLit,
+    Pass, Pat, Prop, PropName, PropOrSpread, SourceMapperExt, SpreadElement, Tpl, VarDeclarator,
 };
 use swc_ecma_utils::ExprFactory;
 use swc_ecma_visit::{Fold, FoldWith, Visit, VisitWith};
@@ -441,16 +443,31 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
         attrs: &mut [JSXAttrOrSpread],
         label_context: Option<String>,
     ) {
-        // Find a css identifier (ExprKind::Css) in import_packages
-        let css_id = self.import_packages.iter().find_map(|(id, meta)| {
-            if matches!(meta, PackageMeta::Named(ExprKind::Css)) {
-                Some(id.clone())
-            } else {
-                None
-            }
-        });
+        #[derive(Clone)]
+        enum CssPropCallee {
+            Named(Id),
+            Namespace { id: Id, export_name: String },
+        }
 
-        let Some((css_sym, css_ctxt)) = css_id else {
+        // Find css from either named imports (`import { css }`) or namespace
+        // imports (`import * as emotionReact`).
+        let css_callee = self
+            .import_packages
+            .iter()
+            .find_map(|(id, meta)| match meta {
+                PackageMeta::Named(ExprKind::Css) => Some(CssPropCallee::Named(id.clone())),
+                PackageMeta::Namespace(module) => module
+                    .exported_names
+                    .iter()
+                    .find(|item| matches!(item.kind, ExprKind::Css))
+                    .map(|item| CssPropCallee::Namespace {
+                        id: id.clone(),
+                        export_name: item.name.clone(),
+                    }),
+                _ => None,
+            });
+
+        let Some(css_callee) = css_callee else {
             return;
         };
 
@@ -460,7 +477,6 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
                 value:
                     Some(JSXAttrValue::JSXExprContainer(JSXExprContainer {
                         expr: JSXExpr::Expr(expr),
-                        span: container_span,
                         ..
                     })),
                 ..
@@ -477,7 +493,7 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
                     _ => continue,
                 }
 
-                let expr_pos = container_span.lo;
+                let expr_pos = expr.span().lo();
                 let raw_expr = expr.take();
                 let mut args = vec![raw_expr.as_arg()];
 
@@ -498,10 +514,33 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
                 }
 
                 self.comments.add_pure_comment(expr_pos);
+                let call_span = Span::new(expr_pos, expr_pos);
+
+                let callee = match &css_callee {
+                    CssPropCallee::Named((css_sym, css_ctxt)) => {
+                        Ident::new(css_sym.clone(), call_span, *css_ctxt).as_callee()
+                    }
+                    CssPropCallee::Namespace {
+                        id: (namespace_sym, namespace_ctxt),
+                        export_name,
+                    } => Expr::Member(MemberExpr {
+                        span: call_span,
+                        obj: Box::new(Expr::Ident(Ident::new(
+                            namespace_sym.clone(),
+                            call_span,
+                            *namespace_ctxt,
+                        ))),
+                        prop: MemberProp::Ident(IdentName::new(
+                            export_name.clone().into(),
+                            call_span,
+                        )),
+                    })
+                    .as_callee(),
+                };
 
                 *expr = Box::new(Expr::Call(CallExpr {
-                    span: DUMMY_SP,
-                    callee: Ident::new(css_sym, DUMMY_SP, css_ctxt).as_callee(),
+                    span: call_span,
+                    callee,
                     args,
                     ..Default::default()
                 }));

@@ -22,9 +22,12 @@ const styles2 = emotionReact.css`
 export class SimpleComponent extends PureComponent {
   render() {
     return (
-      <div className={styles}>
-        <span>hello</span>
-      </div>
+      <>
+        <div className={styles}>
+          <span>hello</span>
+        </div>
+        <div css={{ color: "blue" }}>css prop</div>
+      </>
     );
   }
 }
