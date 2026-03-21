@@ -111,6 +111,24 @@ describe("formatjs swc plugin", () => {
     expect(output).not.toMatch(/description/);
   });
 
+  // Regression test for https://github.com/swc-project/plugins/issues/532
+  it("should handle string concatenation in defaultMessage (issue #532)", async () => {
+    const input = `
+      import { defineMessage } from 'react-intl';
+
+      const message = defineMessage({
+        defaultMessage: 'Hello ' + 'world'
+      });
+    `;
+
+    const output = await transformCode(input);
+
+    expect(output).toMatch(/id: "[^"]+"/);
+    // Should concatenate strings, not produce an empty array
+    expect(output).toMatch(/defaultMessage: "Hello world"/);
+    expect(output).not.toMatch(/defaultMessage: \[\]/);
+  });
+
   it("should handle multiple string concatenations", async () => {
     const input = `
       import { defineMessage } from 'react-intl';
