@@ -986,13 +986,17 @@ impl<'a, C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<'a, 
 
         let name = &jsx_opening_elem.name;
 
-        // Only process known formatjs component names (simple identifiers).
-        // Member expressions (e.g. `React.Suspense`) and namespaced names are
-        // never formatjs components, so return early to avoid evaluating their
-        // attributes.
+        // Only process known formatjs component names.
+        // For member expressions (e.g. ReactIntl.FormattedMessage), we match
+        // against the right-most property name.
         match name {
             JSXElementName::Ident(ident) => {
                 if !self.component_names.contains(&*ident.sym) {
+                    return;
+                }
+            }
+            JSXElementName::JSXMemberExpr(member_expr) => {
+                if !self.component_names.contains(&*member_expr.prop.sym) {
                     return;
                 }
             }

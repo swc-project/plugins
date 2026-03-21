@@ -68,7 +68,7 @@ fn fixture_aliased_import(input: PathBuf) {
                 t.comments.clone(),
                 vec![
                     Signature {
-                        name: "default".into(),
+                        name: "loadable".into(),
                         from: None,
                     },
                 ],

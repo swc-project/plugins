@@ -121,11 +121,11 @@ describe("formatjs swc plugin", () => {
       });
     `;
 
-    const output = await transformCode(input);
+    const output = await transformCode(input, { ast: true });
 
     expect(output).toMatch(/id: "[^"]+"/);
-    // Should concatenate strings, not produce an empty array
-    expect(output).toMatch(/defaultMessage: "Hello world"/);
+    // In AST mode, defaultMessage should be a non-empty ICU AST array.
+    expect(output).toMatch(/defaultMessage: \[/);
     expect(output).not.toMatch(/defaultMessage: \[\]/);
   });
 
@@ -647,6 +647,28 @@ describe("formatjs swc plugin", () => {
 
     // Should succeed without throwing "must be statically evaluate-able" error
     await expect(transformCode(input)).resolves.toBeDefined();
+  });
+
+  it("should transform member-expression FormattedMessage components", async () => {
+    const input = `
+      import React from 'react';
+      import * as ReactIntl from 'react-intl';
+
+      export function Greeting() {
+        return (
+          <ReactIntl.FormattedMessage
+            defaultMessage="Hello, world!"
+            description="Greeting message"
+          />
+        );
+      }
+    `;
+
+    const output = await transformCode(input);
+
+    expect(output).toMatch(/id: "[^"]+"/);
+    expect(output).toMatch(/defaultMessage: "Hello, world!"/);
+    expect(output).not.toMatch(/description/);
   });
 
   it("should not error on conditional JSX outside formatjs calls", async () => {

@@ -138,24 +138,42 @@ where
             _ => return false,
         };
 
-        obj.props.iter().any(|prop| match prop {
-            PropOrSpread::Prop(prop) => match prop.as_ref() {
+        // Object literals are order-sensitive. Walk from right to left to find
+        // the last effective `ssr` assignment. We can only skip when it is
+        // definitely `false`.
+        for prop in obj.props.iter().rev() {
+            let PropOrSpread::Prop(prop) = prop else {
+                // Spread (or unknown future variants) may provide/override
+                // `ssr` dynamically.
+                return false;
+            };
+
+            match prop.as_ref() {
                 Prop::KeyValue(kv) => {
                     let is_ssr_key = match &kv.key {
                         PropName::Ident(i) => &*i.sym == "ssr",
                         PropName::Str(s) => s.value == "ssr",
                         _ => false,
                     };
-                    is_ssr_key
-                        && matches!(
-                            kv.value.as_ref(),
-                            Expr::Lit(Lit::Bool(Bool { value: false, .. }))
-                        )
+
+                    if !is_ssr_key {
+                        continue;
+                    }
+
+                    return matches!(
+                        kv.value.as_ref(),
+                        Expr::Lit(Lit::Bool(Bool { value: false, .. }))
+                    );
                 }
-                _ => false,
-            },
-            _ => false,
-        })
+                Prop::Shorthand(ident) if &*ident.sym == "ssr" => {
+                    // Dynamic shorthand value: cannot guarantee false.
+                    return false;
+                }
+                _ => {}
+            }
+        }
+
+        false
     }
 
     fn transform_import_expr(&mut self, call: &mut CallExpr) {
@@ -682,14 +700,22 @@ where
             for specifier in import_decl.specifiers.iter() {
                 match specifier {
                     ImportSpecifier::Default(default_spec) => {
-                        if signature.is_default_specifier() {
+                        // For source-less signatures (`from: None`), default imports
+                        // must match the configured local identifier to avoid
+                        // over-matching unrelated default imports.
+                        let is_match = if signature.from.is_none() {
+                            default_spec.local.sym == signature.name
+                        } else {
+                            signature.is_default_specifier()
+                                || default_spec.local.sym == signature.name
+                        };
+
+                        if is_match {
                             self.specifiers.insert(default_spec.local.sym.clone());
                         }
                     }
                     ImportSpecifier::Named(named_specifier) => {
-                        if let Some(ModuleExportName::Ident(imported)) =
-                            &named_specifier.imported
-                        {
+                        if let Some(ModuleExportName::Ident(imported)) = &named_specifier.imported {
                             if imported.sym == signature.name {
                                 self.specifiers.insert(named_specifier.local.sym.clone());
                                 return;

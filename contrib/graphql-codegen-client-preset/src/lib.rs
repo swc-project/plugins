@@ -83,8 +83,12 @@ fn to_pascal_case(s: &str) -> String {
 
 fn apply_naming_convention(s: &str, naming_convention: &str) -> String {
     match naming_convention {
+        "change-case-all#pascalCase" => to_pascal_case(s),
         "change-case-all#upperCaseFirst" => upper_case_first(s),
-        _ => to_pascal_case(s),
+        // GraphQL Codegen supports `keep`; preserve casing in that mode.
+        "keep" => s.to_string(),
+        // Keep unknown/custom conventions unchanged instead of forcing PascalCase.
+        _ => s.to_string(),
     }
 }
 
@@ -146,9 +150,16 @@ impl GraphQLVisitor {
         let filename = self.options.filename.replace('\\', "/");
         let artifact_directory = self.options.artifact_directory.replace('\\', "/");
 
-        // using PathBuf to add the relative path to the artifact directory
-        let mut file_full_path = PathBuf::from(&cwd);
-        file_full_path.push(&filename);
+        // Resolve filename first. In WASM runtimes, `PathBuf::push` would treat
+        // `C:/...` as relative, so we must detect Windows absolute paths
+        // ourselves.
+        let file_full_path = if is_absolute_path(&filename) {
+            PathBuf::from(&filename)
+        } else {
+            let mut path = PathBuf::from(&cwd);
+            path.push(&filename);
+            path
+        };
         let file_s_dirname = file_full_path.parent().unwrap();
 
         // The resolved artifact directory as seen from the current running SWC plugin
@@ -260,10 +271,8 @@ impl VisitMut for GraphQLVisitor {
                         },
                     };
 
-                    let import_name = apply_naming_convention(
-                        &operation_name,
-                        &self.options.naming_convention,
-                    );
+                    let import_name =
+                        apply_naming_convention(&operation_name, &self.options.naming_convention);
 
                     self.graphql_operations_or_fragments_to_import
                         .push(import_name.clone());
@@ -340,6 +349,30 @@ fn naming_convention_default() -> String {
     "change-case-all#pascalCase".to_string()
 }
 
+#[derive(Deserialize)]
+#[serde(untagged)]
+enum NamingConventionOption {
+    String(String),
+    Object(serde_json::Value),
+}
+
+impl NamingConventionOption {
+    fn as_type_name_convention(&self) -> String {
+        match self {
+            NamingConventionOption::String(v) => v.to_string(),
+            NamingConventionOption::Object(v) => v
+                .get("typeNames")
+                .and_then(|t| t.as_str())
+                .map(str::to_string)
+                .unwrap_or_else(naming_convention_default),
+        }
+    }
+}
+
+fn naming_convention_option_default() -> NamingConventionOption {
+    NamingConventionOption::String(naming_convention_default())
+}
+
 #[allow(non_snake_case)]
 #[derive(Deserialize)]
 struct PluginOptions {
@@ -348,8 +381,8 @@ struct PluginOptions {
     #[serde(default = "gql_default")]
     gqlTagName: String,
 
-    #[serde(default = "naming_convention_default")]
-    namingConvention: String,
+    #[serde(default = "naming_convention_option_default")]
+    namingConvention: NamingConventionOption,
 }
 
 #[plugin_transform]
@@ -380,7 +413,7 @@ pub fn process_transform(program: Program, metadata: TransformPluginProgramMetad
         cwd,
         artifact_directory,
         gql_tag_name: plugin_config.gqlTagName,
-        naming_convention: plugin_config.namingConvention,
+        naming_convention: plugin_config.namingConvention.as_type_name_convention(),
     });
 
     program.apply(&mut visit_mut_pass(visitor))

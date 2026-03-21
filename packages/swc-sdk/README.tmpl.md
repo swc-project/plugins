@@ -1,6 +1,6 @@
 # @swc/plugin-swc-sdk
 
-`@swc/plugin-swc-sdk` provides build-time transformations from the `@swc/sdk` package. It supports converting static imports annotated with `/*#__DYNAMIC__*/` into dynamic imports, and processes `markAsPure` annotations so the SWC minifier can tree-shake the marked expressions.
+`@swc/plugin-swc-sdk` provides build-time transformations for the `@swc/sdk` package. It supports converting static imports annotated with `/*#__DYNAMIC__*/` into dynamic imports, and applies configured SDK feature-flag transforms.
 
 # Usage
 
@@ -61,14 +61,6 @@ export function sync() {
     import('./logger').then(m => m.log("Without async"))
   }
 }
-```
-
-## `markAsPure`
-
-```js
-import { markAsPure } from "@swc/sdk";
-
-markAsPure(() => console.log("This will be removed by the SWC minifier"));
 ```
 
 ${CHANGELOG}
