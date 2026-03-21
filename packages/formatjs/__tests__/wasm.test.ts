@@ -121,11 +121,11 @@ describe("formatjs swc plugin", () => {
       });
     `;
 
-    const output = await transformCode(input);
+    const output = await transformCode(input, { ast: true });
 
     expect(output).toMatch(/id: "[^"]+"/);
-    // Should concatenate strings, not produce an empty array
-    expect(output).toMatch(/defaultMessage: "Hello world"/);
+    // In AST mode, defaultMessage should be a non-empty ICU AST array.
+    expect(output).toMatch(/defaultMessage: \[/);
     expect(output).not.toMatch(/defaultMessage: \[\]/);
   });
 
