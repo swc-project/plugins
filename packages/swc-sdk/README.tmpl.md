@@ -1,5 +1,7 @@
 # @swc/plugin-swc-sdk
 
+`@swc/plugin-swc-sdk` provides build-time transformations from the `@swc/sdk` package. It supports converting static imports annotated with `/*#__DYNAMIC__*/` into dynamic imports, and processes `markAsPure` annotations so the SWC minifier can tree-shake the marked expressions.
+
 # Usage
 
 .swcrc:
