@@ -1,4 +1,4 @@
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 use graphql_parser::query::parse_query;
 use pathdiff::diff_paths;
@@ -18,6 +18,27 @@ use swc_core::{
 
 fn capetalize(s: &str) -> String {
     format!("{}{}", &s[..1].to_uppercase(), &s[1..])
+}
+
+/// Returns true if `path` is an absolute path on either Unix (`/foo`) or
+/// Windows (`C:/foo`, `C:\foo`).  We cannot rely on `Path::is_absolute()`
+/// because when the plugin runs inside a WASM runtime it always uses Unix
+/// path semantics, so Windows absolute paths would be misclassified as
+/// relative.
+fn is_absolute_path(path: &str) -> bool {
+    // Unix absolute path
+    if path.starts_with('/') {
+        return true;
+    }
+    // Windows absolute path: starts with a drive letter followed by ':' and a
+    // slash/backslash, e.g. "C:/..." or "C:\..."
+    let mut chars = path.chars();
+    if let (Some(drive), Some(':'), Some(sep)) = (chars.next(), chars.next(), chars.next()) {
+        if drive.is_ascii_alphabetic() && (sep == '/' || sep == '\\') {
+            return true;
+        }
+    }
+    false
 }
 
 #[cfg(test)]
@@ -49,21 +70,30 @@ impl GraphQLVisitor {
     }
 
     fn get_relative_import_path(&self, path_end: &str) -> String {
+        // Normalize Windows-style backslashes to forward slashes so that PathBuf
+        // works correctly when the plugin runs in a WASM context (which always uses
+        // Unix path semantics) but receives Windows paths from the host.
+        let cwd = self.options.cwd.replace('\\', "/");
+        let filename = self.options.filename.replace('\\', "/");
+        let artifact_directory = self.options.artifact_directory.replace('\\', "/");
+
         // using PathBuf to add the relative path to the artifact directory
-        let mut file_full_path = PathBuf::from(&self.options.cwd);
-        file_full_path.push(&self.options.filename);
+        let mut file_full_path = PathBuf::from(&cwd);
+        file_full_path.push(&filename);
         let file_s_dirname = file_full_path.parent().unwrap();
 
         // The resolved artifact directory as seen from the current running SWC plugin
-        // working directory
-        let resolved_artifact_directory =
-            if Path::new(&self.options.artifact_directory).is_relative() {
-                let mut cwd = PathBuf::from(&self.options.cwd);
-                cwd.push(&self.options.artifact_directory);
-                cwd.to_string_lossy().to_string()
-            } else {
-                self.options.artifact_directory.to_string()
-            };
+        // working directory.
+        // We check for absolute paths ourselves instead of relying on
+        // Path::is_absolute(), because on WASM (Unix semantics) a Windows absolute
+        // path such as "C:/project/src" would be considered relative.
+        let resolved_artifact_directory = if is_absolute_path(&artifact_directory) {
+            artifact_directory.to_string()
+        } else {
+            let mut cwd_path = PathBuf::from(&cwd);
+            cwd_path.push(&artifact_directory);
+            cwd_path.to_string_lossy().to_string()
+        };
 
         let mut relative = diff_paths(resolved_artifact_directory, file_s_dirname).unwrap();
 
