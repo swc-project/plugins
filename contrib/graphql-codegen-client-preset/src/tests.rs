@@ -93,10 +93,11 @@ fn import_files_from_other_directory(input_path: PathBuf) {
 }
 
 fn get_windows_path_visitor() -> GraphQLVisitor {
-    // Simulate a Windows environment where cwd and artifact_directory use backslashes.
-    // The WASM plugin runs with Unix path semantics, so it must normalize these.
+    // Simulate a Windows environment where cwd and artifact_directory use
+    // backslashes. The WASM plugin runs with Unix path semantics, so it must
+    // normalize these.
     GraphQLVisitor::new(GraphQLCodegenOptions {
-        filename: "src\\App.tsx".to_string(),
+        filename: "C:\\Users\\user\\project\\src\\App.tsx".to_string(),
         cwd: "C:\\Users\\user\\project".to_string(),
         artifact_directory: "C:\\Users\\user\\project\\src\\gql".to_string(),
         gql_tag_name: "gql".to_string(),
@@ -118,6 +119,14 @@ const GetUser = gql(`
   }
 `);"#
 );
+
+#[test]
+fn windows_absolute_filename_path_gets_correct_relative_import_path() {
+    let visitor = get_windows_path_visitor();
+    let import_path = visitor.get_relative_import_path("graphql");
+
+    assert_eq!(import_path, "./gql/graphql");
+}
 
 test!(
     Default::default(),
