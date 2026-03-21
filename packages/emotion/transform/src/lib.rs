@@ -242,6 +242,14 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
         label
     }
 
+    fn create_tagged_tpl_label_arg(&self) -> ExprOrSpread {
+        let mut label = self.create_label(true);
+        if !label.is_empty() && self.options.sourcemap.unwrap_or(false) && !label.ends_with(';') {
+            label.push(';');
+        }
+        label.as_arg()
+    }
+
     fn create_sourcemap(&mut self, pos: BytePos) -> Option<String> {
         if self.options.sourcemap.unwrap_or(false) {
             let loc = self.cm.get_code_map().lookup_char_pos(pos);
@@ -434,16 +442,13 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
         label_context: Option<String>,
     ) {
         // Find a css identifier (ExprKind::Css) in import_packages
-        let css_id = self
-            .import_packages
-            .iter()
-            .find_map(|(id, meta)| {
-                if matches!(meta, PackageMeta::Named(ExprKind::Css)) {
-                    Some(id.clone())
-                } else {
-                    None
-                }
-            });
+        let css_id = self.import_packages.iter().find_map(|(id, meta)| {
+            if matches!(meta, PackageMeta::Named(ExprKind::Css)) {
+                Some(id.clone())
+            } else {
+                None
+            }
+        });
 
         let Some((css_sym, css_ctxt)) = css_id else {
             return;
@@ -452,11 +457,12 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
         for attr in attrs.iter_mut() {
             if let JSXAttrOrSpread::JSXAttr(JSXAttr {
                 name: JSXAttrName::Ident(name_ident),
-                value: Some(JSXAttrValue::JSXExprContainer(JSXExprContainer {
-                    expr: JSXExpr::Expr(expr),
-                    span: container_span,
-                    ..
-                })),
+                value:
+                    Some(JSXAttrValue::JSXExprContainer(JSXExprContainer {
+                        expr: JSXExpr::Expr(expr),
+                        span: container_span,
+                        ..
+                    })),
                 ..
             }) = attr
             {
@@ -804,7 +810,7 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                         if !self.in_jsx_element {
                             self.comments.add_pure_comment(i.span.lo());
                             if self.options.auto_label.unwrap_or(false) {
-                                args.push(self.create_label(true).as_arg());
+                                args.push(self.create_tagged_tpl_label_arg());
                             }
                             if let Some(cm) = self.create_sourcemap(tagged_tpl.span.lo()) {
                                 args.push(cm.as_arg());
@@ -880,7 +886,7 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                                                     &mut tagged_tpl.tpl,
                                                 );
                                                 if self.options.auto_label.unwrap_or(false) {
-                                                    args.push(self.create_label(true).as_arg());
+                                                    args.push(self.create_tagged_tpl_label_arg());
                                                 }
                                                 if let Some(cm) =
                                                     self.create_sourcemap(tagged_tpl.span.lo())
