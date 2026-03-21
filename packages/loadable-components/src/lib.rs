@@ -127,7 +127,43 @@ where
         false
     }
 
+    fn has_ssr_false(&self, call: &CallExpr) -> bool {
+        let options = match call.args.get(1) {
+            Some(arg) => &arg.expr,
+            None => return false,
+        };
+
+        let obj = match options.as_ref() {
+            Expr::Object(obj) => obj,
+            _ => return false,
+        };
+
+        obj.props.iter().any(|prop| match prop {
+            PropOrSpread::Prop(prop) => match prop.as_ref() {
+                Prop::KeyValue(kv) => {
+                    let is_ssr_key = match &kv.key {
+                        PropName::Ident(i) => &*i.sym == "ssr",
+                        PropName::Str(s) => s.value == "ssr",
+                        _ => false,
+                    };
+                    is_ssr_key
+                        && matches!(
+                            kv.value.as_ref(),
+                            Expr::Lit(Lit::Bool(Bool { value: false, .. }))
+                        )
+                }
+                _ => false,
+            },
+            _ => false,
+        })
+    }
+
     fn transform_import_expr(&mut self, call: &mut CallExpr) {
+        // Skip transformation if ssr: false is specified in the options
+        if self.has_ssr_false(call) {
+            return;
+        }
+
         let import = {
             let mut v = ImportFinder::default();
             call.visit_with(&mut v);
