@@ -142,32 +142,34 @@ where
         // the last effective `ssr` assignment. We can only skip when it is
         // definitely `false`.
         for prop in obj.props.iter().rev() {
-            match prop {
-                PropOrSpread::Prop(prop) => match prop.as_ref() {
-                    Prop::KeyValue(kv) => {
-                        let is_ssr_key = match &kv.key {
-                            PropName::Ident(i) => &*i.sym == "ssr",
-                            PropName::Str(s) => s.value == "ssr",
-                            _ => false,
-                        };
+            let PropOrSpread::Prop(prop) = prop else {
+                // Spread (or unknown future variants) may provide/override
+                // `ssr` dynamically.
+                return false;
+            };
 
-                        if !is_ssr_key {
-                            continue;
-                        }
+            match prop.as_ref() {
+                Prop::KeyValue(kv) => {
+                    let is_ssr_key = match &kv.key {
+                        PropName::Ident(i) => &*i.sym == "ssr",
+                        PropName::Str(s) => s.value == "ssr",
+                        _ => false,
+                    };
 
-                        return matches!(
-                            kv.value.as_ref(),
-                            Expr::Lit(Lit::Bool(Bool { value: false, .. }))
-                        );
+                    if !is_ssr_key {
+                        continue;
                     }
-                    Prop::Shorthand(ident) if &*ident.sym == "ssr" => {
-                        // Dynamic shorthand value: cannot guarantee false.
-                        return false;
-                    }
-                    _ => {}
-                },
-                // A spread may provide/override `ssr` dynamically.
-                PropOrSpread::Spread(_) => return false,
+
+                    return matches!(
+                        kv.value.as_ref(),
+                        Expr::Lit(Lit::Bool(Bool { value: false, .. }))
+                    );
+                }
+                Prop::Shorthand(ident) if &*ident.sym == "ssr" => {
+                    // Dynamic shorthand value: cannot guarantee false.
+                    return false;
+                }
+                _ => {}
             }
         }
 
@@ -713,9 +715,7 @@ where
                         }
                     }
                     ImportSpecifier::Named(named_specifier) => {
-                        if let Some(ModuleExportName::Ident(imported)) =
-                            &named_specifier.imported
-                        {
+                        if let Some(ModuleExportName::Ident(imported)) = &named_specifier.imported {
                             if imported.sym == signature.name {
                                 self.specifiers.insert(named_specifier.local.sym.clone());
                                 return;
