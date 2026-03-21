@@ -649,6 +649,28 @@ describe("formatjs swc plugin", () => {
     await expect(transformCode(input)).resolves.toBeDefined();
   });
 
+  it("should transform member-expression FormattedMessage components", async () => {
+    const input = `
+      import React from 'react';
+      import * as ReactIntl from 'react-intl';
+
+      export function Greeting() {
+        return (
+          <ReactIntl.FormattedMessage
+            defaultMessage="Hello, world!"
+            description="Greeting message"
+          />
+        );
+      }
+    `;
+
+    const output = await transformCode(input);
+
+    expect(output).toMatch(/id: "[^"]+"/);
+    expect(output).toMatch(/defaultMessage: "Hello, world!"/);
+    expect(output).not.toMatch(/description/);
+  });
+
   it("should not error on conditional JSX outside formatjs calls", async () => {
     // Conditional JSX expressions unrelated to formatjs should not be evaluated
     const input = `
