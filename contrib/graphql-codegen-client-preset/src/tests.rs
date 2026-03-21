@@ -210,3 +210,54 @@ const SomeEGRockets = gql(`
   }
 `);"#
 );
+
+#[test]
+fn naming_convention_keep_preserves_original_name() {
+    assert_eq!(
+        apply_naming_convention("SomeEGRocketsDocument", "keep"),
+        "SomeEGRocketsDocument"
+    );
+}
+
+#[test]
+fn naming_convention_unknown_preserves_original_name() {
+    assert_eq!(
+        apply_naming_convention("SomeEGRocketsDocument", "lodash#camelCase"),
+        "SomeEGRocketsDocument"
+    );
+}
+
+#[test]
+fn plugin_options_accept_object_naming_convention() {
+    let options: PluginOptions = serde_json::from_str(
+        r#"{
+            "artifactDirectory":"./src/gql",
+            "namingConvention":{
+                "typeNames":"keep",
+                "enumValues":"change-case-all#upperCaseFirst",
+                "transformUnderscore":true
+            }
+        }"#,
+    )
+    .unwrap();
+
+    assert_eq!(options.namingConvention.as_type_name_convention(), "keep");
+}
+
+#[test]
+fn plugin_options_object_without_type_names_uses_default_naming_convention() {
+    let options: PluginOptions = serde_json::from_str(
+        r#"{
+            "artifactDirectory":"./src/gql",
+            "namingConvention":{
+                "enumValues":"keep"
+            }
+        }"#,
+    )
+    .unwrap();
+
+    assert_eq!(
+        options.namingConvention.as_type_name_convention(),
+        "change-case-all#pascalCase"
+    );
+}
