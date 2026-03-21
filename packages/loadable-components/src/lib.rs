@@ -682,7 +682,17 @@ where
             for specifier in import_decl.specifiers.iter() {
                 match specifier {
                     ImportSpecifier::Default(default_spec) => {
-                        if signature.is_default_specifier() {
+                        // For source-less signatures (`from: None`), default imports
+                        // must match the configured local identifier to avoid
+                        // over-matching unrelated default imports.
+                        let is_match = if signature.from.is_none() {
+                            default_spec.local.sym == signature.name
+                        } else {
+                            signature.is_default_specifier()
+                                || default_spec.local.sym == signature.name
+                        };
+
+                        if is_match {
                             self.specifiers.insert(default_spec.local.sym.clone());
                         }
                     }
