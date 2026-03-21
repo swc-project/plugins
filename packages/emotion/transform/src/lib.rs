@@ -727,7 +727,7 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                         if !self.in_jsx_element {
                             self.comments.add_pure_comment(i.span.lo());
                             if self.options.auto_label.unwrap_or(false) {
-                                args.push(self.create_label(false).as_arg());
+                                args.push(self.create_label(true).as_arg());
                             }
                             if let Some(cm) = self.create_sourcemap(tagged_tpl.span.lo()) {
                                 args.push(cm.as_arg());

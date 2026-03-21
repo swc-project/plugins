@@ -1,5 +1,12 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`Should add label to css tagged template when autoLabel is 'always' 1`] = `
+"import { css } from '@emotion/css';
+export var testCls = /*#__PURE__*/ css("font-size:100px;font-weight:bold;", "label:testCls");
+export var anotherStyle = /*#__PURE__*/ css("color:red;", "label:anotherStyle");
+"
+`;
+
 exports[`Should transform emotion css correctly 1`] = `
 "function _tagged_template_literal(strings, raw) {
     if (!raw) {
