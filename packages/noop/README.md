@@ -1,5 +1,19 @@
 # @swc/plugin-noop
 
+A no-operation (noop) SWC plugin that passes the AST through unchanged. Useful for debugging the SWC plugin infrastructure, measuring plugin overhead, or as a minimal starting template for new plugins.
+
+## Usage
+
+```json
+{
+  "jsc": {
+    "experimental": {
+      "plugins": [["@swc/plugin-noop", {}]]
+    }
+  }
+}
+```
+
 # @swc/plugin-noop
 
 ## 12.7.0

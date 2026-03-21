@@ -1,5 +1,23 @@
 # @swc/plugin-styled-jsx
 
+SWC plugin for [styled-jsx](https://github.com/vercel/styled-jsx), Vercel's CSS-in-JS solution. It transforms `<style jsx>` elements within JSX components into scoped CSS, allowing you to write component-level styles in plain CSS syntax that are automatically scoped to the component.
+
+## Usage
+
+```sh
+npm install --save-dev @swc/plugin-styled-jsx @swc/core
+```
+
+```json
+{
+  "jsc": {
+    "experimental": {
+      "plugins": [["@swc/plugin-styled-jsx", {}]]
+    }
+  }
+}
+```
+
 # @swc/plugin-styled-jsx
 
 ## 13.7.0

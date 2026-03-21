@@ -1,5 +1,7 @@
 # @swc/plugin-swc-magic
 
+SWC plugin for the [`@swc/magic`](https://www.npmjs.com/package/@swc/magic) package. It processes magic annotations in your code, such as `markAsPure`, which marks function calls as side-effect-free so the SWC minifier can safely tree-shake (remove) them when their result is unused.
+
 ## Usage
 
 .swcrc:

@@ -1,5 +1,7 @@
 # loadable-components
 
+SWC plugin for [`@loadable/component`](https://loadable-components.com/). It transforms dynamic imports inside loadable functions to add chunk names and enable server-side rendering (SSR) support for code-splitting. This is the SWC equivalent of [`babel-plugin-loadable-components`](https://github.com/gregberge/loadable-components/tree/main/packages/babel-plugin).
+
 ## Config
 
 ```json

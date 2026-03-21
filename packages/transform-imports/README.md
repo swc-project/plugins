@@ -1,4 +1,8 @@
-# transform-imports
+# @swc/plugin-transform-imports
+
+Transforms named module imports into direct imports from individual files, reducing bundle size by avoiding the import of entire libraries when only specific members are needed. This is the SWC equivalent of [`babel-plugin-transform-imports`](https://www.npmjs.com/package/babel-plugin-transform-imports).
+
+For example, `import { Button } from 'react-bootstrap'` becomes `import Button from 'react-bootstrap/lib/Button'`.
 
 ## Config
 

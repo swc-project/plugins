@@ -1,6 +1,8 @@
 # @swc/plugin-swc-sdk
 
-# Usage
+SWC plugin for the [`@swc/sdk`](https://www.npmjs.com/package/@swc/sdk) package. It provides build-time code transformations including `markAsPure` (marks function calls as pure/side-effect-free for tree-shaking) and `/*#__DYNAMIC__*/` annotations (converts static imports into dynamic imports for conditional lazy loading).
+
+## Usage
 
 .swcrc:
 

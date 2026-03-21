@@ -1,4 +1,6 @@
-# remove-console
+# @swc/plugin-remove-console
+
+Removes `console.*` calls (e.g. `console.log`, `console.warn`, `console.error`) from JavaScript/TypeScript code at build time. This reduces bundle size and prevents debug output from being included in production builds. Specific console methods can be excluded from removal (e.g. keeping `console.error`).
 
 See https://nextjs.org/docs/architecture/nextjs-compiler#remove-console for more information.
 

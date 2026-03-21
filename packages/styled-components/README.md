@@ -1,3 +1,7 @@
+# @swc/plugin-styled-components
+
+SWC plugin for [styled-components](https://styled-components.com/), a popular CSS-in-JS library. It adds display names for better debugging, server-side rendering (SSR) support via deterministic class names, and smaller bundles by removing unnecessary code in production. This is the SWC equivalent of [`babel-plugin-styled-components`](https://github.com/styled-components/babel-plugin-styled-components).
+
 ### `@swc/plugin-styled-components`
 
 #### Setup

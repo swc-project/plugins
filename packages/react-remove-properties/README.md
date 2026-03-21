@@ -1,4 +1,6 @@
-# react-remove-properties
+# @swc/plugin-react-remove-properties
+
+Removes custom React properties (such as `data-testid`) from JSX elements at build time. This reduces bundle size and prevents test-only attributes from being shipped to production. By default it removes all `data-testid` attributes, but you can configure it to target any property using a regex pattern.
 
 See https://nextjs.org/docs/architecture/nextjs-compiler#remove-react-properties for more information.
 

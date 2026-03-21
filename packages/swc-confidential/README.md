@@ -1,5 +1,7 @@
 # @swc/plugin-swc-confidential
 
+Encrypts confidential string literals at build time. Strings marked with the `/*#__CONFIDENTIAL__*/` comment annotation are replaced with AES-encrypted values, preventing sensitive data (such as feature flag names, API keys, or internal identifiers) from being exposed as plain text in the compiled bundle.
+
 ## Usage
 
 .swcrc:

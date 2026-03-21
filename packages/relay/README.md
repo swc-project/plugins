@@ -1,3 +1,7 @@
+# @swc/plugin-relay
+
+SWC plugin for [Relay](https://relay.dev/), Facebook's GraphQL client framework for React. It compiles `graphql` tagged template literals into Relay-compatible artifacts, replacing them with `require()` calls to the compiled query files. This is the SWC equivalent of [`babel-plugin-relay`](https://www.npmjs.com/package/babel-plugin-relay).
+
 ### `@swc/plugin-relay`
 
 #### Setup

@@ -1,5 +1,25 @@
 # @swc/plugin-jest
 
+The SWC implementation of `babel-jest`. This plugin transforms test files using SWC, enabling fast Jest-based testing without Babel. It replaces `babel-jest` as the transformer in Jest configurations and supports TypeScript, JSX, and modern JavaScript features.
+
+## Usage
+
+Install the plugin and configure Jest to use SWC as the transformer:
+
+```sh
+npm install --save-dev @swc/plugin-jest @swc/jest @swc/core
+```
+
+Then update your Jest configuration (e.g. `jest.config.js`):
+
+```js
+module.exports = {
+  transform: {
+    "^.+\\.(t|j)sx?$": "@swc/jest",
+  },
+};
+```
+
 # @swc/plugin-jest
 
 ## 12.7.0
