@@ -427,6 +427,83 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
             })
         }
     }
+
+    fn rewrite_css_prop_attr(
+        &mut self,
+        attrs: &mut [JSXAttrOrSpread],
+        label_context: Option<String>,
+    ) {
+        // Find a css identifier (ExprKind::Css) in import_packages
+        let css_id = self
+            .import_packages
+            .iter()
+            .find_map(|(id, meta)| {
+                if matches!(meta, PackageMeta::Named(ExprKind::Css)) {
+                    Some(id.clone())
+                } else {
+                    None
+                }
+            });
+
+        let Some((css_sym, css_ctxt)) = css_id else {
+            return;
+        };
+
+        for attr in attrs.iter_mut() {
+            if let JSXAttrOrSpread::JSXAttr(JSXAttr {
+                name: JSXAttrName::Ident(name_ident),
+                value: Some(JSXAttrValue::JSXExprContainer(JSXExprContainer {
+                    expr: JSXExpr::Expr(expr),
+                    span: container_span,
+                    ..
+                })),
+                ..
+            }) = attr
+            {
+                if name_ident.as_ref() != "css" {
+                    continue;
+                }
+
+                // Only transform object and array expressions; skip calls, template
+                // literals, identifiers, etc. which are handled elsewhere
+                match expr.as_ref() {
+                    Expr::Object(_) | Expr::Array(_) => {}
+                    _ => continue,
+                }
+
+                let expr_pos = container_span.lo;
+                let raw_expr = expr.take();
+                let mut args = vec![raw_expr.as_arg()];
+
+                if self.options.auto_label.unwrap_or(false) {
+                    // Use the pre-captured context (class/function name) rather than
+                    // whatever current_context was set to during fold_children_with
+                    let saved_context =
+                        std::mem::replace(&mut self.current_context, label_context.clone());
+                    let label = self.create_label(true);
+                    self.current_context = saved_context;
+                    if !label.is_empty() {
+                        args.push(label.as_arg());
+                    }
+                }
+
+                if let Some(cm) = self.create_sourcemap(expr_pos) {
+                    args.push(cm.as_arg());
+                }
+
+                self.comments.add_pure_comment(expr_pos);
+
+                *expr = Box::new(Expr::Call(CallExpr {
+                    span: DUMMY_SP,
+                    callee: Ident::new(css_sym, DUMMY_SP, css_ctxt).as_callee(),
+                    args,
+                    ..Default::default()
+                }));
+
+                break; // Only one css prop per element
+            }
+        }
+    }
 }
 
 impl<C: Comments> Fold for EmotionTransformer<'_, C> {
@@ -869,8 +946,16 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
             }
             _ => {}
         };
-        let dest_expr = expr.fold_children_with(self);
+        // Capture the label context before fold_children_with, since folding the
+        // css object's properties (e.g. `color: "red"`) will change current_context
+        let label_context = self.current_context.clone();
+        let mut dest_expr = expr.fold_children_with(self);
         self.in_jsx_element = false;
+
+        // Handle css prop with object/array expression AFTER fold_children_with
+        // to avoid double-processing by fold_call_expr
+        self.rewrite_css_prop_attr(&mut dest_expr.opening.attrs, label_context);
+
         dest_expr
     }
 
