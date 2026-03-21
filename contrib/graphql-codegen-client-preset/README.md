@@ -14,6 +14,8 @@ yarn add -D @swc-contrib/plugin-graphql-codegen-client-preset
 
 You will need to provide the `artifactDirectory` path that should be the same as the one configured in your `codegen.ts`
 
+The plugin also supports a `namingConvention` option to match the naming convention configured in your `codegen.ts`. The default is `"change-case-all#pascalCase"` which matches the default for `@graphql-codegen/client-preset`. If you have set `namingConvention: "change-case-all#upperCaseFirst"` in your `codegen.ts`, you must also set it in the plugin options.
+
 #### Vite
 
 ```ts

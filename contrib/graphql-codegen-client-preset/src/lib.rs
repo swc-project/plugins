@@ -16,8 +16,76 @@ use swc_core::{
     },
 };
 
-fn capetalize(s: &str) -> String {
-    format!("{}{}", &s[..1].to_uppercase(), &s[1..])
+fn upper_case_first(s: &str) -> String {
+    let mut chars = s.chars();
+    match chars.next() {
+        None => String::new(),
+        Some(first) => first.to_uppercase().collect::<String>() + chars.as_str(),
+    }
+}
+
+fn to_pascal_case(s: &str) -> String {
+    let chars: Vec<char> = s.chars().collect();
+    let mut words: Vec<String> = Vec::new();
+    let mut word_start = 0;
+
+    for i in 1..chars.len() {
+        let is_boundary = if !chars[i - 1].is_alphanumeric() {
+            true
+        } else if chars[i - 1].is_lowercase() && chars[i].is_uppercase() {
+            // lowercase → uppercase (e.g., someEG: e→E)
+            true
+        } else if i + 1 < chars.len()
+            && chars[i - 1].is_uppercase()
+            && chars[i].is_uppercase()
+            && chars[i + 1].is_lowercase()
+        {
+            // uppercase sequence followed by lowercase (e.g., EGRockets: G→R)
+            true
+        } else {
+            false
+        };
+
+        if is_boundary {
+            let word: String = chars[word_start..i]
+                .iter()
+                .filter(|c| c.is_alphanumeric())
+                .collect();
+            if !word.is_empty() {
+                words.push(word);
+            }
+            word_start = i;
+        }
+    }
+
+    let word: String = chars[word_start..]
+        .iter()
+        .filter(|c| c.is_alphanumeric())
+        .collect();
+    if !word.is_empty() {
+        words.push(word);
+    }
+
+    words
+        .iter()
+        .map(|w| {
+            let mut chars = w.chars();
+            match chars.next() {
+                None => String::new(),
+                Some(first) => {
+                    let rest = chars.as_str().to_lowercase();
+                    format!("{}{}", first.to_uppercase(), rest)
+                }
+            }
+        })
+        .collect()
+}
+
+fn apply_naming_convention(s: &str, naming_convention: &str) -> String {
+    match naming_convention {
+        "change-case-all#upperCaseFirst" => upper_case_first(s),
+        _ => to_pascal_case(s),
+    }
 }
 
 #[cfg(test)]
@@ -28,6 +96,7 @@ pub struct GraphQLCodegenOptions {
     pub cwd: String,
     pub artifact_directory: String,
     pub gql_tag_name: String,
+    pub naming_convention: String,
 }
 
 pub struct GraphQLVisitor {
@@ -161,11 +230,16 @@ impl VisitMut for GraphQLVisitor {
                         },
                     };
 
+                    let import_name = apply_naming_convention(
+                        &operation_name,
+                        &self.options.naming_convention,
+                    );
+
                     self.graphql_operations_or_fragments_to_import
-                        .push(capetalize(&operation_name));
+                        .push(import_name.clone());
 
                     // now change the call expression to a Identifier
-                    let new_expr = Expr::Ident(quote_ident!(capetalize(&operation_name)).into());
+                    let new_expr = Expr::Ident(quote_ident!(import_name).into());
 
                     *init = Box::new(new_expr);
                 }
@@ -231,6 +305,11 @@ impl VisitMut for GraphQLVisitor {
 fn gql_default() -> String {
     "gql".to_string()
 }
+
+fn naming_convention_default() -> String {
+    "change-case-all#pascalCase".to_string()
+}
+
 #[allow(non_snake_case)]
 #[derive(Deserialize)]
 struct PluginOptions {
@@ -238,6 +317,9 @@ struct PluginOptions {
 
     #[serde(default = "gql_default")]
     gqlTagName: String,
+
+    #[serde(default = "naming_convention_default")]
+    namingConvention: String,
 }
 
 #[plugin_transform]
@@ -268,6 +350,7 @@ pub fn process_transform(program: Program, metadata: TransformPluginProgramMetad
         cwd,
         artifact_directory,
         gql_tag_name: plugin_config.gqlTagName,
+        naming_convention: plugin_config.namingConvention,
     });
 
     program.apply(&mut visit_mut_pass(visitor))
