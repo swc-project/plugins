@@ -26,6 +26,9 @@ Then update your `.swcrc` file like below:
 }
 ```
 
+#### More specific examples and configuration
+See here [https://styled-components.com/docs/tooling](https://styled-components.com/docs/tooling)
+
 # @swc/plugin-styled-components
 
 ## 12.7.0
