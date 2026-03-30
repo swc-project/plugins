@@ -20,4 +20,4 @@ swc_common        = { workspace = true, features = ["concurrent"] }
 swc_core          = { workspace = true, features = ["ecma_plugin_transform"] }
 swc_ecma_ast      = { workspace = true }
 swc_ecma_visit    = { workspace = true }
-swc_feature_flags = { path = "../../crates/swc_feature_flags" }
+swc_feature_flags = { path = "../../crates/swc_feature_flags" , version = "1.0.0" }

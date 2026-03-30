@@ -23,7 +23,7 @@ swc_core         = { workspace = true, features = ["ecma_plugin_transform"] }
 swc_ecma_ast     = { workspace = true }
 swc_ecma_utils   = { workspace = true }
 swc_ecma_visit   = { workspace = true }
-swc_emotion      = { path = "./transform" }
+swc_emotion      = { path = "./transform" , version = "1.0.0" }
 swc_plugin_macro = { workspace = true }
 swc_plugin_proxy = { workspace = true }
 tracing          = { workspace = true, features = ["release_max_level_off"] }
