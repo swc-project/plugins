@@ -18,7 +18,7 @@ version      = "0.19.4"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-modularize_imports = { path = "./transform" }
+modularize_imports = { path = "./transform" , version = "1.0.0" }
 serde_json         = { workspace = true }
 swc_common         = { workspace = true, features = ["concurrent"] }
 swc_core           = { workspace = true, features = ["ecma_plugin_transform"] }

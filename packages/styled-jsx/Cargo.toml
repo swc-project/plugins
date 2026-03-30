@@ -23,7 +23,7 @@ custom_transform = ["swc_common/concurrent"]
 [dependencies]
 anyhow            = { workspace = true }
 serde_json        = { workspace = true }
-styled_jsx        = { path = "./transform" }
+styled_jsx        = { path = "./transform" , version = "1.0.0" }
 swc_atoms         = { workspace = true }
 swc_common        = { workspace = true }
 swc_core          = { workspace = true, features = ["ecma_plugin_transform"] }

@@ -2816,9 +2816,9 @@ dependencies = [
 
 [[package]]
 name = "swc_core"
-version = "59.0.1"
+version = "60.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8acca6d8b73f36672a9b865faad33c75fc15875798c8f50f1583e11b1661d9af"
+checksum = "7eeb24db3d951eef14863a7cbaf3174d17dadd3dc8efa7863a05c435c2c589dc"
 dependencies = [
  "swc_allocator",
  "swc_atoms",
@@ -3035,9 +3035,9 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_minifier"
-version = "47.0.0"
+version = "48.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "11869fd5fb37f67be9586cef43ad6d408170957537847e652f2b1d17cc01f19a"
+checksum = "80996ddeaa844951aa4af099aefc04b28ae5ddd6580df0b8844c17f79681f56b"
 dependencies = [
  "arrayvec",
  "bitflags",
@@ -3234,9 +3234,9 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_usage_analyzer"
-version = "30.0.0"
+version = "31.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "14fb67600772fe41d9d02d96a202f95153ee817ab37942535f06426182674df6"
+checksum = "08a90c56b518bbdbc52061647df0d2e6456690a439a607d450a43aa9ca23bd8f"
 dependencies = [
  "bitflags",
  "indexmap",
