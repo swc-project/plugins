@@ -1,6 +1,14 @@
 # @swc/plugin-jest
 
+`@swc/plugin-jest` is an SWC transform that hoists Jest calls such as `jest.mock`, `jest.unmock`, and `jest.enableAutomock` in the same spirit as Jest's Babel hoist behavior.
+
 # @swc/plugin-jest
+
+## 12.8.0
+
+### Minor Changes
+
+- a0fb975: Update swc_core to v61.0.1
 
 ## 12.7.0
 

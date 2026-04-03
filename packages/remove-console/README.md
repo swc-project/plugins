@@ -1,6 +1,6 @@
 # remove-console
 
-See https://nextjs.org/docs/architecture/nextjs-compiler#remove-console for more information.
+`@swc/plugin-remove-console` strips `console.*` calls from your production builds, helping to reduce bundle size and avoid leaking debug information to end users. You can optionally exclude specific console methods (e.g. `console.error`) from removal. See https://nextjs.org/docs/architecture/nextjs-compiler#remove-console for more information.
 
 ## Config
 
@@ -20,6 +20,12 @@ or
 ```
 
 # @swc/plugin-remove-console
+
+## 12.8.0
+
+### Minor Changes
+
+- a0fb975: Update swc_core to v61.0.1
 
 ## 12.7.0
 

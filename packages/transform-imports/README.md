@@ -1,5 +1,7 @@
 # transform-imports
 
+`@swc/plugin-transform-imports` rewrites named imports into direct, member-level imports to reduce bundle size. For example, `import { Button } from 'react-bootstrap'` becomes `import Button from 'react-bootstrap/lib/Button'`, which allows bundlers to include only the specific module rather than the entire library.
+
 ## Config
 
 ```json
@@ -17,6 +19,12 @@
 ```
 
 # @swc/plugin-transform-imports
+
+## 12.8.0
+
+### Minor Changes
+
+- a0fb975: Update swc_core to v61.0.1
 
 ## 12.7.0
 

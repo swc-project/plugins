@@ -1,6 +1,14 @@
 # @swc/plugin-noop
 
+`@swc/plugin-noop` is a no-operation SWC plugin that passes code through without any transformation. It is useful for testing the SWC plugin system, benchmarking plugin infrastructure overhead, and as a template for building new plugins.
+
 # @swc/plugin-noop
+
+## 12.8.0
+
+### Minor Changes
+
+- a0fb975: Update swc_core to v61.0.1
 
 ## 12.7.0
 

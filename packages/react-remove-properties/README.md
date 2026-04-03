@@ -1,6 +1,6 @@
 # react-remove-properties
 
-See https://nextjs.org/docs/architecture/nextjs-compiler#remove-react-properties for more information.
+`@swc/plugin-react-remove-properties` removes React component properties (such as `data-testid`) from your production builds. This is useful for stripping test-only attributes that you don't want shipped to end users. See https://nextjs.org/docs/architecture/nextjs-compiler#remove-react-properties for more information.
 
 ## Config
 
@@ -22,6 +22,12 @@ or
 ```
 
 # @swc/plugin-react-remove-properties
+
+## 12.8.0
+
+### Minor Changes
+
+- a0fb975: Update swc_core to v61.0.1
 
 ## 12.7.0
 

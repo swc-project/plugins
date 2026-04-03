@@ -1,6 +1,14 @@
 # @swc/plugin-styled-jsx
 
+`@swc/plugin-styled-jsx` transforms `<style jsx>` tags in JSX components into scoped CSS, providing component-level style isolation. It is the SWC equivalent of the `styled-jsx` Babel plugin used by Next.js.
+
 # @swc/plugin-styled-jsx
+
+## 13.8.0
+
+### Minor Changes
+
+- a0fb975: Update swc_core to v61.0.1
 
 ## 13.7.0
 

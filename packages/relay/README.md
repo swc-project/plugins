@@ -1,5 +1,7 @@
 ### `@swc/plugin-relay`
 
+`@swc/plugin-relay` compiles Relay GraphQL `graphql` tagged template literals into the corresponding Relay-generated artifact imports. It is the SWC equivalent of `babel-plugin-relay`, enabling projects that use the Relay framework to leverage SWC for faster compilation.
+
 #### Setup
 
 ```sh
@@ -103,6 +105,12 @@ plugins: [
 In this example typescript graphql files will output transpiled import path of `javascript` ending with `.js`.
 
 # @swc/plugin-relay
+
+## 12.8.0
+
+### Minor Changes
+
+- a0fb975: Update swc_core to v61.0.1
 
 ## 12.7.0
 
