@@ -22,4 +22,4 @@ serde_json = { workspace = true }
 swc_common = { workspace = true }
 swc_core   = { workspace = true, features = ["ecma_plugin_transform"] }
 
-swc_prefresh = { path = "./transform" , version = "1.0.0" }
+swc_prefresh = { path = "./transform", version = "2.0.0" }

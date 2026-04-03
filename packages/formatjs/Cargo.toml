@@ -22,4 +22,4 @@ swc_core = { workspace = true, features = [
   "ecma_ast_serde",
 ] }
 swc_ecma_minifier = { workspace = true }
-swc_formatjs_transform = { path = "./transform" , version = "24.0.0" }
+swc_formatjs_transform = { path = "./transform", version = "25.0.0" }

@@ -18,7 +18,7 @@ version      = "0.19.4"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-react_remove_properties = { path = "./transform" , version = "1.0.0" }
+react_remove_properties = { path = "./transform", version = "2.0.0" }
 serde_json              = { workspace = true }
 swc_cached              = { workspace = true }
 swc_common              = { workspace = true, features = ["concurrent"] }
