@@ -1,5 +1,7 @@
 ### `@swc/plugin-styled-components`
 
+`@swc/plugin-styled-components` is the SWC equivalent of `babel-plugin-styled-components`. It adds display names to styled-components for better debugging, generates deterministic class names for server-side rendering (SSR), and enables other optimizations provided by the styled-components Babel plugin.
+
 #### Setup
 
 ```sh
@@ -27,6 +29,12 @@ Then update your `.swcrc` file like below:
 ```
 
 # @swc/plugin-styled-components
+
+## 12.8.0
+
+### Minor Changes
+
+- a0fb975: Update swc_core to v61.0.1
 
 ## 12.7.0
 

@@ -1,5 +1,7 @@
 # loadable-components
 
+`@swc/plugin-loadable-components` transforms `@loadable/component` dynamic imports to support server-side rendering (SSR) and code splitting. It is the SWC equivalent of the `@loadable/babel-plugin` and enables the full `@loadable/component` SSR workflow when using SWC as your compiler.
+
 ## Config
 
 ```json
@@ -43,6 +45,12 @@ import loadable from '@loadable/component';   // will be transformed
 ```
 
 # @swc/plugin-loadable-components
+
+## 11.8.0
+
+### Minor Changes
+
+- a0fb975: Update swc_core to v61.0.1
 
 ## 11.7.0
 

@@ -1,5 +1,7 @@
 # @swc/plugin-swc-sdk
 
+`@swc/plugin-swc-sdk` provides build-time transformations for the `@swc/sdk` package. It supports converting static imports annotated with `/*#__DYNAMIC__*/` into dynamic imports, and applies configured SDK feature-flag transforms.
+
 # Usage
 
 .swcrc:
@@ -61,15 +63,13 @@ export function sync() {
 }
 ```
 
-## `markAsPure`
-
-```js
-import { markAsPure } from "@swc/sdk";
-
-markAsPure(() => console.log("This will be removed by the SWC minifier"));
-```
-
 # @swc/plugin-swc-sdk
+
+## 12.8.0
+
+### Minor Changes
+
+- a0fb975: Update swc_core to v61.0.1
 
 ## 12.7.0
 

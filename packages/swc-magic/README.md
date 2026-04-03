@@ -1,5 +1,7 @@
 # @swc/plugin-swc-magic
 
+`@swc/plugin-swc-magic` processes magic annotations from the `@swc/magic` package, such as `markAsPure`, which annotates expressions so the SWC minifier can eliminate them as dead code during tree-shaking.
+
 ## Usage
 
 .swcrc:
@@ -23,6 +25,12 @@ markAsPure(() => console.log("This will be removed by the SWC minifier"));
 ```
 
 # @swc/plugin-swc-magic
+
+## 12.8.0
+
+### Minor Changes
+
+- a0fb975: Update swc_core to v61.0.1
 
 ## 12.7.0
 
