@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { expect, test } from "vitest";
 import path from "node:path";
 import fs from "node:fs/promises";
 import url from "node:url";
@@ -10,6 +10,33 @@ const pluginPath = path.join(
   "..",
   pluginName,
 );
+const fixtureDir = path.resolve(
+  url.fileURLToPath(import.meta.url),
+  "..",
+  "fixtures",
+);
+
+async function readFixture(name: string) {
+  return fs.readFile(path.resolve(fixtureDir, name), "utf-8");
+}
+
+async function transformWithEmotion(
+  code: string,
+  pluginOptions: Record<string, unknown> = {},
+  envName?: string,
+) {
+  return transform(code, {
+    envName,
+    jsc: {
+      parser: {
+        syntax: "ecmascript",
+      },
+      experimental: {
+        plugins: [[pluginPath, pluginOptions]],
+      },
+    },
+  });
+}
 
 const options: Options = {
   jsc: {
@@ -17,57 +44,22 @@ const options: Options = {
       syntax: "ecmascript",
     },
     experimental: {
-      plugins: [
-        [
-          pluginPath,
-          {},
-        ],
-      ],
+      plugins: [[pluginPath, {}]],
     },
   },
 };
 
 test("Should transform emotion css correctly", async () => {
-  const code = await fs.readFile(
-    path.resolve(
-      url.fileURLToPath(import.meta.url),
-      "..",
-      "fixtures",
-      "input.js",
-    ),
-    "utf-8",
-  );
+  const code = await readFixture("input.js");
   const output = await transform(code, options);
   expect(output.code).toMatchSnapshot();
 });
 
 test("Should add label to css tagged template when autoLabel is 'always'", async () => {
-  const code = await fs.readFile(
-    path.resolve(
-      url.fileURLToPath(import.meta.url),
-      "..",
-      "fixtures",
-      "auto-label-input.js",
-    ),
-    "utf-8",
-  );
-  const output = await transform(code, {
-    jsc: {
-      parser: {
-        syntax: "ecmascript",
-      },
-      experimental: {
-        plugins: [
-          [
-            pluginPath,
-            {
-              autoLabel: "always",
-              sourceMap: false,
-            },
-          ],
-        ],
-      },
-    },
+  const code = await readFixture("auto-label-input.js");
+  const output = await transformWithEmotion(code, {
+    autoLabel: "always",
+    sourceMap: false,
   });
   expect(output.code).toMatchSnapshot();
   // Verify labels are added with the correct "label:" prefix
@@ -76,33 +68,58 @@ test("Should add label to css tagged template when autoLabel is 'always'", async
 });
 
 test("Should not add label to css tagged template when autoLabel is 'never'", async () => {
-  const code = await fs.readFile(
-    path.resolve(
-      url.fileURLToPath(import.meta.url),
-      "..",
-      "fixtures",
-      "auto-label-input.js",
-    ),
-    "utf-8",
-  );
-  const output = await transform(code, {
-    jsc: {
-      parser: {
-        syntax: "ecmascript",
-      },
-      experimental: {
-        plugins: [
-          [
-            pluginPath,
-            {
-              autoLabel: "never",
-              sourceMap: false,
-            },
-          ],
-        ],
-      },
-    },
+  const code = await readFixture("auto-label-input.js");
+  const output = await transformWithEmotion(code, {
+    autoLabel: "never",
+    sourceMap: false,
   });
   expect(output.code).not.toContain('"label:testCls"');
   expect(output.code).not.toContain('"label:anotherStyle"');
+});
+
+test("Should keep plain keyframes label when sourceMap is enabled", async () => {
+  const code = await readFixture("keyframes-input.js");
+  const output = await transformWithEmotion(
+    code,
+    {
+      autoLabel: "always",
+      sourceMap: true,
+    },
+    "development",
+  );
+
+  expect(output.code).toContain(
+    'keyframes("0%{opacity:1;}50%{opacity:0.5;}100%{opacity:1;}", "pulse", "/*# sourceMappingURL=',
+  );
+  expect(output.code).not.toContain("label:pulse");
+});
+
+test("Should keep plain keyframes label when sourceMap is disabled", async () => {
+  const code = await readFixture("keyframes-input.js");
+  const output = await transformWithEmotion(code, {
+    autoLabel: "always",
+    sourceMap: false,
+  });
+
+  expect(output.code).toContain(
+    'keyframes("0%{opacity:1;}50%{opacity:0.5;}100%{opacity:1;}", "pulse");',
+  );
+  expect(output.code).not.toContain("label:pulse");
+});
+
+test("Should keep plain keyframes label for namespace imports", async () => {
+  const code = await readFixture("keyframes-namespace-input.js");
+  const output = await transformWithEmotion(
+    code,
+    {
+      autoLabel: "always",
+      sourceMap: true,
+    },
+    "development",
+  );
+
+  expect(output.code).toContain(
+    'emotionReact.keyframes("0%{opacity:1;}50%{opacity:0.5;}100%{opacity:1;}", "pulse", "/*# sourceMappingURL=',
+  );
+  expect(output.code).not.toContain("label:pulse");
 });
