@@ -21,6 +21,12 @@ or
 
 # @swc/plugin-remove-console
 
+## 12.9.0
+
+### Minor Changes
+
+- d2f9cfa: build: Update swc_core to v65.0.0
+
 ## 12.8.0
 
 ### Minor Changes
