@@ -34,6 +34,16 @@ Source code for plugin itself (not transforms) are copied from https://github.co
 
 # @swc/plugin-emotion
 
+## 14.9.0
+
+### Minor Changes
+
+- d2f9cfa: build: Update swc_core to v65.0.0
+
+### Patch Changes
+
+- 2a1be0d: Fix the emotion `keyframes` auto-label regression so generated animations keep the plain name string instead of receiving a `label:` CSS fragment.
+
 ## 14.8.0
 
 ### Minor Changes
