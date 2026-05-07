@@ -603,6 +603,9 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
                 function_names.insert(name.to_string());
             });
         function_names.insert("formatMessage".to_string());
+        // Shorthand
+        function_names.insert("$t".to_string());
+        // Vue
         function_names.insert("$formatMessage".to_string());
 
         let mut component_names: HashSet<String> = Default::default();
