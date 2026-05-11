@@ -1,0 +1,5 @@
+{
+  "cssNamespace": "myapp",
+  "ssr": false,
+  "displayName": false
+}

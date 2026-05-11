@@ -399,6 +399,52 @@ var _StyledDiv = _styled("div").withConfig({
 "
 `;
 
+exports[`Should load styled-components wasm plugin correctly > Should transform css-namespace correctly 1`] = `
+"import styled, { css, createGlobalStyle } from "styled-components";
+const Button = styled.button([
+    \`.myapp &{color:red;&:hover{color:blue;}}\`
+]);
+const Wrapped = styled(Link)([
+    \`.myapp &{color:green;}\`
+]);
+const ObjectStyle = styled.div({
+    color: "black"
+});
+const helper = css([
+    \`color:hotpink;\`
+]);
+const GlobalStyle = createGlobalStyle([
+    \`body{margin:0;}\`
+]);
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform css-namespace-selector correctly 1`] = `
+"import styled from "styled-components";
+const Panel = styled.section([
+    \`.shell .app &{padding:8px;}\`
+]);
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform css-namespace-self-reference correctly 1`] = `
+"import styled from "styled-components";
+const Panel = styled.section([
+    \`&&{padding:8px;}\`
+]);
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform css-namespace-with-component-namespace correctly 1`] = `
+"import styled from "styled-components";
+const Button = styled.button.withConfig({
+    componentId: "test-namespace__sc-460d3d61-0"
+})([
+    \`.myapp &{color:red;}\`
+]);
+"
+`;
+
 exports[`Should load styled-components wasm plugin correctly > Should transform does-not-desugar-styled-assignment correctly 1`] = `
 "const domElements = [
     "div"

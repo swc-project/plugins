@@ -26,6 +26,18 @@ Then update your `.swcrc` file like below:
 }
 ```
 
+#### Options
+
+`cssNamespace` prefixes generated component CSS with a parent selector. It is independent from `namespace`, which only prefixes the generated `componentId`.
+
+```json
+{
+  "cssNamespace": "myapp"
+}
+```
+
+With `cssNamespace: "myapp"`, a styled component template is emitted under `.myapp & { ... }`. You can also pass an explicit selector such as `.shell .app`, or a self-reference selector such as `&&` to increase specificity.
+
 # @swc/plugin-styled-components
 
 ## 12.7.0

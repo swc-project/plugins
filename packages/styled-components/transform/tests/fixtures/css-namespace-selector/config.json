@@ -1,0 +1,5 @@
+{
+  "cssNamespace": ".shell .app",
+  "ssr": false,
+  "displayName": false
+}

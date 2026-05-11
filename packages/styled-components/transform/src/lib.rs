@@ -8,9 +8,9 @@ use swc_ecma_ast::{fn_pass, Pass};
 pub use crate::{
     utils::{analyze, analyzer, State},
     visitors::{
-        display_name_and_id::display_name_and_id, minify::visitor::minify,
-        pure_annotation::pure_annotation, template_literals::template_literals,
-        transpile_css_prop::transpile::transpile_css_prop,
+        css_namespace::css_namespace, display_name_and_id::display_name_and_id,
+        minify::visitor::minify, pure_annotation::pure_annotation,
+        template_literals::template_literals, transpile_css_prop::transpile::transpile_css_prop,
     },
 };
 
@@ -35,6 +35,9 @@ pub struct Config {
 
     #[serde(default)]
     pub namespace: String,
+
+    #[serde(default)]
+    pub css_namespace: Option<String>,
 
     #[serde(default)]
     pub top_level_import_paths: Vec<Wtf8Atom>,
@@ -67,6 +70,32 @@ impl Config {
         }
         format!("{}__", self.namespace)
     }
+
+    pub(crate) fn css_namespace_selector(&self) -> Option<String> {
+        let css_namespace = self.css_namespace.as_deref()?.trim();
+
+        if css_namespace.is_empty() {
+            return None;
+        }
+
+        if css_namespace.starts_with('&') {
+            return Some(css_namespace.to_string());
+        }
+
+        let selector = if is_bare_class_name(css_namespace) {
+            format!(".{css_namespace}")
+        } else {
+            css_namespace.to_string()
+        };
+
+        Some(format!("{selector} &"))
+    }
+}
+
+fn is_bare_class_name(value: &str) -> bool {
+    value
+        .chars()
+        .all(|c| c.is_ascii_alphanumeric() || matches!(c, '-' | '_'))
 }
 
 pub fn styled_components<'a, C>(
@@ -89,6 +118,10 @@ where
 
         if !state.need_work() {
             return;
+        }
+
+        if let Some(selector) = config.css_namespace_selector() {
+            program.mutate(css_namespace(&state, selector));
         }
 
         program.mutate((

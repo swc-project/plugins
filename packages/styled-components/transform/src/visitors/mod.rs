@@ -1,3 +1,4 @@
+pub mod css_namespace;
 pub mod display_name_and_id;
 pub mod minify;
 pub mod pure_annotation;
