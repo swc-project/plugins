@@ -65,7 +65,7 @@ fn strip_line_comment(line: impl AsRef<str>) -> String {
         !s.ends_with(':') // NOTE: This is another guard against urls, if they're not inside strings or parantheses.
             && count_occurrences(s, '\'') % 2 == 0
             && count_occurrences(s, '"') % 2 == 0
-            && count_occurrences(s, '(') == count_occurrences(s, ')')
+            && count_occurrences(s, '(') <= count_occurrences(s, ')')
     })
 }
 
@@ -191,6 +191,13 @@ mod tests {
         assert_eq!(
             strip_line_comment(r#"https://test.com// comment//"#),
             r#"https://test.com"#
+        );
+
+        // strips comments after multiline declarations compacted onto a closing
+        // paren line
+        assert_eq!(
+            strip_line_comment(r#"      ); // this is axaBlue with a 5% white mix"#),
+            r#"      ); "#
         );
     }
 
