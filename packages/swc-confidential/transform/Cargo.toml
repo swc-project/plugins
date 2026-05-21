@@ -10,7 +10,7 @@ license      = { workspace = true }
 name         = "swc_confidential"
 repository   = { workspace = true }
 rust-version = { workspace = true }
-version      = "4.0.0"
+version      = "6.0.0"
 
 
 [dependencies]
