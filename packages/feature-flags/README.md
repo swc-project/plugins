@@ -363,6 +363,12 @@ This package includes TypeScript definitions. See `types.d.ts` for the full API.
 
 # @swc/plugin-experimental-feature-flags
 
+## 0.9.0
+
+### Minor Changes
+
+- 5e967fc: build: Update swc_core to v66.0.3
+
 ## 0.8.0
 
 ### Minor Changes
