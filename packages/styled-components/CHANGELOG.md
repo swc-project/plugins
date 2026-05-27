@@ -1,5 +1,11 @@
 # @swc/plugin-styled-components
 
+## 12.11.0
+
+### Minor Changes
+
+- 3b4d5b9: build: Update swc_core to v67
+
 ## 12.10.0
 
 ### Minor Changes

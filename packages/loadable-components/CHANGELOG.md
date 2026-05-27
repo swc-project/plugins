@@ -1,5 +1,11 @@
 # @swc/plugin-loadable-components
 
+## 11.11.0
+
+### Minor Changes
+
+- 3b4d5b9: build: Update swc_core to v67
+
 ## 11.10.0
 
 ### Minor Changes
