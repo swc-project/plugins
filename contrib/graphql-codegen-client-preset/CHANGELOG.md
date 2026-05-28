@@ -1,5 +1,11 @@
 # @swc-contrib/plugin-graphql-codegen-client-preset
 
+## 0.24.0
+
+### Minor Changes
+
+- 809c25d: chore: Mark v67 as a Wasm-breaking
+
 ## 0.23.0
 
 ### Minor Changes
