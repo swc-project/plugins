@@ -1127,9 +1127,9 @@ checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 
 [[package]]
 name = "hstr"
-version = "3.0.5"
+version = "3.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c1b94e40256e78ddd4e30490aa931bec17e65e9413a6ad11f64ec67815da9323"
+checksum = "83bb87e4b300d73412f6dcc7022ee7741452b51b155c2b06e5994d0770c2dbe2"
 dependencies = [
  "hashbrown 0.14.5",
  "new_debug_unreachable",
@@ -2722,9 +2722,9 @@ dependencies = [
 
 [[package]]
 name = "swc_atoms"
-version = "9.0.1"
+version = "9.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ecbd7177c71140b23dc6b1b9c1a9f16f96d0337cb999f5a79bb49ca4d82eded0"
+checksum = "23458c6f905c266dacccbdddaad42d69067a75211e448b1b0f1d42cc8a1de3f9"
 dependencies = [
  "bytecheck 0.8.0",
  "cbor4ii",
@@ -2835,9 +2835,9 @@ dependencies = [
 
 [[package]]
 name = "swc_core"
-version = "67.0.1"
+version = "67.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "596430882e5edc8eb266963700c291e02aade3947fbd1d01eaa03fe6e06c83b7"
+checksum = "3f06610f1d0f05d194fec4c48fa37df8be656ced1185b2695c2df55e73f06e50"
 dependencies = [
  "swc_allocator",
  "swc_atoms",
@@ -3155,9 +3155,9 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_transforms_base"
-version = "43.0.0"
+version = "43.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2e6abfa3cde48dcaf5a513d5110e6b8fb0fdfc285a5e39e6123a7ded797902bd"
+checksum = "44e74f87ceed63e445c022872ffb4d0520ae8608397e7b5d208fa08f1deaf626"
 dependencies = [
  "better_scoped_tls",
  "indexmap",
