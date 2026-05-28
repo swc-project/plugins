@@ -95,6 +95,12 @@ Will extract the metadata: `{project: "web", locale: "en", region: "us"}` that g
 
 # @swc/plugin-formatjs
 
+## 10.0.0
+
+### Major Changes
+
+- 809c25d: chore: Mark v67 as a Wasm-breaking
+
 ## 9.11.0
 
 ### Minor Changes

@@ -34,6 +34,12 @@ Source code for plugin itself (not transforms) are copied from https://github.co
 
 # @swc/plugin-emotion
 
+## 15.0.0
+
+### Major Changes
+
+- 809c25d: chore: Mark v67 as a Wasm-breaking
+
 ## 14.11.0
 
 ### Minor Changes

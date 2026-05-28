@@ -106,6 +106,12 @@ In this example typescript graphql files will output transpiled import path of `
 
 # @swc/plugin-relay
 
+## 13.0.0
+
+### Major Changes
+
+- 809c25d: chore: Mark v67 as a Wasm-breaking
+
 ## 12.11.0
 
 ### Minor Changes

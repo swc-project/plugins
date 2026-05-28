@@ -46,6 +46,12 @@ import loadable from '@loadable/component';   // will be transformed
 
 # @swc/plugin-loadable-components
 
+## 12.0.0
+
+### Major Changes
+
+- 809c25d: chore: Mark v67 as a Wasm-breaking
+
 ## 11.11.0
 
 ### Minor Changes

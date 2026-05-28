@@ -363,6 +363,12 @@ This package includes TypeScript definitions. See `types.d.ts` for the full API.
 
 # @swc/plugin-experimental-feature-flags
 
+## 0.11.0
+
+### Minor Changes
+
+- 809c25d: chore: Mark v67 as a Wasm-breaking
+
 ## 0.10.0
 
 ### Minor Changes
