@@ -20,16 +20,15 @@ use swc_core::{
     },
     ecma::{
         ast::{
-            ArrayLit, AssignExpr, AssignTarget, Bool, CallExpr, Callee, Expr, ExprOrSpread, Ident,
-            IdentName, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElementName,
-            JSXExpr, JSXExprContainer, JSXNamespacedName, JSXOpeningElement, KeyValueProp, Lit,
-            MemberProp, ModuleItem, Number, ObjectLit, Prop, PropName, PropOrSpread,
-            SimpleAssignTarget, Str,
+            ArrayLit, AssignExpr, AssignTarget, BinExpr, BinaryOp, Bool, CallExpr, Callee, Expr,
+            ExprOrSpread, Id, Ident, IdentName, JSXAttr, JSXAttrName, JSXAttrOrSpread,
+            JSXAttrValue, JSXElementName, JSXExpr, JSXExprContainer, JSXNamespacedName,
+            JSXOpeningElement, KeyValueProp, Lit, MemberProp, ModuleItem, Number, ObjectLit, Pat,
+            Prop, PropName, PropOrSpread, SimpleAssignTarget, Str, Tpl, VarDeclarator,
         },
         visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
     },
 };
-use swc_ecma_minifier::eval::{EvalResult, Evaluator};
 use swc_icu_messageformat_parser::{Parser, ParserOptions};
 
 pub static WHITESPACE_REGEX: Lazy<Regexp> = Lazy::new(|| Regexp::new(r"\s+").unwrap());
@@ -48,21 +47,81 @@ pub struct FormatJSPluginOptions {
     pub additional_component_names: Vec<String>,
 }
 
-fn evaluate_expr(expr: &Expr, evaluator: &mut Evaluator) -> Option<String> {
-    let result = match expr {
-        Expr::Tpl(tpl) => evaluator.eval_tpl(tpl),
-        _ => evaluator.eval(expr),
-    };
-
-    match result {
-        Some(EvalResult::Lit(Lit::Str(s))) => {
-            Some(s.value.as_str().expect("non-utf8 string").to_string())
-        }
-        _ => {
+fn evaluate_expr(expr: &Expr, bindings: &HashMap<Id, Expr>) -> Option<String> {
+    let mut seen = HashSet::default();
+    match evaluate_expr_as_string(expr, bindings, &mut seen) {
+        Some(value) => Some(value),
+        None => {
             emit_non_evaluable_error(expr.span());
             None
         }
     }
+}
+
+fn evaluate_expr_as_string(
+    expr: &Expr,
+    bindings: &HashMap<Id, Expr>,
+    seen: &mut HashSet<Id>,
+) -> Option<String> {
+    match expr {
+        Expr::Lit(Lit::Str(s)) => Some(s.value.as_str().expect("non-utf8 string").to_string()),
+        Expr::Tpl(tpl) => evaluate_template_literal(tpl, bindings, seen),
+        Expr::Bin(bin) => evaluate_binary_expr(bin, bindings, seen),
+        Expr::Paren(paren) => evaluate_expr_as_string(&paren.expr, bindings, seen),
+        Expr::Ident(ident) => {
+            let id = ident.to_id();
+            if !seen.insert(id.clone()) {
+                return None;
+            }
+
+            let value = bindings
+                .get(&id)
+                .and_then(|expr| evaluate_expr_as_string(expr, bindings, seen));
+
+            seen.remove(&id);
+            value
+        }
+        _ => None,
+    }
+}
+
+fn evaluate_template_literal(
+    tpl: &Tpl,
+    bindings: &HashMap<Id, Expr>,
+    seen: &mut HashSet<Id>,
+) -> Option<String> {
+    let mut value = String::new();
+
+    for (idx, quasi) in tpl.quasis.iter().enumerate() {
+        value.push_str(
+            quasi
+                .cooked
+                .as_ref()
+                .map(|cooked| cooked.as_str().expect("non-utf8 string"))
+                .unwrap_or(""),
+        );
+
+        if let Some(expr) = tpl.exprs.get(idx) {
+            value.push_str(&evaluate_expr_as_string(expr, bindings, seen)?);
+        }
+    }
+
+    Some(value)
+}
+
+fn evaluate_binary_expr(
+    bin: &BinExpr,
+    bindings: &HashMap<Id, Expr>,
+    seen: &mut HashSet<Id>,
+) -> Option<String> {
+    if !matches!(bin.op, BinaryOp::Add) {
+        return None;
+    }
+
+    let left = evaluate_expr_as_string(&bin.left, bindings, seen)?;
+    let right = evaluate_expr_as_string(&bin.right, bindings, seen)?;
+
+    Some(format!("{left}{right}"))
 }
 
 trait MessageDescriptorExtractor {
@@ -116,7 +175,7 @@ impl MessageDescriptorExtractor for JSXAttrOrSpread {
                                         Expr::Object(object_lit) => {
                                             Some(MessageDescriptionValue::Obj(object_lit))
                                         }
-                                        expr => evaluate_expr(&expr, visitor.evaluator)
+                                        expr => evaluate_expr(&expr, &visitor.variable_bindings)
                                             .map(MessageDescriptionValue::Str),
                                     }
                                 } else {
@@ -124,7 +183,7 @@ impl MessageDescriptorExtractor for JSXAttrOrSpread {
                                 }
                             }
                             Expr::Object(obj) => Some(MessageDescriptionValue::Obj(obj.clone())),
-                            expr => evaluate_expr(expr, visitor.evaluator)
+                            expr => evaluate_expr(expr, &visitor.variable_bindings)
                                 .map(MessageDescriptionValue::Str),
                         }
                     } else {
@@ -158,7 +217,7 @@ impl MessageDescriptorExtractor for PropOrSpread {
             if let Prop::KeyValue(key_value) = &**prop {
                 let key = match &key_value.key {
                     PropName::Computed(prop_name) => {
-                        evaluate_expr(&prop_name.expr, visitor.evaluator)
+                        evaluate_expr(&prop_name.expr, &visitor.variable_bindings)
                     }
                     PropName::Ident(ident) => Some(ident.sym.to_string()),
                     PropName::Str(s) => {
@@ -171,9 +230,8 @@ impl MessageDescriptorExtractor for PropOrSpread {
                 };
                 let value = match &*key_value.value {
                     Expr::Object(obj) => Some(MessageDescriptionValue::Obj(obj.clone())),
-                    expr => {
-                        evaluate_expr(expr, visitor.evaluator).map(MessageDescriptionValue::Str)
-                    }
+                    expr => evaluate_expr(expr, &visitor.variable_bindings)
+                        .map(MessageDescriptionValue::Str),
                 };
                 if let (Some(key), Some(value)) = (key, value) {
                     Some((key, value))
@@ -521,7 +579,7 @@ pub struct Location {
     pub col: usize,
 }
 
-pub struct FormatJSVisitor<'a, C: Clone + Comments, S: SourceMapper> {
+pub struct FormatJSVisitor<C: Clone + Comments, S: SourceMapper> {
     // We may not need Arc in the plugin context - this is only to preserve isomorphic interface
     // between plugin & custom transform pass.
     source_map: std::sync::Arc<S>,
@@ -532,16 +590,15 @@ pub struct FormatJSVisitor<'a, C: Clone + Comments, S: SourceMapper> {
     meta: HashMap<String, String>,
     component_names: HashSet<String>,
     function_names: HashSet<String>,
-    evaluator: &'a mut Evaluator,
+    variable_bindings: HashMap<Id, Expr>,
 }
 
-impl<'a, C: Clone + Comments, S: SourceMapper> FormatJSVisitor<'a, C, S> {
+impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
     fn new(
         source_map: std::sync::Arc<S>,
         comments: C,
         plugin_options: FormatJSPluginOptions,
         filename: &str,
-        evaluator: &'a mut Evaluator,
     ) -> Self {
         let mut function_names: HashSet<String> = Default::default();
         plugin_options
@@ -571,7 +628,7 @@ impl<'a, C: Clone + Comments, S: SourceMapper> FormatJSVisitor<'a, C, S> {
             meta: Default::default(),
             component_names,
             function_names,
-            evaluator,
+            variable_bindings: Default::default(),
         }
     }
 
@@ -602,8 +659,49 @@ impl<'a, C: Clone + Comments, S: SourceMapper> FormatJSVisitor<'a, C, S> {
         }
     }
 
-    fn resolve_identifier(&mut self, ident: &Ident) -> Option<Expr> {
-        self.evaluator.resolve_identifier(ident).as_deref().cloned()
+    fn resolve_identifier(&self, ident: &Ident) -> Option<Expr> {
+        self.variable_bindings.get(&ident.to_id()).cloned()
+    }
+
+    fn expr_to_json_value(&self, expr: &Expr) -> Option<serde_json::Value> {
+        let mut seen = HashSet::default();
+        self.expr_to_json_value_inner(expr, &mut seen)
+    }
+
+    fn expr_to_json_value_inner(
+        &self,
+        expr: &Expr,
+        seen: &mut HashSet<Id>,
+    ) -> Option<serde_json::Value> {
+        match expr {
+            Expr::Lit(Lit::Str(s)) => Some(serde_json::Value::String(
+                s.value.as_str().expect("non-utf8 string").to_string(),
+            )),
+            Expr::Lit(Lit::Num(n)) => serde_json::Number::from_f64(n.value)
+                .map(serde_json::Value::Number)
+                .or(Some(serde_json::Value::Null)),
+            Expr::Lit(Lit::Bool(b)) => Some(serde_json::Value::Bool(b.value)),
+            Expr::Paren(paren) => self.expr_to_json_value_inner(&paren.expr, seen),
+            Expr::Ident(ident) => {
+                let id = ident.to_id();
+                if !seen.insert(id.clone()) {
+                    return None;
+                }
+
+                let value = self
+                    .variable_bindings
+                    .get(&id)
+                    .and_then(|expr| self.expr_to_json_value_inner(expr, seen));
+
+                seen.remove(&id);
+                value
+            }
+            Expr::Tpl(_) | Expr::Bin(_) => {
+                evaluate_expr_as_string(expr, &self.variable_bindings, &mut HashSet::default())
+                    .map(serde_json::Value::String)
+            }
+            _ => None,
+        }
     }
 
     fn create_message_descriptor_from_extractor<T: MessageDescriptorExtractor>(
@@ -736,42 +834,9 @@ impl<'a, C: Clone + Comments, S: SourceMapper> FormatJSVisitor<'a, C, S> {
                                     PropName::Str(s) => s.value.to_atom_lossy().to_string(),
                                     _ => continue,
                                 };
-                                let value = match &*key_value.value {
-                                    Expr::Ident(ident) => {
-                                        // If this is a variable reference, resolve it
-                                        if let Some(resolved_expr) = self.resolve_identifier(ident)
-                                        {
-                                            match resolved_expr {
-                                                Expr::Lit(Lit::Str(s)) => {
-                                                    serde_json::Value::String(
-                                                        s.value
-                                                            .as_str()
-                                                            .expect("non-utf8 string")
-                                                            .to_string(),
-                                                    )
-                                                }
-                                                Expr::Lit(Lit::Num(n)) => {
-                                                    serde_json::Number::from_f64(n.value)
-                                                        .map(serde_json::Value::Number)
-                                                        .unwrap_or(serde_json::Value::Null)
-                                                }
-                                                Expr::Lit(Lit::Bool(b)) => {
-                                                    serde_json::Value::Bool(b.value)
-                                                }
-                                                _ => continue,
-                                            }
-                                        } else {
-                                            continue;
-                                        }
-                                    }
-                                    Expr::Lit(Lit::Str(s)) => serde_json::Value::String(
-                                        s.value.to_atom_lossy().to_string(),
-                                    ),
-                                    Expr::Lit(Lit::Num(n)) => serde_json::Number::from_f64(n.value)
-                                        .map(serde_json::Value::Number)
-                                        .unwrap_or(serde_json::Value::Null),
-                                    Expr::Lit(Lit::Bool(b)) => serde_json::Value::Bool(b.value),
-                                    _ => continue,
+                                let value = match self.expr_to_json_value(&key_value.value) {
+                                    Some(value) => value,
+                                    None => continue,
                                 };
 
                                 map.insert(key_str, value);
@@ -947,8 +1012,19 @@ fn emit_non_evaluable_error(span: Span) {
     });
 }
 
-impl<'a, C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<'a, C, S> {
+impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
     noop_visit_mut_type!(fail);
+
+    fn visit_mut_var_declarator(&mut self, var_declarator: &mut VarDeclarator) {
+        var_declarator.visit_mut_children_with(self);
+
+        if let (Pat::Ident(binding_ident), Some(init)) =
+            (&var_declarator.name, &var_declarator.init)
+        {
+            self.variable_bindings
+                .insert(binding_ident.id.to_id(), *init.clone());
+        }
+    }
 
     fn visit_mut_assign_expr(&mut self, assign_expr: &mut AssignExpr) {
         assign_expr.visit_mut_children_with(self);
@@ -959,7 +1035,7 @@ impl<'a, C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<'a, 
             let variable_id = ident.id.to_id();
 
             // Check if we already have a binding for this variable
-            let should_update = match self.resolve_identifier(ident) {
+            let should_update = match self.variable_bindings.get(&variable_id) {
                 Some(existing_expr) => {
                     // Only overwrite if the new expression is an object literal
                     // and the existing one is not, or if both are object literals
@@ -976,7 +1052,8 @@ impl<'a, C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<'a, 
             };
 
             if should_update {
-                self.evaluator.store(variable_id, &assign_expr.right);
+                self.variable_bindings
+                    .insert(variable_id, *assign_expr.right.clone());
             }
         }
     }
@@ -1277,12 +1354,11 @@ fn json_value_to_expr(json_value: &serde_json::Value) -> Box<Expr> {
     })
 }
 
-pub fn create_formatjs_visitor<'a, C: Clone + Comments, S: SourceMapper>(
+pub fn create_formatjs_visitor<C: Clone + Comments, S: SourceMapper>(
     source_map: std::sync::Arc<S>,
     comments: C,
     plugin_options: FormatJSPluginOptions,
     filename: &str,
-    evaluator: &'a mut Evaluator,
-) -> FormatJSVisitor<'a, C, S> {
-    FormatJSVisitor::new(source_map, comments, plugin_options, filename, evaluator)
+) -> FormatJSVisitor<C, S> {
+    FormatJSVisitor::new(source_map, comments, plugin_options, filename)
 }

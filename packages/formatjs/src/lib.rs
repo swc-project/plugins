@@ -5,7 +5,6 @@ use swc_core::{
         proxies::TransformPluginProgramMetadata,
     },
 };
-use swc_ecma_minifier::{eval::Evaluator, marks::Marks};
 use swc_formatjs_transform::{create_formatjs_visitor, FormatJSPluginOptions};
 
 #[plugin_transform]
@@ -24,20 +23,12 @@ pub fn process(mut program: Program, metadata: TransformPluginProgramMetadata) -
         Default::default()
     };
 
-    if let Some(module) = program.as_module() {
-        let evaluator = &mut Evaluator::new(
-            module.clone(),
-            Marks {
-                unresolved_mark: metadata.unresolved_mark,
-                ..Marks::new()
-            },
-        );
+    if program.as_module().is_some() {
         let mut visitor = create_formatjs_visitor(
             std::sync::Arc::new(metadata.source_map),
             metadata.comments.as_ref(),
             plugin_options,
             filename,
-            evaluator,
         );
 
         program.visit_mut_with(&mut visitor);

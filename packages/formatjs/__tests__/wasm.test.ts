@@ -628,6 +628,60 @@ describe("formatjs swc plugin", () => {
     expect(code3).toMatch(/id: "Ae\/S0P"/);
   });
 
+  it("should not crash on unrelated TSX with nullable nested types (issue #604)", async () => {
+    const input = `
+      "use client";
+
+      let config: { info: { x: string } | null } = { info: null };
+
+      export function setConfig(c: typeof config) {
+        config = c;
+      }
+
+      function getParams() {
+        const p: { x?: string } = {};
+        if (config.info) {
+          p.x = config.info.x;
+        }
+        return p;
+      }
+
+      function run() {
+        console.log(getParams());
+      }
+
+      export default function Page() {
+        return <div onClick={() => run()}>click</div>;
+      }
+    `;
+
+    await expect(transformCode(input, { ast: true })).resolves.toBeDefined();
+  });
+
+  it("should transform several formatMessage calls with ast enabled (issue #604)", async () => {
+    const input = `
+      "use client";
+      import { useIntl } from "react-intl";
+
+      function Messages() {
+        const intl = useIntl();
+        return (
+          <ul>
+            <li>{intl.formatMessage({ id: "a", defaultMessage: "Message A" })}</li>
+            <li>{intl.formatMessage({ id: "b", defaultMessage: "Message B" })}</li>
+            <li>{intl.formatMessage({ id: "c", defaultMessage: "Message C" })}</li>
+            <li>{intl.formatMessage({ id: "d", defaultMessage: "Message D" })}</li>
+            <li>{intl.formatMessage({ id: "e", defaultMessage: "Message E" })}</li>
+          </ul>
+        );
+      }
+    `;
+
+    const output = await transformCode(input, { ast: true });
+
+    expect(output.match(/defaultMessage: \[/g)).toHaveLength(5);
+  });
+
   it("should not error on valid JSX outside formatjs calls (issue #588)", async () => {
     // Member expression JSX names like React.Suspense with JSX fallback props
     // should not trigger the static evaluation error.
