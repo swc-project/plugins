@@ -722,6 +722,10 @@ describe("formatjs swc plugin", () => {
         defaultMessage: \`Step \${2}\`,
       });
 
+      formatMessage({
+        defaultMessage: "Count " + (1 + true),
+      });
+
       const MSG = "Declared later";
     `;
 
@@ -731,7 +735,60 @@ describe("formatjs swc plugin", () => {
     expect(output).toContain('"Value true"');
     expect(output).toMatch(/defaultMessage: "Hello from object"/);
     expect(output).toMatch(/defaultMessage: "Step 2"/);
+    expect(output).toMatch(/defaultMessage: "Count 2"/);
     expect(output).toMatch(/defaultMessage: "Declared later"/);
+  });
+
+  it("should ignore unknown shorthand props without evaluating them", async () => {
+    const input = `
+      import { defineMessage } from 'react-intl';
+
+      defineMessage({
+        defaultMessage: "Hello",
+        metadata,
+      });
+    `;
+
+    const output = await transformCode(input);
+
+    expect(output).toMatch(/defaultMessage: "Hello"/);
+    expect(output).toContain("metadata");
+  });
+
+  it("should remove shorthand defaultMessage when requested", async () => {
+    const input = `
+      import { defineMessage } from 'react-intl';
+
+      const defaultMessage = "Hello";
+
+      defineMessage({
+        defaultMessage,
+      });
+    `;
+
+    const output = await transformCode(input, { removeDefaultMessage: true });
+
+    expect(output).toMatch(/defineMessage\(\{\s*id: "[^"]+"\s*\}\)/s);
+  });
+
+  it("should not resolve member values hidden behind later spreads", async () => {
+    const input = `
+      import { formatMessage } from 'react-intl';
+
+      const runtimeMessages = {};
+      const messages = {
+        hello: "Hello",
+        ...runtimeMessages,
+      };
+
+      formatMessage({
+        defaultMessage: messages.hello,
+      });
+    `;
+
+    await expect(transformCode(input)).rejects.toThrow(
+      "[React Intl] Messages must be statically evaluate-able for extraction.",
+    );
   });
 
   it("should strip TypeScript wrappers while evaluating descriptor values", async () => {

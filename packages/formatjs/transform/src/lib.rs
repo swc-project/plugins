@@ -134,20 +134,24 @@ impl MessageDescriptorExtractor for PropOrSpread {
                         }
                     }?;
 
+                    if !is_message_descriptor_key(&key) {
+                        return None;
+                    }
+
                     (key, visitor.get_message_descriptor_value(&key_value.value))
                 }
                 Prop::Shorthand(ident) => {
                     let key = ident.sym.to_string();
+                    if !is_message_descriptor_key(&key) {
+                        return None;
+                    }
+
                     let ident_expr = Expr::Ident(ident.clone());
 
                     (key, visitor.get_message_descriptor_value(&ident_expr))
                 }
                 _ => return None,
             };
-
-            if !matches!(key.as_str(), "id" | "defaultMessage" | "description") {
-                return None;
-            }
 
             value.map(|value| (key, value))
         } else {
@@ -186,6 +190,19 @@ impl StaticValue {
             StaticValue::Null => "null".to_string(),
             StaticValue::BigInt(value) => value.clone(),
         }
+    }
+
+    fn to_js_number(&self) -> Option<f64> {
+        match self {
+            StaticValue::Num(value) => Some(*value),
+            StaticValue::Bool(value) => Some(if *value { 1.0 } else { 0.0 }),
+            StaticValue::Null => Some(0.0),
+            StaticValue::Str(_) | StaticValue::BigInt(_) => None,
+        }
+    }
+
+    fn is_string(&self) -> bool {
+        matches!(self, StaticValue::Str(_))
     }
 }
 
@@ -227,6 +244,25 @@ fn get_message_descriptor_key_from_jsx(name: &JSXAttrName) -> &str {
     }
 
     // NOTE: Do not support evaluatePath()
+}
+
+fn is_message_descriptor_key(key: &str) -> bool {
+    matches!(key, "id" | "defaultMessage" | "description")
+}
+
+fn string_expr(value: String) -> Box<Expr> {
+    Box::new(Expr::Lit(Lit::Str(Str {
+        span: DUMMY_SP,
+        value: value.into(),
+        raw: None,
+    })))
+}
+
+fn key_value_prop(key: &'static str, value: Box<Expr>) -> PropOrSpread {
+    PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
+        key: PropName::Ident(IdentName::new(key.into(), DUMMY_SP)),
+        value,
+    })))
 }
 
 fn get_message_descriptor_key_from_call_expr(name: &PropName) -> Option<&str> {
@@ -670,7 +706,8 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
 
         for prop in obj.props.iter().rev() {
             let PropOrSpread::Prop(prop) = prop else {
-                continue;
+                // A spread to the right of the key may override it at runtime.
+                return None;
             };
 
             match &**prop {
@@ -770,15 +807,16 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
                 let left = self.evaluate_static_value_with_depth(&bin.left, depth + 1)?;
                 let right = self.evaluate_static_value_with_depth(&bin.right, depth + 1)?;
 
-                match (&left, &right) {
-                    (StaticValue::Num(left), StaticValue::Num(right)) => {
-                        Some(StaticValue::Num(*left + *right))
-                    }
-                    _ => Some(StaticValue::Str(format!(
+                if left.is_string() || right.is_string() {
+                    Some(StaticValue::Str(format!(
                         "{}{}",
                         left.to_js_string(),
                         right.to_js_string()
-                    ))),
+                    )))
+                } else {
+                    Some(StaticValue::Num(
+                        left.to_js_number()? + right.to_js_number()?,
+                    ))
                 }
             }
             Expr::Ident(ident) => {
@@ -1062,99 +1100,114 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
             source_location,
         );
 
-        // let first_prop = properties.first().is_some();
-
-        // Insert ID potentially 1st before removing nodes
-        let id_prop = obj.props.iter().find(|prop| {
-            if let PropOrSpread::Prop(prop) = prop {
-                if let Prop::KeyValue(kv) = &**prop {
-                    return match &kv.key {
-                        PropName::Ident(ident) => &*ident.sym == "id",
-                        PropName::Str(str_) => &*str_.value == "id",
-                        _ => false,
-                    };
-                }
-            }
-            false
-        });
-
-        if let Some(descriptor_id) = descriptor.id {
-            if let Some(id_prop) = id_prop {
-                let prop = id_prop.as_prop().unwrap();
-                let kv = &mut prop.as_key_value().unwrap();
-                kv.to_owned().value = Box::new(Expr::Lit(Lit::Str(Str {
-                    span: DUMMY_SP,
-                    value: descriptor_id.into(),
-                    raw: None,
-                })));
-            } else {
-                obj.props.insert(
-                    0,
-                    PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
-                        key: PropName::Ident(IdentName::new("id".into(), DUMMY_SP)),
-                        value: Box::new(Expr::Lit(Lit::Str(Str {
-                            span: DUMMY_SP,
-                            value: descriptor_id.into(),
-                            raw: None,
-                        }))),
-                    }))),
-                )
-            }
-        }
-
+        let descriptor_id = descriptor.id.clone();
+        let mut has_id_prop = false;
         let mut props = vec![];
         for prop in obj.props.drain(..) {
             match prop {
                 PropOrSpread::Prop(mut prop) => {
-                    if let Prop::KeyValue(keyvalue) = &mut *prop {
-                        let key = get_message_descriptor_key_from_call_expr(&keyvalue.key);
-                        if let Some(key) = key {
-                            match key {
-                                "description" => {
-                                    // remove description
-                                    if descriptor.description.is_some() {
-                                        self.comments.take_leading(prop.span().lo);
-                                    } else {
-                                        props.push(PropOrSpread::Prop(prop));
-                                    }
-                                }
-                                // Pre-parse or remove defaultMessage
-                                "defaultMessage" => {
-                                    if self.options.remove_default_message {
-                                        // remove defaultMessage
-                                    } else {
-                                        if let Some(descriptor_default_message) =
-                                            descriptor.default_message.as_ref()
-                                        {
-                                            if self.options.ast {
-                                                if let Some(ref parsed_expr) = descriptor.ast {
-                                                    keyvalue.value = parsed_expr.clone();
-                                                }
-                                            } else {
-                                                keyvalue.value =
-                                                    Box::new(Expr::Lit(Lit::Str(Str {
-                                                        span: DUMMY_SP,
-                                                        value: descriptor_default_message
-                                                            .as_str()
-                                                            .into(),
-                                                        raw: None,
-                                                    })));
-                                            }
+                    match &mut *prop {
+                        Prop::KeyValue(keyvalue) => {
+                            let key = get_message_descriptor_key_from_call_expr(&keyvalue.key);
+                            if let Some(key) = key {
+                                match key {
+                                    "id" => {
+                                        has_id_prop = true;
+                                        if let Some(descriptor_id) = &descriptor_id {
+                                            keyvalue.value = string_expr(descriptor_id.clone());
                                         }
-
                                         props.push(PropOrSpread::Prop(prop));
                                     }
+                                    "description" => {
+                                        // remove description
+                                        if descriptor.description.is_some() {
+                                            self.comments.take_leading(prop.span().lo);
+                                        } else {
+                                            props.push(PropOrSpread::Prop(prop));
+                                        }
+                                    }
+                                    // Pre-parse or remove defaultMessage
+                                    "defaultMessage" => {
+                                        if self.options.remove_default_message {
+                                            // remove defaultMessage
+                                        } else {
+                                            if let Some(descriptor_default_message) =
+                                                descriptor.default_message.as_ref()
+                                            {
+                                                if self.options.ast {
+                                                    if let Some(ref parsed_expr) = descriptor.ast {
+                                                        keyvalue.value = parsed_expr.clone();
+                                                    }
+                                                } else {
+                                                    keyvalue.value = string_expr(
+                                                        descriptor_default_message.clone(),
+                                                    );
+                                                }
+                                            }
+
+                                            props.push(PropOrSpread::Prop(prop));
+                                        }
+                                    }
+                                    _ => props.push(PropOrSpread::Prop(prop)),
                                 }
-                                _ => props.push(PropOrSpread::Prop(prop)),
+                            } else {
+                                props.push(PropOrSpread::Prop(prop));
                             }
-                        } else {
-                            props.push(PropOrSpread::Prop(prop));
                         }
-                    } else {
-                        props.push(PropOrSpread::Prop(prop));
+                        Prop::Shorthand(ident) => match &*ident.sym {
+                            "id" => {
+                                has_id_prop = true;
+                                if let Some(descriptor_id) = &descriptor_id {
+                                    props.push(key_value_prop(
+                                        "id",
+                                        string_expr(descriptor_id.clone()),
+                                    ));
+                                } else {
+                                    props.push(PropOrSpread::Prop(prop));
+                                }
+                            }
+                            "description" => {
+                                if descriptor.description.is_some() {
+                                    self.comments.take_leading(prop.span().lo);
+                                } else {
+                                    props.push(PropOrSpread::Prop(prop));
+                                }
+                            }
+                            "defaultMessage" => {
+                                if self.options.remove_default_message {
+                                    // remove defaultMessage
+                                } else if self.options.ast {
+                                    if let Some(ref parsed_expr) = descriptor.ast {
+                                        props.push(key_value_prop(
+                                            "defaultMessage",
+                                            parsed_expr.clone(),
+                                        ));
+                                    } else {
+                                        props.push(PropOrSpread::Prop(prop));
+                                    }
+                                } else if let Some(descriptor_default_message) =
+                                    descriptor.default_message.as_ref()
+                                {
+                                    props.push(key_value_prop(
+                                        "defaultMessage",
+                                        string_expr(descriptor_default_message.clone()),
+                                    ));
+                                } else {
+                                    props.push(PropOrSpread::Prop(prop));
+                                }
+                            }
+                            _ => props.push(PropOrSpread::Prop(prop)),
+                        },
+                        _ => props.push(PropOrSpread::Prop(prop)),
                     }
                 }
                 _ => props.push(prop),
+            }
+        }
+
+        if let Some(descriptor_id) = descriptor_id {
+            if !has_id_prop {
+                props.insert(0, key_value_prop("id", string_expr(descriptor_id)));
             }
         }
 
