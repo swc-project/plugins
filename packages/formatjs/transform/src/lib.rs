@@ -20,12 +20,12 @@ use swc_core::{
     },
     ecma::{
         ast::{
-            ArrayLit, AssignExpr, AssignTarget, BinaryOp, Bool, CallExpr, Callee, Expr,
+            ArrayLit, AssignExpr, AssignTarget, BinaryOp, BlockStmt, Bool, CallExpr, Callee, Expr,
             ExprOrSpread, Id, IdentName, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue,
             JSXElementName, JSXExpr, JSXExprContainer, JSXNamespacedName, JSXOpeningElement,
             KeyValueProp, Lit, MemberExpr, MemberProp, ModuleDecl, ModuleItem, Number, ObjectLit,
             Pat, Prop, PropName, PropOrSpread, SimpleAssignTarget, Stmt, Str, Tpl, UnaryOp,
-            VarDecl, VarDeclarator,
+            VarDecl, VarDeclKind, VarDeclarator,
         },
         visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
     },
@@ -179,6 +179,12 @@ enum StaticValue {
     Bool(bool),
     Null,
     BigInt(String),
+}
+
+#[derive(Debug, Clone)]
+enum BindingValue {
+    Static(Box<Expr>),
+    Dynamic,
 }
 
 impl StaticValue {
@@ -579,7 +585,7 @@ pub struct FormatJSVisitor<C: Clone + Comments, S: SourceMapper> {
     meta: HashMap<String, String>,
     component_names: HashSet<String>,
     function_names: HashSet<String>,
-    bindings: HashMap<Id, Box<Expr>>,
+    bindings: HashMap<Id, BindingValue>,
 }
 
 impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
@@ -640,26 +646,63 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
         matches!(Self::strip_expr(expr), Expr::Object(_))
     }
 
-    fn store_binding(&mut self, id: Id, value: &Expr) {
-        // React Compiler may assign an object temp, then later assign a dynamic
-        // cache read to the same temp. Keep the object for descriptor hashing.
-        let should_update = match self.bindings.get(&id) {
-            Some(existing_expr) => match (
-                Self::is_object_expr(existing_expr),
-                Self::is_object_expr(value),
-            ) {
-                (true, false) => false,
-                _ => true,
-            },
-            None => true,
+    fn is_react_compiler_cache_read(expr: &Expr) -> bool {
+        let Expr::Member(member) = Self::strip_expr(expr) else {
+            return false;
         };
 
-        if should_update {
-            self.bindings.insert(id, Box::new(value.clone()));
+        let Expr::Ident(obj) = Self::strip_expr(&member.obj) else {
+            return false;
+        };
+
+        if &*obj.sym != "$" {
+            return false;
+        }
+
+        matches!(
+            &member.prop,
+            MemberProp::Computed(computed)
+                if matches!(Self::strip_expr(&computed.expr), Expr::Lit(Lit::Num(_)))
+        )
+    }
+
+    fn binding_expr(&self, id: &Id) -> Option<&Expr> {
+        match self.bindings.get(id)? {
+            BindingValue::Static(expr) => Some(expr),
+            BindingValue::Dynamic => None,
         }
     }
 
-    fn collect_var_decl_bindings(&mut self, var: &VarDecl) {
+    fn binding_expr_cloned(&self, id: &Id) -> Option<Box<Expr>> {
+        self.binding_expr(id).map(|expr| Box::new(expr.clone()))
+    }
+
+    fn invalidate_binding(&mut self, id: Id) {
+        self.bindings.insert(id, BindingValue::Dynamic);
+    }
+
+    fn store_binding(&mut self, id: Id, value: &Expr) {
+        let value_is_object = Self::is_object_expr(value);
+        let existing_is_object = self.binding_expr(&id).is_some_and(Self::is_object_expr);
+
+        if existing_is_object && !value_is_object {
+            if Self::is_react_compiler_cache_read(value) {
+                return;
+            }
+
+            self.invalidate_binding(id);
+            return;
+        }
+
+        self.bindings
+            .insert(id, BindingValue::Static(Box::new(value.clone())));
+    }
+
+    fn collect_var_decl_bindings(&mut self, var: &VarDecl, include_var: bool) {
+        if !include_var && var.kind == VarDeclKind::Var {
+            return;
+        }
+
         for declarator in &var.decls {
             if let Pat::Ident(ident) = &declarator.name {
                 if let Some(init) = &declarator.init {
@@ -672,14 +715,28 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
     fn collect_module_item_bindings(&mut self, item: &ModuleItem) {
         match item {
             ModuleItem::Stmt(Stmt::Decl(swc_core::ecma::ast::Decl::Var(var))) => {
-                self.collect_var_decl_bindings(var)
+                self.collect_var_decl_bindings(var, false)
             }
             ModuleItem::ModuleDecl(ModuleDecl::ExportDecl(export_decl)) => {
                 if let swc_core::ecma::ast::Decl::Var(var) = &export_decl.decl {
-                    self.collect_var_decl_bindings(var);
+                    self.collect_var_decl_bindings(var, false);
                 }
             }
             _ => {}
+        }
+    }
+
+    fn collect_stmt_bindings(&mut self, stmt: &Stmt) {
+        if let Stmt::Decl(swc_core::ecma::ast::Decl::Var(var)) = stmt {
+            self.collect_var_decl_bindings(var, false);
+        }
+    }
+
+    fn member_base_ident(member: &MemberExpr) -> Option<Id> {
+        match Self::strip_expr(&member.obj) {
+            Expr::Ident(ident) => Some(ident.to_id()),
+            Expr::Member(member) => Self::member_base_ident(member),
+            _ => None,
         }
     }
 
@@ -696,7 +753,7 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
         match Self::strip_expr(expr) {
             Expr::Object(obj) => Some(obj.clone()),
             Expr::Ident(ident) => {
-                let expr = self.bindings.get(&ident.to_id())?;
+                let expr = self.binding_expr(&ident.to_id())?;
                 self.resolve_object_expr_with_depth(expr, depth + 1)
             }
             Expr::Member(member) => {
@@ -728,7 +785,7 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
                     None => return None,
                 },
                 Prop::Shorthand(ident) if ident.sym == *key => {
-                    return self.bindings.get(&ident.to_id()).cloned();
+                    return self.binding_expr_cloned(&ident.to_id());
                 }
                 Prop::Assign(assign) => {
                     if assign.key.sym == *key {
@@ -881,7 +938,7 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
                 self.evaluate_static_value_with_depth(branch, depth + 1)
             }
             Expr::Ident(ident) => {
-                let expr = self.bindings.get(&ident.to_id())?;
+                let expr = self.binding_expr(&ident.to_id())?;
                 self.evaluate_static_value_with_depth(expr, depth + 1)
             }
             Expr::Member(member) => {
@@ -921,7 +978,7 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
 
         match Self::strip_expr(expr) {
             Expr::Ident(ident) => {
-                let expr = self.bindings.get(&ident.to_id())?;
+                let expr = self.binding_expr(&ident.to_id())?;
                 self.json_value_from_expr_with_depth(expr, depth + 1)
             }
             Expr::Lit(Lit::Str(s)) => {
@@ -1305,11 +1362,27 @@ impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
     fn visit_mut_assign_expr(&mut self, assign_expr: &mut AssignExpr) {
         assign_expr.visit_mut_children_with(self);
 
-        // Track assignment expressions for React Compiler optimizations
-        // Handle patterns like: t1 = { ... }
-        if let AssignTarget::Simple(SimpleAssignTarget::Ident(ident)) = &assign_expr.left {
-            self.store_binding(ident.id.to_id(), &assign_expr.right);
+        if let AssignTarget::Simple(target) = &assign_expr.left {
+            match target {
+                SimpleAssignTarget::Ident(ident) => {
+                    self.store_binding(ident.id.to_id(), &assign_expr.right);
+                }
+                SimpleAssignTarget::Member(member) => {
+                    if let Some(id) = Self::member_base_ident(member) {
+                        self.invalidate_binding(id);
+                    }
+                }
+                _ => {}
+            }
         }
+    }
+
+    fn visit_mut_block_stmt(&mut self, block: &mut BlockStmt) {
+        for stmt in &block.stmts {
+            self.collect_stmt_bindings(stmt);
+        }
+
+        block.visit_mut_children_with(self);
     }
 
     fn visit_mut_jsx_opening_element(&mut self, jsx_opening_elem: &mut JSXOpeningElement) {

@@ -831,6 +831,81 @@ describe("formatjs swc plugin", () => {
     );
   });
 
+  it("should treat non-object reassignment as dynamic", async () => {
+    const input = `
+      import { formatMessage } from 'react-intl';
+
+      let messages = {
+        hello: "Hello",
+      };
+      messages = getMessages();
+
+      formatMessage({
+        defaultMessage: messages.hello,
+      });
+    `;
+
+    await expect(transformCode(input)).rejects.toThrow(
+      "[React Intl] Messages must be statically evaluate-able for extraction.",
+    );
+  });
+
+  it("should preserve statement order for var redeclarations", async () => {
+    const input = `
+      import { formatMessage } from 'react-intl';
+
+      var MSG = "First";
+
+      formatMessage({
+        defaultMessage: MSG,
+      });
+
+      var MSG = "Second";
+    `;
+
+    const output = await transformCode(input);
+
+    expect(output).toMatch(/defaultMessage: "First"/);
+    expect(output).not.toMatch(/defaultMessage: "Second"/);
+  });
+
+  it("should invalidate object bindings on member writes", async () => {
+    const input = `
+      import { formatMessage } from 'react-intl';
+
+      const messages = {
+        hello: "Hello",
+      };
+      messages.hello = getMessage();
+
+      formatMessage({
+        defaultMessage: messages.hello,
+      });
+    `;
+
+    await expect(transformCode(input)).rejects.toThrow(
+      "[React Intl] Messages must be statically evaluate-able for extraction.",
+    );
+  });
+
+  it("should precollect bindings inside function bodies", async () => {
+    const input = `
+      import { FormattedMessage } from 'react-intl';
+
+      function Component() {
+        const render = () => <FormattedMessage defaultMessage={MSG} />;
+        const MSG = "Hello from function";
+
+        return render();
+      }
+    `;
+
+    const output = await transformCode(input);
+
+    expect(output).toMatch(/id: "[^"]+"/);
+    expect(output).toMatch(/defaultMessage: MSG/);
+  });
+
   it("should strip TypeScript wrappers while evaluating descriptor values", async () => {
     const input = `
       import { defineMessage } from 'react-intl';
