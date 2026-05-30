@@ -208,7 +208,7 @@ describe("formatjs swc plugin", () => {
       });
     `;
 
-    expect(transformCode(input)).rejects.toThrow(
+    await expect(transformCode(input)).rejects.toThrow(
       "[React Intl] Messages must be statically evaluate-able for extraction.",
     );
   });
@@ -626,6 +626,317 @@ describe("formatjs swc plugin", () => {
     expect(code1).toMatch(/id: "Ae\/S0P"/);
     expect(code2).toMatch(/id: "Ae\/S0P"/);
     expect(code3).toMatch(/id: "Ae\/S0P"/);
+  });
+
+  it("should not evaluate unrelated TypeScript and JSX code (issue #604)", async () => {
+    const input = `
+      "use client";
+
+      let config: { info: { x: string } | null } = { info: null };
+
+      export function setConfig(c: typeof config) {
+        config = c;
+      }
+
+      function getParams() {
+        const p: { x?: string } = {};
+        if (config.info) {
+          p.x = config.info.x;
+        }
+        return p;
+      }
+
+      function run() {
+        console.log(getParams());
+      }
+
+      export default function Page() {
+        return <div onClick={() => run()}>click</div>;
+      }
+    `;
+
+    const output = await transformCode(input, { ast: true });
+
+    expect(output).toContain("config.info.x");
+    expect(output).toContain("onClick");
+  });
+
+  it("should transform several formatMessage calls with ast enabled (issue #604)", async () => {
+    const input = `
+      "use client";
+      import { useIntl, IntlProvider } from "react-intl";
+
+      function Messages() {
+        const intl = useIntl();
+        return (
+          <ul>
+            <li>{intl.formatMessage({ id: "a", defaultMessage: "Message A" })}</li>
+            <li>{intl.formatMessage({ id: "b", defaultMessage: "Message B" })}</li>
+            <li>{intl.formatMessage({ id: "c", defaultMessage: "Message C" })}</li>
+            <li>{intl.formatMessage({ id: "d", defaultMessage: "Message D" })}</li>
+            <li>{intl.formatMessage({ id: "e", defaultMessage: "Message E" })}</li>
+          </ul>
+        );
+      }
+
+      export default function Page() {
+        return (
+          <IntlProvider locale="en" messages={{}}>
+            <Messages />
+          </IntlProvider>
+        );
+      }
+    `;
+
+    const output = await transformCode(input, { ast: true });
+
+    expect(output.match(/defaultMessage: \[/g)).toHaveLength(5);
+  });
+
+  it("should evaluate delayed bindings, member lookups, and primitive coercion", async () => {
+    const input = `
+      import { defineMessage, formatMessage } from 'react-intl';
+
+      function laterBinding() {
+        return formatMessage({
+          defaultMessage: MSG,
+        });
+      }
+
+      const id = "coerced";
+      const suffix = true;
+      const messages = {
+        hello: "Hello from object",
+      };
+
+      defineMessage({
+        id,
+        defaultMessage: ("Value " + suffix) as const,
+      });
+
+      formatMessage({
+        defaultMessage: messages.hello,
+      });
+
+      formatMessage({
+        defaultMessage: \`Step \${2}\`,
+      });
+
+      formatMessage({
+        defaultMessage: "Count " + (1 + true),
+      });
+
+      formatMessage({
+        defaultMessage: \`Negative \${-1}\`,
+      });
+
+      formatMessage({
+        defaultMessage: "Signed " + -1,
+      });
+
+      formatMessage({
+        defaultMessage: true ? "Enabled" : "Disabled",
+      });
+
+      formatMessage({
+        defaultMessage: \`ID \${1e21}\`,
+      });
+
+      const MSG = "Declared later";
+    `;
+
+    const output = await transformCode(input);
+
+    expect(output).toMatch(/id: "coerced"/);
+    expect(output).toContain('"Value true"');
+    expect(output).toMatch(/defaultMessage: "Hello from object"/);
+    expect(output).toMatch(/defaultMessage: "Step 2"/);
+    expect(output).toMatch(/defaultMessage: "Count 2"/);
+    expect(output).toMatch(/defaultMessage: "Negative -1"/);
+    expect(output).toMatch(/defaultMessage: "Signed -1"/);
+    expect(output).toMatch(/defaultMessage: "Enabled"/);
+    expect(output).toMatch(/defaultMessage: "ID 1e\+21"/);
+    expect(output).toMatch(/defaultMessage: "Declared later"/);
+  });
+
+  it("should ignore unknown shorthand props without evaluating them", async () => {
+    const input = `
+      import { defineMessage } from 'react-intl';
+
+      defineMessage({
+        defaultMessage: "Hello",
+        metadata,
+      });
+    `;
+
+    const output = await transformCode(input);
+
+    expect(output).toMatch(/defaultMessage: "Hello"/);
+    expect(output).toContain("metadata");
+  });
+
+  it("should remove shorthand defaultMessage when requested", async () => {
+    const input = `
+      import { defineMessage } from 'react-intl';
+
+      const defaultMessage = "Hello";
+
+      defineMessage({
+        defaultMessage,
+      });
+    `;
+
+    const output = await transformCode(input, { removeDefaultMessage: true });
+
+    expect(output).toMatch(/defineMessage\(\{\s*id: "[^"]+"\s*\}\)/s);
+  });
+
+  it("should not resolve member values hidden behind later spreads", async () => {
+    const input = `
+      import { formatMessage } from 'react-intl';
+
+      const runtimeMessages = {};
+      const messages = {
+        hello: "Hello",
+        ...runtimeMessages,
+      };
+
+      formatMessage({
+        defaultMessage: messages.hello,
+      });
+    `;
+
+    await expect(transformCode(input)).rejects.toThrow(
+      "[React Intl] Messages must be statically evaluate-able for extraction.",
+    );
+  });
+
+  it("should not resolve member values hidden behind unknown computed keys", async () => {
+    const input = `
+      import { formatMessage } from 'react-intl';
+
+      const runtimeKey = globalThis.key;
+      const messages = {
+        hello: "Hello",
+        [runtimeKey]: "Runtime",
+      };
+
+      formatMessage({
+        defaultMessage: messages.hello,
+      });
+    `;
+
+    await expect(transformCode(input)).rejects.toThrow(
+      "[React Intl] Messages must be statically evaluate-able for extraction.",
+    );
+  });
+
+  it("should treat non-object reassignment as dynamic", async () => {
+    const input = `
+      import { formatMessage } from 'react-intl';
+
+      let messages = {
+        hello: "Hello",
+      };
+      messages = getMessages();
+
+      formatMessage({
+        defaultMessage: messages.hello,
+      });
+    `;
+
+    await expect(transformCode(input)).rejects.toThrow(
+      "[React Intl] Messages must be statically evaluate-able for extraction.",
+    );
+  });
+
+  it("should preserve statement order for var redeclarations", async () => {
+    const input = `
+      import { formatMessage } from 'react-intl';
+
+      var MSG = "First";
+
+      formatMessage({
+        defaultMessage: MSG,
+      });
+
+      var MSG = "Second";
+    `;
+
+    const output = await transformCode(input);
+
+    expect(output).toMatch(/defaultMessage: "First"/);
+    expect(output).not.toMatch(/defaultMessage: "Second"/);
+  });
+
+  it("should invalidate object bindings on member writes", async () => {
+    const input = `
+      import { formatMessage } from 'react-intl';
+
+      const messages = {
+        hello: "Hello",
+      };
+      messages.hello = getMessage();
+
+      formatMessage({
+        defaultMessage: messages.hello,
+      });
+    `;
+
+    await expect(transformCode(input)).rejects.toThrow(
+      "[React Intl] Messages must be statically evaluate-able for extraction.",
+    );
+  });
+
+  it("should precollect bindings inside function bodies", async () => {
+    const input = `
+      import { FormattedMessage } from 'react-intl';
+
+      function Component() {
+        const render = () => <FormattedMessage defaultMessage={MSG} />;
+        const MSG = "Hello from function";
+
+        return render();
+      }
+    `;
+
+    const output = await transformCode(input);
+
+    expect(output).toMatch(/id: "[^"]+"/);
+    expect(output).toMatch(/defaultMessage: MSG/);
+  });
+
+  it("should strip TypeScript wrappers while evaluating descriptor values", async () => {
+    const input = `
+      import { defineMessage } from 'react-intl';
+
+      defineMessage({
+        id: "wrapped" as const,
+        defaultMessage: ("Wrapped message" satisfies string),
+      });
+    `;
+
+    const output = await transformCode(input);
+
+    expect(output).toMatch(/id: "wrapped"/);
+    expect(output).toMatch(/defaultMessage: "Wrapped message"/);
+  });
+
+  it("should stop resolving cyclic bindings", async () => {
+    const input = `
+      import { defineMessage } from 'react-intl';
+
+      let a = b;
+      let b = a;
+
+      defineMessage({
+        defaultMessage: a,
+      });
+    `;
+
+    await expect(transformCode(input)).rejects.toThrow(
+      "[React Intl] Messages must be statically evaluate-able for extraction.",
+    );
   });
 
   it("should not error on valid JSX outside formatjs calls (issue #588)", async () => {

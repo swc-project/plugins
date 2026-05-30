@@ -41,6 +41,7 @@ radix_fmt                   = "1"
 regex                       = { version = "1.10.4", default-features = false }
 rquickjs                    = "0.8.1"
 rustc-hash                  = "2.1.0"
+ryu-js                      = "1.0.1"
 serde                       = "1.0.203"
 serde_json                  = "1.0.117"
 serde_repr                  = "0.1"

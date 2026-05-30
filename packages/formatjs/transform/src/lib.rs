@@ -20,19 +20,21 @@ use swc_core::{
     },
     ecma::{
         ast::{
-            ArrayLit, AssignExpr, AssignTarget, Bool, CallExpr, Callee, Expr, ExprOrSpread, Ident,
-            IdentName, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue, JSXElementName,
-            JSXExpr, JSXExprContainer, JSXNamespacedName, JSXOpeningElement, KeyValueProp, Lit,
-            MemberProp, ModuleItem, Number, ObjectLit, Prop, PropName, PropOrSpread,
-            SimpleAssignTarget, Str,
+            ArrayLit, AssignExpr, AssignTarget, BinaryOp, BlockStmt, Bool, CallExpr, Callee, Expr,
+            ExprOrSpread, Id, IdentName, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue,
+            JSXElementName, JSXExpr, JSXExprContainer, JSXNamespacedName, JSXOpeningElement,
+            KeyValueProp, Lit, MemberExpr, MemberProp, ModuleDecl, ModuleItem, Number, ObjectLit,
+            Pat, Prop, PropName, PropOrSpread, SimpleAssignTarget, Stmt, Str, Tpl, UnaryOp,
+            VarDecl, VarDeclKind, VarDeclarator,
         },
         visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
     },
 };
-use swc_ecma_minifier::eval::{EvalResult, Evaluator};
+use swc_ecma_minifier::eval::Evaluator;
 use swc_icu_messageformat_parser::{Parser, ParserOptions};
 
 pub static WHITESPACE_REGEX: Lazy<Regexp> = Lazy::new(|| Regexp::new(r"\s+").unwrap());
+const MAX_RESOLUTION_DEPTH: usize = 16;
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
@@ -46,23 +48,6 @@ pub struct FormatJSPluginOptions {
     pub __debug_extracted_messages_comment: bool,
     pub additional_function_names: Vec<String>,
     pub additional_component_names: Vec<String>,
-}
-
-fn evaluate_expr(expr: &Expr, evaluator: &mut Evaluator) -> Option<String> {
-    let result = match expr {
-        Expr::Tpl(tpl) => evaluator.eval_tpl(tpl),
-        _ => evaluator.eval(expr),
-    };
-
-    match result {
-        Some(EvalResult::Lit(Lit::Str(s))) => {
-            Some(s.value.as_str().expect("non-utf8 string").to_string())
-        }
-        _ => {
-            emit_non_evaluable_error(expr.span());
-            None
-        }
-    }
 }
 
 trait MessageDescriptorExtractor {
@@ -103,30 +88,12 @@ impl MessageDescriptorExtractor for JSXAttrOrSpread {
             }
 
             let value = match value {
-                JSXAttrValue::Str(s) => Some(MessageDescriptionValue::Str(
-                    s.value.as_str().expect("non-utf8 string").to_string(),
-                )),
+                JSXAttrValue::Str(s) => {
+                    Some(MessageDescriptionValue::Str(s.value.as_str()?.to_string()))
+                }
                 JSXAttrValue::JSXExprContainer(container) => {
                     if let JSXExpr::Expr(expr) = &container.expr {
-                        match &**expr {
-                            Expr::Ident(ident) => {
-                                let resolved = visitor.resolve_identifier(ident);
-                                if let Some(resolved_expr) = resolved {
-                                    match resolved_expr {
-                                        Expr::Object(object_lit) => {
-                                            Some(MessageDescriptionValue::Obj(object_lit))
-                                        }
-                                        expr => evaluate_expr(&expr, visitor.evaluator)
-                                            .map(MessageDescriptionValue::Str),
-                                    }
-                                } else {
-                                    None
-                                }
-                            }
-                            Expr::Object(obj) => Some(MessageDescriptionValue::Obj(obj.clone())),
-                            expr => evaluate_expr(expr, visitor.evaluator)
-                                .map(MessageDescriptionValue::Str),
-                        }
+                        visitor.get_message_descriptor_value(expr)
                     } else {
                         None
                     }
@@ -155,34 +122,38 @@ impl MessageDescriptorExtractor for PropOrSpread {
         visitor: &mut FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
     ) -> Option<(String, MessageDescriptionValue)> {
         if let PropOrSpread::Prop(prop) = self {
-            if let Prop::KeyValue(key_value) = &**prop {
-                let key = match &key_value.key {
-                    PropName::Computed(prop_name) => {
-                        evaluate_expr(&prop_name.expr, visitor.evaluator)
+            let (key, value) = match &**prop {
+                Prop::KeyValue(key_value) => {
+                    let key = match &key_value.key {
+                        PropName::Computed(prop_name) => visitor.evaluate_expr(&prop_name.expr),
+                        PropName::Ident(ident) => Some(ident.sym.to_string()),
+                        PropName::Str(s) => s.value.as_str().map(str::to_string),
+                        prop_name => {
+                            emit_non_evaluable_error(prop_name.span());
+                            None
+                        }
+                    }?;
+
+                    if !is_message_descriptor_key(&key) {
+                        return None;
                     }
-                    PropName::Ident(ident) => Some(ident.sym.to_string()),
-                    PropName::Str(s) => {
-                        Some(s.value.as_str().expect("non-utf8 string").to_string())
-                    }
-                    prop_name => {
-                        emit_non_evaluable_error(prop_name.span());
-                        None
-                    }
-                };
-                let value = match &*key_value.value {
-                    Expr::Object(obj) => Some(MessageDescriptionValue::Obj(obj.clone())),
-                    expr => {
-                        evaluate_expr(expr, visitor.evaluator).map(MessageDescriptionValue::Str)
-                    }
-                };
-                if let (Some(key), Some(value)) = (key, value) {
-                    Some((key, value))
-                } else {
-                    None
+
+                    (key, visitor.get_message_descriptor_value(&key_value.value))
                 }
-            } else {
-                None
-            }
+                Prop::Shorthand(ident) => {
+                    let key = ident.sym.to_string();
+                    if !is_message_descriptor_key(&key) {
+                        return None;
+                    }
+
+                    let ident_expr = Expr::Ident(ident.clone());
+
+                    (key, visitor.get_message_descriptor_value(&ident_expr))
+                }
+                _ => return None,
+            };
+
+            value.map(|value| (key, value))
         } else {
             None
         }
@@ -199,6 +170,69 @@ pub struct MessageDescriptor {
     default_message: Option<String>,
     description: Option<MessageDescriptionValue>,
     ast: Option<Box<Expr>>,
+}
+
+#[derive(Debug, Clone)]
+enum StaticValue {
+    Str(String),
+    Num(f64),
+    Bool(bool),
+    Null,
+    BigInt(String),
+}
+
+#[derive(Debug, Clone)]
+enum BindingValue {
+    Static(Box<Expr>),
+    Dynamic,
+}
+
+impl StaticValue {
+    fn to_js_string(&self) -> String {
+        match self {
+            StaticValue::Str(value) => value.clone(),
+            StaticValue::Num(value) => number_to_js_string(*value),
+            StaticValue::Bool(value) => value.to_string(),
+            StaticValue::Null => "null".to_string(),
+            StaticValue::BigInt(value) => value.clone(),
+        }
+    }
+
+    fn to_js_number(&self) -> Option<f64> {
+        match self {
+            StaticValue::Num(value) => Some(*value),
+            StaticValue::Bool(value) => Some(if *value { 1.0 } else { 0.0 }),
+            StaticValue::Null => Some(0.0),
+            StaticValue::Str(_) | StaticValue::BigInt(_) => None,
+        }
+    }
+
+    fn is_truthy(&self) -> bool {
+        match self {
+            StaticValue::Str(value) => !value.is_empty(),
+            StaticValue::Num(value) => *value != 0.0 && !value.is_nan(),
+            StaticValue::Bool(value) => *value,
+            StaticValue::Null => false,
+            StaticValue::BigInt(value) => value != "0",
+        }
+    }
+
+    fn is_string(&self) -> bool {
+        matches!(self, StaticValue::Str(_))
+    }
+}
+
+fn number_to_js_string(value: f64) -> String {
+    if value.is_nan() {
+        "NaN".to_string()
+    } else if value == f64::INFINITY {
+        "Infinity".to_string()
+    } else if value == f64::NEG_INFINITY {
+        "-Infinity".to_string()
+    } else {
+        let mut buffer = ryu_js::Buffer::new();
+        buffer.format(value).to_string()
+    }
 }
 
 fn parse(source: &str) -> Result<Box<Expr>, swc_icu_messageformat_parser::Error> {
@@ -229,10 +263,29 @@ fn get_message_descriptor_key_from_jsx(name: &JSXAttrName) -> &str {
     // NOTE: Do not support evaluatePath()
 }
 
+fn is_message_descriptor_key(key: &str) -> bool {
+    matches!(key, "id" | "defaultMessage" | "description")
+}
+
+fn string_expr(value: String) -> Box<Expr> {
+    Box::new(Expr::Lit(Lit::Str(Str {
+        span: DUMMY_SP,
+        value: value.into(),
+        raw: None,
+    })))
+}
+
+fn key_value_prop(key: &'static str, value: Box<Expr>) -> PropOrSpread {
+    PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
+        key: PropName::Ident(IdentName::new(key.into(), DUMMY_SP)),
+        value,
+    })))
+}
+
 fn get_message_descriptor_key_from_call_expr(name: &PropName) -> Option<&str> {
     match name {
         PropName::Ident(name) => Some(&*name.sym),
-        PropName::Str(name) => Some(name.value.as_str().expect("non-utf8 prop name")),
+        PropName::Str(name) => name.value.as_str(),
         _ => None,
     }
 
@@ -521,7 +574,7 @@ pub struct Location {
     pub col: usize,
 }
 
-pub struct FormatJSVisitor<'a, C: Clone + Comments, S: SourceMapper> {
+pub struct FormatJSVisitor<C: Clone + Comments, S: SourceMapper> {
     // We may not need Arc in the plugin context - this is only to preserve isomorphic interface
     // between plugin & custom transform pass.
     source_map: std::sync::Arc<S>,
@@ -532,16 +585,15 @@ pub struct FormatJSVisitor<'a, C: Clone + Comments, S: SourceMapper> {
     meta: HashMap<String, String>,
     component_names: HashSet<String>,
     function_names: HashSet<String>,
-    evaluator: &'a mut Evaluator,
+    bindings: HashMap<Id, BindingValue>,
 }
 
-impl<'a, C: Clone + Comments, S: SourceMapper> FormatJSVisitor<'a, C, S> {
+impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
     fn new(
         source_map: std::sync::Arc<S>,
         comments: C,
         plugin_options: FormatJSPluginOptions,
         filename: &str,
-        evaluator: &'a mut Evaluator,
     ) -> Self {
         let mut function_names: HashSet<String> = Default::default();
         plugin_options
@@ -571,7 +623,376 @@ impl<'a, C: Clone + Comments, S: SourceMapper> FormatJSVisitor<'a, C, S> {
             meta: Default::default(),
             component_names,
             function_names,
-            evaluator,
+            bindings: Default::default(),
+        }
+    }
+
+    fn strip_expr(mut expr: &Expr) -> &Expr {
+        loop {
+            expr = match expr {
+                Expr::Paren(expr) => &expr.expr,
+                Expr::TsAs(expr) => &expr.expr,
+                Expr::TsTypeAssertion(expr) => &expr.expr,
+                Expr::TsConstAssertion(expr) => &expr.expr,
+                Expr::TsNonNull(expr) => &expr.expr,
+                Expr::TsSatisfies(expr) => &expr.expr,
+                Expr::TsInstantiation(expr) => &expr.expr,
+                _ => return expr,
+            };
+        }
+    }
+
+    fn is_object_expr(expr: &Expr) -> bool {
+        matches!(Self::strip_expr(expr), Expr::Object(_))
+    }
+
+    fn is_react_compiler_cache_read(expr: &Expr) -> bool {
+        let Expr::Member(member) = Self::strip_expr(expr) else {
+            return false;
+        };
+
+        let Expr::Ident(obj) = Self::strip_expr(&member.obj) else {
+            return false;
+        };
+
+        if &*obj.sym != "$" {
+            return false;
+        }
+
+        matches!(
+            &member.prop,
+            MemberProp::Computed(computed)
+                if matches!(Self::strip_expr(&computed.expr), Expr::Lit(Lit::Num(_)))
+        )
+    }
+
+    fn binding_expr(&self, id: &Id) -> Option<&Expr> {
+        match self.bindings.get(id)? {
+            BindingValue::Static(expr) => Some(expr),
+            BindingValue::Dynamic => None,
+        }
+    }
+
+    fn binding_expr_cloned(&self, id: &Id) -> Option<Box<Expr>> {
+        self.binding_expr(id).map(|expr| Box::new(expr.clone()))
+    }
+
+    fn invalidate_binding(&mut self, id: Id) {
+        self.bindings.insert(id, BindingValue::Dynamic);
+    }
+
+    fn store_binding(&mut self, id: Id, value: &Expr) {
+        let value_is_object = Self::is_object_expr(value);
+        let existing_is_object = self.binding_expr(&id).is_some_and(Self::is_object_expr);
+
+        if existing_is_object && !value_is_object {
+            if Self::is_react_compiler_cache_read(value) {
+                return;
+            }
+
+            self.invalidate_binding(id);
+            return;
+        }
+
+        self.bindings
+            .insert(id, BindingValue::Static(Box::new(value.clone())));
+    }
+
+    fn collect_var_decl_bindings(&mut self, var: &VarDecl, include_var: bool) {
+        if !include_var && var.kind == VarDeclKind::Var {
+            return;
+        }
+
+        for declarator in &var.decls {
+            if let Pat::Ident(ident) = &declarator.name {
+                if let Some(init) = &declarator.init {
+                    self.store_binding(ident.id.to_id(), init);
+                }
+            }
+        }
+    }
+
+    fn collect_module_item_bindings(&mut self, item: &ModuleItem) {
+        match item {
+            ModuleItem::Stmt(Stmt::Decl(swc_core::ecma::ast::Decl::Var(var))) => {
+                self.collect_var_decl_bindings(var, false)
+            }
+            ModuleItem::ModuleDecl(ModuleDecl::ExportDecl(export_decl)) => {
+                if let swc_core::ecma::ast::Decl::Var(var) = &export_decl.decl {
+                    self.collect_var_decl_bindings(var, false);
+                }
+            }
+            _ => {}
+        }
+    }
+
+    fn collect_stmt_bindings(&mut self, stmt: &Stmt) {
+        if let Stmt::Decl(swc_core::ecma::ast::Decl::Var(var)) = stmt {
+            self.collect_var_decl_bindings(var, false);
+        }
+    }
+
+    fn member_base_ident(member: &MemberExpr) -> Option<Id> {
+        match Self::strip_expr(&member.obj) {
+            Expr::Ident(ident) => Some(ident.to_id()),
+            Expr::Member(member) => Self::member_base_ident(member),
+            _ => None,
+        }
+    }
+
+    fn resolve_object_expr(&self, expr: &Expr) -> Option<ObjectLit> {
+        self.resolve_object_expr_with_depth(expr, 0)
+    }
+
+    fn resolve_object_expr_with_depth(&self, expr: &Expr, depth: usize) -> Option<ObjectLit> {
+        // Shared recursion limit also prevents cycles like `let a = b; let b = a`.
+        if depth > MAX_RESOLUTION_DEPTH {
+            return None;
+        }
+
+        match Self::strip_expr(expr) {
+            Expr::Object(obj) => Some(obj.clone()),
+            Expr::Ident(ident) => {
+                let expr = self.binding_expr(&ident.to_id())?;
+                self.resolve_object_expr_with_depth(expr, depth + 1)
+            }
+            Expr::Member(member) => {
+                let expr = self.resolve_member_expr_value(member, depth + 1)?;
+                self.resolve_object_expr_with_depth(&expr, depth + 1)
+            }
+            _ => None,
+        }
+    }
+
+    fn resolve_member_expr_value(&self, member: &MemberExpr, depth: usize) -> Option<Box<Expr>> {
+        if depth > MAX_RESOLUTION_DEPTH {
+            return None;
+        }
+
+        let obj = self.resolve_object_expr_with_depth(&member.obj, depth + 1)?;
+        let key = self.member_prop_to_key(&member.prop, depth + 1)?;
+
+        for prop in obj.props.iter().rev() {
+            let PropOrSpread::Prop(prop) = prop else {
+                // A spread to the right of the key may override it at runtime.
+                return None;
+            };
+
+            match &**prop {
+                Prop::KeyValue(kv) => match self.prop_name_to_key(&kv.key, depth + 1) {
+                    Some(prop_key) if prop_key == key => return Some(kv.value.clone()),
+                    Some(_) => {}
+                    None => return None,
+                },
+                Prop::Shorthand(ident) if ident.sym == *key => {
+                    return self.binding_expr_cloned(&ident.to_id());
+                }
+                Prop::Assign(assign) => {
+                    if assign.key.sym == *key {
+                        return Some(assign.value.clone());
+                    }
+                }
+                Prop::Getter(getter) => match self.prop_name_to_key(&getter.key, depth + 1) {
+                    Some(prop_key) if prop_key != key => {}
+                    _ => return None,
+                },
+                Prop::Setter(setter) => match self.prop_name_to_key(&setter.key, depth + 1) {
+                    Some(prop_key) if prop_key != key => {}
+                    _ => return None,
+                },
+                Prop::Method(method) => match self.prop_name_to_key(&method.key, depth + 1) {
+                    Some(prop_key) if prop_key != key => {}
+                    _ => return None,
+                },
+                _ => {}
+            }
+        }
+
+        None
+    }
+
+    fn member_prop_to_key(&self, prop: &MemberProp, depth: usize) -> Option<String> {
+        match prop {
+            MemberProp::Ident(ident) => Some(ident.sym.to_string()),
+            MemberProp::Computed(computed) => {
+                self.evaluate_static_string_with_depth(&computed.expr, depth + 1, true)
+            }
+            _ => None,
+        }
+    }
+
+    fn prop_name_to_key(&self, prop: &PropName, depth: usize) -> Option<String> {
+        match prop {
+            PropName::Ident(ident) => Some(ident.sym.to_string()),
+            PropName::Str(str_) => str_.value.as_str().map(str::to_string),
+            PropName::Num(num) => Some(number_to_js_string(num.value)),
+            PropName::BigInt(big_int) => Some(big_int.value.to_string()),
+            PropName::Computed(computed) => {
+                self.evaluate_static_string_with_depth(&computed.expr, depth + 1, true)
+            }
+        }
+    }
+
+    fn get_message_descriptor_value(&self, expr: &Expr) -> Option<MessageDescriptionValue> {
+        if let Some(obj) = self.resolve_object_expr(expr) {
+            return Some(MessageDescriptionValue::Obj(obj));
+        }
+
+        self.evaluate_expr(expr).map(MessageDescriptionValue::Str)
+    }
+
+    fn evaluate_expr(&self, expr: &Expr) -> Option<String> {
+        let result = self.evaluate_static_string(expr);
+
+        if result.is_none() {
+            emit_non_evaluable_error(expr.span());
+        }
+
+        result
+    }
+
+    fn evaluate_static_string(&self, expr: &Expr) -> Option<String> {
+        self.evaluate_static_string_with_depth(expr, 0, false)
+    }
+
+    fn evaluate_static_string_with_depth(
+        &self,
+        expr: &Expr,
+        depth: usize,
+        allow_coercion: bool,
+    ) -> Option<String> {
+        if depth > MAX_RESOLUTION_DEPTH {
+            return None;
+        }
+
+        let value = self.evaluate_static_value_with_depth(expr, depth)?;
+
+        match value {
+            StaticValue::Str(value) => Some(value),
+            value if allow_coercion => Some(value.to_js_string()),
+            _ => None,
+        }
+    }
+
+    fn evaluate_static_value_with_depth(&self, expr: &Expr, depth: usize) -> Option<StaticValue> {
+        if depth > MAX_RESOLUTION_DEPTH {
+            return None;
+        }
+
+        match Self::strip_expr(expr) {
+            Expr::Lit(Lit::Str(s)) => Some(StaticValue::Str(s.value.as_str()?.to_string())),
+            Expr::Lit(Lit::Num(n)) => Some(StaticValue::Num(n.value)),
+            Expr::Lit(Lit::Bool(b)) => Some(StaticValue::Bool(b.value)),
+            Expr::Lit(Lit::Null(_)) => Some(StaticValue::Null),
+            Expr::Lit(Lit::BigInt(n)) => Some(StaticValue::BigInt(n.value.to_string())),
+            Expr::Tpl(tpl) => self
+                .evaluate_template_literal(tpl, depth + 1)
+                .map(StaticValue::Str),
+            Expr::Unary(unary) => {
+                let value = self.evaluate_static_value_with_depth(&unary.arg, depth + 1)?;
+
+                match unary.op {
+                    UnaryOp::Minus => match value {
+                        StaticValue::BigInt(value) => {
+                            if value == "0" {
+                                Some(StaticValue::BigInt(value))
+                            } else if let Some(value) = value.strip_prefix('-') {
+                                Some(StaticValue::BigInt(value.to_string()))
+                            } else {
+                                Some(StaticValue::BigInt(format!("-{value}")))
+                            }
+                        }
+                        value => Some(StaticValue::Num(-value.to_js_number()?)),
+                    },
+                    UnaryOp::Plus => Some(StaticValue::Num(value.to_js_number()?)),
+                    UnaryOp::Bang => Some(StaticValue::Bool(!value.is_truthy())),
+                    _ => None,
+                }
+            }
+            Expr::Bin(bin) if bin.op == BinaryOp::Add => {
+                let left = self.evaluate_static_value_with_depth(&bin.left, depth + 1)?;
+                let right = self.evaluate_static_value_with_depth(&bin.right, depth + 1)?;
+
+                if left.is_string() || right.is_string() {
+                    Some(StaticValue::Str(format!(
+                        "{}{}",
+                        left.to_js_string(),
+                        right.to_js_string()
+                    )))
+                } else {
+                    // BigInt arithmetic is deliberately left unsupported; this
+                    // keeps mixed Number/BigInt additions from being folded.
+                    Some(StaticValue::Num(
+                        left.to_js_number()? + right.to_js_number()?,
+                    ))
+                }
+            }
+            Expr::Cond(cond) => {
+                let test = self.evaluate_static_value_with_depth(&cond.test, depth + 1)?;
+                let branch = if test.is_truthy() {
+                    &cond.cons
+                } else {
+                    &cond.alt
+                };
+
+                self.evaluate_static_value_with_depth(branch, depth + 1)
+            }
+            Expr::Ident(ident) => {
+                let expr = self.binding_expr(&ident.to_id())?;
+                self.evaluate_static_value_with_depth(expr, depth + 1)
+            }
+            Expr::Member(member) => {
+                let expr = self.resolve_member_expr_value(member, depth + 1)?;
+                self.evaluate_static_value_with_depth(&expr, depth + 1)
+            }
+            _ => None,
+        }
+    }
+
+    fn evaluate_template_literal(&self, tpl: &Tpl, depth: usize) -> Option<String> {
+        let mut value = String::new();
+
+        for (idx, quasi) in tpl.quasis.iter().enumerate() {
+            value.push_str(quasi.cooked.as_ref()?.as_str()?);
+
+            if let Some(expr) = tpl.exprs.get(idx) {
+                value.push_str(&self.evaluate_static_string_with_depth(expr, depth + 1, true)?);
+            }
+        }
+
+        Some(value)
+    }
+
+    fn json_value_from_expr(&self, expr: &Expr) -> Option<serde_json::Value> {
+        self.json_value_from_expr_with_depth(expr, 0)
+    }
+
+    fn json_value_from_expr_with_depth(
+        &self,
+        expr: &Expr,
+        depth: usize,
+    ) -> Option<serde_json::Value> {
+        if depth > MAX_RESOLUTION_DEPTH {
+            return None;
+        }
+
+        match Self::strip_expr(expr) {
+            Expr::Ident(ident) => {
+                let expr = self.binding_expr(&ident.to_id())?;
+                self.json_value_from_expr_with_depth(expr, depth + 1)
+            }
+            Expr::Lit(Lit::Str(s)) => {
+                Some(serde_json::Value::String(s.value.as_str()?.to_string()))
+            }
+            Expr::Lit(Lit::Num(n)) => Some(
+                serde_json::Number::from_f64(n.value)
+                    .map(serde_json::Value::Number)
+                    .unwrap_or(serde_json::Value::Null),
+            ),
+            Expr::Lit(Lit::Bool(b)) => Some(serde_json::Value::Bool(b.value)),
+            _ => self
+                .evaluate_static_string_with_depth(expr, depth + 1, false)
+                .map(serde_json::Value::String),
         }
     }
 
@@ -600,10 +1021,6 @@ impl<'a, C: Clone + Comments, S: SourceMapper> FormatJSVisitor<'a, C, S> {
                 }
             }
         }
-    }
-
-    fn resolve_identifier(&mut self, ident: &Ident) -> Option<Expr> {
-        self.evaluator.resolve_identifier(ident).as_deref().cloned()
     }
 
     fn create_message_descriptor_from_extractor<T: MessageDescriptorExtractor>(
@@ -736,42 +1153,9 @@ impl<'a, C: Clone + Comments, S: SourceMapper> FormatJSVisitor<'a, C, S> {
                                     PropName::Str(s) => s.value.to_atom_lossy().to_string(),
                                     _ => continue,
                                 };
-                                let value = match &*key_value.value {
-                                    Expr::Ident(ident) => {
-                                        // If this is a variable reference, resolve it
-                                        if let Some(resolved_expr) = self.resolve_identifier(ident)
-                                        {
-                                            match resolved_expr {
-                                                Expr::Lit(Lit::Str(s)) => {
-                                                    serde_json::Value::String(
-                                                        s.value
-                                                            .as_str()
-                                                            .expect("non-utf8 string")
-                                                            .to_string(),
-                                                    )
-                                                }
-                                                Expr::Lit(Lit::Num(n)) => {
-                                                    serde_json::Number::from_f64(n.value)
-                                                        .map(serde_json::Value::Number)
-                                                        .unwrap_or(serde_json::Value::Null)
-                                                }
-                                                Expr::Lit(Lit::Bool(b)) => {
-                                                    serde_json::Value::Bool(b.value)
-                                                }
-                                                _ => continue,
-                                            }
-                                        } else {
-                                            continue;
-                                        }
-                                    }
-                                    Expr::Lit(Lit::Str(s)) => serde_json::Value::String(
-                                        s.value.to_atom_lossy().to_string(),
-                                    ),
-                                    Expr::Lit(Lit::Num(n)) => serde_json::Number::from_f64(n.value)
-                                        .map(serde_json::Value::Number)
-                                        .unwrap_or(serde_json::Value::Null),
-                                    Expr::Lit(Lit::Bool(b)) => serde_json::Value::Bool(b.value),
-                                    _ => continue,
+                                let Some(value) = self.json_value_from_expr(&key_value.value)
+                                else {
+                                    continue;
                                 };
 
                                 map.insert(key_str, value);
@@ -834,99 +1218,114 @@ impl<'a, C: Clone + Comments, S: SourceMapper> FormatJSVisitor<'a, C, S> {
             source_location,
         );
 
-        // let first_prop = properties.first().is_some();
-
-        // Insert ID potentially 1st before removing nodes
-        let id_prop = obj.props.iter().find(|prop| {
-            if let PropOrSpread::Prop(prop) = prop {
-                if let Prop::KeyValue(kv) = &**prop {
-                    return match &kv.key {
-                        PropName::Ident(ident) => &*ident.sym == "id",
-                        PropName::Str(str_) => &*str_.value == "id",
-                        _ => false,
-                    };
-                }
-            }
-            false
-        });
-
-        if let Some(descriptor_id) = descriptor.id {
-            if let Some(id_prop) = id_prop {
-                let prop = id_prop.as_prop().unwrap();
-                let kv = &mut prop.as_key_value().unwrap();
-                kv.to_owned().value = Box::new(Expr::Lit(Lit::Str(Str {
-                    span: DUMMY_SP,
-                    value: descriptor_id.into(),
-                    raw: None,
-                })));
-            } else {
-                obj.props.insert(
-                    0,
-                    PropOrSpread::Prop(Box::new(Prop::KeyValue(KeyValueProp {
-                        key: PropName::Ident(IdentName::new("id".into(), DUMMY_SP)),
-                        value: Box::new(Expr::Lit(Lit::Str(Str {
-                            span: DUMMY_SP,
-                            value: descriptor_id.into(),
-                            raw: None,
-                        }))),
-                    }))),
-                )
-            }
-        }
-
+        let descriptor_id = descriptor.id.clone();
+        let mut has_id_prop = false;
         let mut props = vec![];
         for prop in obj.props.drain(..) {
             match prop {
                 PropOrSpread::Prop(mut prop) => {
-                    if let Prop::KeyValue(keyvalue) = &mut *prop {
-                        let key = get_message_descriptor_key_from_call_expr(&keyvalue.key);
-                        if let Some(key) = key {
-                            match key {
-                                "description" => {
-                                    // remove description
-                                    if descriptor.description.is_some() {
-                                        self.comments.take_leading(prop.span().lo);
-                                    } else {
-                                        props.push(PropOrSpread::Prop(prop));
-                                    }
-                                }
-                                // Pre-parse or remove defaultMessage
-                                "defaultMessage" => {
-                                    if self.options.remove_default_message {
-                                        // remove defaultMessage
-                                    } else {
-                                        if let Some(descriptor_default_message) =
-                                            descriptor.default_message.as_ref()
-                                        {
-                                            if self.options.ast {
-                                                if let Some(ref parsed_expr) = descriptor.ast {
-                                                    keyvalue.value = parsed_expr.clone();
-                                                }
-                                            } else {
-                                                keyvalue.value =
-                                                    Box::new(Expr::Lit(Lit::Str(Str {
-                                                        span: DUMMY_SP,
-                                                        value: descriptor_default_message
-                                                            .as_str()
-                                                            .into(),
-                                                        raw: None,
-                                                    })));
-                                            }
+                    match &mut *prop {
+                        Prop::KeyValue(keyvalue) => {
+                            let key = get_message_descriptor_key_from_call_expr(&keyvalue.key);
+                            if let Some(key) = key {
+                                match key {
+                                    "id" => {
+                                        has_id_prop = true;
+                                        if let Some(descriptor_id) = &descriptor_id {
+                                            keyvalue.value = string_expr(descriptor_id.clone());
                                         }
-
                                         props.push(PropOrSpread::Prop(prop));
                                     }
+                                    "description" => {
+                                        // remove description
+                                        if descriptor.description.is_some() {
+                                            self.comments.take_leading(prop.span().lo);
+                                        } else {
+                                            props.push(PropOrSpread::Prop(prop));
+                                        }
+                                    }
+                                    // Pre-parse or remove defaultMessage
+                                    "defaultMessage" => {
+                                        if self.options.remove_default_message {
+                                            // remove defaultMessage
+                                        } else {
+                                            if let Some(descriptor_default_message) =
+                                                descriptor.default_message.as_ref()
+                                            {
+                                                if self.options.ast {
+                                                    if let Some(ref parsed_expr) = descriptor.ast {
+                                                        keyvalue.value = parsed_expr.clone();
+                                                    }
+                                                } else {
+                                                    keyvalue.value = string_expr(
+                                                        descriptor_default_message.clone(),
+                                                    );
+                                                }
+                                            }
+
+                                            props.push(PropOrSpread::Prop(prop));
+                                        }
+                                    }
+                                    _ => props.push(PropOrSpread::Prop(prop)),
                                 }
-                                _ => props.push(PropOrSpread::Prop(prop)),
+                            } else {
+                                props.push(PropOrSpread::Prop(prop));
                             }
-                        } else {
-                            props.push(PropOrSpread::Prop(prop));
                         }
-                    } else {
-                        props.push(PropOrSpread::Prop(prop));
+                        Prop::Shorthand(ident) => match &*ident.sym {
+                            "id" => {
+                                has_id_prop = true;
+                                if let Some(descriptor_id) = &descriptor_id {
+                                    props.push(key_value_prop(
+                                        "id",
+                                        string_expr(descriptor_id.clone()),
+                                    ));
+                                } else {
+                                    props.push(PropOrSpread::Prop(prop));
+                                }
+                            }
+                            "description" => {
+                                if descriptor.description.is_some() {
+                                    self.comments.take_leading(prop.span().lo);
+                                } else {
+                                    props.push(PropOrSpread::Prop(prop));
+                                }
+                            }
+                            "defaultMessage" => {
+                                if self.options.remove_default_message {
+                                    // remove defaultMessage
+                                } else if self.options.ast {
+                                    if let Some(ref parsed_expr) = descriptor.ast {
+                                        props.push(key_value_prop(
+                                            "defaultMessage",
+                                            parsed_expr.clone(),
+                                        ));
+                                    } else {
+                                        props.push(PropOrSpread::Prop(prop));
+                                    }
+                                } else if let Some(descriptor_default_message) =
+                                    descriptor.default_message.as_ref()
+                                {
+                                    props.push(key_value_prop(
+                                        "defaultMessage",
+                                        string_expr(descriptor_default_message.clone()),
+                                    ));
+                                } else {
+                                    props.push(PropOrSpread::Prop(prop));
+                                }
+                            }
+                            _ => props.push(PropOrSpread::Prop(prop)),
+                        },
+                        _ => props.push(PropOrSpread::Prop(prop)),
                     }
                 }
                 _ => props.push(prop),
+            }
+        }
+
+        if let Some(descriptor_id) = descriptor_id {
+            if !has_id_prop {
+                props.insert(0, key_value_prop("id", string_expr(descriptor_id)));
             }
         }
 
@@ -947,38 +1346,43 @@ fn emit_non_evaluable_error(span: Span) {
     });
 }
 
-impl<'a, C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<'a, C, S> {
+impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
     noop_visit_mut_type!(fail);
+
+    fn visit_mut_var_declarator(&mut self, declarator: &mut VarDeclarator) {
+        declarator.visit_mut_children_with(self);
+
+        if let Pat::Ident(ident) = &declarator.name {
+            if let Some(init) = &declarator.init {
+                self.store_binding(ident.id.to_id(), init);
+            }
+        }
+    }
 
     fn visit_mut_assign_expr(&mut self, assign_expr: &mut AssignExpr) {
         assign_expr.visit_mut_children_with(self);
 
-        // Track assignment expressions for React Compiler optimizations
-        // Handle patterns like: t1 = { ... }
-        if let AssignTarget::Simple(SimpleAssignTarget::Ident(ident)) = &assign_expr.left {
-            let variable_id = ident.id.to_id();
-
-            // Check if we already have a binding for this variable
-            let should_update = match self.resolve_identifier(ident) {
-                Some(existing_expr) => {
-                    // Only overwrite if the new expression is an object literal
-                    // and the existing one is not, or if both are object literals
-                    match (existing_expr, &*assign_expr.right) {
-                        (Expr::Object(_), Expr::Object(_)) => true, // Both objects, update
-                        (_, Expr::Object(_)) => true,               /* New is object, existing */
-                        // is not, update
-                        (Expr::Object(_), _) => false, /* Existing is object, new is not, don't */
-                        // update
-                        _ => true, // Neither is object, update
+        if let AssignTarget::Simple(target) = &assign_expr.left {
+            match target {
+                SimpleAssignTarget::Ident(ident) => {
+                    self.store_binding(ident.id.to_id(), &assign_expr.right);
+                }
+                SimpleAssignTarget::Member(member) => {
+                    if let Some(id) = Self::member_base_ident(member) {
+                        self.invalidate_binding(id);
                     }
                 }
-                None => true, // No existing binding, always update
-            };
-
-            if should_update {
-                self.evaluator.store(variable_id, &assign_expr.right);
+                _ => {}
             }
         }
+    }
+
+    fn visit_mut_block_stmt(&mut self, block: &mut BlockStmt) {
+        for stmt in &block.stmts {
+            self.collect_stmt_bindings(stmt);
+        }
+
+        block.visit_mut_children_with(self);
     }
 
     fn visit_mut_jsx_opening_element(&mut self, jsx_opening_elem: &mut JSXOpeningElement) {
@@ -1200,6 +1604,10 @@ impl<'a, C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<'a, 
         }
         */
 
+        for item in items.iter() {
+            self.collect_module_item_bindings(item);
+        }
+
         for item in items {
             self.read_pragma(item.span().lo, item.span().hi);
             item.visit_mut_children_with(self);
@@ -1277,12 +1685,24 @@ fn json_value_to_expr(json_value: &serde_json::Value) -> Box<Expr> {
     })
 }
 
+pub fn create_formatjs_visitor_without_evaluator<C: Clone + Comments, S: SourceMapper>(
+    source_map: std::sync::Arc<S>,
+    comments: C,
+    plugin_options: FormatJSPluginOptions,
+    filename: &str,
+) -> FormatJSVisitor<C, S> {
+    FormatJSVisitor::new(source_map, comments, plugin_options, filename)
+}
+
+#[deprecated(
+    note = "use create_formatjs_visitor_without_evaluator; the evaluator argument is ignored"
+)]
 pub fn create_formatjs_visitor<'a, C: Clone + Comments, S: SourceMapper>(
     source_map: std::sync::Arc<S>,
     comments: C,
     plugin_options: FormatJSPluginOptions,
     filename: &str,
-    evaluator: &'a mut Evaluator,
-) -> FormatJSVisitor<'a, C, S> {
-    FormatJSVisitor::new(source_map, comments, plugin_options, filename, evaluator)
+    _evaluator: &'a mut Evaluator,
+) -> FormatJSVisitor<C, S> {
+    create_formatjs_visitor_without_evaluator(source_map, comments, plugin_options, filename)
 }

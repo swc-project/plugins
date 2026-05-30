@@ -3384,6 +3384,7 @@ dependencies = [
  "once_cell",
  "pretty_assertions",
  "regex",
+ "ryu-js",
  "serde",
  "serde_json",
  "sha1",
@@ -3491,7 +3492,6 @@ dependencies = [
  "serde",
  "serde_json",
  "swc_core",
- "swc_ecma_minifier",
  "swc_formatjs_transform",
 ]
 
