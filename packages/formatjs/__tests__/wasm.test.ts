@@ -726,6 +726,22 @@ describe("formatjs swc plugin", () => {
         defaultMessage: "Count " + (1 + true),
       });
 
+      formatMessage({
+        defaultMessage: \`Negative \${-1}\`,
+      });
+
+      formatMessage({
+        defaultMessage: "Signed " + -1,
+      });
+
+      formatMessage({
+        defaultMessage: true ? "Enabled" : "Disabled",
+      });
+
+      formatMessage({
+        defaultMessage: \`ID \${1e21}\`,
+      });
+
       const MSG = "Declared later";
     `;
 
@@ -736,6 +752,10 @@ describe("formatjs swc plugin", () => {
     expect(output).toMatch(/defaultMessage: "Hello from object"/);
     expect(output).toMatch(/defaultMessage: "Step 2"/);
     expect(output).toMatch(/defaultMessage: "Count 2"/);
+    expect(output).toMatch(/defaultMessage: "Negative -1"/);
+    expect(output).toMatch(/defaultMessage: "Signed -1"/);
+    expect(output).toMatch(/defaultMessage: "Enabled"/);
+    expect(output).toMatch(/defaultMessage: "ID 1e\+21"/);
     expect(output).toMatch(/defaultMessage: "Declared later"/);
   });
 
@@ -779,6 +799,26 @@ describe("formatjs swc plugin", () => {
       const messages = {
         hello: "Hello",
         ...runtimeMessages,
+      };
+
+      formatMessage({
+        defaultMessage: messages.hello,
+      });
+    `;
+
+    await expect(transformCode(input)).rejects.toThrow(
+      "[React Intl] Messages must be statically evaluate-able for extraction.",
+    );
+  });
+
+  it("should not resolve member values hidden behind unknown computed keys", async () => {
+    const input = `
+      import { formatMessage } from 'react-intl';
+
+      const runtimeKey = globalThis.key;
+      const messages = {
+        hello: "Hello",
+        [runtimeKey]: "Runtime",
       };
 
       formatMessage({

@@ -24,8 +24,8 @@ use swc_core::{
             ExprOrSpread, Id, IdentName, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue,
             JSXElementName, JSXExpr, JSXExprContainer, JSXNamespacedName, JSXOpeningElement,
             KeyValueProp, Lit, MemberExpr, MemberProp, ModuleDecl, ModuleItem, Number, ObjectLit,
-            Pat, Prop, PropName, PropOrSpread, SimpleAssignTarget, Stmt, Str, Tpl, VarDecl,
-            VarDeclarator,
+            Pat, Prop, PropName, PropOrSpread, SimpleAssignTarget, Stmt, Str, Tpl, UnaryOp,
+            VarDecl, VarDeclarator,
         },
         visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
     },
@@ -201,6 +201,16 @@ impl StaticValue {
         }
     }
 
+    fn is_truthy(&self) -> bool {
+        match self {
+            StaticValue::Str(value) => !value.is_empty(),
+            StaticValue::Num(value) => *value != 0.0 && !value.is_nan(),
+            StaticValue::Bool(value) => *value,
+            StaticValue::Null => false,
+            StaticValue::BigInt(value) => value != "0",
+        }
+    }
+
     fn is_string(&self) -> bool {
         matches!(self, StaticValue::Str(_))
     }
@@ -214,7 +224,8 @@ fn number_to_js_string(value: f64) -> String {
     } else if value == f64::NEG_INFINITY {
         "-Infinity".to_string()
     } else {
-        value.to_string()
+        let mut buffer = ryu_js::Buffer::new();
+        buffer.format(value).to_string()
     }
 }
 
@@ -711,14 +722,31 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
             };
 
             match &**prop {
-                Prop::KeyValue(kv) => {
-                    if self.prop_name_to_key(&kv.key, depth + 1).as_deref() == Some(key.as_str()) {
-                        return Some(kv.value.clone());
-                    }
-                }
+                Prop::KeyValue(kv) => match self.prop_name_to_key(&kv.key, depth + 1) {
+                    Some(prop_key) if prop_key == key => return Some(kv.value.clone()),
+                    Some(_) => {}
+                    None => return None,
+                },
                 Prop::Shorthand(ident) if ident.sym == *key => {
                     return self.bindings.get(&ident.to_id()).cloned();
                 }
+                Prop::Assign(assign) => {
+                    if assign.key.sym == *key {
+                        return Some(assign.value.clone());
+                    }
+                }
+                Prop::Getter(getter) => match self.prop_name_to_key(&getter.key, depth + 1) {
+                    Some(prop_key) if prop_key != key => {}
+                    _ => return None,
+                },
+                Prop::Setter(setter) => match self.prop_name_to_key(&setter.key, depth + 1) {
+                    Some(prop_key) if prop_key != key => {}
+                    _ => return None,
+                },
+                Prop::Method(method) => match self.prop_name_to_key(&method.key, depth + 1) {
+                    Some(prop_key) if prop_key != key => {}
+                    _ => return None,
+                },
                 _ => {}
             }
         }
@@ -803,6 +831,27 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
             Expr::Tpl(tpl) => self
                 .evaluate_template_literal(tpl, depth + 1)
                 .map(StaticValue::Str),
+            Expr::Unary(unary) => {
+                let value = self.evaluate_static_value_with_depth(&unary.arg, depth + 1)?;
+
+                match unary.op {
+                    UnaryOp::Minus => match value {
+                        StaticValue::BigInt(value) => {
+                            if value == "0" {
+                                Some(StaticValue::BigInt(value))
+                            } else if let Some(value) = value.strip_prefix('-') {
+                                Some(StaticValue::BigInt(value.to_string()))
+                            } else {
+                                Some(StaticValue::BigInt(format!("-{value}")))
+                            }
+                        }
+                        value => Some(StaticValue::Num(-value.to_js_number()?)),
+                    },
+                    UnaryOp::Plus => Some(StaticValue::Num(value.to_js_number()?)),
+                    UnaryOp::Bang => Some(StaticValue::Bool(!value.is_truthy())),
+                    _ => None,
+                }
+            }
             Expr::Bin(bin) if bin.op == BinaryOp::Add => {
                 let left = self.evaluate_static_value_with_depth(&bin.left, depth + 1)?;
                 let right = self.evaluate_static_value_with_depth(&bin.right, depth + 1)?;
@@ -814,10 +863,22 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
                         right.to_js_string()
                     )))
                 } else {
+                    // BigInt arithmetic is deliberately left unsupported; this
+                    // keeps mixed Number/BigInt additions from being folded.
                     Some(StaticValue::Num(
                         left.to_js_number()? + right.to_js_number()?,
                     ))
                 }
+            }
+            Expr::Cond(cond) => {
+                let test = self.evaluate_static_value_with_depth(&cond.test, depth + 1)?;
+                let branch = if test.is_truthy() {
+                    &cond.cons
+                } else {
+                    &cond.alt
+                };
+
+                self.evaluate_static_value_with_depth(branch, depth + 1)
             }
             Expr::Ident(ident) => {
                 let expr = self.bindings.get(&ident.to_id())?;

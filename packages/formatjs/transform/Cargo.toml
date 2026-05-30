@@ -20,6 +20,7 @@ hex        = { workspace = true }
 md-5       = { workspace = true }
 once_cell  = { workspace = true }
 regex      = { workspace = true }
+ryu-js     = { workspace = true }
 serde      = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
 sha1       = { workspace = true }
