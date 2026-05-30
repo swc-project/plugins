@@ -3491,7 +3491,6 @@ dependencies = [
  "serde",
  "serde_json",
  "swc_core",
- "swc_ecma_minifier",
  "swc_formatjs_transform",
 ]
 
