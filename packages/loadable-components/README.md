@@ -50,7 +50,7 @@ import loadable from '@loadable/component';   // will be transformed
 
 ### Minor Changes
 
-- 3b04284: build: Update swc_core to v68
+- 3b4d5b9: build: Update swc_core to v67
 
 ## 11.10.0
 

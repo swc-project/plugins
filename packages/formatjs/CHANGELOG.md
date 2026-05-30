@@ -1,10 +1,16 @@
 # @swc/plugin-formatjs
 
-## 9.11.0
+## 9.12.0
 
 ### Minor Changes
 
 - 3b04284: build: Update swc_core to v68
+
+## 9.11.0
+
+### Minor Changes
+
+- 3b4d5b9: build: Update swc_core to v67
 
 ## 9.10.0
 

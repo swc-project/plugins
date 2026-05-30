@@ -71,7 +71,7 @@ pub fn process_transform(program: Program, data: TransformPluginProgramMetadata)
     let path = Path::new(&file_name);
     let source_map = std::sync::Arc::new(data.source_map);
     let pos = source_map.lookup_char_pos(program.span().lo);
-    let hash = pos.file.src_hash as u32;
+    let hash = pos.file.src_hash() as u32;
     program.apply(swc_emotion::emotion(
         &config,
         path,

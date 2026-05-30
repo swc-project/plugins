@@ -44,7 +44,7 @@ And SWC has built-in React Refresh transformation, therefore, this plugin only i
 
 ### Minor Changes
 
-- 3b04284: build: Update swc_core to v68
+- 3b4d5b9: build: Update swc_core to v67
 
 ## 12.10.0
 

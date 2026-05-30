@@ -1,10 +1,16 @@
 # @swc/plugin-swc-confidential
 
-## 11.11.0
+## 11.12.0
 
 ### Minor Changes
 
 - 3b04284: build: Update swc_core to v68
+
+## 11.11.0
+
+### Minor Changes
+
+- 3b4d5b9: build: Update swc_core to v67
 
 ## 11.10.0
 

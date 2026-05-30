@@ -28,7 +28,7 @@ fn fixture(input: PathBuf) {
 
             (
                 resolver(Mark::new(), Mark::new(), false),
-                styled_components(Some(&file_name), fm.src_hash, &config, t.comments.clone()),
+                styled_components(Some(&file_name), fm.src_hash(), &config, t.comments.clone()),
             )
         },
         &input,
