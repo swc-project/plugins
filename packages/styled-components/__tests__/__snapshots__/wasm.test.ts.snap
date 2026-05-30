@@ -503,6 +503,20 @@ const Div = styled.div.withConfig({
 "
 `;
 
+exports[`Should load styled-components wasm plugin correctly > Should transform issue-615 correctly 1`] = `
+"import styled from "styled-components";
+const MyStyledComponent = styled.div.withConfig({
+    displayName: "test__MyStyledComponent",
+    componentId: "sc-7bef651e-0"
+})([
+    \`max-height:calc( \`,
+    \` + \`,
+    \` + \`,
+    \` );color:red;\`
+], someVariable1, someVariable2, someVariable3);
+"
+`;
+
 exports[`Should load styled-components wasm plugin correctly > Should transform minify-css-in-helpers correctly 1`] = `
 "import { createGlobalStyle, css, keyframes } from "styled-components";
 const key = keyframes\`to{transform:rotate(360deg);}\`;
