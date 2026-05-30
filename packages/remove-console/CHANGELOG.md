@@ -1,5 +1,11 @@
 # @swc/plugin-remove-console
 
+## 12.12.0
+
+### Minor Changes
+
+- 3b04284: build: Update swc_core to v68
+
 ## 12.11.0
 
 ### Minor Changes

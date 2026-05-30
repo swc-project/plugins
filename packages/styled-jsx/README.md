@@ -4,6 +4,12 @@
 
 # @swc/plugin-styled-jsx
 
+## 13.12.0
+
+### Minor Changes
+
+- 3b04284: build: Update swc_core to v68
+
 ## 13.11.0
 
 ### Minor Changes
