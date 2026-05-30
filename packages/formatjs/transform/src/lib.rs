@@ -23,8 +23,9 @@ use swc_core::{
             ArrayLit, AssignExpr, AssignTarget, BinaryOp, Bool, CallExpr, Callee, Expr,
             ExprOrSpread, Id, IdentName, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue,
             JSXElementName, JSXExpr, JSXExprContainer, JSXNamespacedName, JSXOpeningElement,
-            KeyValueProp, Lit, MemberProp, ModuleItem, Number, ObjectLit, Pat, Prop, PropName,
-            PropOrSpread, SimpleAssignTarget, Str, Tpl, VarDeclarator,
+            KeyValueProp, Lit, MemberExpr, MemberProp, ModuleDecl, ModuleItem, Number, ObjectLit,
+            Pat, Prop, PropName, PropOrSpread, SimpleAssignTarget, Stmt, Str, Tpl, VarDecl,
+            VarDeclarator,
         },
         visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
     },
@@ -33,6 +34,7 @@ use swc_ecma_minifier::eval::Evaluator;
 use swc_icu_messageformat_parser::{Parser, ParserOptions};
 
 pub static WHITESPACE_REGEX: Lazy<Regexp> = Lazy::new(|| Regexp::new(r"\s+").unwrap());
+const MAX_RESOLUTION_DEPTH: usize = 16;
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
@@ -86,9 +88,9 @@ impl MessageDescriptorExtractor for JSXAttrOrSpread {
             }
 
             let value = match value {
-                JSXAttrValue::Str(s) => Some(MessageDescriptionValue::Str(
-                    s.value.as_str().expect("non-utf8 string").to_string(),
-                )),
+                JSXAttrValue::Str(s) => {
+                    Some(MessageDescriptionValue::Str(s.value.as_str()?.to_string()))
+                }
                 JSXAttrValue::JSXExprContainer(container) => {
                     if let JSXExpr::Expr(expr) = &container.expr {
                         visitor.get_message_descriptor_value(expr)
@@ -120,35 +122,34 @@ impl MessageDescriptorExtractor for PropOrSpread {
         visitor: &mut FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
     ) -> Option<(String, MessageDescriptionValue)> {
         if let PropOrSpread::Prop(prop) = self {
-            if let Prop::KeyValue(key_value) = &**prop {
-                let key = match &key_value.key {
-                    PropName::Computed(prop_name) => visitor.evaluate_expr(&prop_name.expr),
-                    PropName::Ident(ident) => Some(ident.sym.to_string()),
-                    PropName::Str(s) => {
-                        Some(s.value.as_str().expect("non-utf8 string").to_string())
-                    }
-                    prop_name => {
-                        emit_non_evaluable_error(prop_name.span());
-                        None
-                    }
-                };
+            let (key, value) = match &**prop {
+                Prop::KeyValue(key_value) => {
+                    let key = match &key_value.key {
+                        PropName::Computed(prop_name) => visitor.evaluate_expr(&prop_name.expr),
+                        PropName::Ident(ident) => Some(ident.sym.to_string()),
+                        PropName::Str(s) => s.value.as_str().map(str::to_string),
+                        prop_name => {
+                            emit_non_evaluable_error(prop_name.span());
+                            None
+                        }
+                    }?;
 
-                let Some(key) = key else {
-                    return None;
-                };
-
-                if !matches!(key.as_str(), "id" | "defaultMessage" | "description") {
-                    return None;
+                    (key, visitor.get_message_descriptor_value(&key_value.value))
                 }
+                Prop::Shorthand(ident) => {
+                    let key = ident.sym.to_string();
+                    let ident_expr = Expr::Ident(ident.clone());
 
-                if let Some(value) = visitor.get_message_descriptor_value(&key_value.value) {
-                    Some((key, value))
-                } else {
-                    None
+                    (key, visitor.get_message_descriptor_value(&ident_expr))
                 }
-            } else {
-                None
+                _ => return None,
+            };
+
+            if !matches!(key.as_str(), "id" | "defaultMessage" | "description") {
+                return None;
             }
+
+            value.map(|value| (key, value))
         } else {
             None
         }
@@ -165,6 +166,39 @@ pub struct MessageDescriptor {
     default_message: Option<String>,
     description: Option<MessageDescriptionValue>,
     ast: Option<Box<Expr>>,
+}
+
+#[derive(Debug, Clone)]
+enum StaticValue {
+    Str(String),
+    Num(f64),
+    Bool(bool),
+    Null,
+    BigInt(String),
+}
+
+impl StaticValue {
+    fn to_js_string(&self) -> String {
+        match self {
+            StaticValue::Str(value) => value.clone(),
+            StaticValue::Num(value) => number_to_js_string(*value),
+            StaticValue::Bool(value) => value.to_string(),
+            StaticValue::Null => "null".to_string(),
+            StaticValue::BigInt(value) => value.clone(),
+        }
+    }
+}
+
+fn number_to_js_string(value: f64) -> String {
+    if value.is_nan() {
+        "NaN".to_string()
+    } else if value == f64::INFINITY {
+        "Infinity".to_string()
+    } else if value == f64::NEG_INFINITY {
+        "-Infinity".to_string()
+    } else {
+        value.to_string()
+    }
 }
 
 fn parse(source: &str) -> Result<Box<Expr>, swc_icu_messageformat_parser::Error> {
@@ -198,7 +232,7 @@ fn get_message_descriptor_key_from_jsx(name: &JSXAttrName) -> &str {
 fn get_message_descriptor_key_from_call_expr(name: &PropName) -> Option<&str> {
     match name {
         PropName::Ident(name) => Some(&*name.sym),
-        PropName::Str(name) => Some(name.value.as_str().expect("non-utf8 prop name")),
+        PropName::Str(name) => name.value.as_str(),
         _ => None,
     }
 
@@ -560,6 +594,8 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
     }
 
     fn store_binding(&mut self, id: Id, value: &Expr) {
+        // React Compiler may assign an object temp, then later assign a dynamic
+        // cache read to the same temp. Keep the object for descriptor hashing.
         let should_update = match self.bindings.get(&id) {
             Some(existing_expr) => match (
                 Self::is_object_expr(existing_expr),
@@ -576,12 +612,37 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
         }
     }
 
+    fn collect_var_decl_bindings(&mut self, var: &VarDecl) {
+        for declarator in &var.decls {
+            if let Pat::Ident(ident) = &declarator.name {
+                if let Some(init) = &declarator.init {
+                    self.store_binding(ident.id.to_id(), init);
+                }
+            }
+        }
+    }
+
+    fn collect_module_item_bindings(&mut self, item: &ModuleItem) {
+        match item {
+            ModuleItem::Stmt(Stmt::Decl(swc_core::ecma::ast::Decl::Var(var))) => {
+                self.collect_var_decl_bindings(var)
+            }
+            ModuleItem::ModuleDecl(ModuleDecl::ExportDecl(export_decl)) => {
+                if let swc_core::ecma::ast::Decl::Var(var) = &export_decl.decl {
+                    self.collect_var_decl_bindings(var);
+                }
+            }
+            _ => {}
+        }
+    }
+
     fn resolve_object_expr(&self, expr: &Expr) -> Option<ObjectLit> {
         self.resolve_object_expr_with_depth(expr, 0)
     }
 
     fn resolve_object_expr_with_depth(&self, expr: &Expr, depth: usize) -> Option<ObjectLit> {
-        if depth > 16 {
+        // Shared recursion limit also prevents cycles like `let a = b; let b = a`.
+        if depth > MAX_RESOLUTION_DEPTH {
             return None;
         }
 
@@ -591,7 +652,62 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
                 let expr = self.bindings.get(&ident.to_id())?;
                 self.resolve_object_expr_with_depth(expr, depth + 1)
             }
+            Expr::Member(member) => {
+                let expr = self.resolve_member_expr_value(member, depth + 1)?;
+                self.resolve_object_expr_with_depth(&expr, depth + 1)
+            }
             _ => None,
+        }
+    }
+
+    fn resolve_member_expr_value(&self, member: &MemberExpr, depth: usize) -> Option<Box<Expr>> {
+        if depth > MAX_RESOLUTION_DEPTH {
+            return None;
+        }
+
+        let obj = self.resolve_object_expr_with_depth(&member.obj, depth + 1)?;
+        let key = self.member_prop_to_key(&member.prop, depth + 1)?;
+
+        for prop in obj.props.iter().rev() {
+            let PropOrSpread::Prop(prop) = prop else {
+                continue;
+            };
+
+            match &**prop {
+                Prop::KeyValue(kv) => {
+                    if self.prop_name_to_key(&kv.key, depth + 1).as_deref() == Some(key.as_str()) {
+                        return Some(kv.value.clone());
+                    }
+                }
+                Prop::Shorthand(ident) if ident.sym == *key => {
+                    return self.bindings.get(&ident.to_id()).cloned();
+                }
+                _ => {}
+            }
+        }
+
+        None
+    }
+
+    fn member_prop_to_key(&self, prop: &MemberProp, depth: usize) -> Option<String> {
+        match prop {
+            MemberProp::Ident(ident) => Some(ident.sym.to_string()),
+            MemberProp::Computed(computed) => {
+                self.evaluate_static_string_with_depth(&computed.expr, depth + 1, true)
+            }
+            _ => None,
+        }
+    }
+
+    fn prop_name_to_key(&self, prop: &PropName, depth: usize) -> Option<String> {
+        match prop {
+            PropName::Ident(ident) => Some(ident.sym.to_string()),
+            PropName::Str(str_) => str_.value.as_str().map(str::to_string),
+            PropName::Num(num) => Some(number_to_js_string(num.value)),
+            PropName::BigInt(big_int) => Some(big_int.value.to_string()),
+            PropName::Computed(computed) => {
+                self.evaluate_static_string_with_depth(&computed.expr, depth + 1, true)
+            }
         }
     }
 
@@ -614,25 +730,64 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
     }
 
     fn evaluate_static_string(&self, expr: &Expr) -> Option<String> {
-        self.evaluate_static_string_with_depth(expr, 0)
+        self.evaluate_static_string_with_depth(expr, 0, false)
     }
 
-    fn evaluate_static_string_with_depth(&self, expr: &Expr, depth: usize) -> Option<String> {
-        if depth > 16 {
+    fn evaluate_static_string_with_depth(
+        &self,
+        expr: &Expr,
+        depth: usize,
+        allow_coercion: bool,
+    ) -> Option<String> {
+        if depth > MAX_RESOLUTION_DEPTH {
+            return None;
+        }
+
+        let value = self.evaluate_static_value_with_depth(expr, depth)?;
+
+        match value {
+            StaticValue::Str(value) => Some(value),
+            value if allow_coercion => Some(value.to_js_string()),
+            _ => None,
+        }
+    }
+
+    fn evaluate_static_value_with_depth(&self, expr: &Expr, depth: usize) -> Option<StaticValue> {
+        if depth > MAX_RESOLUTION_DEPTH {
             return None;
         }
 
         match Self::strip_expr(expr) {
-            Expr::Lit(Lit::Str(s)) => Some(s.value.as_str().expect("non-utf8 string").to_string()),
-            Expr::Tpl(tpl) => self.evaluate_template_literal(tpl, depth + 1),
+            Expr::Lit(Lit::Str(s)) => Some(StaticValue::Str(s.value.as_str()?.to_string())),
+            Expr::Lit(Lit::Num(n)) => Some(StaticValue::Num(n.value)),
+            Expr::Lit(Lit::Bool(b)) => Some(StaticValue::Bool(b.value)),
+            Expr::Lit(Lit::Null(_)) => Some(StaticValue::Null),
+            Expr::Lit(Lit::BigInt(n)) => Some(StaticValue::BigInt(n.value.to_string())),
+            Expr::Tpl(tpl) => self
+                .evaluate_template_literal(tpl, depth + 1)
+                .map(StaticValue::Str),
             Expr::Bin(bin) if bin.op == BinaryOp::Add => {
-                let left = self.evaluate_static_string_with_depth(&bin.left, depth + 1)?;
-                let right = self.evaluate_static_string_with_depth(&bin.right, depth + 1)?;
-                Some(format!("{left}{right}"))
+                let left = self.evaluate_static_value_with_depth(&bin.left, depth + 1)?;
+                let right = self.evaluate_static_value_with_depth(&bin.right, depth + 1)?;
+
+                match (&left, &right) {
+                    (StaticValue::Num(left), StaticValue::Num(right)) => {
+                        Some(StaticValue::Num(*left + *right))
+                    }
+                    _ => Some(StaticValue::Str(format!(
+                        "{}{}",
+                        left.to_js_string(),
+                        right.to_js_string()
+                    ))),
+                }
             }
             Expr::Ident(ident) => {
                 let expr = self.bindings.get(&ident.to_id())?;
-                self.evaluate_static_string_with_depth(expr, depth + 1)
+                self.evaluate_static_value_with_depth(expr, depth + 1)
+            }
+            Expr::Member(member) => {
+                let expr = self.resolve_member_expr_value(member, depth + 1)?;
+                self.evaluate_static_value_with_depth(&expr, depth + 1)
             }
             _ => None,
         }
@@ -642,10 +797,10 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
         let mut value = String::new();
 
         for (idx, quasi) in tpl.quasis.iter().enumerate() {
-            value.push_str(quasi.cooked.as_ref()?.as_str().expect("non-utf8 string"));
+            value.push_str(quasi.cooked.as_ref()?.as_str()?);
 
             if let Some(expr) = tpl.exprs.get(idx) {
-                value.push_str(&self.evaluate_static_string_with_depth(expr, depth + 1)?);
+                value.push_str(&self.evaluate_static_string_with_depth(expr, depth + 1, true)?);
             }
         }
 
@@ -661,7 +816,7 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
         expr: &Expr,
         depth: usize,
     ) -> Option<serde_json::Value> {
-        if depth > 16 {
+        if depth > MAX_RESOLUTION_DEPTH {
             return None;
         }
 
@@ -670,9 +825,9 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
                 let expr = self.bindings.get(&ident.to_id())?;
                 self.json_value_from_expr_with_depth(expr, depth + 1)
             }
-            Expr::Lit(Lit::Str(s)) => Some(serde_json::Value::String(
-                s.value.as_str().expect("non-utf8 string").to_string(),
-            )),
+            Expr::Lit(Lit::Str(s)) => {
+                Some(serde_json::Value::String(s.value.as_str()?.to_string()))
+            }
             Expr::Lit(Lit::Num(n)) => Some(
                 serde_json::Number::from_f64(n.value)
                     .map(serde_json::Value::Number)
@@ -680,7 +835,7 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
             ),
             Expr::Lit(Lit::Bool(b)) => Some(serde_json::Value::Bool(b.value)),
             _ => self
-                .evaluate_static_string_with_depth(expr, depth + 1)
+                .evaluate_static_string_with_depth(expr, depth + 1, false)
                 .map(serde_json::Value::String),
         }
     }
@@ -1262,6 +1417,10 @@ impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
         }
         */
 
+        for item in items.iter() {
+            self.collect_module_item_bindings(item);
+        }
+
         for item in items {
             self.read_pragma(item.span().lo, item.span().hi);
             item.visit_mut_children_with(self);
@@ -1348,6 +1507,9 @@ pub fn create_formatjs_visitor_without_evaluator<C: Clone + Comments, S: SourceM
     FormatJSVisitor::new(source_map, comments, plugin_options, filename)
 }
 
+#[deprecated(
+    note = "use create_formatjs_visitor_without_evaluator; the evaluator argument is ignored"
+)]
 pub fn create_formatjs_visitor<'a, C: Clone + Comments, S: SourceMapper>(
     source_map: std::sync::Arc<S>,
     comments: C,

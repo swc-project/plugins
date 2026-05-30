@@ -208,7 +208,7 @@ describe("formatjs swc plugin", () => {
       });
     `;
 
-    expect(transformCode(input)).rejects.toThrow(
+    await expect(transformCode(input)).rejects.toThrow(
       "[React Intl] Messages must be statically evaluate-able for extraction.",
     );
   });
@@ -655,7 +655,10 @@ describe("formatjs swc plugin", () => {
       }
     `;
 
-    await expect(transformCode(input, { ast: true })).resolves.toBeDefined();
+    const output = await transformCode(input, { ast: true });
+
+    expect(output).toContain("config.info.x");
+    expect(output).toContain("onClick");
   });
 
   it("should transform several formatMessage calls with ast enabled (issue #604)", async () => {
@@ -688,6 +691,80 @@ describe("formatjs swc plugin", () => {
     const output = await transformCode(input, { ast: true });
 
     expect(output.match(/defaultMessage: \[/g)).toHaveLength(5);
+  });
+
+  it("should evaluate delayed bindings, member lookups, and primitive coercion", async () => {
+    const input = `
+      import { defineMessage, formatMessage } from 'react-intl';
+
+      function laterBinding() {
+        return formatMessage({
+          defaultMessage: MSG,
+        });
+      }
+
+      const id = "coerced";
+      const suffix = true;
+      const messages = {
+        hello: "Hello from object",
+      };
+
+      defineMessage({
+        id,
+        defaultMessage: ("Value " + suffix) as const,
+      });
+
+      formatMessage({
+        defaultMessage: messages.hello,
+      });
+
+      formatMessage({
+        defaultMessage: \`Step \${2}\`,
+      });
+
+      const MSG = "Declared later";
+    `;
+
+    const output = await transformCode(input);
+
+    expect(output).toMatch(/id: "coerced"/);
+    expect(output).toContain('"Value true"');
+    expect(output).toMatch(/defaultMessage: "Hello from object"/);
+    expect(output).toMatch(/defaultMessage: "Step 2"/);
+    expect(output).toMatch(/defaultMessage: "Declared later"/);
+  });
+
+  it("should strip TypeScript wrappers while evaluating descriptor values", async () => {
+    const input = `
+      import { defineMessage } from 'react-intl';
+
+      defineMessage({
+        id: "wrapped" as const,
+        defaultMessage: ("Wrapped message" satisfies string),
+      });
+    `;
+
+    const output = await transformCode(input);
+
+    expect(output).toMatch(/id: "wrapped"/);
+    expect(output).toMatch(/defaultMessage: "Wrapped message"/);
+  });
+
+  it("should stop resolving cyclic bindings", async () => {
+    const input = `
+      import { defineMessage } from 'react-intl';
+
+      let a = b;
+      let b = a;
+
+      defineMessage({
+        defaultMessage: a,
+      });
+    `;
+
+    await expect(transformCode(input)).rejects.toThrow(
+      "[React Intl] Messages must be statically evaluate-able for extraction.",
+    );
   });
 
   it("should not error on valid JSX outside formatjs calls (issue #588)", async () => {
