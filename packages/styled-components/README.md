@@ -30,6 +30,12 @@ Then update your `.swcrc` file like below:
 
 # @swc/plugin-styled-components
 
+## 12.12.1
+
+### Patch Changes
+
+- Strip trailing line comments after multiline styled-components declarations during CSS minification.
+
 ## 12.12.0
 
 ### Minor Changes
