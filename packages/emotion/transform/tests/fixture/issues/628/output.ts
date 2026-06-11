@@ -1,0 +1,4 @@
+import { css } from "@emotion/react";
+const path = "https://cdn.example.com/fonts/";
+const family = "MyFont";
+export const styles = /*#__PURE__*/ css("@font-face{font-family:'", family, "';src:url('", path, family, "-Bold.woff2') format('woff2');}", "label:styles;", "/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5wdXQudHMiLCJzb3VyY2VzIjpbImlucHV0LnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IGNzcyB9IGZyb20gXCJAZW1vdGlvbi9yZWFjdFwiO1xuXG5jb25zdCBwYXRoID0gXCJodHRwczovL2Nkbi5leGFtcGxlLmNvbS9mb250cy9cIjtcbmNvbnN0IGZhbWlseSA9IFwiTXlGb250XCI7XG5cbmV4cG9ydCBjb25zdCBzdHlsZXMgPSBjc3NgXG4gIEBmb250LWZhY2Uge1xuICAgIGZvbnQtZmFtaWx5OiAnJHtmYW1pbHl9JztcbiAgICBzcmM6IHVybCgnJHtwYXRofSR7ZmFtaWx5fS1Cb2xkLndvZmYyJykgZm9ybWF0KCd3b2ZmMicpO1xuICB9XG5gO1xuIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUtzQiJ9 */");

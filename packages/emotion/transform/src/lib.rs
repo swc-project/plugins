@@ -383,7 +383,7 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
                     let minified = minify_css_string(&css_input, index == 0, index == args_len - 1);
                     // Compress one more spaces into one space
                     if minified.replace(' ', "").is_empty() {
-                        if index != 0 && index != args_len - 1 {
+                        if index != 0 && index != args_len - 1 && !css_input.is_empty() {
                             args.push(" ".as_arg());
                         }
                     } else {
