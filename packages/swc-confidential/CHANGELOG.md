@@ -1,5 +1,11 @@
 # @swc/plugin-swc-confidential
 
+## 11.13.0
+
+### Minor Changes
+
+- c3013d7: build: Update swc_core to v69
+
 ## 11.12.0
 
 ### Minor Changes

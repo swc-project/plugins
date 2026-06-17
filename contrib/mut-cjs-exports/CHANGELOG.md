@@ -1,5 +1,11 @@
 # @swc-contrib/mut-cjs-exports
 
+## 14.13.0
+
+### Minor Changes
+
+- c3013d7: build: Update swc_core to v69
+
 ## 14.12.0
 
 ### Minor Changes
