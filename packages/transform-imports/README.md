@@ -20,6 +20,12 @@
 
 # @swc/plugin-transform-imports
 
+## 12.13.0
+
+### Minor Changes
+
+- c3013d7: build: Update swc_core to v69
+
 ## 12.12.0
 
 ### Minor Changes
