@@ -1,5 +1,11 @@
 # @swc/plugin-experimental-feature-flags
 
+## 0.12.0
+
+### Minor Changes
+
+- c3013d7: build: Update swc_core to v69
+
 ## 0.11.0
 
 ### Minor Changes
