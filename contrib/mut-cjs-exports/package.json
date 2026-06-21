@@ -1,6 +1,6 @@
 {
     "name": "@swc-contrib/mut-cjs-exports",
-    "version": "14.13.0",
+    "version": "14.14.0",
     "publishConfig": {
         "access": "public",
         "provenance": true

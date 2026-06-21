@@ -1,5 +1,11 @@
 # @swc-contrib/mut-cjs-exports
 
+## 14.14.0
+
+### Minor Changes
+
+- 7cc5e96: build: Update swc_core to v72
+
 ## 14.13.0
 
 ### Minor Changes
