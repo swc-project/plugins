@@ -1,5 +1,11 @@
 # @swc/plugin-formatjs
 
+## 9.14.0
+
+### Minor Changes
+
+- 7cc5e96: build: Update swc_core to v72
+
 ## 9.13.0
 
 ### Minor Changes
