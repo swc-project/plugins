@@ -135,11 +135,10 @@ test("Should transform css prop output from React Compiler", async () => {
     `,
     {
       envName: "development",
-      filename: "percentInput.tsx",
       jsc: {
         parser: {
-          syntax: "typescript",
-          tsx: true,
+          syntax: "ecmascript",
+          jsx: true,
         },
         transform: {
           react: {
