@@ -123,3 +123,37 @@ test("Should keep plain keyframes label for namespace imports", async () => {
   );
   expect(output.code).not.toContain("label:pulse");
 });
+
+test("Should transform css prop output from React Compiler", async () => {
+  const output = await transform(
+    `
+      import { css } from "@emotion/react";
+
+      export function App() {
+        return <div css={css\`width:120px;\`} />;
+      }
+    `,
+    {
+      envName: "development",
+      filename: "percentInput.tsx",
+      jsc: {
+        parser: {
+          syntax: "typescript",
+          tsx: true,
+        },
+        transform: {
+          react: {
+            runtime: "automatic",
+            importSource: "@emotion/react",
+          },
+          reactCompiler: true,
+        },
+        experimental: {
+          plugins: [[pluginPath, {}]],
+        },
+      },
+    } satisfies Options,
+  );
+
+  expect(output.code).toContain('css("width:120px;", "")');
+});
