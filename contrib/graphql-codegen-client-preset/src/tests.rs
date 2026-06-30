@@ -209,6 +209,25 @@ const SomeEGRockets = gql(`
 
 test!(
     Default::default(),
+    |_| visit_mut_pass(get_test_code_visitor()),
+    pascal_case_preserves_digit_suffix_boundaries,
+    r#"import gql from "gql-tag";
+
+const Hero30 = gql(`
+  fragment Hero30 on SomeType {
+    id
+  }
+`);
+
+const Foo1 = gql(`
+  query Foo1 {
+    id
+  }
+`);"#
+);
+
+test!(
+    Default::default(),
     |_| visit_mut_pass(get_test_code_visitor_upper_case_first()),
     upper_case_first_preserves_uppercase_sequences,
     r#"import gql from "gql-tag";
@@ -233,6 +252,26 @@ fn naming_convention_unknown_preserves_original_name() {
     assert_eq!(
         apply_naming_convention("SomeEGRocketsDocument", "lodash#camelCase"),
         "SomeEGRocketsDocument"
+    );
+}
+
+#[test]
+fn pascal_case_preserves_digit_suffixes() {
+    assert_eq!(
+        apply_naming_convention("Hero30FragmentDoc", "change-case-all#pascalCase"),
+        "Hero30FragmentDoc"
+    );
+    assert_eq!(
+        apply_naming_convention("Foo1Document", "change-case-all#pascalCase"),
+        "Foo1Document"
+    );
+    assert_eq!(
+        apply_naming_convention("Foo1barDocument", "change-case-all#pascalCase"),
+        "Foo1barDocument"
+    );
+    assert_eq!(
+        apply_naming_convention("SomeEGRocketsDocument", "change-case-all#pascalCase"),
+        "SomeEgRocketsDocument"
     );
 }
 
