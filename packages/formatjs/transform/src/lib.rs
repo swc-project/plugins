@@ -36,13 +36,14 @@ use swc_icu_messageformat_parser::{Parser, ParserOptions};
 pub static WHITESPACE_REGEX: Lazy<Regexp> = Lazy::new(|| Regexp::new(r"\s+").unwrap());
 const MAX_RESOLUTION_DEPTH: usize = 16;
 
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct FormatJSPluginOptions {
     pub pragma: Option<String>,
     pub remove_default_message: bool,
     pub id_interpolation_pattern: Option<String>,
     pub ast: bool,
+    pub throws: bool,
     pub extract_source_location: bool,
     pub preserve_whitespace: bool,
     pub __debug_extracted_messages_comment: bool,
@@ -50,12 +51,52 @@ pub struct FormatJSPluginOptions {
     pub additional_component_names: Vec<String>,
 }
 
+impl Default for FormatJSPluginOptions {
+    fn default() -> Self {
+        Self {
+            pragma: None,
+            remove_default_message: false,
+            id_interpolation_pattern: None,
+            ast: false,
+            throws: true,
+            extract_source_location: false,
+            preserve_whitespace: false,
+            __debug_extracted_messages_comment: false,
+            additional_function_names: Default::default(),
+            additional_component_names: Default::default(),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+enum MessageDescriptorError {
+    NonEvaluable(Span),
+    Parse {
+        error: swc_icu_messageformat_parser::Error,
+        is_literal_err: bool,
+    },
+}
+
+impl MessageDescriptorError {
+    fn emit(&self) {
+        match self {
+            MessageDescriptorError::NonEvaluable(span) => emit_non_evaluable_error(*span),
+            MessageDescriptorError::Parse {
+                error,
+                is_literal_err,
+            } => emit_parse_error(error, *is_literal_err),
+        }
+    }
+}
+
+type MessageDescriptorResult<T> = Result<T, MessageDescriptorError>;
+
 trait MessageDescriptorExtractor {
     fn get_key_value_with_visitor(
         &self,
         _visitor: &mut FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
-    ) -> Option<(String, MessageDescriptionValue)> {
-        None
+    ) -> MessageDescriptorResult<Option<(String, MessageDescriptionValue)>> {
+        Ok(None)
     }
     fn is_jsx(&self) -> bool {
         false
@@ -66,7 +107,7 @@ impl MessageDescriptorExtractor for JSXAttrOrSpread {
     fn get_key_value_with_visitor(
         &self,
         visitor: &mut FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
-    ) -> Option<(String, MessageDescriptionValue)> {
+    ) -> MessageDescriptorResult<Option<(String, MessageDescriptionValue)>> {
         if let JSXAttrOrSpread::JSXAttr(JSXAttr {
             name,
             value: Some(value),
@@ -84,30 +125,29 @@ impl MessageDescriptorExtractor for JSXAttrOrSpread {
             // Attributes like `values`, `fallback`, etc. may contain JSX
             // expressions that cannot (and should not) be statically evaluated.
             if !matches!(key.as_str(), "id" | "defaultMessage" | "description") {
-                return None;
+                return Ok(None);
             }
 
             let value = match value {
-                JSXAttrValue::Str(s) => {
-                    Some(MessageDescriptionValue::Str(s.value.as_str()?.to_string()))
-                }
+                JSXAttrValue::Str(s) => MessageDescriptionValue::Str(
+                    s.value
+                        .as_str()
+                        .ok_or(MessageDescriptorError::NonEvaluable(s.span))?
+                        .to_string(),
+                ),
                 JSXAttrValue::JSXExprContainer(container) => {
                     if let JSXExpr::Expr(expr) = &container.expr {
-                        visitor.get_message_descriptor_value(expr)
+                        visitor.get_message_descriptor_value(expr)?
                     } else {
-                        None
+                        return Ok(None);
                     }
                 }
-                _ => None,
+                _ => return Err(MessageDescriptorError::NonEvaluable(value.span())),
             };
 
-            if let Some(value) = value {
-                Some((key, value))
-            } else {
-                None
-            }
+            Ok(Some((key, value)))
         } else {
-            None
+            Ok(None)
         }
     }
 
@@ -120,42 +160,45 @@ impl MessageDescriptorExtractor for PropOrSpread {
     fn get_key_value_with_visitor(
         &self,
         visitor: &mut FormatJSVisitor<impl Clone + Comments, impl SourceMapper>,
-    ) -> Option<(String, MessageDescriptionValue)> {
+    ) -> MessageDescriptorResult<Option<(String, MessageDescriptionValue)>> {
         if let PropOrSpread::Prop(prop) = self {
             let (key, value) = match &**prop {
                 Prop::KeyValue(key_value) => {
                     let key = match &key_value.key {
-                        PropName::Computed(prop_name) => visitor.evaluate_expr(&prop_name.expr),
-                        PropName::Ident(ident) => Some(ident.sym.to_string()),
-                        PropName::Str(s) => s.value.as_str().map(str::to_string),
+                        PropName::Computed(prop_name) => visitor.evaluate_expr(&prop_name.expr)?,
+                        PropName::Ident(ident) => ident.sym.to_string(),
+                        PropName::Str(s) => s
+                            .value
+                            .as_str()
+                            .ok_or(MessageDescriptorError::NonEvaluable(s.span))?
+                            .to_string(),
                         prop_name => {
-                            emit_non_evaluable_error(prop_name.span());
-                            None
+                            return Err(MessageDescriptorError::NonEvaluable(prop_name.span()));
                         }
-                    }?;
+                    };
 
                     if !is_message_descriptor_key(&key) {
-                        return None;
+                        return Ok(None);
                     }
 
-                    (key, visitor.get_message_descriptor_value(&key_value.value))
+                    (key, visitor.get_message_descriptor_value(&key_value.value)?)
                 }
                 Prop::Shorthand(ident) => {
                     let key = ident.sym.to_string();
                     if !is_message_descriptor_key(&key) {
-                        return None;
+                        return Ok(None);
                     }
 
                     let ident_expr = Expr::Ident(ident.clone());
 
-                    (key, visitor.get_message_descriptor_value(&ident_expr))
+                    (key, visitor.get_message_descriptor_value(&ident_expr)?)
                 }
-                _ => return None,
+                _ => return Ok(None),
             };
 
-            value.map(|value| (key, value))
+            Ok(Some((key, value)))
         } else {
-            None
+            Ok(None)
         }
     }
 
@@ -836,22 +879,20 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
         }
     }
 
-    fn get_message_descriptor_value(&self, expr: &Expr) -> Option<MessageDescriptionValue> {
+    fn get_message_descriptor_value(
+        &self,
+        expr: &Expr,
+    ) -> MessageDescriptorResult<MessageDescriptionValue> {
         if let Some(obj) = self.resolve_object_expr(expr) {
-            return Some(MessageDescriptionValue::Obj(obj));
+            return Ok(MessageDescriptionValue::Obj(obj));
         }
 
         self.evaluate_expr(expr).map(MessageDescriptionValue::Str)
     }
 
-    fn evaluate_expr(&self, expr: &Expr) -> Option<String> {
-        let result = self.evaluate_static_string(expr);
-
-        if result.is_none() {
-            emit_non_evaluable_error(expr.span());
-        }
-
-        result
+    fn evaluate_expr(&self, expr: &Expr) -> MessageDescriptorResult<String> {
+        self.evaluate_static_string(expr)
+            .ok_or_else(|| MessageDescriptorError::NonEvaluable(expr.span()))
     }
 
     fn evaluate_static_string(&self, expr: &Expr) -> Option<String> {
@@ -1029,10 +1070,10 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
     fn create_message_descriptor_from_extractor<T: MessageDescriptorExtractor>(
         &mut self,
         nodes: &Vec<T>,
-    ) -> MessageDescriptor {
+    ) -> MessageDescriptorResult<MessageDescriptor> {
         let mut ret = MessageDescriptor::default();
         for node in nodes {
-            let Some((key, value)) = node.get_key_value_with_visitor(self) else {
+            let Some((key, value)) = node.get_key_value_with_visitor(self)? else {
                 continue;
             };
 
@@ -1072,49 +1113,14 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
         };
 
         match parse(message.as_str()) {
-            Err(e) => {
-                let is_literal_err = if nodes[0].is_jsx() {
-                    message.contains("\\\\")
-                } else {
-                    false
-                };
+            Err(error) => {
+                let is_literal_err =
+                    nodes.first().is_some_and(|node| node.is_jsx()) && message.contains("\\\\");
 
-                let handler = &swc_core::plugin::errors::HANDLER;
-
-                if is_literal_err {
-                    {
-                        handler.with(|handler| {
-                            handler
-                                .struct_err(
-                                    r#"
-                        [React Intl] Message failed to parse.
-                        It looks like `\\`s were used for escaping,
-                        this won't work with JSX string literals.
-                        Wrap with `{{}}`.
-                        See: http://facebook.github.io/react/docs/jsx-gotchas.html
-                        "#,
-                                )
-                                .emit()
-                        });
-                    }
-                } else {
-                    {
-                        handler.with(|handler| {
-                            handler
-                                .struct_warn(
-                                    r#"
-                        [React Intl] Message failed to parse.
-                        See: https://formatjs.io/docs/core-concepts/icu-syntax
-                        \n {:#?}
-                        "#,
-                                )
-                                .emit();
-                            handler
-                                .struct_err(&format!("SyntaxError: {}", e.kind))
-                                .emit()
-                        });
-                    }
-                }
+                return Err(MessageDescriptorError::Parse {
+                    error,
+                    is_literal_err,
+                });
             }
             Ok(ast) => {
                 ret.ast = Some(ast);
@@ -1123,7 +1129,7 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
 
         ret.default_message = Some(message);
 
-        ret
+        Ok(ret)
     }
 
     fn evaluate_message_descriptor(&mut self, descriptor: &mut MessageDescriptor) {
@@ -1196,7 +1202,15 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
 
         let properties = &obj.props;
 
-        let mut descriptor = self.create_message_descriptor_from_extractor(properties);
+        let mut descriptor = match self.create_message_descriptor_from_extractor(properties) {
+            Ok(descriptor) => descriptor,
+            Err(error) => {
+                if self.options.throws {
+                    error.emit();
+                }
+                return;
+            }
+        };
 
         // If the message is already compiled, don't re-compile it
         if descriptor.default_message.is_none() {
@@ -1349,6 +1363,41 @@ fn emit_non_evaluable_error(span: Span) {
     });
 }
 
+fn emit_parse_error(error: &swc_icu_messageformat_parser::Error, is_literal_err: bool) {
+    let handler = &swc_core::plugin::errors::HANDLER;
+
+    if is_literal_err {
+        handler.with(|handler| {
+            handler
+                .struct_err(
+                    r#"
+                        [React Intl] Message failed to parse.
+                        It looks like `\\`s were used for escaping,
+                        this won't work with JSX string literals.
+                        Wrap with `{{}}`.
+                        See: http://facebook.github.io/react/docs/jsx-gotchas.html
+                        "#,
+                )
+                .emit()
+        });
+    } else {
+        handler.with(|handler| {
+            handler
+                .struct_warn(
+                    r#"
+                        [React Intl] Message failed to parse.
+                        See: https://formatjs.io/docs/core-concepts/icu-syntax
+                        \n {:#?}
+                        "#,
+                )
+                .emit();
+            handler
+                .struct_err(&format!("SyntaxError: {}", error.kind))
+                .emit()
+        });
+    }
+}
+
 impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
     noop_visit_mut_type!(fail);
 
@@ -1410,7 +1459,16 @@ impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
             _ => return,
         }
 
-        let mut descriptor = self.create_message_descriptor_from_extractor(&jsx_opening_elem.attrs);
+        let mut descriptor =
+            match self.create_message_descriptor_from_extractor(&jsx_opening_elem.attrs) {
+                Ok(descriptor) => descriptor,
+                Err(error) => {
+                    if self.options.throws {
+                        error.emit();
+                    }
+                    return;
+                }
+            };
 
         // In order for a default message to be extracted when
         // declaring a JSX element, it must be done with standard

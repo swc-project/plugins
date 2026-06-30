@@ -213,6 +213,106 @@ describe("formatjs swc plugin", () => {
     );
   });
 
+  it("should throw by default on non-static descriptor ids", async () => {
+    const input = `
+      import { formatMessage } from 'react-intl';
+
+      formatMessage({ id: backendProvidedId });
+    `;
+
+    await expect(transformCode(input)).rejects.toThrow(
+      "[React Intl] Messages must be statically evaluate-able for extraction.",
+    );
+  });
+
+  it("should skip non-static descriptors when throws is false", async () => {
+    const input = `
+      import React from 'react';
+      import { FormattedMessage, defineMessages, useIntl } from 'react-intl';
+
+      defineMessages({
+        staticMessage: {
+          defaultMessage: 'Static defineMessages message',
+          description: 'Static defineMessages description',
+        },
+        dynamicId: {
+          id: window.location.hash,
+          defaultMessage: 'Dynamic defineMessages id',
+        },
+      });
+
+      export function Example({ status }) {
+        const intl = useIntl();
+
+        return (
+          <div>
+            {intl.formatMessage({
+              defaultMessage: 'Static formatMessage message',
+              description: 'Static formatMessage description',
+            })}
+            {intl.formatMessage({
+              id: status,
+            })}
+            {intl.formatMessage({
+              defaultMessage: getDynamicMessage(),
+            })}
+            {intl.formatMessage({
+              defaultMessage: intl.formatMessage({
+                defaultMessage: 'Nested static formatMessage message',
+                description: 'Nested static formatMessage description',
+              }),
+            })}
+            <FormattedMessage
+              defaultMessage="Static JSX message"
+              description="Static JSX description"
+            />
+            <FormattedMessage
+              id={\`Agent.Details.Status.\${status}\`}
+              defaultMessage="Dynamic JSX id"
+            />
+          </div>
+        );
+      }
+    `;
+
+    const output = await transformCode(input, {
+      ast: true,
+      throws: false,
+    });
+
+    expect(output).toContain("id: window.location.hash");
+    expect(output).toContain("id: status");
+    expect(output).toContain("defaultMessage: getDynamicMessage()");
+    expect(output).toContain("Agent.Details.Status.");
+    expect(output).toContain('defaultMessage: "Dynamic JSX id"');
+    expect(output.match(/id: "[A-Za-z0-9+/]{6}"/g)).toHaveLength(4);
+    expect(output.match(/defaultMessage: \[/g)).toHaveLength(4);
+  });
+
+  it("should skip ICU parse errors when throws is false", async () => {
+    const input = `
+      import { FormattedMessage } from 'react-intl';
+
+      export function Example() {
+        return (
+          <>
+            <FormattedMessage defaultMessage="{count, plural, one {One}}" />
+            <FormattedMessage defaultMessage="Static after parse error" />
+          </>
+        );
+      }
+    `;
+
+    const output = await transformCode(input, {
+      ast: true,
+      throws: false,
+    });
+
+    expect(output).toContain('defaultMessage: "{count, plural, one {One}}"');
+    expect(output.match(/id: "[A-Za-z0-9+/]{6}"/g)).toHaveLength(1);
+    expect(output.match(/defaultMessage: \[/g)).toHaveLength(1);
+  });
+
   it("should transform to ast when enabled", async () => {
     const input = `
       import { defineMessage, formatMessage, FormattedMessage } from 'react-intl';
