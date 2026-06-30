@@ -1,0 +1,6 @@
+__tests__/
+tests/
+src/
+Cargo.toml
+Cargo.lock
+*.rs
