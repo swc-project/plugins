@@ -77,6 +77,10 @@ Additional function names to extract messages from, e.g: `['']`. Use this if you
 
 Pre-parse `defaultMessage` into AST for faster runtime perf. This flag doesn't do anything when `removeDefaultMessage` is `true`.
 
+### **`throws`**
+
+Whether to throw when a message descriptor cannot be statically evaluated for extraction. Defaults to `true`. Set to `false` to skip descriptors that fail extraction and leave them unchanged.
+
 ### **`preserveWhitespace`**
 
 Whether to preserve whitespace and newlines.
