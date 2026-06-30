@@ -258,6 +258,14 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
         label
     }
 
+    fn add_pure_comment(&self, pos: BytePos) {
+        // React Compiler can synthesize Emotion calls with dummy spans.
+        // SWC cannot attach comments at BytePos(0), so skip the hint there.
+        if pos != BytePos(0) {
+            self.comments.add_pure_comment(pos);
+        }
+    }
+
     fn create_call_label_arg(&self, kind: ExprKind) -> ExprOrSpread {
         self.create_runtime_label(kind, false).as_arg()
     }
@@ -267,6 +275,10 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
     }
 
     fn create_sourcemap(&mut self, pos: BytePos) -> Option<String> {
+        if pos == BytePos(0) {
+            return None;
+        }
+
         if self.options.sourcemap.unwrap_or(false) {
             let loc = self.cm.get_code_map().lookup_char_pos(pos);
             let filename = self.filepath.to_str().map(BytesStr::from_str_slice);
@@ -527,7 +539,7 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
                     args.push(cm.as_arg());
                 }
 
-                self.comments.add_pure_comment(expr_pos);
+                self.add_pure_comment(expr_pos);
                 let call_span = Span::new(expr_pos, expr_pos);
 
                 let callee = match &css_callee {
@@ -582,7 +594,7 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                                 if matches!(*kind, ExprKind::Css | ExprKind::Keyframes)
                                     && !self.in_jsx_element
                                 {
-                                    self.comments.add_pure_comment(expr.span.lo());
+                                    self.add_pure_comment(expr.span.lo());
                                     if self.options.auto_label.unwrap_or(false) {
                                         expr.args.push(self.create_call_label_arg(*kind));
                                     }
@@ -608,7 +620,7 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                                 if !c.args.is_empty() {
                                     let mut args_props = Vec::with_capacity(2);
                                     args_props.push(self.create_label_prop_node("target"));
-                                    self.comments.add_pure_comment(expr.span.lo());
+                                    self.add_pure_comment(expr.span.lo());
                                     if self.options.auto_label.unwrap_or(false) {
                                         args_props.push(PropOrSpread::Prop(Box::new(
                                             Prop::KeyValue(KeyValueProp {
@@ -678,7 +690,7 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                                         args_props.push(self.create_label_prop_node("target"));
                                         let mut args = vec![prop.sym.as_ref().as_arg()];
                                         if !self.in_jsx_element {
-                                            self.comments.add_pure_comment(expr.span.lo());
+                                            self.add_pure_comment(expr.span.lo());
                                             if self.options.auto_label.unwrap_or(false) {
                                                 args_props.push(PropOrSpread::Prop(Box::new(
                                                     Prop::KeyValue(KeyValueProp {
@@ -724,7 +736,7 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                                     .iter()
                                     .find_map(|item| match_runtime_export(item, &m.prop))
                                 {
-                                    self.comments.add_pure_comment(expr.span.lo());
+                                    self.add_pure_comment(expr.span.lo());
                                     if self.options.auto_label.unwrap_or(false) {
                                         expr.args.push(self.create_call_label_arg(kind));
                                     }
@@ -787,7 +799,7 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                                 let mut callee = call.take();
                                 let mut object_props = Vec::with_capacity(2);
                                 object_props.push(self.create_label_prop_node("target"));
-                                self.comments.add_pure_comment(callee.span.lo());
+                                self.add_pure_comment(callee.span.lo());
                                 if self.options.auto_label.unwrap_or(false) {
                                     object_props.push(PropOrSpread::Prop(Box::new(
                                         Prop::KeyValue(KeyValueProp {
@@ -864,7 +876,7 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                         if matches!(*kind, ExprKind::Css | ExprKind::Keyframes) {
                             let mut args = self.create_args_from_tagged_tpl(&mut tagged_tpl.tpl);
                             if !self.in_jsx_element {
-                                self.comments.add_pure_comment(i.span.lo());
+                                self.add_pure_comment(i.span.lo());
                                 if self.options.auto_label.unwrap_or(false) {
                                     args.push(self.create_tagged_tpl_label_arg(*kind));
                                 }
@@ -911,7 +923,7 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                                             args.push(cm.as_arg());
                                         }
 
-                                        self.comments.add_pure_comment(member_expr.span.lo());
+                                        self.add_pure_comment(member_expr.span.lo());
                                         return Expr::Call(CallExpr {
                                             callee: CallExpr {
                                                 callee: i.take().as_callee(),
@@ -935,7 +947,7 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                                     if let Some(kind) = c.exported_names.iter().find_map(|item| {
                                         match_runtime_export(item, &member_expr.prop)
                                     }) {
-                                        self.comments.add_pure_comment(member_expr.span.lo());
+                                        self.add_pure_comment(member_expr.span.lo());
                                         return Expr::Call(CallExpr {
                                             callee: member_expr.take().as_callee(),
                                             args: {
