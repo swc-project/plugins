@@ -4,9 +4,7 @@ use std::path::Path;
 
 use serde::Deserialize;
 use swc_atoms::{atom, Atom};
-use swc_common::{
-    plugin::metadata::TransformPluginMetadataContextKind, BytePos, SourceMapper, Spanned,
-};
+use swc_common::{plugin::metadata::TransformPluginMetadataContextKind, SourceMapper, Spanned};
 use swc_ecma_ast::Program;
 use swc_emotion::EmotionOptions;
 use swc_plugin_macro::plugin_transform;
@@ -72,12 +70,8 @@ pub fn process_transform(program: Program, data: TransformPluginProgramMetadata)
         .unwrap_or_default();
     let path = Path::new(&file_name);
     let source_map = std::sync::Arc::new(data.source_map);
-    let hash = if program.span().lo == BytePos(0) {
-        0
-    } else {
-        let pos = source_map.lookup_char_pos(program.span().lo);
-        pos.file.src_hash() as u32
-    };
+    let pos = source_map.lookup_char_pos(program.span().lo);
+    let hash = pos.file.src_hash() as u32;
     program.apply(swc_emotion::emotion(
         &config,
         path,
