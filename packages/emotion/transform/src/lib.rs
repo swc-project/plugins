@@ -512,10 +512,13 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
                     continue;
                 }
 
-                // Only transform object and array expressions; skip calls, template
-                // literals, identifiers, etc. which are handled elsewhere
+                // Only transform object and fully static array expressions; skip
+                // calls, template literals, identifiers, dynamic arrays, etc.
+                // which are handled elsewhere or by Emotion's JSX runtime.
                 match expr.as_ref() {
-                    Expr::Object(_) | Expr::Array(_) => {}
+                    Expr::Object(_) => {}
+                    Expr::Array(array) if can_rewrite_css_prop_array(array) => {}
+                    Expr::Array(_) => break,
                     _ => continue,
                 }
 
@@ -1087,6 +1090,38 @@ fn match_runtime_export(item: &ExportItem, prop: &MemberProp) -> Option<ExprKind
         }
     }
     None
+}
+
+fn can_rewrite_css_prop_array(array: &ArrayLit) -> bool {
+    array.elems.iter().all(|elem| match elem {
+        Some(ExprOrSpread { spread: None, expr }) => can_rewrite_static_css_prop_expr(expr),
+        _ => false,
+    })
+}
+
+fn can_rewrite_static_css_prop_expr(expr: &Expr) -> bool {
+    match expr {
+        Expr::Lit(_) => true,
+        Expr::Tpl(tpl) => tpl.exprs.is_empty(),
+        Expr::Object(object) => can_rewrite_static_css_prop_object(object),
+        Expr::Array(array) => can_rewrite_css_prop_array(array),
+        Expr::Paren(paren) => can_rewrite_static_css_prop_expr(&paren.expr),
+        _ => false,
+    }
+}
+
+fn can_rewrite_static_css_prop_object(object: &ObjectLit) -> bool {
+    object.props.iter().all(|prop| match prop {
+        PropOrSpread::Prop(prop) => match &**prop {
+            Prop::KeyValue(KeyValueProp { key, value }) => {
+                !matches!(key, PropName::Computed(_)) && can_rewrite_static_css_prop_expr(value)
+            }
+            _ => false,
+        },
+        PropOrSpread::Spread(_) => false,
+        #[cfg(swc_ast_unknown)]
+        _ => false,
+    })
 }
 
 #[inline]
