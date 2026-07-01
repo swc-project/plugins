@@ -20,6 +20,12 @@
 
 # @swc/plugin-transform-imports
 
+## 12.14.1
+
+### Patch Changes
+
+- 4fdbc1b: Update swc_core.
+
 ## 12.14.0
 
 ### Minor Changes

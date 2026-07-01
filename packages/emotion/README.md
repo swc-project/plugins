@@ -34,6 +34,14 @@ Source code for plugin itself (not transforms) are copied from https://github.co
 
 # @swc/plugin-emotion
 
+## 14.14.1
+
+### Patch Changes
+
+- b6b2355: Keep dynamic Emotion JSX css prop arrays unwrapped so theme callbacks are evaluated by Emotion's JSX runtime.
+- 14bd92c: Handle React Compiler output with synthetic spans.
+- 4fdbc1b: Update swc_core.
+
 ## 14.14.0
 
 ### Minor Changes

@@ -99,6 +99,13 @@ Will extract the metadata: `{project: "web", locale: "en", region: "us"}` that g
 
 # @swc/plugin-formatjs
 
+## 9.14.1
+
+### Patch Changes
+
+- 4f2efe7: Add `throws: false` support to skip non-static FormatJS descriptors without failing the transform.
+- 4fdbc1b: Update swc_core.
+
 ## 9.14.0
 
 ### Minor Changes
