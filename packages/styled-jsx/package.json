@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-styled-jsx",
-  "version": "13.14.0",
+  "version": "13.14.1",
   "publishConfig": {
     "access": "public",
     "provenance": true
