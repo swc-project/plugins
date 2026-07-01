@@ -1,5 +1,11 @@
 # @swc/plugin-styled-jsx
 
+## 13.14.1
+
+### Patch Changes
+
+- 4fdbc1b: Update swc_core.
+
 ## 13.14.0
 
 ### Minor Changes

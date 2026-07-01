@@ -1,5 +1,11 @@
 # @swc/plugin-loadable-components
 
+## 11.14.1
+
+### Patch Changes
+
+- 4fdbc1b: Update swc_core.
+
 ## 11.14.0
 
 ### Minor Changes
