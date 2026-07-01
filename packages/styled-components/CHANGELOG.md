@@ -1,5 +1,11 @@
 # @swc/plugin-styled-components
 
+## 12.14.1
+
+### Patch Changes
+
+- e785517: build: Update swc_core to v71.0.5
+
 ## 12.14.0
 
 ### Minor Changes

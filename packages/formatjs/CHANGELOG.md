@@ -1,5 +1,12 @@
 # @swc/plugin-formatjs
 
+## 9.14.1
+
+### Patch Changes
+
+- 4f2efe7: Add `throws: false` support to skip non-static FormatJS descriptors without failing the transform.
+- e785517: build: Update swc_core to v71.0.5
+
 ## 9.14.0
 
 ### Minor Changes
