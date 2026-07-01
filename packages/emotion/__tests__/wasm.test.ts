@@ -156,3 +156,49 @@ test("Should transform css prop output from React Compiler", async () => {
 
   expect(output.code).toContain('css("width:120px;", "")');
 });
+
+test("Should not wrap dynamic css prop arrays", async () => {
+  const output = await transform(
+    `
+      import { css } from "@emotion/react";
+      import { forwardRef } from "react";
+
+      const styles = {
+        row: (theme) => css({ display: "grid", gap: theme.spacing.sm }),
+      };
+
+      export const Row = forwardRef((props, ref) => (
+        <div ref={ref} css={[styles.row, {}]} {...props} />
+      ));
+    `,
+    {
+      jsc: {
+        parser: {
+          syntax: "ecmascript",
+          jsx: true,
+        },
+        transform: {
+          react: {
+            runtime: "automatic",
+            importSource: "@emotion/react",
+          },
+        },
+        experimental: {
+          plugins: [
+            [
+              pluginPath,
+              {
+                autoLabel: "never",
+                sourceMap: false,
+              },
+            ],
+          ],
+        },
+      },
+    } satisfies Options,
+  );
+
+  expect(output.code).toContain("css: [");
+  expect(output.code).toContain("styles.row");
+  expect(output.code).not.toContain("css([");
+});
