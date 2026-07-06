@@ -10,7 +10,7 @@ homepage     = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
 rust-version = { workspace = true }
-version      = "11.0.0"
+version      = "12.0.0"
 
 [dependencies]
 anyhow           = { workspace = true }
