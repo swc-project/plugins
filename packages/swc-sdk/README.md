@@ -65,6 +65,12 @@ export function sync() {
 
 # @swc/plugin-swc-sdk
 
+## 12.15.0
+
+### Minor Changes
+
+- 4b382e7: build: Update swc_core to v72.0.0
+
 ## 12.14.1
 
 ### Patch Changes
