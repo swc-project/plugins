@@ -1544,7 +1544,7 @@ checksum = "68354c5c6bd36d73ff3feceb05efa59b6acb7626617f4962be322a825e61f79a"
 
 [[package]]
 name = "modularize_imports"
-version = "11.0.0"
+version = "12.0.0"
 dependencies = [
  "convert_case",
  "handlebars",
@@ -2044,7 +2044,7 @@ dependencies = [
 
 [[package]]
 name = "react_remove_properties"
-version = "11.0.0"
+version = "12.0.0"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -2114,7 +2114,7 @@ checksum = "ba39f3699c378cd8970968dcbff9c43159ea4cfbd88d43c00b22f2ef10a435d2"
 
 [[package]]
 name = "remove_console"
-version = "11.0.0"
+version = "12.0.0"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -2541,7 +2541,7 @@ checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
 
 [[package]]
 name = "styled_components"
-version = "11.0.0"
+version = "12.0.0"
 dependencies = [
  "Inflector",
  "once_cell",
@@ -2563,7 +2563,7 @@ dependencies = [
 
 [[package]]
 name = "styled_jsx"
-version = "11.0.0"
+version = "12.0.0"
 dependencies = [
  "anyhow",
  "lightningcss",
@@ -2669,7 +2669,7 @@ dependencies = [
 
 [[package]]
 name = "swc_confidential"
-version = "11.0.0"
+version = "12.0.0"
 dependencies = [
  "cipher 0.4.4",
  "hex",
@@ -3170,7 +3170,7 @@ dependencies = [
 
 [[package]]
 name = "swc_emotion"
-version = "11.0.0"
+version = "12.0.0"
 dependencies = [
  "base64 0.22.1",
  "byteorder",
@@ -3223,7 +3223,7 @@ dependencies = [
 
 [[package]]
 name = "swc_experimental_babel"
-version = "11.0.0"
+version = "12.0.0"
 dependencies = [
  "anyhow",
  "once_cell",
@@ -3243,7 +3243,7 @@ dependencies = [
 
 [[package]]
 name = "swc_feature_flags"
-version = "11.0.0"
+version = "12.0.0"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -3259,7 +3259,7 @@ dependencies = [
 
 [[package]]
 name = "swc_formatjs_transform"
-version = "34.0.0"
+version = "35.0.0"
 dependencies = [
  "base64ct",
  "digest 0.10.7",
@@ -3280,7 +3280,7 @@ dependencies = [
 
 [[package]]
 name = "swc_icu_messageformat_parser"
-version = "30.0.0"
+version = "31.0.0"
 dependencies = [
  "langtag",
  "once_cell",
@@ -3306,7 +3306,7 @@ dependencies = [
 
 [[package]]
 name = "swc_magic"
-version = "11.0.0"
+version = "12.0.0"
 dependencies = [
  "rustc-hash",
  "serde",
@@ -3323,7 +3323,7 @@ dependencies = [
 
 [[package]]
 name = "swc_mut_cjs_exports"
-version = "22.0.0"
+version = "23.0.0"
 dependencies = [
  "rustc-hash",
  "swc_core",
@@ -3605,7 +3605,7 @@ dependencies = [
 
 [[package]]
 name = "swc_prefresh"
-version = "11.0.0"
+version = "12.0.0"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -3621,7 +3621,7 @@ dependencies = [
 
 [[package]]
 name = "swc_relay"
-version = "11.0.0"
+version = "12.0.0"
 dependencies = [
  "once_cell",
  "regex",
@@ -3639,7 +3639,7 @@ dependencies = [
 
 [[package]]
 name = "swc_sdk"
-version = "11.0.0"
+version = "12.0.0"
 dependencies = [
  "default-from-serde",
  "rustc-hash",
