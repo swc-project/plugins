@@ -1,21 +1,18 @@
-use std::{
-    collections::hash_map::DefaultHasher,
-    hash::{Hash, Hasher},
-    mem::take,
-    sync::Arc,
-};
+use std::{collections::hash_map::DefaultHasher, hash::Hasher, mem::take, sync::Arc};
 
 use anyhow::{bail, format_err, Error, Result};
 use preset_env_base::Versions;
 use rustc_hash::FxHashSet;
 use serde::Deserialize;
-use swc_common::{errors::HANDLER, util::take::Take, FileName, SourceMap, Span, DUMMY_SP};
+use swc_common::{
+    errors::HANDLER, util::take::Take, FileName, SourceMap, SourceMapper, Span, Spanned, DUMMY_SP,
+};
 use swc_ecma_ast::*;
 use swc_ecma_minifier::{
     eval::{EvalResult, Evaluator},
     marks::Marks,
 };
-use swc_ecma_utils::{collect_decls, drop_span, prepend_stmt, private_ident};
+use swc_ecma_utils::{collect_decls, prepend_stmt, private_ident};
 use swc_ecma_visit::{Fold, FoldWith, Visit, VisitWith};
 
 use crate::{
@@ -128,6 +125,31 @@ enum StyleExpr<'a> {
     Str(&'a Str),
     Tpl(&'a Tpl, &'a Expr),
     Ident(&'a Ident),
+}
+
+fn hash_expr_for_style<H: Hasher>(cm: &SourceMap, expr: &Expr, state: &mut H) {
+    if let Ok(source) = cm.span_to_snippet(expr.span()) {
+        if let Some(source) = source.strip_prefix('`').and_then(|s| s.strip_suffix('`')) {
+            state.write(source.as_bytes());
+            return;
+        }
+    }
+
+    let Expr::Tpl(tpl) = expr else {
+        return;
+    };
+
+    for i in 0..tpl.quasis.len() {
+        state.write(tpl.quasis[i].raw.as_bytes());
+
+        if let Some(expr) = tpl.exprs.get(i) {
+            state.write(b"${");
+            if let Ok(source) = cm.span_to_snippet(expr.span()) {
+                state.write(source.as_bytes());
+            }
+            state.write(b"}");
+        }
+    }
 }
 
 impl Fold for StyledJSXTransformer<'_> {
@@ -521,7 +543,7 @@ impl StyledJSXTransformer<'_> {
                     css_span = *span;
                     is_dynamic = false;
                 } else {
-                    drop_span(expr.clone()).hash(&mut hasher);
+                    hash_expr_for_style(&self.cm, expr, &mut hasher);
                     let mut s = String::new();
                     for i in 0..quasis.len() {
                         // TODO: Handle comments
