@@ -1,5 +1,11 @@
 # @swc/plugin-styled-jsx
 
+## 13.16.0
+
+### Minor Changes
+
+- b7be81b: build: Update swc_core to v73.0.0
+
 ## 13.15.0
 
 ### Minor Changes

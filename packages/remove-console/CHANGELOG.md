@@ -1,5 +1,11 @@
 # @swc/plugin-remove-console
 
+## 12.16.0
+
+### Minor Changes
+
+- b7be81b: build: Update swc_core to v73.0.0
+
 ## 12.15.0
 
 ### Minor Changes
