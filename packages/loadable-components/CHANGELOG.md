@@ -1,5 +1,11 @@
 # @swc/plugin-loadable-components
 
+## 11.17.0
+
+### Minor Changes
+
+- 6051cea: build: Update swc_core to v74.0.0
+
 ## 11.16.0
 
 ### Minor Changes
