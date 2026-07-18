@@ -1,5 +1,11 @@
 # @swc/plugin-experimental-feature-flags
 
+## 0.16.0
+
+### Minor Changes
+
+- 6051cea: build: Update swc_core to v74.0.0
+
 ## 0.15.0
 
 ### Minor Changes
