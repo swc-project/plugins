@@ -123,6 +123,12 @@ importers:
         specifier: ^0.1.3
         version: 0.1.3
 
+  packages/swc-ast-grep:
+    dependencies:
+      '@swc/counter':
+        specifier: ^0.1.3
+        version: 0.1.3
+
   packages/swc-confidential:
     dependencies:
       '@swc/counter':
