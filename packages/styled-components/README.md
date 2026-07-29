@@ -30,6 +30,12 @@ Then update your `.swcrc` file like below:
 
 # @swc/plugin-styled-components
 
+## 12.18.0
+
+### Minor Changes
+
+- 1a6fdee: build: Update swc_core to v75.0.0
+
 ## 12.17.0
 
 ### Minor Changes
