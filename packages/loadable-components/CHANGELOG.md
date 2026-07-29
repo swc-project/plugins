@@ -1,5 +1,11 @@
 # @swc/plugin-loadable-components
 
+## 11.18.0
+
+### Minor Changes
+
+- 1a6fdee: build: Update swc_core to v75.0.0
+
 ## 11.17.0
 
 ### Minor Changes
