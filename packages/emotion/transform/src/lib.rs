@@ -643,7 +643,7 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                                             Expr::Object(ObjectLit { props, .. }) => {
                                                 props.extend(args_props);
                                             }
-                                            Expr::Call(_) => {
+                                            _ => {
                                                 args_props.push(PropOrSpread::Spread(
                                                     SpreadElement {
                                                         dot3_token: DUMMY_SP,
@@ -655,15 +655,6 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                                                     span: DUMMY_SP,
                                                     props: args_props,
                                                 }));
-                                            }
-                                            _ => {
-                                                c.args.push(
-                                                    Expr::Object(ObjectLit {
-                                                        span: DUMMY_SP,
-                                                        props: args_props,
-                                                    })
-                                                    .as_arg(),
-                                                );
                                             }
                                         }
                                     } else {
@@ -819,7 +810,7 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                                         Expr::Object(ObjectLit { props, .. }) => {
                                             props.extend(object_props);
                                         }
-                                        Expr::Call(_) => {
+                                        _ => {
                                             object_props.push(PropOrSpread::Spread(
                                                 SpreadElement {
                                                     dot3_token: DUMMY_SP,
@@ -831,15 +822,6 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                                                 span: DUMMY_SP,
                                                 props: object_props,
                                             }));
-                                        }
-                                        _ => {
-                                            callee.args.push(
-                                                Expr::Object(ObjectLit {
-                                                    span: DUMMY_SP,
-                                                    props: object_props,
-                                                })
-                                                .as_arg(),
-                                            );
                                         }
                                     }
                                 } else {
