@@ -46,6 +46,12 @@ import loadable from '@loadable/component';   // will be transformed
 
 # @swc/plugin-loadable-components
 
+## 11.19.0
+
+### Minor Changes
+
+- 8d2db7f: build: Update swc_core to v76.0.0
+
 ## 11.18.0
 
 ### Minor Changes
