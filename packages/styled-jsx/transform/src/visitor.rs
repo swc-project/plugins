@@ -824,8 +824,11 @@ fn get_style_expr(el: &JSXElement) -> Result<StyleExpr, Error> {
         .iter()
         .filter(|child| {
             if let JSXElementChild::JSXText(txt) = child {
-                if txt.value.chars().all(char::is_whitespace) {
-                    return false;
+                // A text node containing lone surrogates is never whitespace-only.
+                if let Some(value) = txt.value.as_atom() {
+                    if value.chars().all(char::is_whitespace) {
+                        return false;
+                    }
                 }
             }
             true

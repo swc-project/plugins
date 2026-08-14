@@ -21,7 +21,7 @@ use swc_plugin_macro::plugin_transform;
 use swc_plugin_proxy::{PluginCommentsProxy, TransformPluginProgramMetadata};
 use tracing::debug;
 
-use crate::util::get_import_arg;
+use crate::util::{expect_fn_body, get_import_arg};
 
 mod util;
 
@@ -384,7 +384,7 @@ where
             key: PropName::Ident(quote_ident!("chunkName")),
             function: Box::new(Function {
                 params: clone_params(func),
-                body: Some(BlockStmt {
+                body: Some(FunctionBody {
                     stmts: vec![Stmt::Return(ReturnStmt {
                         span: DUMMY_SP,
                         arg: Some(Box::new(self.replace_chunk_name(import))),
@@ -407,9 +407,8 @@ where
                     decorators: Default::default(),
                     pat: Pat::Ident(quote_ident!("props").into()),
                 }],
-                body: Some(
-                    quote!(
-                        "
+                body: Some(expect_fn_body(quote!(
+                    "
                         {
                             const key=this.resolve(props)
                             if (this.resolved[key] !== true) {
@@ -423,9 +422,7 @@ where
                             return false
                         }
                       " as Stmt
-                    )
-                    .expect_block(),
-                ),
+                ))),
                 is_generator: false,
                 is_async: false,
                 ..Default::default()
@@ -449,9 +446,8 @@ where
                     decorators: Default::default(),
                     pat: Pat::Ident(quote_ident!("props").into()),
                 }],
-                body: Some(
-                    quote!(
-                        "
+                body: Some(expect_fn_body(quote!(
+                    "
                         {
                             const key = this.resolve(props)
                             this.resolved[key] = false
@@ -461,9 +457,7 @@ where
                             });
                         }
                         " as Stmt
-                    )
-                    .expect_block(),
-                ),
+                ))),
                 is_generator: false,
                 is_async: false,
                 ..Default::default()
@@ -480,9 +474,8 @@ where
                     decorators: Default::default(),
                     pat: Pat::Ident(quote_ident!("props").into()),
                 }],
-                body: Some(
-                    quote!(
-                        "
+                body: Some(expect_fn_body(quote!(
+                    "
                     {
                         const id = this.resolve(props)
 
@@ -493,9 +486,7 @@ where
                         return eval('module.require')(id)
                     }
                     " as Stmt
-                    )
-                    .expect_block(),
-                ),
+                ))),
                 is_generator: false,
                 is_async: false,
                 ..Default::default()
@@ -514,9 +505,8 @@ where
             key: PropName::Ident(quote_ident!("resolve")),
             function: Box::new(Function {
                 params: clone_params(func),
-                body: Some(
-                    quote!(
-                        "
+                body: Some(expect_fn_body(quote!(
+                    "
                         {
                             if (require.resolveWeak) {
                                 return require.resolveWeak($id)
@@ -525,10 +515,8 @@ where
                               return eval('require.resolve')($id)
                         }
                         " as Stmt,
-                        id: Expr = get_call_value(import)
-                    )
-                    .expect_block(),
-                ),
+                    id: Expr = get_call_value(import)
+                ))),
                 is_generator: false,
                 is_async: false,
                 ..Default::default()
