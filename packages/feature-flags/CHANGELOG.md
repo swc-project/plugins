@@ -1,5 +1,11 @@
 # @swc/plugin-experimental-feature-flags
 
+## 0.19.0
+
+### Minor Changes
+
+- 74931df: build!: Update swc_core to v77.0.0
+
 ## 0.18.0
 
 ### Minor Changes

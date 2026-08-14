@@ -1,5 +1,11 @@
 # @swc-contrib/mut-cjs-exports
 
+## 15.0.0
+
+### Major Changes
+
+- 74931df: build!: Update swc_core to v77.0.0
+
 ## 14.19.0
 
 ### Minor Changes
