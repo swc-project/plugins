@@ -99,6 +99,12 @@ Will extract the metadata: `{project: "web", locale: "en", region: "us"}` that g
 
 # @swc/plugin-formatjs
 
+## 10.0.0
+
+### Major Changes
+
+- 74931df: build!: Update swc_core to v77.0.0
+
 ## 9.19.0
 
 ### Minor Changes
