@@ -50,9 +50,7 @@ exports[`Should load styled-components wasm plugin correctly > Should transform 
             configurable: true,
             writable: true
         });
-    } else {
-        obj[key] = value;
-    }
+    } else obj[key] = value;
     return obj;
 }
 import styled from "styled-components";

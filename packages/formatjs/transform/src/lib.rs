@@ -21,11 +21,11 @@ use swc_core::{
     ecma::{
         ast::{
             ArrayLit, AssignExpr, AssignTarget, BinaryOp, BlockStmt, Bool, CallExpr, Callee, Expr,
-            ExprOrSpread, Id, IdentName, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue,
-            JSXElementName, JSXExpr, JSXExprContainer, JSXNamespacedName, JSXOpeningElement,
-            KeyValueProp, Lit, MemberExpr, MemberProp, ModuleDecl, ModuleItem, Number, ObjectLit,
-            Pat, Prop, PropName, PropOrSpread, SimpleAssignTarget, Stmt, Str, Tpl, UnaryOp,
-            VarDecl, VarDeclKind, VarDeclarator,
+            ExprOrSpread, FunctionBody, Id, IdentName, JSXAttr, JSXAttrName, JSXAttrOrSpread,
+            JSXAttrValue, JSXElementName, JSXExpr, JSXExprContainer, JSXNamespacedName,
+            JSXOpeningElement, KeyValueProp, Lit, MemberExpr, MemberProp, ModuleDecl, ModuleItem,
+            Number, ObjectLit, Pat, Prop, PropName, PropOrSpread, SimpleAssignTarget, Stmt, Str,
+            Tpl, UnaryOp, VarDecl, VarDeclKind, VarDeclarator,
         },
         visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
     },
@@ -1435,6 +1435,14 @@ impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
         }
 
         block.visit_mut_children_with(self);
+    }
+
+    fn visit_mut_function_body(&mut self, body: &mut FunctionBody) {
+        for stmt in &body.stmts {
+            self.collect_stmt_bindings(stmt);
+        }
+
+        body.visit_mut_children_with(self);
     }
 
     fn visit_mut_jsx_opening_element(&mut self, jsx_opening_elem: &mut JSXOpeningElement) {
