@@ -7,7 +7,7 @@ use once_cell::sync::Lazy;
 use regex::Regex;
 use rustc_hash::{FxHashMap, FxHashSet};
 use swc_atoms::Atom;
-use swc_common::{util::take::Take, Spanned, DUMMY_SP};
+use swc_common::{util::take::Take, BytePos, Spanned, DUMMY_SP};
 use swc_ecma_ast::*;
 use swc_ecma_utils::{prepend_stmt, private_ident, quote_ident, ExprFactory};
 use swc_ecma_visit::{noop_visit_mut_type, visit_mut_pass, VisitMut, VisitMutWith};
@@ -30,6 +30,7 @@ pub fn transpile_css_prop(state: &mut State) -> impl '_ + Pass {
         identifier_idx: Default::default(),
         styled_idx: Default::default(),
         top_level_decls: Default::default(),
+        top_level_decl_positions: Default::default(),
     })
 }
 
@@ -43,6 +44,7 @@ struct TranspileCssProp<'a> {
     identifier_idx: usize,
     styled_idx: HashMap<Atom, usize>,
     top_level_decls: Option<FxHashSet<Id>>,
+    top_level_decl_positions: Option<FxHashMap<Id, BytePos>>,
 }
 
 impl TranspileCssProp<'_> {
@@ -58,6 +60,124 @@ impl TranspileCssProp<'_> {
             .as_ref()
             .map(|decls| decls.contains(&ident.to_id()))
             .unwrap_or(false)
+    }
+
+    fn latest_css_dependency_after(&self, exprs: &[Box<Expr>], anchor: &Ident) -> Option<Id> {
+        let anchor_position = self
+            .top_level_decl_positions
+            .as_ref()
+            .and_then(|positions| positions.get(&anchor.to_id()))
+            .copied()?;
+
+        exprs
+            .iter()
+            .filter_map(|expr| {
+                let root = trace_root_value(expr)?;
+
+                match root {
+                    Expr::Ident(ident) if self.is_top_level_ident(ident) => {
+                        let position = self
+                            .top_level_decl_positions
+                            .as_ref()
+                            .and_then(|positions| positions.get(&ident.to_id()))
+                            .copied()?;
+
+                        if position > anchor_position {
+                            Some((ident.to_id(), position))
+                        } else {
+                            None
+                        }
+                    }
+                    _ => None,
+                }
+            })
+            .max_by_key(|(_, position)| *position)
+            .map(|(id, _)| id)
+    }
+}
+
+struct TopLevelDeclPositionCollector {
+    positions: FxHashMap<Id, BytePos>,
+}
+
+impl TopLevelDeclPositionCollector {
+    fn new() -> Self {
+        Self {
+            positions: FxHashMap::default(),
+        }
+    }
+
+    fn collect(module: &Module) -> FxHashMap<Id, BytePos> {
+        let mut collector = Self::new();
+
+        for item in &module.body {
+            match item {
+                ModuleItem::Stmt(Stmt::Decl(Decl::Var(var_decl))) => {
+                    for decl in &var_decl.decls {
+                        collect_pat_positions(&decl.name, &mut collector.positions);
+                    }
+                }
+                ModuleItem::Stmt(Stmt::Decl(Decl::Fn(fn_decl))) => {
+                    collector
+                        .positions
+                        .insert(fn_decl.ident.to_id(), fn_decl.ident.span_lo());
+                }
+                ModuleItem::Stmt(Stmt::Decl(Decl::Class(class_decl))) => {
+                    collector
+                        .positions
+                        .insert(class_decl.ident.to_id(), class_decl.ident.span_lo());
+                }
+                ModuleItem::ModuleDecl(ModuleDecl::Import(import_decl)) => {
+                    for specifier in &import_decl.specifiers {
+                        let local = match specifier {
+                            ImportSpecifier::Named(s) => &s.local,
+                            ImportSpecifier::Default(s) => &s.local,
+                            ImportSpecifier::Namespace(s) => &s.local,
+                        };
+
+                        collector.positions.insert(local.to_id(), local.span_lo());
+                    }
+                }
+                _ => {}
+            }
+        }
+
+        collector.positions
+    }
+}
+
+fn collect_pat_positions(pat: &Pat, positions: &mut FxHashMap<Id, BytePos>) {
+    match pat {
+        Pat::Ident(binding) => {
+            positions.insert(binding.id.to_id(), binding.id.span_lo());
+        }
+        Pat::Array(array) => {
+            for elem in array.elems.iter().flatten() {
+                collect_pat_positions(elem, positions);
+            }
+        }
+        Pat::Object(object) => {
+            for prop in &object.props {
+                match prop {
+                    ObjectPatProp::Assign(assign) => {
+                        positions.insert(assign.key.to_id(), assign.key.span_lo());
+                    }
+                    ObjectPatProp::KeyValue(key_value) => {
+                        collect_pat_positions(&key_value.value, positions);
+                    }
+                    ObjectPatProp::Rest(rest) => {
+                        collect_pat_positions(&rest.arg, positions);
+                    }
+                }
+            }
+        }
+        Pat::Rest(rest) => {
+            collect_pat_positions(&rest.arg, positions);
+        }
+        Pat::Assign(assign) => {
+            collect_pat_positions(&assign.left, positions);
+        }
+        _ => {}
     }
 }
 
@@ -284,6 +404,13 @@ impl VisitMut for TranspileCssProp<'_> {
                         css = Expr::Tpl(tpl);
                     }
 
+                    let css_dependency = match (&css, &inject_after) {
+                        (Expr::Tpl(tpl), Some(anchor)) => {
+                            self.latest_css_dependency_after(&tpl.exprs, anchor)
+                        }
+                        _ => None,
+                    };
+
                     let var = VarDeclarator {
                         span: DUMMY_SP,
                         name: Pat::Ident(id.clone().into()),
@@ -309,9 +436,11 @@ impl VisitMut for TranspileCssProp<'_> {
                         decls: vec![var],
                         ..Default::default()
                     })));
-                    match inject_after {
-                        Some(injector) => {
-                            let id = injector.to_id();
+                    let injection_anchor =
+                        css_dependency.or_else(|| inject_after.map(|ident| ident.to_id()));
+
+                    match injection_anchor {
+                        Some(id) => {
                             self.interleaved_injections
                                 .entry(id)
                                 .or_default()
@@ -351,8 +480,12 @@ impl VisitMut for TranspileCssProp<'_> {
     fn visit_mut_module(&mut self, n: &mut Module) {
         // TODO: Skip if there are no css prop usage
         self.top_level_decls = Some(collect_top_level_decls(n));
+        self.top_level_decl_positions = Some(TopLevelDeclPositionCollector::collect(n));
+
         n.visit_mut_children_with(self);
+
         self.top_level_decls = None;
+        self.top_level_decl_positions = None;
 
         if let Some(import_name) = self.import_name.take() {
             self.state.set_import_name(import_name.to_id());
