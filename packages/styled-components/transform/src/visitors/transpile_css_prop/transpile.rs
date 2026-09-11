@@ -117,11 +117,6 @@ impl TopLevelDeclPositionCollector {
                         collect_pat_positions(&decl.name, &mut collector.positions);
                     }
                 }
-                ModuleItem::Stmt(Stmt::Decl(Decl::Fn(fn_decl))) => {
-                    collector
-                        .positions
-                        .insert(fn_decl.ident.to_id(), fn_decl.ident.span_lo());
-                }
                 ModuleItem::Stmt(Stmt::Decl(Decl::Class(class_decl))) => {
                     collector
                         .positions
