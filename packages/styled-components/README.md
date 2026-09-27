@@ -30,6 +30,12 @@ Then update your `.swcrc` file like below:
 
 # @swc/plugin-styled-components
 
+## 15.0.0
+
+### Major Changes
+
+- d90fa6c: build!: Update swc_core to v81.0.0
+
 ## 14.0.0
 
 ### Major Changes
