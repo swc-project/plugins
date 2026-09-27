@@ -20,6 +20,12 @@
 
 # @swc/plugin-transform-imports
 
+## 15.0.0
+
+### Major Changes
+
+- d90fa6c: build!: Update swc_core to v81.0.0
+
 ## 14.0.0
 
 ### Major Changes
