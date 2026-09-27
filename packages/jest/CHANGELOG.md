@@ -1,5 +1,11 @@
 # @swc/plugin-jest
 
+## 15.0.0
+
+### Major Changes
+
+- 27f28a4: build!: Update swc_core to v81.0.0
+
 ## 14.0.0
 
 ### Major Changes
