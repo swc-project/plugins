@@ -1,5 +1,11 @@
 # @swc/plugin-swc-confidential
 
+## 14.0.0
+
+### Major Changes
+
+- d90fa6c: build!: Update swc_core to v81.0.0
+
 ## 13.0.0
 
 ### Major Changes

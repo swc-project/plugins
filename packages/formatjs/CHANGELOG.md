@@ -1,5 +1,11 @@
 # @swc/plugin-formatjs
 
+## 12.0.0
+
+### Major Changes
+
+- d90fa6c: build!: Update swc_core to v81.0.0
+
 ## 11.0.0
 
 ### Major Changes

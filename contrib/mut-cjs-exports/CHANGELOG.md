@@ -1,5 +1,11 @@
 # @swc-contrib/mut-cjs-exports
 
+## 17.0.0
+
+### Major Changes
+
+- d90fa6c: build!: Update swc_core to v81.0.0
+
 ## 16.0.0
 
 ### Major Changes
