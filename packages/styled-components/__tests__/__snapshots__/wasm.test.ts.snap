@@ -1292,6 +1292,31 @@ var _StyledDiv = styled("div").withConfig({
 "
 `;
 
+exports[`Should load styled-components wasm plugin correctly > Should transform transpile-css-prop-nested-member correctly 1`] = `
+"import styled from 'styled-components';
+const Box = styled.div\`\`;
+var _StyledBox3 = styled(Box)\`bottom: \${SIZES[KEY].bottom};\`;
+var _StyledBox2 = styled(Box)\`bottom: \${(p)=>p.$_css2};\`;
+var _StyledBox = styled(Box)\`bottom: \${(p)=>p.$_css};\`;
+const SIZES = {
+    small: {
+        bottom: '8px'
+    },
+    large: {
+        bottom: '16px'
+    }
+};
+const KEY = 'small';
+export const Local = ({ size })=>/*#__PURE__*/ React.createElement(_StyledBox, {
+        $_css: SIZES[size].bottom
+    });
+export const LocalCall = ({ size })=>/*#__PURE__*/ React.createElement(_StyledBox2, {
+        $_css2: SIZES.get(size).bottom
+    });
+export const TopLevel = ()=>/*#__PURE__*/ React.createElement(_StyledBox3, null);
+"
+`;
+
 exports[`Should load styled-components wasm plugin correctly > Should transform transpile-require-default correctly 1`] = `
 "const styled_default = require("styled-components");
 const TestNormal = styled.div.withConfig({
