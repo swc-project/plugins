@@ -51,7 +51,7 @@ similar-asserts             = "1.4.2"
 swc_atoms                   = "10.0.0"
 swc_cached                  = "2.0.0"
 swc_common                  = "26.0.0"
-swc_core                    = "81.0.0"
+swc_core                    = "81.0.2"
 swc_css_ast                 = "26.0.0"
 swc_css_codegen             = "26.0.0"
 swc_css_compat              = "26.0.0"
@@ -61,7 +61,7 @@ swc_css_prefixer            = "32.0.0"
 swc_css_visit               = "26.0.0"
 swc_ecma_ast                = "29.0.2"
 swc_ecma_codegen            = "32.0.3"
-swc_ecma_minifier           = "62.0.0"
+swc_ecma_minifier           = "62.0.1"
 swc_ecma_parser             = "45.1.6"
 swc_ecma_transforms         = "63.0.0"
 swc_ecma_transforms_base    = "49.0.1"
@@ -77,7 +77,7 @@ testing                     = "27.0.0"
 tracing                     = "0.1.40"
 widestring                  = "1.0.2"
 
-swc_icu_messageformat_parser = { version = "38.0.0", path = "./crates/swc_icu_messageformat_parser" }
+swc_icu_messageformat_parser = { version = "39.0.0", path = "./crates/swc_icu_messageformat_parser" }
 
 
 [profile.release]
