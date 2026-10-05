@@ -30,6 +30,16 @@ Then update your `.swcrc` file like below:
 
 # @swc/plugin-styled-components
 
+## 16.0.0
+
+### Major Changes
+
+- e995ea5: build!: Update swc_core to v81.0.2
+
+### Patch Changes
+
+- 1a64141: Reuse existing boxed expressions instead of allocating new boxes, fixing `clippy::replace_box` warnings without changing transform behavior.
+
 ## 15.0.0
 
 ### Major Changes
