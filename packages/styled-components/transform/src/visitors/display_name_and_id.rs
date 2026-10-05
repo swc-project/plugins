@@ -189,7 +189,7 @@ impl DisplayNameAndId<'_> {
         }
 
         if let Expr::TaggedTpl(e) = e {
-            e.tag = Box::new(Expr::Call(CallExpr {
+            *e.tag = Expr::Call(CallExpr {
                 callee: e
                     .tag
                     .take()
@@ -201,7 +201,7 @@ impl DisplayNameAndId<'_> {
                 }
                 .as_arg()],
                 ..Default::default()
-            }));
+            });
             return;
         }
 
@@ -210,7 +210,7 @@ impl DisplayNameAndId<'_> {
             ..
         }) = e
         {
-            *callee = Box::new(Expr::Call(CallExpr {
+            **callee = Expr::Call(CallExpr {
                 span: DUMMY_SP,
                 callee: callee
                     .take()
@@ -222,7 +222,7 @@ impl DisplayNameAndId<'_> {
                 }
                 .as_arg()],
                 ..Default::default()
-            }));
+            });
             return;
         }
 
