@@ -1,4 +1,4 @@
-#![feature(box_patterns)]
+#![feature(deref_patterns)]
 
 use magic_crypt::{new_magic_crypt, MagicCryptTrait};
 use serde::Deserialize;

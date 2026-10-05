@@ -35,7 +35,7 @@ impl ImportMap {
             }
 
             Expr::Member(MemberExpr {
-                obj: box Expr::Ident(obj),
+                obj: Expr::Ident(obj),
                 prop: MemberProp::Ident(prop),
                 ..
             }) => {
@@ -75,7 +75,7 @@ impl ImportMap {
             }
 
             Expr::Member(MemberExpr {
-                obj: box Expr::Ident(obj),
+                obj: Expr::Ident(obj),
                 prop: MemberProp::Ident(prop),
                 ..
             }) => {

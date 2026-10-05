@@ -1032,7 +1032,7 @@ fn add_hash_statement((id, hash): (Id, String)) -> Stmt {
 
 fn is_styled_css_import(item: &ModuleItem) -> bool {
     if let ModuleItem::ModuleDecl(ModuleDecl::Import(ImportDecl {
-        src: box Str { value, .. },
+        src: Str { value, .. },
         ..
     })) = item
     {

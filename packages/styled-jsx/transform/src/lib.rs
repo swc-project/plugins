@@ -1,4 +1,4 @@
-#![feature(box_patterns)]
+#![feature(deref_patterns)]
 pub mod style;
 mod transform_css_lightningcss;
 mod transform_css_swc;
