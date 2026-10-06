@@ -1,0 +1,3 @@
+import { GetUserDocument } from "./src/gql/graphql";
+import gql from "gql-tag";
+const GetUser = GetUserDocument;
