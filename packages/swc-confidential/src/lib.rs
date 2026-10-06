@@ -1,5 +1,5 @@
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
-#![feature(box_patterns)]
+#![feature(deref_patterns)]
 
 use swc_core::{
     ecma::{ast::Program, visit::VisitMutWith},
