@@ -1,5 +1,11 @@
 # @swc/plugin-swc-sdk
 
+## 17.0.0
+
+### Major Changes
+
+- 1e53340: Migrate from Rust `box_patterns` to `deref_patterns` and update the pinned toolchain to `nightly-2026-04-10`.
+
 ## 16.0.0
 
 ### Major Changes
