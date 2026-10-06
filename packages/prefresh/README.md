@@ -40,6 +40,12 @@ And SWC has built-in React Refresh transformation, therefore, this plugin only i
 
 # @swc/plugin-prefresh
 
+## 17.0.0
+
+### Major Changes
+
+- 5c6d86d: Update swc_core to 82.0.0.
+
 ## 16.0.0
 
 ### Major Changes
