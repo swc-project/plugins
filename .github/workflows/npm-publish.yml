@@ -4,6 +4,14 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - .github/workflows/npm-publish.yml
+  workflow_dispatch:
+    inputs:
+      packages:
+        description: Space-separated package names. Leave empty to publish all packages.
+        required: false
+        type: string
 
 env:
   RUST_LOG: debug
@@ -39,4 +47,14 @@ jobs:
           pnpm i
 
       - name: Publish to npm
-        run: pnpm publish -r --access public
+        env:
+          PACKAGE_NAMES: ${{ inputs.packages }}
+        run: |
+          filters=()
+          if [[ -n "$PACKAGE_NAMES" ]]; then
+            read -r -a packages <<< "$PACKAGE_NAMES"
+            for package in "${packages[@]}"; do
+              filters+=(--filter "$package")
+            done
+          fi
+          pnpm "${filters[@]}" publish -r --access public
