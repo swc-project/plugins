@@ -35,6 +35,12 @@ importers:
 
   contrib/graphql-codegen-client-preset: {}
 
+  contrib/import-meta-env:
+    dependencies:
+      '@swc/core':
+        specifier: '>=1.15.4'
+        version: 1.15.43
+
   contrib/mut-cjs-exports:
     dependencies:
       '@swc/core':

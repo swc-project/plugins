@@ -1,0 +1,38 @@
+{
+  "name": "@swc-contrib/plugin-import-meta-env",
+  "version": "1.15.41",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "description": "SWC plugin for handling the transformation of import.meta.env",
+  "author": "Alex Miller <codex.nz@gmail.com>",
+  "license": "Apache-2.0",
+  "keywords": [
+    "swc-plugin",
+    "import.meta.env"
+  ],
+  "main": "swc_plugin_import_meta_env.wasm",
+  "scripts": {
+    "prepack": "pnpm run build",
+    "build": "RUSTFLAGS='--cfg swc_ast_unknown' cargo build --release -p swc_plugin_import_meta_env --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/release/swc_plugin_import_meta_env.wasm .",
+    "build:debug": "RUSTFLAGS='--cfg swc_ast_unknown' cargo build -p swc_plugin_import_meta_env --target wasm32-wasip1 && cp ../../target/wasm32-wasip1/debug/swc_plugin_import_meta_env.wasm .",
+    "test": "cargo test -p swc_plugin_import_meta_env --color always"
+  },
+  "homepage": "https://github.com/swc-project/plugins/tree/main/contrib/import-meta-env",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/swc-project/plugins.git",
+    "directory": "contrib/import-meta-env"
+  },
+  "bugs": {
+    "url": "https://github.com/swc-project/plugins/issues"
+  },
+  "files": [
+    "swc_plugin_import_meta_env.wasm"
+  ],
+  "preferUnplugged": true,
+  "peerDependencies": {
+    "@swc/core": ">=1.15.4"
+  }
+}

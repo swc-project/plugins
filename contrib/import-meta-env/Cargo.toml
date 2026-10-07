@@ -1,0 +1,24 @@
+[package]
+authors      = ["Alex Miller <codex.nz@gmail.com>"]
+description  = "SWC plugin for handling the transformation of import.meta.env"
+edition      = "2021"
+license      = "Apache-2.0"
+name         = "swc_plugin_import_meta_env"
+publish      = false
+readme       = "README.md"
+rust-version = "1.70"
+version      = "1.15.41"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+swc_core = { workspace = true, features = [
+  "common",
+  "ecma_ast",
+  "ecma_parser",
+  "ecma_plugin_transform",
+  "ecma_visit",
+  "testing",
+  "testing_transform",
+] }
