@@ -663,22 +663,38 @@ fn is_direct_access<F>(expr: &Expr, is_top_level_ident: &F) -> bool
 where
     F: Fn(&Ident) -> bool,
 {
-    if let Some(root) = trace_root_value(expr) {
-        match root {
-            Expr::Lit(_) => true,
-            Expr::Ident(id) if is_top_level_ident(id) => match expr {
-                Expr::Call(CallExpr { args, .. }) => args
-                    .iter()
-                    .all(|arg| -> bool { is_direct_access(&arg.expr, is_top_level_ident) }),
-                Expr::Member(MemberExpr {
-                    prop: MemberProp::Computed(ComputedPropName { expr, .. }),
-                    ..
-                }) => is_direct_access(expr, is_top_level_ident),
-                _ => true,
-            },
-            _ => false,
+    match trace_root_value(expr) {
+        Some(Expr::Lit(_)) => true,
+        Some(Expr::Ident(id)) if is_top_level_ident(id) => {
+            has_only_direct_keys(expr, is_top_level_ident)
         }
-    } else {
-        false
+        _ => false,
+    }
+}
+
+/// Whether every computed key and call argument along a member/call chain is
+/// itself a direct access, so `SIZES[size].bottom` is not mistaken for a
+/// module-level value.
+fn has_only_direct_keys<F>(expr: &Expr, is_top_level_ident: &F) -> bool
+where
+    F: Fn(&Ident) -> bool,
+{
+    match expr {
+        Expr::Member(MemberExpr { obj, prop, .. }) => {
+            has_only_direct_keys(obj, is_top_level_ident)
+                && match prop {
+                    MemberProp::Computed(ComputedPropName { expr, .. }) => {
+                        is_direct_access(expr, is_top_level_ident)
+                    }
+                    _ => true,
+                }
+        }
+        Expr::Call(CallExpr { callee, args, .. }) => {
+            matches!(callee, Callee::Expr(callee) if has_only_direct_keys(callee, is_top_level_ident))
+                && args
+                    .iter()
+                    .all(|arg| is_direct_access(&arg.expr, is_top_level_ident))
+        }
+        _ => true,
     }
 }
