@@ -5,6 +5,8 @@ exports[`Should load remove-console wasm plugin correctly 1`] = `
 export function shouldRemove() {
     ;
     ;
+    ;
+    ;
 }
 export function locallyDefinedConsole() {
     const console = {

@@ -3,6 +3,8 @@ console.log("remove console test at top level");
 export function shouldRemove() {
   console.log("remove console test in function");
   console.error("remove console test in function / error");
+  console.warn.call(console, "");
+  console.log.apply(console, [""]);
 }
 
 export function locallyDefinedConsole() {
