@@ -283,7 +283,7 @@ impl VisitMut for GraphQLVisitor {
                     // now change the call expression to a Identifier
                     let new_expr = Expr::Ident(quote_ident!(import_name).into());
 
-                    *init = Box::new(new_expr);
+                    **init = new_expr;
                 }
             }
         }

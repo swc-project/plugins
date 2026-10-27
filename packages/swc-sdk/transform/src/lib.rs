@@ -1,4 +1,4 @@
-#![feature(box_patterns)]
+#![feature(deref_patterns)]
 #![feature(never_type)]
 
 use swc_common::{comments::Comments, errors::HANDLER, util::take::Take, Mark, DUMMY_SP};

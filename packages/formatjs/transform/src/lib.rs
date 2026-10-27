@@ -21,11 +21,11 @@ use swc_core::{
     ecma::{
         ast::{
             ArrayLit, AssignExpr, AssignTarget, BinaryOp, BlockStmt, Bool, CallExpr, Callee, Expr,
-            ExprOrSpread, Id, IdentName, JSXAttr, JSXAttrName, JSXAttrOrSpread, JSXAttrValue,
-            JSXElementName, JSXExpr, JSXExprContainer, JSXNamespacedName, JSXOpeningElement,
-            KeyValueProp, Lit, MemberExpr, MemberProp, ModuleDecl, ModuleItem, Number, ObjectLit,
-            Pat, Prop, PropName, PropOrSpread, SimpleAssignTarget, Stmt, Str, Tpl, UnaryOp,
-            VarDecl, VarDeclKind, VarDeclarator,
+            ExprOrSpread, FunctionBody, Id, IdentName, JSXAttr, JSXAttrName, JSXAttrOrSpread,
+            JSXAttrValue, JSXElementName, JSXExpr, JSXExprContainer, JSXNamespacedName,
+            JSXOpeningElement, KeyValueProp, Lit, MemberExpr, MemberProp, ModuleDecl, ModuleItem,
+            Number, ObjectLit, Pat, Prop, PropName, PropOrSpread, SimpleAssignTarget, Stmt, Str,
+            Tpl, UnaryOp, VarDecl, VarDeclKind, VarDeclarator,
         },
         visit::{noop_visit_mut_type, VisitMut, VisitMutWith},
     },
@@ -470,11 +470,12 @@ fn interpolate_name(filename: &str, interpolate_pattern: &str, content: &str) ->
         })
         .to_string();
 
-    url = Regexp::new(r#"\[(ext|name|path|folder|query)\]"#)
+    url = Regexp::new(r#"\[(content|ext|name|path|folder|query)\]"#)
         .unwrap()
         .replace_all(url.as_str(), |cap: &Captures| {
             if let Some(placeholder) = cap.get(1) {
                 match placeholder.as_str() {
+                    "content" => content,
                     "ext" => {
                         if let Some(extension) = path.extension() {
                             extension.to_str().unwrap()
@@ -1147,7 +1148,9 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
                 .unwrap_or("[sha512:contenthash:base64:6]".to_string());
 
             let content = match &description {
-                Some(MessageDescriptionValue::Str(description)) => {
+                // An empty description is treated like an omitted one, as in
+                // babel-plugin-formatjs.
+                Some(MessageDescriptionValue::Str(description)) if !description.is_empty() => {
                     format!("{default_message}#{description}")
                 }
                 Some(MessageDescriptionValue::Obj(obj)) => {
@@ -1435,6 +1438,14 @@ impl<C: Clone + Comments, S: SourceMapper> VisitMut for FormatJSVisitor<C, S> {
         }
 
         block.visit_mut_children_with(self);
+    }
+
+    fn visit_mut_function_body(&mut self, body: &mut FunctionBody) {
+        for stmt in &body.stmts {
+            self.collect_stmt_bindings(stmt);
+        }
+
+        body.visit_mut_children_with(self);
     }
 
     fn visit_mut_jsx_opening_element(&mut self, jsx_opening_elem: &mut JSXOpeningElement) {

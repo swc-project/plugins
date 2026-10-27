@@ -266,6 +266,26 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
         }
     }
 
+    /// Adds a `/*#__PURE__*/` annotation and returns the span it is attached
+    /// to, which is meant to be used as the span of the annotated call.
+    ///
+    /// The annotation is stored by position, so annotating a call which starts
+    /// at the same position as its callee, like `styled('div')({})`, is
+    /// ambiguous. The fixer resolves such an ambiguity in favor of the callee
+    /// by parenthesizing it, and the annotation then applies to the callee
+    /// only instead of the whole call. A synthesized position is not shared
+    /// with any other node, so the annotation stays attached to the call.
+    fn add_pure_comment_with_new_span(&self, pos: BytePos) -> Span {
+        // React Compiler can synthesize Emotion calls with dummy spans.
+        if pos == BytePos(0) {
+            return DUMMY_SP;
+        }
+
+        let span = Span::dummy_with_cmt();
+        self.comments.add_pure_comment(span.lo);
+        span
+    }
+
     fn create_call_label_arg(&self, kind: ExprKind) -> ExprOrSpread {
         self.create_runtime_label(kind, false).as_arg()
     }
@@ -567,12 +587,12 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
                     .as_callee(),
                 };
 
-                *expr = Box::new(Expr::Call(CallExpr {
+                **expr = Expr::Call(CallExpr {
                     span: call_span,
                     callee,
                     args,
                     ..Default::default()
-                }));
+                });
 
                 break; // Only one css prop per element
             }
@@ -587,6 +607,9 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
         if self.import_packages.is_empty() {
             return expr;
         }
+        // Applied after the match below, which borrows `expr` mutably.
+        let mut pure_span = None;
+
         if let Callee::Expr(e) = &mut expr.callee {
             match e.as_mut() {
                 // css({}) / keyframes(...)
@@ -623,7 +646,8 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                                 if !c.args.is_empty() {
                                     let mut args_props = Vec::with_capacity(2);
                                     args_props.push(self.create_label_prop_node("target"));
-                                    self.add_pure_comment(expr.span.lo());
+                                    pure_span =
+                                        Some(self.add_pure_comment_with_new_span(expr.span.lo()));
                                     if self.options.auto_label.unwrap_or(false) {
                                         args_props.push(PropOrSpread::Prop(Box::new(
                                             Prop::KeyValue(KeyValueProp {
@@ -651,10 +675,10 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                                                     },
                                                 ));
 
-                                                *expr = Box::new(Expr::Object(ObjectLit {
+                                                **expr = Expr::Object(ObjectLit {
                                                     span: DUMMY_SP,
                                                     props: args_props,
-                                                }));
+                                                });
                                             }
                                         }
                                     } else {
@@ -745,6 +769,9 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                 _ => {}
             }
         }
+        if let Some(span) = pure_span {
+            expr.span = span;
+        }
         expr
     }
 
@@ -793,7 +820,8 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                                 let mut callee = call.take();
                                 let mut object_props = Vec::with_capacity(2);
                                 object_props.push(self.create_label_prop_node("target"));
-                                self.add_pure_comment(callee.span.lo());
+                                let pure_span =
+                                    self.add_pure_comment_with_new_span(callee.span.lo());
                                 if self.options.auto_label.unwrap_or(false) {
                                     object_props.push(PropOrSpread::Prop(Box::new(
                                         Prop::KeyValue(KeyValueProp {
@@ -818,10 +846,10 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                                                 },
                                             ));
 
-                                            *expr = Box::new(Expr::Object(ObjectLit {
+                                            **expr = Expr::Object(ObjectLit {
                                                 span: DUMMY_SP,
                                                 props: object_props,
-                                            }));
+                                            });
                                         }
                                     }
                                 } else {
@@ -834,7 +862,7 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                                     );
                                 }
                                 return Expr::Call(CallExpr {
-                                    span: DUMMY_SP,
+                                    span: pure_span,
                                     callee: callee.as_callee(),
                                     args: {
                                         let mut args: Vec<ExprOrSpread> = self

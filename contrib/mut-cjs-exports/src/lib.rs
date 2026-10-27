@@ -199,7 +199,7 @@ impl TransformVisitor {
                 vec![Function {
                     params: vec![key.clone().into()],
                     span: DUMMY_SP,
-                    body: Some(BlockStmt {
+                    body: Some(FunctionBody {
                         stmts: vec![
                             // if (key === "default" || key === "__esModule") return;
                             IfStmt {
