@@ -9,9 +9,7 @@ export var anotherStyle = /*#__PURE__*/ css("color:red;", "label:anotherStyle");
 
 exports[`Should transform emotion css correctly 1`] = `
 "function _tagged_template_literal(strings, raw) {
-    if (!raw) {
-        raw = strings.slice(0);
-    }
+    if (!raw) raw = strings.slice(0);
     return Object.freeze(Object.defineProperties(strings, {
         raw: {
             value: Object.freeze(raw)

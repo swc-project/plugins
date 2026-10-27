@@ -55,7 +55,7 @@ fn next_emotion_fixture(input: PathBuf) {
                 swc_emotion::emotion(
                     &options,
                     &path,
-                    fm.src_hash as u32,
+                    fm.src_hash() as u32,
                     tr.cm.clone(),
                     tr.comments.as_ref().clone(),
                 ),
@@ -133,7 +133,7 @@ fn emotion_label_option_fixture(output: PathBuf) {
                 swc_emotion::emotion(
                     &options,
                     &file_name,
-                    fm.src_hash as u32,
+                    fm.src_hash() as u32,
                     tr.cm.clone(),
                     tr.comments.as_ref().clone(),
                 ),
@@ -202,7 +202,7 @@ fn emotion_label(input: PathBuf, label: String) {
                 swc_emotion::emotion(
                     &options,
                     &file_name,
-                    fm.src_hash as u32,
+                    fm.src_hash() as u32,
                     tr.cm.clone(),
                     tr.comments.as_ref().clone(),
                 ),

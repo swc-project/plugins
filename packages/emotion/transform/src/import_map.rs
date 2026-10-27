@@ -48,7 +48,7 @@ static EMOTION_OFFICIAL_LIBRARIES: Lazy<Arc<Vec<EmotionModuleConfig>>> = Lazy::n
                 },
                 ExportItem {
                     name: "keyframes".to_owned(),
-                    kind: ExprKind::Css,
+                    kind: ExprKind::Keyframes,
                 },
                 ExportItem {
                     name: "Global".to_owned(),

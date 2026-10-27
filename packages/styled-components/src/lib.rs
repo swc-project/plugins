@@ -23,7 +23,7 @@ fn styled_components(mut program: Program, data: TransformPluginProgramMetadata)
     let file_name = data.get_context(&TransformPluginMetadataContextKind::Filename);
 
     let pos = data.source_map.lookup_char_pos(program.span().lo);
-    let hash = pos.file.src_hash;
+    let hash = pos.file.src_hash();
 
     program.mutate(styled_components::styled_components(
         file_name.as_deref(),

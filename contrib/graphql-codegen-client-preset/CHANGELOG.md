@@ -1,5 +1,111 @@
 # @swc-contrib/plugin-graphql-codegen-client-preset
 
+## 0.36.0
+
+### Minor Changes
+
+- 5c6d86d: Update swc_core to 82.0.0.
+
+## 0.35.0
+
+### Minor Changes
+
+- e995ea5: build!: Update swc_core to v81.0.2
+
+### Patch Changes
+
+- 1a64141: Reuse existing boxed expressions instead of allocating new boxes, fixing `clippy::replace_box` warnings without changing transform behavior.
+
+## 0.34.0
+
+### Minor Changes
+
+- 27f28a4: build!: Update swc_core to v81.0.0
+
+## 0.33.0
+
+### Minor Changes
+
+- a9a7fe9: build!: Update swc_core to v78.0.0
+
+## 0.32.0
+
+### Minor Changes
+
+- 74931df: build!: Update swc_core to v77.0.0
+
+## 0.31.0
+
+### Minor Changes
+
+- 8d2db7f: build: Update swc_core to v76.0.0
+
+## 0.30.0
+
+### Minor Changes
+
+- 1a6fdee: build: Update swc_core to v75.0.0
+
+## 0.29.0
+
+### Minor Changes
+
+- 6051cea: build: Update swc_core to v74.0.0
+
+## 0.28.0
+
+### Minor Changes
+
+- b7be81b: build: Update swc_core to v73.0.0
+
+## 0.27.0
+
+### Minor Changes
+
+- 4b382e7: build: Update swc_core to v72.0.0
+
+## 0.26.1
+
+### Patch Changes
+
+- e785517: build: Update swc_core to v71.0.5
+
+## 0.26.0
+
+### Minor Changes
+
+- 7cc5e96: build: Update swc_core to v72
+
+## 0.25.0
+
+### Minor Changes
+
+- c3013d7: build: Update swc_core to v69
+
+## 0.24.0
+
+### Minor Changes
+
+- 3b04284: build: Update swc_core to v68
+
+## 0.23.0
+
+### Minor Changes
+
+- 3b4d5b9: build: Update swc_core to v67
+
+## 0.22.0
+
+### Minor Changes
+
+- 5e967fc: build: Update swc_core to v66.0.3
+
+## 0.21.0
+
+### Minor Changes
+
+- d2f9cfa: build: Update swc_core to v65.0.0
+
 ## 0.20.0
 
 ### Minor Changes

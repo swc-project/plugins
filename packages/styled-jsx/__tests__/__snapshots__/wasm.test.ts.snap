@@ -12,77 +12,77 @@ const obj = {
     display: "block"
 };
 export default (({ display })=>/*#__PURE__*/ React.createElement("div", {
-        className: "jsx-98c353683ca4620a " + _JSXStyle.dynamic([
+        className: "jsx-a53d3fed849cb49a " + _JSXStyle.dynamic([
             [
-                "f7dcddda350c6320",
+                "c50d3655f9555840",
                 [
                     display ? "block" : "none"
                 ]
             ],
             [
-                "65d7e76c4745f188",
+                "aa8b3fef53a12c64",
                 [
                     darken(color) + 2
                 ]
             ],
             [
-                "a8df94b8a9a6d3d6",
+                "aa8b3fef53a12c64",
                 [
                     darken(color)
                 ]
             ]
         ])
     }, /*#__PURE__*/ React.createElement("p", {
-        className: "jsx-98c353683ca4620a " + _JSXStyle.dynamic([
+        className: "jsx-a53d3fed849cb49a " + _JSXStyle.dynamic([
             [
-                "f7dcddda350c6320",
+                "c50d3655f9555840",
                 [
                     display ? "block" : "none"
                 ]
             ],
             [
-                "65d7e76c4745f188",
+                "aa8b3fef53a12c64",
                 [
                     darken(color) + 2
                 ]
             ],
             [
-                "a8df94b8a9a6d3d6",
+                "aa8b3fef53a12c64",
                 [
                     darken(color)
                 ]
             ]
         ])
     }, "test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "db378e8860ef77d0"
-    }, \`p.\${color}.jsx-98c353683ca4620a{color:\${otherColor};display:\${obj.display}}\`), /*#__PURE__*/ React.createElement(_JSXStyle, {
+        id: "53d6a63a58fafa5e"
+    }, \`p.\${color}.jsx-a53d3fed849cb49a{color:\${otherColor};display:\${obj.display}}\`), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "94239b6d6b42c9b5"
-    }, "p.jsx-98c353683ca4620a{color:red}"), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "66fc27aec4ac3c22"
+    }, "p.jsx-a53d3fed849cb49a{color:red}"), /*#__PURE__*/ React.createElement(_JSXStyle, {
+        id: "2cc47c641d156b6f"
     }, \`body{background:\${color}}\`), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "66fc27aec4ac3c22"
+        id: "2cc47c641d156b6f"
     }, \`body{background:\${color}}\`), "// TODO: the next two should have the same hash", /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "7e810e6813878b8c"
-    }, \`p.jsx-98c353683ca4620a{color:\${color}}\`), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "7e810e6813878b8c"
-    }, \`p.jsx-98c353683ca4620a{color:\${color}}\`), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "a8df94b8a9a6d3d6",
+        id: "61bb13f60e423986"
+    }, \`p.jsx-a53d3fed849cb49a{color:\${color}}\`), /*#__PURE__*/ React.createElement(_JSXStyle, {
+        id: "61bb13f60e423986"
+    }, \`p.jsx-a53d3fed849cb49a{color:\${color}}\`), /*#__PURE__*/ React.createElement(_JSXStyle, {
+        id: "aa8b3fef53a12c64",
         dynamic: [
             darken(color)
         ]
     }, \`p.__jsx-style-dynamic-selector{color:\${darken(color)}}\`), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "65d7e76c4745f188",
+        id: "aa8b3fef53a12c64",
         dynamic: [
             darken(color) + 2
         ]
     }, \`p.__jsx-style-dynamic-selector{color:\${darken(color) + 2}}\`), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "cb506cc21b457018"
-    }, \`@media(min-width:\${mediumScreen}){p.jsx-98c353683ca4620a{color:green}p.jsx-98c353683ca4620a{color:\${\`red\`}}}p.jsx-98c353683ca4620a{color:red}\`), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "3fbd7f33ecd97f05"
-    }, \`p.jsx-98c353683ca4620a{-webkit-animation-duration:\${animationDuration};-moz-animation-duration:\${animationDuration};-o-animation-duration:\${animationDuration};animation-duration:\${animationDuration}}\`), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "79b95ec4ba723b8c"
-    }, \`p.jsx-98c353683ca4620a{-webkit-animation:\${animationDuration} forwards \${animationName};-moz-animation:\${animationDuration} forwards \${animationName};-o-animation:\${animationDuration} forwards \${animationName};animation:\${animationDuration} forwards \${animationName}}div.jsx-98c353683ca4620a{background:\${color}}\`), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "f7dcddda350c6320",
+        id: "1cd37e399915015c"
+    }, \`@media(min-width:\${mediumScreen}){p.jsx-a53d3fed849cb49a{color:green}p.jsx-a53d3fed849cb49a{color:\${\`red\`}}}p.jsx-a53d3fed849cb49a{color:red}\`), /*#__PURE__*/ React.createElement(_JSXStyle, {
+        id: "a79928c1f27369a4"
+    }, \`p.jsx-a53d3fed849cb49a{-webkit-animation-duration:\${animationDuration};-moz-animation-duration:\${animationDuration};-o-animation-duration:\${animationDuration};animation-duration:\${animationDuration}}\`), /*#__PURE__*/ React.createElement(_JSXStyle, {
+        id: "62a8f2467bcb9608"
+    }, \`p.jsx-a53d3fed849cb49a{-webkit-animation:\${animationDuration} forwards \${animationName};-moz-animation:\${animationDuration} forwards \${animationName};-o-animation:\${animationDuration} forwards \${animationName};animation:\${animationDuration} forwards \${animationName}}div.jsx-a53d3fed849cb49a{background:\${color}}\`), /*#__PURE__*/ React.createElement(_JSXStyle, {
+        id: "c50d3655f9555840",
         dynamic: [
             display ? "block" : "none"
         ]
@@ -276,7 +276,7 @@ export const Test2 = ()=>/*#__PURE__*/ React.createElement("div", {
 export const Test3 = ({ color })=>/*#__PURE__*/ React.createElement("div", {
         className: \`jsx-\${styles.__hash}\` + " " + _JSXStyle.dynamic([
             [
-                "c7cd0c9a271b5596",
+                "61bb13f60e423986",
                 [
                     color
                 ]
@@ -285,14 +285,14 @@ export const Test3 = ({ color })=>/*#__PURE__*/ React.createElement("div", {
     }, /*#__PURE__*/ React.createElement("p", {
         className: \`jsx-\${styles.__hash}\` + " " + _JSXStyle.dynamic([
             [
-                "c7cd0c9a271b5596",
+                "61bb13f60e423986",
                 [
                     color
                 ]
             ]
         ])
     }, "external and dynamic"), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "c7cd0c9a271b5596",
+        id: "61bb13f60e423986",
         dynamic: [
             color
         ]
@@ -303,7 +303,7 @@ export const Test3 = ({ color })=>/*#__PURE__*/ React.createElement("div", {
 export const Test4 = ({ color })=>/*#__PURE__*/ React.createElement("div", {
         className: \`jsx-\${styles.__hash}\` + " jsx-ceba8c9ce34e3d0c " + _JSXStyle.dynamic([
             [
-                "67ef1d3ae291dad0",
+                "1e84642f90e27a34",
                 [
                     color
                 ]
@@ -312,7 +312,7 @@ export const Test4 = ({ color })=>/*#__PURE__*/ React.createElement("div", {
     }, /*#__PURE__*/ React.createElement("p", {
         className: \`jsx-\${styles.__hash}\` + " jsx-ceba8c9ce34e3d0c " + _JSXStyle.dynamic([
             [
-                "67ef1d3ae291dad0",
+                "1e84642f90e27a34",
                 [
                     color
                 ]
@@ -321,7 +321,7 @@ export const Test4 = ({ color })=>/*#__PURE__*/ React.createElement("div", {
     }, "external, static and dynamic"), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "ceba8c9ce34e3d0c"
     }, "p.jsx-ceba8c9ce34e3d0c{display:inline-block}"), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "67ef1d3ae291dad0",
+        id: "1e84642f90e27a34",
         dynamic: [
             color
         ]
@@ -342,7 +342,7 @@ export const Test5 = ()=>/*#__PURE__*/ React.createElement("div", {
 export const Test6 = ({ color })=>/*#__PURE__*/ React.createElement("div", {
         className: "jsx-ceba8c9ce34e3d0c " + _JSXStyle.dynamic([
             [
-                "268577fdfa8f996f",
+                "1e84642f90e27a34",
                 [
                     color
                 ]
@@ -351,7 +351,7 @@ export const Test6 = ({ color })=>/*#__PURE__*/ React.createElement("div", {
     }, /*#__PURE__*/ React.createElement("p", {
         className: "jsx-ceba8c9ce34e3d0c " + _JSXStyle.dynamic([
             [
-                "268577fdfa8f996f",
+                "1e84642f90e27a34",
                 [
                     color
                 ]
@@ -360,7 +360,7 @@ export const Test6 = ({ color })=>/*#__PURE__*/ React.createElement("div", {
     }, "static and dynamic"), /*#__PURE__*/ React.createElement(_JSXStyle, {
         id: "ceba8c9ce34e3d0c"
     }, "p.jsx-ceba8c9ce34e3d0c{display:inline-block}"), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "268577fdfa8f996f",
+        id: "1e84642f90e27a34",
         dynamic: [
             color
         ]
@@ -369,7 +369,7 @@ export const Test6 = ({ color })=>/*#__PURE__*/ React.createElement("div", {
 export const Test7 = ({ color })=>/*#__PURE__*/ React.createElement("div", {
         className: _JSXStyle.dynamic([
             [
-                "326696c8771af70",
+                "61bb13f60e423986",
                 [
                     color
                 ]
@@ -378,14 +378,14 @@ export const Test7 = ({ color })=>/*#__PURE__*/ React.createElement("div", {
     }, /*#__PURE__*/ React.createElement("p", {
         className: _JSXStyle.dynamic([
             [
-                "326696c8771af70",
+                "61bb13f60e423986",
                 [
                     color
                 ]
             ]
         ])
     }, "dynamic only"), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "326696c8771af70",
+        id: "61bb13f60e423986",
         dynamic: [
             color
         ]
@@ -399,7 +399,7 @@ export const Test8 = ({ color })=>{
         return /*#__PURE__*/ React.createElement("div", {
             className: _JSXStyle.dynamic([
                 [
-                    "ffdf125bf0c0d312",
+                    "d77a5e7a32304b8e",
                     [
                         innerProps.color
                     ]
@@ -408,14 +408,14 @@ export const Test8 = ({ color })=>{
         }, /*#__PURE__*/ React.createElement("p", {
             className: _JSXStyle.dynamic([
                 [
-                    "ffdf125bf0c0d312",
+                    "d77a5e7a32304b8e",
                     [
                         innerProps.color
                     ]
                 ]
             ])
         }, "dynamic with scoped compound variable"), /*#__PURE__*/ React.createElement(_JSXStyle, {
-            id: "ffdf125bf0c0d312",
+            id: "d77a5e7a32304b8e",
             dynamic: [
                 innerProps.color
             ]
@@ -430,7 +430,7 @@ export const Test9 = ({ color })=>{
     return /*#__PURE__*/ React.createElement("div", {
         className: _JSXStyle.dynamic([
             [
-                "b39b51f69f1c1b3b",
+                "2a046d311c1cc2ba",
                 [
                     innerProps.color
                 ]
@@ -439,14 +439,14 @@ export const Test9 = ({ color })=>{
     }, /*#__PURE__*/ React.createElement("p", {
         className: _JSXStyle.dynamic([
             [
-                "b39b51f69f1c1b3b",
+                "2a046d311c1cc2ba",
                 [
                     innerProps.color
                 ]
             ]
         ])
     }, "dynamic with compound variable"), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "b39b51f69f1c1b3b",
+        id: "2a046d311c1cc2ba",
         dynamic: [
             innerProps.color
         ]
@@ -455,12 +455,12 @@ export const Test9 = ({ color })=>{
 const foo = "red";
 // dynamic with constant variable
 export const Test10 = ()=>/*#__PURE__*/ React.createElement("div", {
-        className: "jsx-4767b73c8fb26397"
+        className: "jsx-61bb13f60e423986"
     }, /*#__PURE__*/ React.createElement("p", {
-        className: "jsx-4767b73c8fb26397"
+        className: "jsx-61bb13f60e423986"
     }, "dynamic with constant variable"), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "4767b73c8fb26397"
-    }, \`p.jsx-4767b73c8fb26397{color:\${foo}}\`));
+        id: "61bb13f60e423986"
+    }, \`p.jsx-61bb13f60e423986{color:\${foo}}\`));
 // dynamic with complex scope
 export const Test11 = ({ color })=>{
     const items = Array.from({
@@ -469,14 +469,14 @@ export const Test11 = ({ color })=>{
             key: i,
             className: _JSXStyle.dynamic([
                 [
-                    "2399a69bdbcf0d16",
+                    "898c89dcda3535cf",
                     [
                         color
                     ]
                 ]
             ]) + " " + "item"
         }, /*#__PURE__*/ React.createElement(_JSXStyle, {
-            id: "2399a69bdbcf0d16",
+            id: "898c89dcda3535cf",
             dynamic: [
                 color
             ]
@@ -497,7 +497,7 @@ export default function Component() {
     return /*#__PURE__*/ React.createElement("div", {
         className: _JSXStyle.dynamic([
             [
-                "e26ad77aa2d4b11f",
+                "b1ae82982dd22841",
                 [
                     width,
                     height,
@@ -508,7 +508,7 @@ export default function Component() {
     }, /*#__PURE__*/ React.createElement("h1", {
         className: _JSXStyle.dynamic([
             [
-                "e26ad77aa2d4b11f",
+                "b1ae82982dd22841",
                 [
                     width,
                     height,
@@ -517,7 +517,7 @@ export default function Component() {
             ]
         ])
     }, "Basic Variables Test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "e26ad77aa2d4b11f",
+        id: "b1ae82982dd22841",
         dynamic: [
             width,
             height,
@@ -556,7 +556,7 @@ export default function Component() {
     return /*#__PURE__*/ React.createElement("div", {
         className: _JSXStyle.dynamic([
             [
-                "162894eabf3bf6c1",
+                "5103bc23e6adb01",
                 [
                     middleOpacity,
                     rotation,
@@ -569,7 +569,7 @@ export default function Component() {
     }, /*#__PURE__*/ React.createElement("div", {
         className: _JSXStyle.dynamic([
             [
-                "162894eabf3bf6c1",
+                "5103bc23e6adb01",
                 [
                     middleOpacity,
                     rotation,
@@ -580,7 +580,7 @@ export default function Component() {
             ]
         ]) + " " + "animated"
     }, "Animated Element"), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "162894eabf3bf6c1",
+        id: "5103bc23e6adb01",
         dynamic: [
             middleOpacity,
             rotation,
@@ -674,7 +674,7 @@ export default function Component() {
     return /*#__PURE__*/ React.createElement("div", {
         className: _JSXStyle.dynamic([
             [
-                "604761e0bca7f780",
+                "a84e06e31d411f9f",
                 [
                     dynamicValue,
                     color1,
@@ -688,7 +688,7 @@ export default function Component() {
     }, /*#__PURE__*/ React.createElement("div", {
         className: _JSXStyle.dynamic([
             [
-                "604761e0bca7f780",
+                "a84e06e31d411f9f",
                 [
                     dynamicValue,
                     color1,
@@ -700,7 +700,7 @@ export default function Component() {
             ]
         ]) + " " + "item"
     }, "CSS Variables and Functions"), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "604761e0bca7f780",
+        id: "a84e06e31d411f9f",
         dynamic: [
             dynamicValue,
             color1,
@@ -719,19 +719,19 @@ exports[`Should load swc-confidential wasm plugin correctly > Should transform d
 const color = "red";
 const otherColor = "green";
 const A = ()=>/*#__PURE__*/ React.createElement("div", {
-        className: "jsx-7e810e6813878b8c"
+        className: "jsx-61bb13f60e423986"
     }, /*#__PURE__*/ React.createElement("p", {
-        className: "jsx-7e810e6813878b8c"
+        className: "jsx-61bb13f60e423986"
     }, "test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "7e810e6813878b8c"
-    }, \`p.jsx-7e810e6813878b8c{color:\${color}}\`));
+        id: "61bb13f60e423986"
+    }, \`p.jsx-61bb13f60e423986{color:\${color}}\`));
 const B = ()=>/*#__PURE__*/ React.createElement("div", {
-        className: "jsx-d0d831803ebf1024"
+        className: "jsx-61bb13f60e423986"
     }, /*#__PURE__*/ React.createElement("p", {
-        className: "jsx-d0d831803ebf1024"
+        className: "jsx-61bb13f60e423986"
     }, "test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "d0d831803ebf1024"
-    }, \`p.jsx-d0d831803ebf1024{color:\${otherColor}}\`));
+        id: "61bb13f60e423986"
+    }, \`p.jsx-61bb13f60e423986{color:\${otherColor}}\`));
 export default (()=>/*#__PURE__*/ React.createElement("div", null, /*#__PURE__*/ React.createElement(A, null), /*#__PURE__*/ React.createElement(B, null)));
 "
 `;
@@ -1128,7 +1128,7 @@ export default function Component() {
     return /*#__PURE__*/ React.createElement("div", {
         className: _JSXStyle.dynamic([
             [
-                "d4e687de2b4d1f78",
+                "41976462f2b2e3ed",
                 [
                     id,
                     stringifyCssVariablesObject(cssVariables),
@@ -1140,7 +1140,7 @@ export default function Component() {
     }, /*#__PURE__*/ React.createElement("button", {
         className: _JSXStyle.dynamic([
             [
-                "d4e687de2b4d1f78",
+                "41976462f2b2e3ed",
                 [
                     id,
                     stringifyCssVariablesObject(cssVariables),
@@ -1152,7 +1152,7 @@ export default function Component() {
     }, "Global Styled Button"), /*#__PURE__*/ React.createElement("div", {
         className: _JSXStyle.dynamic([
             [
-                "d4e687de2b4d1f78",
+                "41976462f2b2e3ed",
                 [
                     id,
                     stringifyCssVariablesObject(cssVariables),
@@ -1162,7 +1162,7 @@ export default function Component() {
             ]
         ])
     }, "Styled Div"), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "d4e687de2b4d1f78",
+        id: "41976462f2b2e3ed",
         dynamic: [
             id,
             stringifyCssVariablesObject(cssVariables),
@@ -1223,14 +1223,14 @@ exports[`Should load swc-confidential wasm plugin correctly > Should transform i
 export default (({ breakPoint })=>/*#__PURE__*/ React.createElement("div", {
         className: _JSXStyle.dynamic([
             [
-                "6e8f367908723ecb",
+                "56766f16d52e0906",
                 [
                     breakPoint
                 ]
             ]
         ])
     }, /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "6e8f367908723ecb",
+        id: "56766f16d52e0906",
         dynamic: [
             breakPoint
         ]
@@ -1259,7 +1259,7 @@ class _class {
         return /*#__PURE__*/ React.createElement("div", {
             className: _JSXStyle.dynamic([
                 [
-                    "6b704abab74bd4b4",
+                    "ffd9ae483995867d",
                     [
                         Typography.base.size.default,
                         Typography.base.lineHeight,
@@ -1273,7 +1273,7 @@ class _class {
         }, /*#__PURE__*/ React.createElement("p", {
             className: _JSXStyle.dynamic([
                 [
-                    "6b704abab74bd4b4",
+                    "ffd9ae483995867d",
                     [
                         Typography.base.size.default,
                         Typography.base.lineHeight,
@@ -1285,7 +1285,7 @@ class _class {
                 ]
             ])
         }, "test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
-            id: "6b704abab74bd4b4",
+            id: "ffd9ae483995867d",
             dynamic: [
                 Typography.base.size.default,
                 Typography.base.lineHeight,
@@ -1344,7 +1344,7 @@ export default function Component() {
     return /*#__PURE__*/ React.createElement("div", {
         className: _JSXStyle.dynamic([
             [
-                "7e828585df2745e6",
+                "225aa1efd8e5beca",
                 [
                     ResponsiveBreakpoint[breakpoint],
                     mobileWidth
@@ -1354,7 +1354,7 @@ export default function Component() {
     }, /*#__PURE__*/ React.createElement("div", {
         className: _JSXStyle.dynamic([
             [
-                "7e828585df2745e6",
+                "225aa1efd8e5beca",
                 [
                     ResponsiveBreakpoint[breakpoint],
                     mobileWidth
@@ -1362,7 +1362,7 @@ export default function Component() {
             ]
         ]) + " " + "active"
     }, "Responsive Element"), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "7e828585df2745e6",
+        id: "225aa1efd8e5beca",
         dynamic: [
             ResponsiveBreakpoint[breakpoint],
             mobileWidth
@@ -1455,10 +1455,10 @@ import { AppProps } from "next/app";
 const someVar = "--var-1";
 export default function App({ Component, pageProps }) {
     return /*#__PURE__*/ React.createElement(React.Fragment, null, /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "74a097bbd343520c"
+        id: "b6c119d364497ec3"
     }, \`:root{\${someVar}:red;background-color:var(\${someVar})}\`), /*#__PURE__*/ React.createElement(Component, {
         ...pageProps,
-        className: "jsx-74a097bbd343520c" + " " + (pageProps && pageProps.className != null && pageProps.className || "")
+        className: "jsx-b6c119d364497ec3" + " " + (pageProps && pageProps.className != null && pageProps.className || "")
     }));
 }
 "
@@ -1471,7 +1471,7 @@ export default function Home() {
     return /*#__PURE__*/ React.createElement("div", {
         className: _JSXStyle.dynamic([
             [
-                "4c387ea5249dc57f",
+                "dc5f83c7824c3ea7",
                 [
                     MOBILE_MAX
                 ]
@@ -1480,14 +1480,14 @@ export default function Home() {
     }, /*#__PURE__*/ React.createElement("h1", {
         className: _JSXStyle.dynamic([
             [
-                "4c387ea5249dc57f",
+                "dc5f83c7824c3ea7",
                 [
                     MOBILE_MAX
                 ]
             ]
         ]) + " " + "header"
     }, "Hello"), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "4c387ea5249dc57f",
+        id: "dc5f83c7824c3ea7",
         dynamic: [
             MOBILE_MAX
         ]
@@ -1502,13 +1502,13 @@ import _JSXStyle from "styled-jsx/style";
 const color = "color: red;";
 export default function RootLayout({ children }) {
     return /*#__PURE__*/ React.createElement("html", {
-        className: "jsx-e7dde8ddcf4ebe1b"
+        className: "jsx-afdf203c35890144"
     }, /*#__PURE__*/ React.createElement("head", {
-        className: "jsx-e7dde8ddcf4ebe1b"
+        className: "jsx-afdf203c35890144"
     }), /*#__PURE__*/ React.createElement("body", {
-        className: "jsx-e7dde8ddcf4ebe1b"
+        className: "jsx-afdf203c35890144"
     }, children), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "e7dde8ddcf4ebe1b"
+        id: "afdf203c35890144"
     }, \`body{\${color}}body p{font-size:72px}\`));
 }
 "
@@ -1568,14 +1568,14 @@ exports[`Should load swc-confidential wasm plugin correctly > Should transform n
 import Link from "next/link";
 export default function IndexPage() {
     return /*#__PURE__*/ React.createElement("div", {
-        className: "jsx-3b7e3a8058515bc5"
+        className: "jsx-2fd54d403cc6cfce"
     }, "Hello World.", " ", /*#__PURE__*/ React.createElement(Link, {
         href: "/about"
     }, /*#__PURE__*/ React.createElement("a", {
-        className: "jsx-3b7e3a8058515bc5"
+        className: "jsx-2fd54d403cc6cfce"
     }, "Abound")), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "3b7e3a8058515bc5"
-    }, \`a.jsx-3b7e3a8058515bc5{color:\${"#abcdef"}12}\`));
+        id: "2fd54d403cc6cfce"
+    }, \`a.jsx-2fd54d403cc6cfce{color:\${"#abcdef"}12}\`));
 }
 "
 `;
@@ -1596,9 +1596,9 @@ exports[`Should load swc-confidential wasm plugin correctly > Should transform p
 "import _JSXStyle from "styled-jsx/style";
 const { className: cardClassName, styles } = {
     styles: /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "e19557e37cedae26"
-    }, \`.jsx-e19557e37cedae26:hover{z-index:\${hoverAnimation ? "1" : "auto"}}\`),
-    className: "jsx-e19557e37cedae26"
+        id: "5c7ef760406d8b84"
+    }, \`.jsx-5c7ef760406d8b84:hover{z-index:\${hoverAnimation ? "1" : "auto"}}\`),
+    className: "jsx-5c7ef760406d8b84"
 };
 "
 `;
@@ -1666,33 +1666,33 @@ bar.__hash = "aaed0341accea8f";
 const baz = new String("div{font-size:3em}");
 baz.__hash = "aaed0341accea8f";
 const a = new String(\`div{font-size:\${size}em}\`);
-a.__hash = "81ceb794f2cae382";
+a.__hash = "46f2e9b5d30184c5";
 export const uh = bar;
-export const foo = new String(\`div.jsx-9593f414a33169e1{color:\${color}}\`);
-foo.__hash = "9593f414a33169e1";
+export const foo = new String(\`div.jsx-ca61d6988dbd342c{color:\${color}}\`);
+foo.__hash = "ca61d6988dbd342c";
 ({
     styles: /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "aae6f73a05684c5a"
-    }, \`div.jsx-aae6f73a05684c5a{color:\${colors.green.light}}a.jsx-aae6f73a05684c5a{color:red}\`),
-    className: "jsx-aae6f73a05684c5a"
+        id: "dcc1f480c8dc0d33"
+    }, \`div.jsx-dcc1f480c8dc0d33{color:\${colors.green.light}}a.jsx-dcc1f480c8dc0d33{color:red}\`),
+    className: "jsx-dcc1f480c8dc0d33"
 });
 const b = {
     styles: /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "ec08f8cce5a842a0"
-    }, \`div.jsx-ec08f8cce5a842a0{color:\${colors.green.light}}a.jsx-ec08f8cce5a842a0{color:red}\`),
-    className: "jsx-ec08f8cce5a842a0"
+        id: "503124c5a649ce10"
+    }, \`div.jsx-503124c5a649ce10{color:\${colors.green.light}}a.jsx-503124c5a649ce10{color:red}\`),
+    className: "jsx-503124c5a649ce10"
 };
 const dynamic = (colors)=>{
     const b = {
         styles: /*#__PURE__*/ React.createElement(_JSXStyle, {
-            id: "4bfc45a0f1223605",
+            id: "8fe15b70d68a09a7",
             dynamic: [
                 colors.green.light
             ]
         }, \`div.__jsx-style-dynamic-selector{color:\${colors.green.light}}a.__jsx-style-dynamic-selector{color:red}\`),
         className: _JSXStyle.dynamic([
             [
-                "4bfc45a0f1223605",
+                "8fe15b70d68a09a7",
                 [
                     colors.green.light
                 ]
@@ -1702,9 +1702,9 @@ const dynamic = (colors)=>{
 };
 export default {
     styles: /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "9cced4345a314fba"
-    }, \`div.jsx-9cced4345a314fba{font-size:3em}p.jsx-9cced4345a314fba{color:\${color}}\`),
-    className: "jsx-9cced4345a314fba"
+        id: "593eba3ae6c6d0e3"
+    }, \`div.jsx-593eba3ae6c6d0e3{font-size:3em}p.jsx-593eba3ae6c6d0e3{color:\${color}}\`),
+    className: "jsx-593eba3ae6c6d0e3"
 };
 "
 `;
@@ -1751,7 +1751,7 @@ const MaskedDivBad = ()=>{
     return /*#__PURE__*/ React.createElement(React.Fragment, null, /*#__PURE__*/ React.createElement("div", {
         className: _JSXStyle.dynamic([
             [
-                "6f8b8f9bb31b5548",
+                "d926f1e801290da9",
                 [
                     0.5 + HEAD_MARGIN_PERCENTAGE,
                     0.5 + CUTOUT_AVATAR_PERCENTAGE_VISIBLE + HEAD_MARGIN_PERCENTAGE
@@ -1761,7 +1761,7 @@ const MaskedDivBad = ()=>{
     }, /*#__PURE__*/ React.createElement("div", {
         className: _JSXStyle.dynamic([
             [
-                "6f8b8f9bb31b5548",
+                "d926f1e801290da9",
                 [
                     0.5 + HEAD_MARGIN_PERCENTAGE,
                     0.5 + CUTOUT_AVATAR_PERCENTAGE_VISIBLE + HEAD_MARGIN_PERCENTAGE
@@ -1769,7 +1769,7 @@ const MaskedDivBad = ()=>{
             ]
         ]) + " " + "avatar-wrapper"
     })), /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "6f8b8f9bb31b5548",
+        id: "d926f1e801290da9",
         dynamic: [
             0.5 + HEAD_MARGIN_PERCENTAGE,
             0.5 + CUTOUT_AVATAR_PERCENTAGE_VISIBLE + HEAD_MARGIN_PERCENTAGE
@@ -1785,7 +1785,7 @@ export const Red = ({ Component = "button" })=>{
     return /*#__PURE__*/ React.createElement(Component, {
         className: _JSXStyle.dynamic([
             [
-                "52fd9cadbaec4156",
+                "916d0f562633f50a",
                 [
                     e1,
                     e2,
@@ -1806,7 +1806,7 @@ export const Red = ({ Component = "button" })=>{
             ]
         ])
     }, /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "52fd9cadbaec4156",
+        id: "916d0f562633f50a",
         dynamic: [
             e1,
             e2,
@@ -1852,14 +1852,14 @@ export default function Home({ fontFamily }) {
     return /*#__PURE__*/ React.createElement("div", {
         className: _JSXStyle.dynamic([
             [
-                "40fd48184c00b68",
+                "6054eb4c2c4c1b51",
                 [
                     fontFamily
                 ]
             ]
         ])
     }, /*#__PURE__*/ React.createElement(_JSXStyle, {
-        id: "40fd48184c00b68",
+        id: "6054eb4c2c4c1b51",
         dynamic: [
             fontFamily
         ]
@@ -1875,7 +1875,7 @@ class _class {
         return /*#__PURE__*/ React.createElement("div", {
             className: _JSXStyle.dynamic([
                 [
-                    "ac1863fa45ef18c3",
+                    "105c023a498a847c",
                     [
                         inputSize ? "height: calc(2 * var(--a)) !important;" : ""
                     ]
@@ -1884,14 +1884,14 @@ class _class {
         }, /*#__PURE__*/ React.createElement("p", {
             className: _JSXStyle.dynamic([
                 [
-                    "ac1863fa45ef18c3",
+                    "105c023a498a847c",
                     [
                         inputSize ? "height: calc(2 * var(--a)) !important;" : ""
                     ]
                 ]
             ])
         }, "test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
-            id: "ac1863fa45ef18c3",
+            id: "105c023a498a847c",
             dynamic: [
                 inputSize ? "height: calc(2 * var(--a)) !important;" : ""
             ]
@@ -1909,7 +1909,7 @@ class _class {
         return /*#__PURE__*/ React.createElement("div", {
             className: _JSXStyle.dynamic([
                 [
-                    "c8f770348e60420a",
+                    "aff7a3d3136089df",
                     [
                         a[b],
                         -1 * (c || 0),
@@ -1920,7 +1920,7 @@ class _class {
         }, /*#__PURE__*/ React.createElement("p", {
             className: _JSXStyle.dynamic([
                 [
-                    "c8f770348e60420a",
+                    "aff7a3d3136089df",
                     [
                         a[b],
                         -1 * (c || 0),
@@ -1929,7 +1929,7 @@ class _class {
                 ]
             ])
         }, "test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
-            id: "c8f770348e60420a",
+            id: "aff7a3d3136089df",
             dynamic: [
                 a[b],
                 -1 * (c || 0),
@@ -1949,7 +1949,7 @@ class _class {
         return /*#__PURE__*/ React.createElement("div", {
             className: _JSXStyle.dynamic([
                 [
-                    "a482e3616e0a0c3a",
+                    "9a30330155b13818",
                     [
                         a
                     ]
@@ -1958,14 +1958,14 @@ class _class {
         }, /*#__PURE__*/ React.createElement("p", {
             className: _JSXStyle.dynamic([
                 [
-                    "a482e3616e0a0c3a",
+                    "9a30330155b13818",
                     [
                         a
                     ]
                 ]
             ])
         }, "test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
-            id: "a482e3616e0a0c3a",
+            id: "9a30330155b13818",
             dynamic: [
                 a
             ]
@@ -1983,7 +1983,7 @@ class _class {
         return /*#__PURE__*/ React.createElement("div", {
             className: _JSXStyle.dynamic([
                 [
-                    "8806e34777bf1832",
+                    "d2309480d6dbc170",
                     [
                         a || "var(--c)",
                         b || "inherit"
@@ -1993,7 +1993,7 @@ class _class {
         }, /*#__PURE__*/ React.createElement("p", {
             className: _JSXStyle.dynamic([
                 [
-                    "8806e34777bf1832",
+                    "d2309480d6dbc170",
                     [
                         a || "var(--c)",
                         b || "inherit"
@@ -2001,7 +2001,7 @@ class _class {
                 ]
             ])
         }, "test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
-            id: "8806e34777bf1832",
+            id: "d2309480d6dbc170",
             dynamic: [
                 a || "var(--c)",
                 b || "inherit"
@@ -2020,7 +2020,7 @@ class _class {
         return /*#__PURE__*/ React.createElement("div", {
             className: _JSXStyle.dynamic([
                 [
-                    "a037c47811943013",
+                    "96f395b26cba58f4",
                     [
                         a ? "100%" : "200px",
                         b ? "0" : "8px 20px"
@@ -2030,7 +2030,7 @@ class _class {
         }, /*#__PURE__*/ React.createElement("p", {
             className: _JSXStyle.dynamic([
                 [
-                    "a037c47811943013",
+                    "96f395b26cba58f4",
                     [
                         a ? "100%" : "200px",
                         b ? "0" : "8px 20px"
@@ -2038,7 +2038,7 @@ class _class {
                 ]
             ])
         }, "test"), /*#__PURE__*/ React.createElement(_JSXStyle, {
-            id: "a037c47811943013",
+            id: "96f395b26cba58f4",
             dynamic: [
                 a ? "100%" : "200px",
                 b ? "0" : "8px 20px"

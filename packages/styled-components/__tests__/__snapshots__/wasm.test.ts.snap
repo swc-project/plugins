@@ -50,9 +50,7 @@ exports[`Should load styled-components wasm plugin correctly > Should transform 
             configurable: true,
             writable: true
         });
-    } else {
-        obj[key] = value;
-    }
+    } else obj[key] = value;
     return obj;
 }
 import styled from "styled-components";
@@ -503,6 +501,20 @@ const Div = styled.div.withConfig({
 "
 `;
 
+exports[`Should load styled-components wasm plugin correctly > Should transform issue-615 correctly 1`] = `
+"import styled from "styled-components";
+const MyStyledComponent = styled.div.withConfig({
+    displayName: "test__MyStyledComponent",
+    componentId: "sc-7bef651e-0"
+})([
+    \`max-height:calc( \`,
+    \` + \`,
+    \` + \`,
+    \` );color:red;\`
+], someVariable1, someVariable2, someVariable3);
+"
+`;
+
 exports[`Should load styled-components wasm plugin correctly > Should transform minify-css-in-helpers correctly 1`] = `
 "import { createGlobalStyle, css, keyframes } from "styled-components";
 const key = keyframes\`to{transform:rotate(360deg);}\`;
@@ -663,10 +675,10 @@ const WrappedComponent = s(Inner).withConfig({
 `;
 
 exports[`Should load styled-components wasm plugin correctly > Should transform transpile-css-prop correctly 1`] = `
-"/*
+"import _styled from "styled-components";
+/*
  * Basic fixtures
- */ import _styled from "styled-components";
-const StaticString = (p)=>/*#__PURE__*/ React.createElement(_StyledP, null, "A");
+ */ const StaticString = (p)=>/*#__PURE__*/ React.createElement(_StyledP, null, "A");
 const StaticTemplate = (p)=>/*#__PURE__*/ React.createElement(_StyledP2, null, "A");
 const ObjectProp = (p)=>/*#__PURE__*/ React.createElement(_StyledP3, null, "A");
 const NoChildren = (p)=>/*#__PURE__*/ React.createElement(_StyledP4, null);
@@ -916,8 +928,8 @@ var _StyledP21 = _styled("p")\`
 `;
 
 exports[`Should load styled-components wasm plugin correctly > Should transform transpile-css-prop-add-import correctly 1`] = `
-"// @flow
-import _styled from "styled-components";
+"import _styled from "styled-components";
+// @flow
 import React from "react";
 import Card from "../../shared/components/Card";
 import config from "../../../config";
@@ -931,8 +943,8 @@ var _StyledDiv = _styled("div")\`
 `;
 
 exports[`Should load styled-components wasm plugin correctly > Should transform transpile-css-prop-add-require correctly 1`] = `
-"// @flow
-import _styled from "styled-components";
+"import _styled from "styled-components";
+// @flow
 import React from "react";
 export default (()=>/*#__PURE__*/ React.createElement(_StyledDiv, null));
 var _StyledDiv = _styled("div")\`

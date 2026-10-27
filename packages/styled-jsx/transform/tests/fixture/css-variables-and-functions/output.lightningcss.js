@@ -7,7 +7,7 @@ export default function Component() {
     const spacing = 10;
     return <div className={_JSXStyle.dynamic([
         [
-            "7901c83573157acb",
+            "ef11d9bc22be9e3d",
             [
                 dynamicValue,
                 color1,
@@ -20,7 +20,7 @@ export default function Component() {
     ]) + " " + "container"}>
       <div className={_JSXStyle.dynamic([
         [
-            "7901c83573157acb",
+            "ef11d9bc22be9e3d",
             [
                 dynamicValue,
                 color1,
@@ -31,13 +31,13 @@ export default function Component() {
             ]
         ]
     ]) + " " + "item"}>CSS Variables and Functions</div>
-      <_JSXStyle id={"7901c83573157acb"} dynamic={[
+      <_JSXStyle id={"ef11d9bc22be9e3d"} dynamic={[
         dynamicValue,
         color1,
         color2,
         offset,
         offset,
         spacing
-    ]}>{`.container.__jsx-style-dynamic-selector{--local-var:${dynamicValue};color:var(--text-color);background:linear-gradient(to right,${color1},${color2})}.container.__jsx-style-dynamic-selector .item.__jsx-style-dynamic-selector{transform:translate(calc(var(--x) + ${offset}px),calc(var(--y) + ${offset}px))}.container.__jsx-style-dynamic-selector div.__jsx-style-dynamic-selector{margin:calc(10px + ${spacing}px)}`}</_JSXStyle>
+    ]}>{`.container.__jsx-style-dynamic-selector{--local-var:${dynamicValue};color:var(--text-color);background:linear-gradient(to right, ${color1}, ${color2})}.container.__jsx-style-dynamic-selector .item.__jsx-style-dynamic-selector{transform:translate(calc(var(--x) + ${offset}px), calc(var(--y) + ${offset}px))}.container.__jsx-style-dynamic-selector div.__jsx-style-dynamic-selector{margin:calc(10px + ${spacing}px)}`}</_JSXStyle>
     </div>;
 }

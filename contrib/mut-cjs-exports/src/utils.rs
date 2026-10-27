@@ -35,7 +35,7 @@ pub(crate) fn prop_method_setter(ident: Ident) -> Prop {
     let setter_param = private_ident!("v");
     let params = vec![setter_param.clone().into()];
 
-    let body = BlockStmt {
+    let body = FunctionBody {
         stmts: vec![setter_param
             .make_assign_to(op!("="), ident.clone().into())
             .into_stmt()],

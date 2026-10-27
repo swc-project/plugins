@@ -57,6 +57,8 @@ export default defineConfig((env) => ({
 
 A template string that allows you to override the ID both in the extracted javascript and messages. It's used only if the message ID is empty.
 
+Use `[content]` to insert the unhashed content instead of a hash: the default message, followed by `#` and the description when one is present. For example, `idInterpolationPattern: '[content]'` uses each default message as its own ID.
+
 ### **`removeDefaultMessage`**
 
 Remove `defaultMessage` field in generated js after extraction.
@@ -77,6 +79,10 @@ Additional function names to extract messages from, e.g: `['']`. Use this if you
 
 Pre-parse `defaultMessage` into AST for faster runtime perf. This flag doesn't do anything when `removeDefaultMessage` is `true`.
 
+### **`throws`**
+
+Whether to throw when a message descriptor cannot be statically evaluated for extraction. Defaults to `true`. Set to `false` to skip descriptors that fail extraction and leave them unchanged.
+
 ### **`preserveWhitespace`**
 
 Whether to preserve whitespace and newlines.
@@ -94,6 +100,117 @@ For example, with `pragma: "@formatjs"`, a comment like:
 Will extract the metadata: `{project: "web", locale: "en", region: "us"}` that gets included with the extracted messages. This is useful for adding contextual information to your message extractions.
 
 # @swc/plugin-formatjs
+
+## 14.0.0
+
+### Major Changes
+
+- 5c6d86d: Update swc_core to 82.0.0.
+
+## 13.0.0
+
+### Major Changes
+
+- e995ea5: build!: Update swc_core to v81.0.2
+
+## 12.0.0
+
+### Major Changes
+
+- d90fa6c: build!: Update swc_core to v81.0.0
+
+## 11.0.0
+
+### Major Changes
+
+- a9a7fe9: build!: Update swc_core to v78.0.0
+
+## 10.0.0
+
+### Major Changes
+
+- 74931df: build!: Update swc_core to v77.0.0
+
+## 9.19.0
+
+### Minor Changes
+
+- 8d2db7f: build: Update swc_core to v76.0.0
+
+## 9.18.0
+
+### Minor Changes
+
+- 1a6fdee: build: Update swc_core to v75.0.0
+
+## 9.17.0
+
+### Minor Changes
+
+- 6051cea: build: Update swc_core to v74.0.0
+
+## 9.16.0
+
+### Minor Changes
+
+- b7be81b: build: Update swc_core to v73.0.0
+
+## 9.15.0
+
+### Minor Changes
+
+- 4b382e7: build: Update swc_core to v72.0.0
+
+## 9.14.1
+
+### Patch Changes
+
+- 4f2efe7: Add `throws: false` support to skip non-static FormatJS descriptors without failing the transform.
+- e785517: build: Update swc_core to v71.0.5
+
+## 9.14.0
+
+### Minor Changes
+
+- 7cc5e96: build: Update swc_core to v72
+
+## 9.13.0
+
+### Minor Changes
+
+- c3013d7: build: Update swc_core to v69
+
+## 9.12.1
+
+### Patch Changes
+
+- c5bd878: Avoid hygiene proxy crashes by evaluating only static formatjs descriptor values.
+  The legacy Rust visitor constructor now ignores its evaluator argument; use
+  `create_formatjs_visitor_without_evaluator` for new integrations.
+
+## 9.12.0
+
+### Minor Changes
+
+- 3b04284: build: Update swc_core to v68
+
+## 9.11.0
+
+### Minor Changes
+
+- 3b4d5b9: build: Update swc_core to v67
+
+## 9.10.0
+
+### Minor Changes
+
+- 5e967fc: build: Update swc_core to v66.0.3
+
+## 9.9.0
+
+### Minor Changes
+
+- d2f9cfa: build: Update swc_core to v65.0.0
 
 ## 9.8.0
 

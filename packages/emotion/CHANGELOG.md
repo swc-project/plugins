@@ -1,5 +1,121 @@
 # @swc/plugin-emotion
 
+## 19.0.0
+
+### Major Changes
+
+- 5c6d86d: Update swc_core to 82.0.0.
+
+## 18.0.0
+
+### Major Changes
+
+- e995ea5: build!: Update swc_core to v81.0.2
+
+### Patch Changes
+
+- 1a64141: Reuse existing boxed expressions instead of allocating new boxes, fixing `clippy::replace_box` warnings without changing transform behavior.
+
+## 17.0.0
+
+### Major Changes
+
+- d90fa6c: build!: Update swc_core to v81.0.0
+
+## 16.0.0
+
+### Major Changes
+
+- a9a7fe9: build!: Update swc_core to v78.0.0
+
+## 15.0.0
+
+### Major Changes
+
+- 74931df: build!: Update swc_core to v77.0.0
+
+## 14.19.0
+
+### Minor Changes
+
+- 8d2db7f: build: Update swc_core to v76.0.0
+
+## 14.18.0
+
+### Minor Changes
+
+- 1a6fdee: build: Update swc_core to v75.0.0
+
+## 14.17.0
+
+### Minor Changes
+
+- 6051cea: build: Update swc_core to v74.0.0
+
+## 14.16.0
+
+### Minor Changes
+
+- b7be81b: build: Update swc_core to v73.0.0
+
+## 14.15.0
+
+### Minor Changes
+
+- 4b382e7: build: Update swc_core to v72.0.0
+
+## 14.14.1
+
+### Patch Changes
+
+- b6b2355: Keep dynamic Emotion JSX css prop arrays unwrapped so theme callbacks are evaluated by Emotion's JSX runtime.
+- e785517: build: Update swc_core to v71.0.5
+- 14bd92c: Handle React Compiler output with synthetic spans.
+
+## 14.14.0
+
+### Minor Changes
+
+- 7cc5e96: build: Update swc_core to v72
+
+## 14.13.0
+
+### Minor Changes
+
+- c3013d7: build: Update swc_core to v69
+
+### Patch Changes
+
+- 49044fc: Fix extraneous spaces in compiled template strings
+
+## 14.12.0
+
+### Minor Changes
+
+- 3b04284: build: Update swc_core to v68
+
+## 14.11.0
+
+### Minor Changes
+
+- 3b4d5b9: build: Update swc_core to v67
+
+## 14.10.0
+
+### Minor Changes
+
+- 5e967fc: build: Update swc_core to v66.0.3
+
+## 14.9.0
+
+### Minor Changes
+
+- d2f9cfa: build: Update swc_core to v65.0.0
+
+### Patch Changes
+
+- 2a1be0d: Fix the emotion `keyframes` auto-label regression so generated animations keep the plain name string instead of receiving a `label:` CSS fragment.
+
 ## 14.8.0
 
 ### Minor Changes

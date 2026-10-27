@@ -35,6 +35,9 @@ fn to_pascal_case(s: &str) -> String {
         } else if chars[i - 1].is_lowercase() && chars[i].is_uppercase() {
             // lowercase → uppercase (e.g., someEG: e→E)
             true
+        } else if chars[i - 1].is_numeric() && chars[i].is_uppercase() {
+            // number → uppercase letter (e.g., Hero30Fragment: 0→F)
+            true
         } else if i + 1 < chars.len()
             && chars[i - 1].is_uppercase()
             && chars[i].is_uppercase()
@@ -305,7 +308,7 @@ impl VisitMut for GraphQLVisitor {
                     // now change the call expression to a Identifier
                     let new_expr = Expr::Ident(quote_ident!(import_name).into());
 
-                    *init = Box::new(new_expr);
+                    **init = new_expr;
                 }
             }
         }

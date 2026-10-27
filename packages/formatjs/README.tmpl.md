@@ -57,6 +57,8 @@ export default defineConfig((env) => ({
 
 A template string that allows you to override the ID both in the extracted javascript and messages. It's used only if the message ID is empty.
 
+Use `[content]` to insert the unhashed content instead of a hash: the default message, followed by `#` and the description when one is present. For example, `idInterpolationPattern: '[content]'` uses each default message as its own ID.
+
 ### **`removeDefaultMessage`**
 
 Remove `defaultMessage` field in generated js after extraction.
@@ -76,6 +78,10 @@ Additional function names to extract messages from, e.g: `['$formatMessage']`. U
 ### **`ast`**
 
 Pre-parse `defaultMessage` into AST for faster runtime perf. This flag doesn't do anything when `removeDefaultMessage` is `true`.
+
+### **`throws`**
+
+Whether to throw when a message descriptor cannot be statically evaluated for extraction. Defaults to `true`. Set to `false` to skip descriptors that fail extraction and leave them unchanged.
 
 ### **`preserveWhitespace`**
 
