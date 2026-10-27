@@ -69,6 +69,12 @@ importers:
         specifier: ^0.1.3
         version: 0.1.3
 
+  packages/import-meta-env:
+    dependencies:
+      '@swc/counter':
+        specifier: ^0.1.3
+        version: 0.1.3
+
   packages/jest:
     dependencies:
       '@swc/counter':

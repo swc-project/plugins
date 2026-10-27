@@ -5,6 +5,7 @@ Plugins for SWC, written in Rust
 #### Currently Available:
 
 - [`emotion`](packages/emotion)
+- [`import-meta-env`](packages/import-meta-env)
 - [`jest`](packages/jest)
 - [`loadable-components`](packages/loadable-components)
 - [`noop`](packages/noop) for testing Wasm plugin system itself
