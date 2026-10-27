@@ -3,6 +3,7 @@ import { transform } from "@swc/core";
 import path from "node:path";
 import url from "node:url";
 import fs from "node:fs/promises";
+import { runInNewContext } from "node:vm";
 
 const pluginName = "swc_plugin_styled_components.wasm";
 
@@ -75,4 +76,43 @@ describe("Should load styled-components wasm plugin correctly", async () => {
       });
     },
   );
+});
+
+test("issue-659: evaluates nested css prop member chains at render time", async () => {
+  const fixture = new URL(
+    "../transform/tests/fixtures/issue-659/",
+    import.meta.url,
+  );
+  const input = await fs.readFile(new URL("code.js", fixture), "utf-8");
+  const config = JSON.parse(
+    await fs.readFile(new URL("config.json", fixture), "utf-8"),
+  );
+  const transformed = await transformCode(input, config);
+  const { code } = await transform(transformed.code, {
+    module: { type: "commonjs" },
+    jsc: { target: "es2018" },
+  });
+
+  const styled = Object.assign(() => () => ({}), { div: () => ({}) });
+  const exports = {} as {
+    Avatar: (props: { size: string; property: string }) => unknown;
+  };
+  runInNewContext(code, {
+    exports,
+    require: () => ({ __esModule: true, default: styled }),
+    React: { createElement: (_type: unknown, props: unknown) => props },
+  });
+
+  expect(exports.Avatar({ size: "small", property: "bottom" })).toEqual({
+    $_css: "8px",
+    $_css2: "4px",
+    $_css3: "4px",
+    $_css4: "8px",
+  });
+  expect(exports.Avatar({ size: "large", property: "bottom" })).toEqual({
+    $_css: "16px",
+    $_css2: "8px",
+    $_css3: "8px",
+    $_css4: "8px",
+  });
 });
