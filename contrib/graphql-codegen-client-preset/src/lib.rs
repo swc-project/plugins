@@ -86,8 +86,16 @@ fn to_pascal_case(s: &str) -> String {
 
 fn apply_naming_convention(s: &str, naming_convention: &str) -> String {
     match naming_convention {
-        "change-case-all#pascalCase" => to_pascal_case(s),
-        "change-case-all#upperCaseFirst" => upper_case_first(s),
+        "change-case-all#pascalCase" => s
+            .split('_')
+            .map(to_pascal_case)
+            .collect::<Vec<_>>()
+            .join("_"),
+        "change-case-all#upperCaseFirst" => s
+            .split('_')
+            .map(upper_case_first)
+            .collect::<Vec<_>>()
+            .join("_"),
         // GraphQL Codegen supports `keep`; preserve casing in that mode.
         "keep" => s.to_string(),
         // Keep unknown/custom conventions unchanged instead of forcing PascalCase.
@@ -119,12 +127,63 @@ fn is_absolute_path(path: &str) -> bool {
 #[cfg(test)]
 mod tests;
 
+#[derive(Deserialize)]
+#[serde(default, rename_all = "camelCase")]
+pub struct DocumentNamingOptions {
+    pub document_variable_prefix: String,
+    pub document_variable_suffix: String,
+    pub fragment_variable_prefix: String,
+    pub fragment_variable_suffix: String,
+    pub dedupe_operation_suffix: bool,
+    pub omit_operation_suffix: bool,
+}
+
+impl Default for DocumentNamingOptions {
+    fn default() -> Self {
+        Self {
+            document_variable_prefix: String::new(),
+            document_variable_suffix: "Document".to_string(),
+            fragment_variable_prefix: String::new(),
+            fragment_variable_suffix: "FragmentDoc".to_string(),
+            dedupe_operation_suffix: false,
+            omit_operation_suffix: false,
+        }
+    }
+}
+
+impl DocumentNamingOptions {
+    fn operation_name(&self, name: &str) -> String {
+        format!(
+            "{}{name}{}",
+            self.document_variable_prefix, self.document_variable_suffix
+        )
+    }
+
+    fn fragment_name(&self, name: &str) -> String {
+        let suffix = if self.omit_operation_suffix {
+            ""
+        } else if self.dedupe_operation_suffix
+            && name.to_ascii_lowercase().ends_with("fragment")
+            && self
+                .fragment_variable_suffix
+                .to_ascii_lowercase()
+                .starts_with("fragment")
+        {
+            &self.fragment_variable_suffix["Fragment".len()..]
+        } else {
+            &self.fragment_variable_suffix
+        };
+        format!("{}{name}{suffix}", self.fragment_variable_prefix)
+    }
+}
+
 pub struct GraphQLCodegenOptions {
     pub filename: String,
     pub cwd: String,
     pub artifact_directory: String,
     pub gql_tag_name: String,
     pub naming_convention: String,
+    pub document_naming: DocumentNamingOptions,
 }
 
 pub struct GraphQLVisitor {
@@ -249,25 +308,25 @@ impl VisitMut for GraphQLVisitor {
 
                     let operation_name = match first_definition {
                         graphql_parser::query::Definition::Fragment(fragment) => {
-                            fragment.name.to_string() + "FragmentDoc"
+                            self.options.document_naming.fragment_name(fragment.name)
                         }
                         graphql_parser::query::Definition::Operation(op) => match op {
                             graphql_parser::query::OperationDefinition::Query(query) => {
                                 match query.name {
-                                    Some(name) => name.to_string() + "Document",
+                                    Some(name) => self.options.document_naming.operation_name(name),
                                     None => return,
                                 }
                             }
                             graphql_parser::query::OperationDefinition::Mutation(mutation) => {
                                 match mutation.name {
-                                    Some(name) => name.to_string() + "Document",
+                                    Some(name) => self.options.document_naming.operation_name(name),
                                     None => return,
                                 }
                             }
                             graphql_parser::query::OperationDefinition::Subscription(
                                 subscription,
                             ) => match subscription.name {
-                                Some(name) => name.to_string() + "Document",
+                                Some(name) => self.options.document_naming.operation_name(name),
                                 None => return,
                             },
                             _ => return,
@@ -381,6 +440,9 @@ fn naming_convention_option_default() -> NamingConventionOption {
 struct PluginOptions {
     artifactDirectory: String,
 
+    #[serde(flatten)]
+    document_naming: DocumentNamingOptions,
+
     #[serde(default = "gql_default")]
     gqlTagName: String,
 
@@ -417,6 +479,7 @@ pub fn process_transform(program: Program, metadata: TransformPluginProgramMetad
         artifact_directory,
         gql_tag_name: plugin_config.gqlTagName,
         naming_convention: plugin_config.namingConvention.as_type_name_convention(),
+        document_naming: plugin_config.document_naming,
     });
 
     program.apply(&mut visit_mut_pass(visitor))
