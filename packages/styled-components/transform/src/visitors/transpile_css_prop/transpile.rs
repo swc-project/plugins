@@ -646,39 +646,27 @@ fn get_name_of_jsx_obj(el: &JSXObject) -> Atom {
     }
 }
 
-fn trace_root_value(e: &Expr) -> Option<&Expr> {
-    match e {
-        Expr::Member(e) => trace_root_value(&e.obj),
-        Expr::Call(e) => match &e.callee {
-            Callee::Expr(e) => trace_root_value(e),
-            _ => None,
-        },
-        Expr::Ident(_) => Some(e),
-        Expr::Lit(_) => Some(e),
-        _ => None,
-    }
-}
-
 fn is_direct_access<F>(expr: &Expr, is_top_level_ident: &F) -> bool
 where
     F: Fn(&Ident) -> bool,
 {
-    if let Some(root) = trace_root_value(expr) {
-        match root {
-            Expr::Lit(_) => true,
-            Expr::Ident(id) if is_top_level_ident(id) => match expr {
-                Expr::Call(CallExpr { args, .. }) => args
-                    .iter()
-                    .all(|arg| -> bool { is_direct_access(&arg.expr, is_top_level_ident) }),
-                Expr::Member(MemberExpr {
-                    prop: MemberProp::Computed(ComputedPropName { expr, .. }),
-                    ..
-                }) => is_direct_access(expr, is_top_level_ident),
-                _ => true,
-            },
-            _ => false,
+    match expr {
+        Expr::Lit(_) => true,
+        Expr::Ident(id) => is_top_level_ident(id),
+        Expr::Member(member) => {
+            is_direct_access(&member.obj, is_top_level_ident)
+                && match &member.prop {
+                    MemberProp::Computed(prop) => is_direct_access(&prop.expr, is_top_level_ident),
+                    _ => true,
+                }
         }
-    } else {
-        false
+        Expr::Call(call) => {
+            matches!(&call.callee, Callee::Expr(callee) if is_direct_access(callee, is_top_level_ident))
+                && call
+                    .args
+                    .iter()
+                    .all(|arg| is_direct_access(&arg.expr, is_top_level_ident))
+        }
+        _ => false,
     }
 }
