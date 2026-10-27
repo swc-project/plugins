@@ -37,10 +37,10 @@ const FuncInterpolation = (p)=><_StyledP8>
     H
   </_StyledP8>;
 const radius = 10;
-const GlobalInterpolation = (p)=><_StyledP9>
+const GlobalInterpolation = (p)=><_StyledP9 $_css3={radius}>
     H
   </_StyledP9>;
-const LocalCssHelperProp = (p)=><_StyledP10 $_css3={p.color}>
+const LocalCssHelperProp = (p)=><_StyledP10 $_css4={p.color}>
     A
   </_StyledP10>;
 const DynamicCssHelperProp = (p)=><_StyledP11>
@@ -54,13 +54,13 @@ const globalVar = '"foo"';
 const getAfterValue = ()=>'"bar"';
 const ObjectPropMixedInputs = (p)=>{
     const color = "red";
-    return <_StyledP12 $_css4={p.background} $_css5={color} $_css6={globalVar} $_css7={getAfterValue()}>
+    return <_StyledP12 $_css5={p.background} $_css6={color} $_css7={globalVar} $_css8={getAfterValue()}>
       A
     </_StyledP12>;
 };
 const SpreadObjectPropMixedInputs = (p)=>{
     const color = "red";
-    return <_StyledP13 $_css8={globalVar} $_css9={getAfterValue()} $_css10={globalVar} $_css11={getAfterValue()} $_css12={p.background} $_css13={globalVar} $_css14={getAfterValue()}>
+    return <_StyledP13 $_css9={globalVar} $_css10={getAfterValue()} $_css11={globalVar} $_css12={getAfterValue()} $_css13={p.background} $_css14={globalVar} $_css15={getAfterValue()}>
       A
     </_StyledP13>;
 };
@@ -75,7 +75,7 @@ var _StyledThing6 = styled(Thing3).withConfig({
     displayName: "code___StyledThing6",
     componentId: "sc-35b1796-3"
 })((p)=>({
-        [p.$_css19]: {
+        [p.$_css20]: {
             color: "red"
         }
     }));
@@ -83,7 +83,7 @@ var _StyledThing5 = styled(Thing3).withConfig({
     displayName: "code___StyledThing5",
     componentId: "sc-35b1796-4"
 })((p)=>({
-        [p.$_css18]: {
+        [p.$_css19]: {
             color: "red"
         }
     }));
@@ -91,7 +91,7 @@ var _StyledThing4 = styled(Thing3).withConfig({
     displayName: "code___StyledThing4",
     componentId: "sc-35b1796-5"
 })((p)=>({
-        [p.$_css17]: {
+        [p.$_css18]: {
             color: "red"
         }
     }));
@@ -99,7 +99,7 @@ var _StyledThing3 = styled(Thing3).withConfig({
     displayName: "code___StyledThing3",
     componentId: "sc-35b1796-6"
 })((p)=>({
-        color: p.$_css16
+        color: p.$_css17
     }));
 var _StyledThing = styled(Thing3).withConfig({
     displayName: "code___StyledThing",
@@ -115,31 +115,31 @@ function Thing4(props1) {
 const RequiredComponentUsage = (p)=><_StyledSomeOtherComponent/>;
 const ObjectInterpolation = (p)=>{
     const theme = useTheme();
-    return <_StyledP14 $_css15={theme.colors.red}>
+    return <_StyledP14 $_css16={theme.colors.red}>
       H
     </_StyledP14>;
 };
 const ObjectInterpolationCustomComponent = (p)=>{
     const theme = useTheme();
-    return <_StyledThing3 $_css16={theme.colors.red}>
+    return <_StyledThing3 $_css17={theme.colors.red}>
       H
     </_StyledThing3>;
 };
 const ObjectInterpolationInKey = (p)=>{
     const theme = useTheme();
-    return <_StyledThing4 $_css17={theme.breakpoints.md}>
+    return <_StyledThing4 $_css18={theme.breakpoints.md}>
       H
     </_StyledThing4>;
 };
 const ObjectFnInterpolationInKey = (p)=>{
     const theme = useTheme();
-    return <_StyledThing5 $_css18={theme.breakpoints.md()}>
+    return <_StyledThing5 $_css19={theme.breakpoints.md()}>
       H
     </_StyledThing5>;
 };
 const ObjectFnSimpleInterpolationInKey = (p)=>{
     const foo = "@media screen and (max-width: 600px)";
-    return <_StyledThing6 $_css19={foo}>
+    return <_StyledThing6 $_css20={foo}>
       H
     </_StyledThing6>;
 };
@@ -148,7 +148,7 @@ const ObjectPropWithSpread = ()=>{
         color: "red"
     };
     const playing = true;
-    return <_StyledDiv $_css20={css} $_css21={playing ? {
+    return <_StyledDiv $_css21={css} $_css22={playing ? {
         opacity: 0,
         bottom: "-100px"
     } : {}}/>;
@@ -234,14 +234,14 @@ var _StyledP9 = styled("p").withConfig({
 })([
     `border-radius:`,
     `px;`
-], radius);
+], (p)=>p.$_css3);
 var _StyledP10 = styled("p").withConfig({
     displayName: "code___StyledP10",
     componentId: "sc-35b1796-21"
 })([
     `color:`,
     `;`
-], (p)=>p.$_css3);
+], (p)=>p.$_css4);
 var _StyledP11 = styled("p").withConfig({
     displayName: "code___StyledP11",
     componentId: "sc-35b1796-22"
@@ -277,14 +277,14 @@ var _StyledP12 = styled("p").withConfig({
     displayName: "code___StyledP12",
     componentId: "sc-35b1796-27"
 })((p)=>({
-        background: p.$_css4,
-        color: p.$_css5,
+        background: p.$_css5,
+        color: p.$_css6,
         textAlign: "left",
         "::before": {
-            content: p.$_css6
+            content: p.$_css7
         },
         "::after": {
-            content: p.$_css7
+            content: p.$_css8
         }
     }));
 var _StyledP13 = styled("p").withConfig({
@@ -293,39 +293,39 @@ var _StyledP13 = styled("p").withConfig({
 })((p)=>({
         ...{
             "::before": {
-                content: p.$_css8
+                content: p.$_css9
             },
             "::after": {
-                content: p.$_css9
+                content: p.$_css10
             },
             ...{
                 "::before": {
-                    content: p.$_css10
+                    content: p.$_css11
                 },
                 "::after": {
-                    content: p.$_css11
+                    content: p.$_css12
                 }
             }
         },
-        background: p.$_css12,
+        background: p.$_css13,
         textAlign: "left",
         "::before": {
-            content: p.$_css13
+            content: p.$_css14
         },
         "::after": {
-            content: p.$_css14
+            content: p.$_css15
         }
     }));
 var _StyledP14 = styled("p").withConfig({
     displayName: "code___StyledP14",
     componentId: "sc-35b1796-29"
 })((p)=>({
-        color: p.$_css15
+        color: p.$_css16
     }));
 var _StyledDiv = styled("div").withConfig({
     displayName: "code___StyledDiv",
     componentId: "sc-35b1796-30"
 })((p)=>({
-        ...p.$_css20,
-        ...p.$_css21
+        ...p.$_css21,
+        ...p.$_css22
     }));

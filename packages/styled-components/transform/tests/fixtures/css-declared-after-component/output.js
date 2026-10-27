@@ -2,7 +2,7 @@ import _styled from "styled-components";
 import React from "react";
 import { css } from "styled-components";
 export default function Example() {
-    return <_StyledDiv>oops</_StyledDiv>;
+    return <_StyledDiv $_css={someCss}>oops</_StyledDiv>;
 }
 const someCss = css([
     `color:red;`
@@ -13,4 +13,4 @@ var _StyledDiv = _styled("div").withConfig({
 })([
     ``,
     ``
-], someCss);
+], (p)=>p.$_css);

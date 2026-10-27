@@ -9,13 +9,19 @@ const someCss = css([
     \`background:purple;\`
 ]);
 const App1 = ()=>{
-    return /*#__PURE__*/ React.createElement(_StyledIcons, null);
+    return /*#__PURE__*/ React.createElement(_StyledIcons, {
+        $_css: someCss
+    });
 };
 const App2 = ()=>{
-    return /*#__PURE__*/ React.createElement(_StyledIconsFoo, null);
+    return /*#__PURE__*/ React.createElement(_StyledIconsFoo, {
+        $_css2: someCss
+    });
 };
 const App3 = ()=>{
-    return /*#__PURE__*/ React.createElement(_StyledIconsFooBar, null);
+    return /*#__PURE__*/ React.createElement(_StyledIconsFooBar, {
+        $_css3: someCss
+    });
 };
 var _StyledIcons = _styled(Icons).withConfig({
     displayName: "test___StyledIcons",
@@ -23,21 +29,21 @@ var _StyledIcons = _styled(Icons).withConfig({
 })([
     \`\`,
     \`\`
-], someCss);
+], (p)=>p.$_css);
 var _StyledIconsFoo = _styled(Icons.Foo).withConfig({
     displayName: "test___StyledIconsFoo",
     componentId: "sc-d2582aa7-1"
 })([
     \`\`,
     \`\`
-], someCss);
+], (p)=>p.$_css2);
 var _StyledIconsFooBar = _styled(Icons.Foo.Bar).withConfig({
     displayName: "test___StyledIconsFooBar",
     componentId: "sc-d2582aa7-2"
 })([
     \`\`,
     \`\`
-], someCss);
+], (p)=>p.$_css3);
 "
 `;
 
@@ -382,7 +388,9 @@ exports[`Should load styled-components wasm plugin correctly > Should transform 
 import React from "react";
 import { css } from "styled-components";
 export default function Example() {
-    return /*#__PURE__*/ React.createElement(_StyledDiv, null, "oops");
+    return /*#__PURE__*/ React.createElement(_StyledDiv, {
+        $_css: someCss
+    }, "oops");
 }
 const someCss = css([
     \`color:red;\`
@@ -393,7 +401,75 @@ var _StyledDiv = _styled("div").withConfig({
 })([
     \`\`,
     \`\`
-], someCss);
+], (p)=>p.$_css);
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform css-prop-read-site correctly 1`] = `
+"import styled from "styled-components";
+const Box = ({ children, ...rest })=>/*#__PURE__*/ React.createElement("div", rest, children);
+var _StyledBox = styled(Box)\`color: \${(p)=>p.$_css}\`;
+const COLOR = "red";
+export default function Home() {
+    return /*#__PURE__*/ React.createElement(_StyledBox, {
+        $_css: COLOR
+    }, "Red color text");
+}
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform css-prop-read-site-expressions correctly 1`] = `
+"import styled, { css } from "styled-components";
+const Box = styled.div\`\`;
+var _StyledBox = styled(Box)\`color: \${(p)=>p.$_css}; background: \${(p)=>p.$_css2}; border-color: \${(p)=>p.$_css3};\`;
+export function Home() {
+    return /*#__PURE__*/ React.createElement(_StyledBox, {
+        $_css: palette[current](),
+        $_css2: getColor(),
+        $_css3: palette.red
+    });
+}
+const palette = {
+    red: "red",
+    getRed: ()=>"red"
+};
+const current = "getRed";
+const getColor = ()=>"blue";
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform css-prop-read-site-hoisted correctly 1`] = `
+"import styled from "styled-components";
+const Box = styled.div\`\`;
+var _StyledBox = styled(Box)\`color: \${(p)=>p.$_css}; background: \${(p)=>p.$_css2};\`;
+export const node = /*#__PURE__*/ React.createElement(_StyledBox, {
+    $_css: getColor(),
+    $_css2: color
+});
+function getColor() {
+    return "red";
+}
+import { color } from "./colors";
+"
+`;
+
+exports[`Should load styled-components wasm plugin correctly > Should transform css-prop-read-site-mutable correctly 1`] = `
+"import styled from "styled-components";
+const Box = styled.div\`\`;
+var _StyledBox = styled(Box)\`color: \${(p)=>p.$_css}; background: \${(p)=>p.$_css2};\`;
+let color = "red";
+let calls = 0;
+export function Home() {
+    return /*#__PURE__*/ React.createElement(_StyledBox, {
+        $_css: color,
+        $_css2: getColor()
+    });
+}
+function getColor() {
+    calls++;
+    return color;
+}
+color = "blue";
 "
 `;
 
@@ -694,9 +770,11 @@ const LocalInterpolation = (p)=>/*#__PURE__*/ React.createElement(_StyledP7, {
     }, "H");
 const FuncInterpolation = (p)=>/*#__PURE__*/ React.createElement(_StyledP8, null, "H");
 const radius = 10;
-const GlobalInterpolation = (p)=>/*#__PURE__*/ React.createElement(_StyledP9, null, "H");
+const GlobalInterpolation = (p)=>/*#__PURE__*/ React.createElement(_StyledP9, {
+        $_css3: radius
+    }, "H");
 const LocalCssHelperProp = (p)=>/*#__PURE__*/ React.createElement(_StyledP10, {
-        $_css3: p.color
+        $_css4: p.color
     }, "A");
 const DynamicCssHelperProp = (p)=>/*#__PURE__*/ React.createElement(_StyledP11, null, "A");
 const CustomCompWithDot = (p)=>/*#__PURE__*/ React.createElement(_StyledButtonGhost, null, "H");
@@ -708,61 +786,61 @@ const Thing3 = styled.div\`
   color: blue;
 \`;
 var _StyledThing5 = _styled(Thing3)((p)=>({
-        [p.$_css8]: {
+        [p.$_css9]: {
             color: "red"
         }
     }));
 var _StyledThing4 = _styled(Thing3)((p)=>({
-        [p.$_css7]: {
+        [p.$_css8]: {
             color: "red"
         }
     }));
 var _StyledThing3 = _styled(Thing3)((p)=>({
-        [p.$_css6]: {
+        [p.$_css7]: {
             color: "red"
         }
     }));
 var _StyledThing2 = _styled(Thing3)((p)=>({
-        color: p.$_css5
+        color: p.$_css6
     }));
 var _StyledThing = _styled(Thing3)\`color: red;\`;
 const ObjectInterpolation = (p)=>{
     const theme = useTheme();
     return /*#__PURE__*/ React.createElement(_StyledP12, {
-        $_css4: theme.colors.red
+        $_css5: theme.colors.red
     }, "H");
 };
 const ObjectInterpolationCustomComponent = (p)=>{
     const theme = useTheme();
     return /*#__PURE__*/ React.createElement(_StyledThing2, {
-        $_css5: theme.colors.red
+        $_css6: theme.colors.red
     }, "H");
 };
 const ObjectInterpolationInKey = (p)=>{
     const theme = useTheme();
     return /*#__PURE__*/ React.createElement(_StyledThing3, {
-        $_css6: theme.breakpoints.md
+        $_css7: theme.breakpoints.md
     }, "H");
 };
 const ObjectFnInterpolationInKey = (p)=>{
     const theme = useTheme();
     return /*#__PURE__*/ React.createElement(_StyledThing4, {
-        $_css7: theme.breakpoints.md()
+        $_css8: theme.breakpoints.md()
     }, "H");
 };
 const ObjectFnSimpleInterpolationInKey = (p)=>{
     const foo = "@media screen and (max-width: 600px)";
     return /*#__PURE__*/ React.createElement(_StyledThing5, {
-        $_css8: foo
+        $_css9: foo
     }, "H");
 };
 const ObjectPropMixedInputs = (p)=>{
     const color = "red";
     return /*#__PURE__*/ React.createElement(_StyledP13, {
-        $_css9: p.background,
-        $_css10: color,
-        $_css11: globalVar,
-        $_css12: getAfterValue()
+        $_css10: p.background,
+        $_css11: color,
+        $_css12: globalVar,
+        $_css13: getAfterValue()
     }, "A");
 };
 const ObjectPropWithSpread = ()=>{
@@ -771,8 +849,8 @@ const ObjectPropWithSpread = ()=>{
     };
     const playing = true;
     return /*#__PURE__*/ React.createElement(_StyledDiv, {
-        $_css13: css1,
-        $_css14: playing ? {
+        $_css14: css1,
+        $_css15: playing ? {
             opacity: 0,
             bottom: "-100px"
         } : {}
@@ -782,16 +860,18 @@ const id = (x)=>x;
 const LocalCallInterpolation = (p)=>{
     const color = "red";
     return /*#__PURE__*/ React.createElement(_StyledP14, {
-        $_css15: id(color)
+        $_css16: id(color)
     }, "H");
 };
 const LocalCallInterpolation2 = ()=>{
-    return /*#__PURE__*/ React.createElement(_StyledP15, null, "H");
+    return /*#__PURE__*/ React.createElement(_StyledP15, {
+        $_css17: id("red")
+    }, "H");
 };
 const LocalCallCssHelperProp = (p)=>{
     const color = "red";
     return /*#__PURE__*/ React.createElement(_StyledP16, {
-        $_css16: id(color)
+        $_css18: id(color)
     }, "H");
 };
 // https://github.com/vercel/next.js/issues/38914
@@ -800,7 +880,8 @@ function Home() {
         x: 4
     };
     return /*#__PURE__*/ React.createElement(_StyledDiv2, {
-        $_css17: myCss(x)
+        $_css19: myCss(2),
+        $_css20: myCss(x)
     });
 }
 const myCss = (x)=>css\`
@@ -819,28 +900,30 @@ const colorMap2 = {
 const LocalMemberInterpolation = (p)=>{
     const color = "red";
     return /*#__PURE__*/ React.createElement(_StyledP17, {
-        $_css18: colorMap[color]
+        $_css21: colorMap[color]
     }, "H");
 };
 const LocalMemberInterpolation2 = (p)=>{
     const color = "red";
     return /*#__PURE__*/ React.createElement(_StyledP18, {
-        $_css19: colorMap[colorMap2[color]]
+        $_css22: colorMap[colorMap2[color]]
     }, "H");
 };
 const LocalMemberInterpolation3 = (p)=>{
     const color = "red";
     return /*#__PURE__*/ React.createElement(_StyledP19, {
-        $_css20: colorMap[id(color)]
+        $_css23: colorMap[id(color)]
     }, "H");
 };
 const LocalMemberInterpolation4 = ()=>{
-    return /*#__PURE__*/ React.createElement(_StyledP20, null, "H");
+    return /*#__PURE__*/ React.createElement(_StyledP20, {
+        $_css24: colorMap["red"]
+    }, "H");
 };
 const LocalMemberCssHelperProp = (p)=>{
     const color = "red";
     return /*#__PURE__*/ React.createElement(_StyledP21, {
-        $_css21: colorMap[color]
+        $_css25: colorMap[color]
     }, "H");
 };
 var _StyledP = _styled("p")\`flex: 1;\`;
@@ -863,10 +946,10 @@ var _StyledP8 = _styled("p")\`
       color: \${(props1)=>props1.theme.a};
     \`;
 var _StyledP9 = _styled("p")\`
-      border-radius: \${radius}px;
+      border-radius: \${(p)=>p.$_css3}px;
     \`;
 var _StyledP10 = _styled("p")\`
-      color: \${(p)=>p.$_css3};
+      color: \${(p)=>p.$_css4};
     \`;
 var _StyledP11 = _styled("p")\`
       color: \${(props1)=>props1.theme.color};
@@ -876,53 +959,53 @@ var _StyledButtonGhostNew = _styled(Button.Ghost.New)\`flex: 1\`;
 var _StyledButtonGhost2 = _styled(button.ghost)\`flex: 1\`;
 var _StyledButtonGhost3 = _styled("button-ghost")\`flex: 1\`;
 var _StyledP12 = _styled("p")((p)=>({
-        color: p.$_css4
+        color: p.$_css5
     }));
 var _StyledP13 = _styled("p")((p)=>({
-        background: p.$_css9,
-        color: p.$_css10,
+        background: p.$_css10,
+        color: p.$_css11,
         textAlign: "left",
         "::before": {
-            content: p.$_css11
+            content: p.$_css12
         },
         "::after": {
-            content: p.$_css12
+            content: p.$_css13
         }
     }));
 var _StyledDiv = _styled("div")((p)=>({
-        ...p.$_css13,
-        ...p.$_css14
+        ...p.$_css14,
+        ...p.$_css15
     }));
 var _StyledP14 = _styled("p")\`
-        color: \${(p)=>p.$_css15};
+        color: \${(p)=>p.$_css16};
       \`;
 var _StyledP15 = _styled("p")\`
         /* direct call */
-        color: \${id("red")};
+        color: \${(p)=>p.$_css17};
       \`;
 var _StyledP16 = _styled("p")\`
-        color: \${(p)=>p.$_css16};
+        color: \${(p)=>p.$_css18};
       \`;
 var _StyledDiv2 = _styled("div")\`
         /* direct */
-        \${myCss(2)}
+        \${(p)=>p.$_css19}
         /* indirect */
-      \${(p)=>p.$_css17}
+      \${(p)=>p.$_css20}
       \`;
 var _StyledP17 = _styled("p")\`
-        color: \${(p)=>p.$_css18};
+        color: \${(p)=>p.$_css21};
       \`;
 var _StyledP18 = _styled("p")\`
-        color: \${(p)=>p.$_css19};
+        color: \${(p)=>p.$_css22};
       \`;
 var _StyledP19 = _styled("p")\`
-        color: \${(p)=>p.$_css20};
+        color: \${(p)=>p.$_css23};
       \`;
 var _StyledP20 = _styled("p")\`
-        color: \${colorMap["red"]};
+        color: \${(p)=>p.$_css24};
       \`;
 var _StyledP21 = _styled("p")\`
-        color: \${(p)=>p.$_css21};
+        color: \${(p)=>p.$_css25};
       \`;
 "
 `;
@@ -989,9 +1072,11 @@ const LocalInterpolation = (p)=>/*#__PURE__*/ React.createElement(_StyledP7, {
     }, "H");
 const FuncInterpolation = (p)=>/*#__PURE__*/ React.createElement(_StyledP8, null, "H");
 const radius = 10;
-const GlobalInterpolation = (p)=>/*#__PURE__*/ React.createElement(_StyledP9, null, "H");
+const GlobalInterpolation = (p)=>/*#__PURE__*/ React.createElement(_StyledP9, {
+        $_css3: radius
+    }, "H");
 const LocalCssHelperProp = (p)=>/*#__PURE__*/ React.createElement(_StyledP10, {
-        $_css3: p.color
+        $_css4: p.color
     }, "A");
 const DynamicCssHelperProp = (p)=>/*#__PURE__*/ React.createElement(_StyledP11, null, "A");
 const CustomCompWithDot = (p)=>/*#__PURE__*/ React.createElement(_StyledButtonGhost, null, "H");
@@ -1003,22 +1088,22 @@ const getAfterValue = ()=>'"bar"';
 const ObjectPropMixedInputs = (p)=>{
     const color = "red";
     return /*#__PURE__*/ React.createElement(_StyledP12, {
-        $_css4: p.background,
-        $_css5: color,
-        $_css6: globalVar,
-        $_css7: getAfterValue()
+        $_css5: p.background,
+        $_css6: color,
+        $_css7: globalVar,
+        $_css8: getAfterValue()
     }, "A");
 };
 const SpreadObjectPropMixedInputs = (p)=>{
     const color = "red";
     return /*#__PURE__*/ React.createElement(_StyledP13, {
-        $_css8: globalVar,
-        $_css9: getAfterValue(),
-        $_css10: globalVar,
-        $_css11: getAfterValue(),
-        $_css12: p.background,
-        $_css13: globalVar,
-        $_css14: getAfterValue()
+        $_css9: globalVar,
+        $_css10: getAfterValue(),
+        $_css11: globalVar,
+        $_css12: getAfterValue(),
+        $_css13: p.background,
+        $_css14: globalVar,
+        $_css15: getAfterValue()
     }, "A");
 };
 /* styled component defined after function it's used in */ const EarlyUsageComponent = (p)=>/*#__PURE__*/ React.createElement(_StyledThing, null);
@@ -1032,7 +1117,7 @@ var _StyledThing6 = styled(Thing3).withConfig({
     displayName: "test___StyledThing6",
     componentId: "sc-35b1796-3"
 })((p)=>({
-        [p.$_css19]: {
+        [p.$_css20]: {
             color: "red"
         }
     }));
@@ -1040,7 +1125,7 @@ var _StyledThing5 = styled(Thing3).withConfig({
     displayName: "test___StyledThing5",
     componentId: "sc-35b1796-4"
 })((p)=>({
-        [p.$_css18]: {
+        [p.$_css19]: {
             color: "red"
         }
     }));
@@ -1048,7 +1133,7 @@ var _StyledThing4 = styled(Thing3).withConfig({
     displayName: "test___StyledThing4",
     componentId: "sc-35b1796-5"
 })((p)=>({
-        [p.$_css17]: {
+        [p.$_css18]: {
             color: "red"
         }
     }));
@@ -1056,7 +1141,7 @@ var _StyledThing3 = styled(Thing3).withConfig({
     displayName: "test___StyledThing3",
     componentId: "sc-35b1796-6"
 })((p)=>({
-        color: p.$_css16
+        color: p.$_css17
     }));
 var _StyledThing = styled(Thing3).withConfig({
     displayName: "test___StyledThing",
@@ -1073,31 +1158,31 @@ const RequiredComponentUsage = (p)=>/*#__PURE__*/ React.createElement(_StyledSom
 const ObjectInterpolation = (p)=>{
     const theme = useTheme();
     return /*#__PURE__*/ React.createElement(_StyledP14, {
-        $_css15: theme.colors.red
+        $_css16: theme.colors.red
     }, "H");
 };
 const ObjectInterpolationCustomComponent = (p)=>{
     const theme = useTheme();
     return /*#__PURE__*/ React.createElement(_StyledThing3, {
-        $_css16: theme.colors.red
+        $_css17: theme.colors.red
     }, "H");
 };
 const ObjectInterpolationInKey = (p)=>{
     const theme = useTheme();
     return /*#__PURE__*/ React.createElement(_StyledThing4, {
-        $_css17: theme.breakpoints.md
+        $_css18: theme.breakpoints.md
     }, "H");
 };
 const ObjectFnInterpolationInKey = (p)=>{
     const theme = useTheme();
     return /*#__PURE__*/ React.createElement(_StyledThing5, {
-        $_css18: theme.breakpoints.md()
+        $_css19: theme.breakpoints.md()
     }, "H");
 };
 const ObjectFnSimpleInterpolationInKey = (p)=>{
     const foo = "@media screen and (max-width: 600px)";
     return /*#__PURE__*/ React.createElement(_StyledThing6, {
-        $_css19: foo
+        $_css20: foo
     }, "H");
 };
 const ObjectPropWithSpread = ()=>{
@@ -1106,8 +1191,8 @@ const ObjectPropWithSpread = ()=>{
     };
     const playing = true;
     return /*#__PURE__*/ React.createElement(_StyledDiv, {
-        $_css20: css,
-        $_css21: playing ? {
+        $_css21: css,
+        $_css22: playing ? {
             opacity: 0,
             bottom: "-100px"
         } : {}
@@ -1194,14 +1279,14 @@ var _StyledP9 = styled("p").withConfig({
 })([
     \`border-radius:\`,
     \`px;\`
-], radius);
+], (p)=>p.$_css3);
 var _StyledP10 = styled("p").withConfig({
     displayName: "test___StyledP10",
     componentId: "sc-35b1796-21"
 })([
     \`color:\`,
     \`;\`
-], (p)=>p.$_css3);
+], (p)=>p.$_css4);
 var _StyledP11 = styled("p").withConfig({
     displayName: "test___StyledP11",
     componentId: "sc-35b1796-22"
@@ -1237,14 +1322,14 @@ var _StyledP12 = styled("p").withConfig({
     displayName: "test___StyledP12",
     componentId: "sc-35b1796-27"
 })((p)=>({
-        background: p.$_css4,
-        color: p.$_css5,
+        background: p.$_css5,
+        color: p.$_css6,
         textAlign: "left",
         "::before": {
-            content: p.$_css6
+            content: p.$_css7
         },
         "::after": {
-            content: p.$_css7
+            content: p.$_css8
         }
     }));
 var _StyledP13 = styled("p").withConfig({
@@ -1253,41 +1338,41 @@ var _StyledP13 = styled("p").withConfig({
 })((p)=>({
         ...{
             "::before": {
-                content: p.$_css8
+                content: p.$_css9
             },
             "::after": {
-                content: p.$_css9
+                content: p.$_css10
             },
             ...{
                 "::before": {
-                    content: p.$_css10
+                    content: p.$_css11
                 },
                 "::after": {
-                    content: p.$_css11
+                    content: p.$_css12
                 }
             }
         },
-        background: p.$_css12,
+        background: p.$_css13,
         textAlign: "left",
         "::before": {
-            content: p.$_css13
+            content: p.$_css14
         },
         "::after": {
-            content: p.$_css14
+            content: p.$_css15
         }
     }));
 var _StyledP14 = styled("p").withConfig({
     displayName: "test___StyledP14",
     componentId: "sc-35b1796-29"
 })((p)=>({
-        color: p.$_css15
+        color: p.$_css16
     }));
 var _StyledDiv = styled("div").withConfig({
     displayName: "test___StyledDiv",
     componentId: "sc-35b1796-30"
 })((p)=>({
-        ...p.$_css20,
-        ...p.$_css21
+        ...p.$_css21,
+        ...p.$_css22
     }));
 "
 `;
