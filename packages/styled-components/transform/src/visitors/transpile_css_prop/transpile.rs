@@ -244,12 +244,9 @@ impl VisitMut for TranspileCssProp<'_> {
                                 .take()
                                 .into_iter()
                                 .fold(vec![], |mut acc, mut expr| {
-                                    if expr.is_fn_expr()
-                                        || expr.is_arrow()
-                                        || is_direct_access(&expr, &|id| {
-                                            self.is_top_level_ident(id)
-                                        })
-                                    {
+                                    // Binding reads and calls must stay at the JSX evaluation site.
+                                    // Hoisting them can read uninitialized or stale values.
+                                    if expr.is_fn_expr() || expr.is_arrow() || expr.is_lit() {
                                         acc.push(expr);
                                         return acc;
                                     }
@@ -643,42 +640,5 @@ fn get_name_of_jsx_obj(el: &JSXObject) -> Atom {
         }
         #[cfg(swc_ast_unknown)]
         _ => panic!("unknown node"),
-    }
-}
-
-fn trace_root_value(e: &Expr) -> Option<&Expr> {
-    match e {
-        Expr::Member(e) => trace_root_value(&e.obj),
-        Expr::Call(e) => match &e.callee {
-            Callee::Expr(e) => trace_root_value(e),
-            _ => None,
-        },
-        Expr::Ident(_) => Some(e),
-        Expr::Lit(_) => Some(e),
-        _ => None,
-    }
-}
-
-fn is_direct_access<F>(expr: &Expr, is_top_level_ident: &F) -> bool
-where
-    F: Fn(&Ident) -> bool,
-{
-    if let Some(root) = trace_root_value(expr) {
-        match root {
-            Expr::Lit(_) => true,
-            Expr::Ident(id) if is_top_level_ident(id) => match expr {
-                Expr::Call(CallExpr { args, .. }) => args
-                    .iter()
-                    .all(|arg| -> bool { is_direct_access(&arg.expr, is_top_level_ident) }),
-                Expr::Member(MemberExpr {
-                    prop: MemberProp::Computed(ComputedPropName { expr, .. }),
-                    ..
-                }) => is_direct_access(expr, is_top_level_ident),
-                _ => true,
-            },
-            _ => false,
-        }
-    } else {
-        false
     }
 }
