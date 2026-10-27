@@ -1,0 +1,7 @@
+{
+  "cssProp": true,
+  "ssr": false,
+  "displayName": false,
+  "minify": false,
+  "transpileTemplateLiterals": true
+}
