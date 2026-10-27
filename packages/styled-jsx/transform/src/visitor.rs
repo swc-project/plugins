@@ -5,15 +5,17 @@ use preset_env_base::Versions;
 use rustc_hash::FxHashSet;
 use serde::Deserialize;
 use swc_common::{
-    errors::HANDLER, util::take::Take, FileName, SourceMap, SourceMapper, Span, Spanned, DUMMY_SP,
+    errors::HANDLER, util::take::Take, FileName, Mark, SourceMap, SourceMapper, Span, Spanned,
+    DUMMY_SP,
 };
 use swc_ecma_ast::*;
 use swc_ecma_minifier::{
     eval::{EvalResult, Evaluator},
     marks::Marks,
 };
+use swc_ecma_transforms_react::{jsx, Options as JsxOptions};
 use swc_ecma_utils::{collect_decls, prepend_stmt, private_ident};
-use swc_ecma_visit::{Fold, FoldWith, Visit, VisitWith};
+use swc_ecma_visit::{Fold, FoldWith, Visit, VisitMutWith, VisitWith};
 
 use crate::{
     style::{ExternalStyle, JSXStyle, LocalStyle},
@@ -455,7 +457,21 @@ impl Fold for StyledJSXTransformer<'_> {
 
     fn fold_module(&mut self, module: Module) -> Module {
         self.bindings = collect_decls(&module);
-        self.evaluator = Some(Evaluator::new(module.clone(), Marks::new()));
+        let marks = Marks::new();
+        let mut evaluation_module = module.clone();
+        // The evaluator runs the minifier, which requires JSX-free input. Lower JSX
+        // only in this copy so that expressions and their side effects are preserved.
+        evaluation_module.visit_mut_with(&mut jsx::<swc_common::comments::SingleThreadedComments>(
+            self.cm.clone(),
+            None,
+            JsxOptions {
+                throw_if_namespace: Some(false),
+                ..Default::default()
+            },
+            Mark::new(),
+            marks.unresolved_mark,
+        ));
+        self.evaluator = Some(Evaluator::new(evaluation_module, marks));
         self.style_import_name = Some(get_usable_import_specifier(&module.body));
         let module = module.fold_children_with(self);
         if self.file_has_css_resolve
