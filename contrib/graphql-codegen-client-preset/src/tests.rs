@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use swc_core::{
     ecma::{
         parser::{Syntax, TsSyntax},
-        transforms::testing::{test, test_fixture},
+        transforms::testing::{test, test_fixture, test_inline},
         visit::visit_mut_pass,
     },
     testing,
@@ -18,6 +18,7 @@ fn get_test_code_visitor() -> GraphQLVisitor {
         artifact_directory: "./src/gql".to_string(),
         gql_tag_name: "gql".to_string(),
         naming_convention: "change-case-all#pascalCase".to_string(),
+        document_naming: DocumentNamingOptions::default(),
     })
 }
 
@@ -28,6 +29,7 @@ fn get_test_code_visitor_upper_case_first() -> GraphQLVisitor {
         artifact_directory: "./src/gql".to_string(),
         gql_tag_name: "gql".to_string(),
         naming_convention: "change-case-all#upperCaseFirst".to_string(),
+        document_naming: DocumentNamingOptions::default(),
     })
 }
 
@@ -52,6 +54,7 @@ fn import_files_from_same_directory(input_path: PathBuf) {
                 artifact_directory: "./tests/fixtures".to_string(),
                 gql_tag_name: "gql".to_string(),
                 naming_convention: "change-case-all#pascalCase".to_string(),
+                document_naming: DocumentNamingOptions::default(),
             }))
         },
         &input_path,
@@ -84,6 +87,7 @@ fn import_files_from_other_directory(input_path: PathBuf) {
                 artifact_directory: cwd.to_string_lossy().to_string(),
                 gql_tag_name: "gql".to_string(),
                 naming_convention: "change-case-all#pascalCase".to_string(),
+                document_naming: DocumentNamingOptions::default(),
             }))
         },
         &input_path,
@@ -102,6 +106,7 @@ fn get_windows_path_visitor() -> GraphQLVisitor {
         artifact_directory: "C:\\Users\\user\\project\\src\\gql".to_string(),
         gql_tag_name: "gql".to_string(),
         naming_convention: "change-case-all#pascalCase".to_string(),
+        document_naming: DocumentNamingOptions::default(),
     })
 }
 
@@ -308,4 +313,142 @@ fn plugin_options_object_without_type_names_uses_default_naming_convention() {
         options.namingConvention.as_type_name_convention(),
         "change-case-all#pascalCase"
     );
+}
+
+fn visitor_with_options(config: &str) -> GraphQLVisitor {
+    let options: PluginOptions = serde_json::from_str(config).unwrap();
+    let mut visitor = get_test_code_visitor();
+    visitor.options.document_naming = options.document_naming;
+    visitor.options.naming_convention = options.namingConvention.as_type_name_convention();
+    visitor
+}
+
+test_inline!(
+    Default::default(),
+    |_| visit_mut_pass(visitor_with_options(
+        r#"{
+        "artifactDirectory": "./src/gql",
+        "documentVariableSuffix": "",
+        "fragmentVariableSuffix": ""
+    }"#
+    )),
+    empty_document_suffixes,
+    r#"import gql from "gql-tag";
+    const query = gql(`query GetUser { id }`);
+    const mutation = gql(`mutation CreateUser { id }`);
+    const subscription = gql(`subscription WatchUser { id }`);
+    const fragment = gql(`fragment User on User { id }`);"#,
+    r#"import { GetUser } from "./src/gql/graphql";
+    import { CreateUser } from "./src/gql/graphql";
+    import { WatchUser } from "./src/gql/graphql";
+    import { User } from "./src/gql/graphql";
+    import gql from "gql-tag";
+    const query = GetUser;
+    const mutation = CreateUser;
+    const subscription = WatchUser;
+    const fragment = User;"#
+);
+
+test_inline!(
+    Default::default(),
+    |_| visit_mut_pass(visitor_with_options(
+        r#"{
+        "artifactDirectory": "./src/gql",
+        "documentVariablePrefix": "generated",
+        "documentVariableSuffix": "Node",
+        "fragmentVariablePrefix": "shared",
+        "fragmentVariableSuffix": "Part"
+    }"#
+    )),
+    custom_document_affixes_follow_naming_convention,
+    r#"import gql from "gql-tag";
+    const query = gql(`query GetUser { id }`);
+    const mutation = gql(`mutation CreateUser { id }`);
+    const subscription = gql(`subscription WatchUser { id }`);
+    const fragment = gql(`fragment User on User { id }`);"#,
+    r#"import { GeneratedGetUserNode } from "./src/gql/graphql";
+    import { GeneratedCreateUserNode } from "./src/gql/graphql";
+    import { GeneratedWatchUserNode } from "./src/gql/graphql";
+    import { SharedUserPart } from "./src/gql/graphql";
+    import gql from "gql-tag";
+    const query = GeneratedGetUserNode;
+    const mutation = GeneratedCreateUserNode;
+    const subscription = GeneratedWatchUserNode;
+    const fragment = SharedUserPart;"#
+);
+
+test_inline!(
+    Default::default(),
+    |_| visit_mut_pass(visitor_with_options(
+        r#"{
+        "artifactDirectory": "./src/gql",
+        "dedupeOperationSuffix": true,
+        "namingConvention": "keep"
+    }"#
+    )),
+    dedupe_fragment_suffix_case_insensitively,
+    r#"import gql from "gql-tag";
+    const query = gql(`query GetUserDocument { id }`);
+    const fragment = gql(`fragment UserFRAGMENT on User { id }`);
+    const other = gql(`fragment User on User { id }`);"#,
+    r#"import { GetUserDocumentDocument } from "./src/gql/graphql";
+    import { UserFRAGMENTDoc } from "./src/gql/graphql";
+    import { UserFragmentDoc } from "./src/gql/graphql";
+    import gql from "gql-tag";
+    const query = GetUserDocumentDocument;
+    const fragment = UserFRAGMENTDoc;
+    const other = UserFragmentDoc;"#
+);
+
+test_inline!(
+    Default::default(),
+    |_| visit_mut_pass(visitor_with_options(
+        r#"{
+        "artifactDirectory": "./src/gql",
+        "omitOperationSuffix": true,
+        "dedupeOperationSuffix": true,
+        "documentVariablePrefix": "op",
+        "documentVariableSuffix": "Node",
+        "fragmentVariablePrefix": "shared",
+        "fragmentVariableSuffix": "FragmentNode"
+    }"#
+    )),
+    omit_fragment_suffix_takes_precedence,
+    r#"import gql from "gql-tag";
+    const query = gql(`query GetUser { id }`);
+    const fragment = gql(`fragment UserFragment on User { id }`);"#,
+    r#"import { OpGetUserNode } from "./src/gql/graphql";
+    import { SharedUserFragment } from "./src/gql/graphql";
+    import gql from "gql-tag";
+    const query = OpGetUserNode;
+    const fragment = SharedUserFragment;"#
+);
+
+#[test]
+fn document_naming_defaults_and_custom_fragment_deduplication() {
+    let options: PluginOptions =
+        serde_json::from_str(r#"{"artifactDirectory":"./src/gql"}"#).unwrap();
+    let mut naming = options.document_naming;
+    assert_eq!(naming.operation_name("GetUser"), "GetUserDocument");
+    assert_eq!(
+        naming.fragment_name("UserFragment"),
+        "UserFragmentFragmentDoc"
+    );
+    assert!(!naming.dedupe_operation_suffix);
+    assert!(!naming.omit_operation_suffix);
+
+    naming.dedupe_operation_suffix = true;
+    naming.fragment_variable_prefix = "Shared".to_string();
+    naming.fragment_variable_suffix = "fRaGmEnTNode".to_string();
+    assert_eq!(
+        naming.fragment_name("UserFragment"),
+        "SharedUserFragmentNode"
+    );
+    naming.fragment_variable_suffix = "Node".to_string();
+    assert_eq!(
+        naming.fragment_name("UserFragment"),
+        "SharedUserFragmentNode"
+    );
+    naming.fragment_variable_suffix = "Fragment".to_string();
+    assert_eq!(naming.fragment_name("UserFragment"), "SharedUserFragment");
 }
