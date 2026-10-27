@@ -400,6 +400,25 @@ describe("formatjs swc plugin", () => {
     expect(output).toMatch(/id: "file_[a-zA-Z0-9]{5}"/);
   });
 
+  it("should generate the same id for empty and omitted descriptions", async () => {
+    const withEmpty = await transformCode(`
+      import { defineMessage } from 'react-intl';
+
+      defineMessage({ defaultMessage: "Hello!", description: "" });
+    `);
+    const withOmitted = await transformCode(`
+      import { defineMessage } from 'react-intl';
+
+      defineMessage({ defaultMessage: "Hello!" });
+    `);
+
+    const idPattern = /id: "([^"]+)"/;
+    expect(withEmpty).toMatch(idPattern);
+    expect(withEmpty.match(idPattern)?.[1]).toBe(
+      withOmitted.match(idPattern)?.[1],
+    );
+  });
+
   it("should handle additional component names", async () => {
     const input = `
       import { CustomMessage } from './custom-intl';

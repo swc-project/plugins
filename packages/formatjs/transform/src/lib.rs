@@ -1147,7 +1147,9 @@ impl<C: Clone + Comments, S: SourceMapper> FormatJSVisitor<C, S> {
                 .unwrap_or("[sha512:contenthash:base64:6]".to_string());
 
             let content = match &description {
-                Some(MessageDescriptionValue::Str(description)) => {
+                // An empty description is treated like an omitted one, as in
+                // babel-plugin-formatjs.
+                Some(MessageDescriptionValue::Str(description)) if !description.is_empty() => {
                     format!("{default_message}#{description}")
                 }
                 Some(MessageDescriptionValue::Obj(obj)) => {
