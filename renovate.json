@@ -10,8 +10,11 @@
     {
       "groupName": "swc_core",
       "matchPackageNames": ["swc_core", "testing"],
-      "rangeStrategy": "bump",
-      "matchUpdateTypes": "major",
+      "rangeStrategy": "bump"
+    },
+    {
+      "matchPackageNames": ["swc_core", "testing"],
+      "matchUpdateTypes": ["major"],
       "enabled": true
     }
   ]
