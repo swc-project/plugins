@@ -470,11 +470,12 @@ fn interpolate_name(filename: &str, interpolate_pattern: &str, content: &str) ->
         })
         .to_string();
 
-    url = Regexp::new(r#"\[(ext|name|path|folder|query)\]"#)
+    url = Regexp::new(r#"\[(content|ext|name|path|folder|query)\]"#)
         .unwrap()
         .replace_all(url.as_str(), |cap: &Captures| {
             if let Some(placeholder) = cap.get(1) {
                 match placeholder.as_str() {
+                    "content" => content,
                     "ext" => {
                         if let Some(extension) = path.extension() {
                             extension.to_str().unwrap()

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { createHash } from "node:crypto";
 import { transform } from "@swc/core";
 import path from "node:path";
 import url from "node:url";
@@ -417,6 +418,70 @@ describe("formatjs swc plugin", () => {
     expect(withEmpty.match(idPattern)?.[1]).toBe(
       withOmitted.match(idPattern)?.[1],
     );
+  });
+
+  it("should interpolate raw content in id", async () => {
+    const input = `
+      import { FormattedMessage } from 'react-intl';
+
+      export function Greeting() {
+        return (
+          <FormattedMessage
+            defaultMessage="Hello, {name}!"
+            description="Greeting message"
+          />
+        );
+      }
+    `;
+
+    const output = await transformCode(input, {
+      idInterpolationPattern: "[content]",
+    });
+
+    expect(output).toContain('id: "Hello, {name}!#Greeting message"');
+  });
+
+  it("should interpolate content without an empty description", async () => {
+    const input = `
+      import { defineMessage } from 'react-intl';
+
+      defineMessage({ defaultMessage: "Hello!", description: "" });
+    `;
+
+    const output = await transformCode(input, {
+      idInterpolationPattern: "prefix-[content]",
+    });
+
+    expect(output).toContain('id: "prefix-Hello!"');
+  });
+
+  it("should not interpolate placeholders inside content", async () => {
+    const input = `
+      import { defineMessage } from 'react-intl';
+
+      defineMessage({ defaultMessage: "Click [name] or [hash:5]" });
+    `;
+
+    const output = await transformCode(input, {
+      idInterpolationPattern: "[name]:[content]",
+    });
+
+    expect(output).toContain('id: "file:Click [name] or [hash:5]"');
+  });
+
+  it("should combine content, file, and hash placeholders", async () => {
+    const input = `
+      import { defineMessage } from 'react-intl';
+
+      defineMessage({ defaultMessage: "foo" });
+    `;
+
+    const output = await transformCode(input, {
+      idInterpolationPattern: "[name]_[content]_[sha512:contenthash:base64:6]",
+    });
+
+    const hash = createHash("sha512").update("foo").digest("base64");
+    expect(output).toContain(`id: "file_foo_${hash.slice(0, 6)}"`);
   });
 
   it("should handle additional component names", async () => {
