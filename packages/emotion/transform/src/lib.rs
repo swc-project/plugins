@@ -587,12 +587,12 @@ impl<'a, C: Comments> EmotionTransformer<'a, C> {
                     .as_callee(),
                 };
 
-                *expr = Box::new(Expr::Call(CallExpr {
+                **expr = Expr::Call(CallExpr {
                     span: call_span,
                     callee,
                     args,
                     ..Default::default()
-                }));
+                });
 
                 break; // Only one css prop per element
             }
@@ -675,10 +675,10 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                                                     },
                                                 ));
 
-                                                *expr = Box::new(Expr::Object(ObjectLit {
+                                                **expr = Expr::Object(ObjectLit {
                                                     span: DUMMY_SP,
                                                     props: args_props,
-                                                }));
+                                                });
                                             }
                                             _ => {
                                                 c.args.push(
@@ -855,10 +855,10 @@ impl<C: Comments> Fold for EmotionTransformer<'_, C> {
                                                 },
                                             ));
 
-                                            *expr = Box::new(Expr::Object(ObjectLit {
+                                            **expr = Expr::Object(ObjectLit {
                                                 span: DUMMY_SP,
                                                 props: object_props,
-                                            }));
+                                            });
                                         }
                                         _ => {
                                             callee.args.push(

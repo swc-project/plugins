@@ -57,6 +57,8 @@ export default defineConfig((env) => ({
 
 A template string that allows you to override the ID both in the extracted javascript and messages. It's used only if the message ID is empty.
 
+Use `[content]` to insert the unhashed content instead of a hash: the default message, followed by `#` and the description when one is present. For example, `idInterpolationPattern: '[content]'` uses each default message as its own ID.
+
 ### **`removeDefaultMessage`**
 
 Remove `defaultMessage` field in generated js after extraction.
@@ -98,6 +100,24 @@ For example, with `pragma: "@formatjs"`, a comment like:
 Will extract the metadata: `{project: "web", locale: "en", region: "us"}` that gets included with the extracted messages. This is useful for adding contextual information to your message extractions.
 
 # @swc/plugin-formatjs
+
+## 14.0.0
+
+### Major Changes
+
+- 5c6d86d: Update swc_core to 82.0.0.
+
+## 13.0.0
+
+### Major Changes
+
+- e995ea5: build!: Update swc_core to v81.0.2
+
+## 12.0.0
+
+### Major Changes
+
+- d90fa6c: build!: Update swc_core to v81.0.0
 
 ## 11.0.0
 

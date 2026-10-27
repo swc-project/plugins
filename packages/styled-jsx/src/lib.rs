@@ -1,5 +1,5 @@
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
-#![feature(box_patterns)]
+#![feature(deref_patterns)]
 
 use styled_jsx::{visitor, visitor::Config};
 use swc_core::{

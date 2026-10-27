@@ -36,7 +36,7 @@ impl RemoveConsole {
         &ident.sym == "console" && ident.ctxt == self.unresolved_ctxt
     }
 
-    fn should_remove_call(&mut self, n: &CallExpr) -> bool {
+    fn should_remove_call(&self, n: &CallExpr) -> bool {
         let callee = &n.callee;
         let member_expr = match callee {
             Callee::Expr(e) => match &**e {
@@ -44,6 +44,18 @@ impl RemoveConsole {
                 _ => return false,
             },
             _ => return false,
+        };
+
+        // `console.method.call(...)` and `console.method.apply(...)` invoke the
+        // same console method. Check exclusions against that method, not against
+        // `call` or `apply`.
+        let member_expr = match (&*member_expr.obj, &member_expr.prop) {
+            (Expr::Member(method), MemberProp::Ident(invocation))
+                if invocation.sym == "call" || invocation.sym == "apply" =>
+            {
+                method
+            }
+            _ => member_expr,
         };
 
         // Don't attempt to evaluate computed properties.
@@ -82,6 +94,15 @@ impl Fold for RemoveConsole {
             }
         }
         stmt.fold_children_with(self)
+    }
+
+    fn fold_expr(&mut self, expr: Expr) -> Expr {
+        if let Expr::Call(call) = &expr {
+            if self.should_remove_call(call) {
+                return *Expr::undefined(DUMMY_SP);
+            }
+        }
+        expr.fold_children_with(self)
     }
 }
 

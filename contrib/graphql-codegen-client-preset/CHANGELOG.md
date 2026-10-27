@@ -1,5 +1,27 @@
 # @swc-contrib/plugin-graphql-codegen-client-preset
 
+## 0.36.0
+
+### Minor Changes
+
+- 5c6d86d: Update swc_core to 82.0.0.
+
+## 0.35.0
+
+### Minor Changes
+
+- e995ea5: build!: Update swc_core to v81.0.2
+
+### Patch Changes
+
+- 1a64141: Reuse existing boxed expressions instead of allocating new boxes, fixing `clippy::replace_box` warnings without changing transform behavior.
+
+## 0.34.0
+
+### Minor Changes
+
+- 27f28a4: build!: Update swc_core to v81.0.0
+
 ## 0.33.0
 
 ### Minor Changes

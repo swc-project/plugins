@@ -1,5 +1,23 @@
 # @swc/plugin-noop
 
+## 17.0.0
+
+### Major Changes
+
+- 5c6d86d: Update swc_core to 82.0.0.
+
+## 16.0.0
+
+### Major Changes
+
+- e995ea5: build!: Update swc_core to v81.0.2
+
+## 15.0.0
+
+### Major Changes
+
+- 27f28a4: build!: Update swc_core to v81.0.0
+
 ## 14.0.0
 
 ### Major Changes

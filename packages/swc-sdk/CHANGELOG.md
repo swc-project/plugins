@@ -1,5 +1,29 @@
 # @swc/plugin-swc-sdk
 
+## 18.0.0
+
+### Major Changes
+
+- 5c6d86d: Update swc_core to 82.0.0.
+
+## 17.0.0
+
+### Major Changes
+
+- 1e53340: Migrate from Rust `box_patterns` to `deref_patterns` and update the pinned toolchain to `nightly-2026-04-10`.
+
+## 16.0.0
+
+### Major Changes
+
+- e995ea5: build!: Update swc_core to v81.0.2
+
+## 15.0.0
+
+### Major Changes
+
+- d90fa6c: build!: Update swc_core to v81.0.0
+
 ## 14.0.0
 
 ### Major Changes

@@ -1,4 +1,4 @@
-#![feature(box_patterns)]
+#![feature(deref_patterns)]
 
 use import_analyzer::ImportMap;
 use serde::Deserialize;
