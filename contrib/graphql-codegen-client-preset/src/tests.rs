@@ -452,3 +452,51 @@ fn document_naming_defaults_and_custom_fragment_deduplication() {
     naming.fragment_variable_suffix = "Fragment".to_string();
     assert_eq!(naming.fragment_name("UserFragment"), "SharedUserFragment");
 }
+
+test_inline!(
+    Default::default(),
+    |_| visit_mut_pass(visitor_with_options(
+        r#"{
+        "artifactDirectory": "./src/gql",
+        "documentVariablePrefix": "gql_",
+        "documentVariableSuffix": "_Document",
+        "fragmentVariablePrefix": "shared_",
+        "fragmentVariableSuffix": "_FragmentDoc"
+    }"#
+    )),
+    custom_document_affixes_preserve_underscores,
+    r#"import gql from "gql-tag";
+    const query = gql(`query GetUser { id }`);
+    const mutation = gql(`mutation CreateUser { id }`);
+    const subscription = gql(`subscription WatchUser { id }`);
+    const fragment = gql(`fragment User on User { id }`);"#,
+    r#"import { Gql_GetUser_Document } from "./src/gql/graphql";
+    import { Gql_CreateUser_Document } from "./src/gql/graphql";
+    import { Gql_WatchUser_Document } from "./src/gql/graphql";
+    import { Shared_User_FragmentDoc } from "./src/gql/graphql";
+    import gql from "gql-tag";
+    const query = Gql_GetUser_Document;
+    const mutation = Gql_CreateUser_Document;
+    const subscription = Gql_WatchUser_Document;
+    const fragment = Shared_User_FragmentDoc;"#
+);
+
+#[test]
+fn naming_conventions_preserve_underscore_boundaries() {
+    for (convention, expected) in [
+        (
+            "change-case-all#pascalCase",
+            "_Gql__SomeEgRockets_Document_",
+        ),
+        (
+            "change-case-all#upperCaseFirst",
+            "_Gql__SomeEGRockets_Document_",
+        ),
+        ("keep", "_gql__someEGRockets_Document_"),
+    ] {
+        assert_eq!(
+            apply_naming_convention("_gql__someEGRockets_Document_", convention),
+            expected
+        );
+    }
+}

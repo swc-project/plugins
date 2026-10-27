@@ -27,7 +27,7 @@ The following options must also match your Codegen configuration when you change
 | `dedupeOperationSuffix` | `false` | Remove the leading `Fragment` from the fragment suffix when the fragment name already ends with `Fragment`. The comparison ignores case. |
 | `omitOperationSuffix` | `false` | Omit the fragment variable suffix. This takes precedence over `dedupeOperationSuffix`. |
 
-As in Codegen, `dedupeOperationSuffix` and `omitOperationSuffix` do not change operation document variable names. The plugin applies `namingConvention` after combining the prefix, name, and suffix.
+As in Codegen, `dedupeOperationSuffix` and `omitOperationSuffix` do not change operation document variable names. The plugin applies `namingConvention` after combining the prefix, name, and suffix. The supported string naming conventions preserve underscores and convert each underscore-separated segment independently.
 
 For example, if Codegen uses `documentVariableSuffix: ""`, set the same option in the plugin:
 

@@ -86,8 +86,16 @@ fn to_pascal_case(s: &str) -> String {
 
 fn apply_naming_convention(s: &str, naming_convention: &str) -> String {
     match naming_convention {
-        "change-case-all#pascalCase" => to_pascal_case(s),
-        "change-case-all#upperCaseFirst" => upper_case_first(s),
+        "change-case-all#pascalCase" => s
+            .split('_')
+            .map(to_pascal_case)
+            .collect::<Vec<_>>()
+            .join("_"),
+        "change-case-all#upperCaseFirst" => s
+            .split('_')
+            .map(upper_case_first)
+            .collect::<Vec<_>>()
+            .join("_"),
         // GraphQL Codegen supports `keep`; preserve casing in that mode.
         "keep" => s.to_string(),
         // Keep unknown/custom conventions unchanged instead of forcing PascalCase.
