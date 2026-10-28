@@ -44,3 +44,12 @@ inline environment values, or provide Vite-specific environment variables.
 
 To migrate from `swc-plugin-import-meta-env`, install `@swc/plugin-import-meta-env`
 and replace the package name in your plugin configuration.
+
+# @swc/plugin-import-meta-env
+
+## 0.2.0
+
+### Minor Changes
+
+- 5811626: Add the official import-meta-env plugin to transform `import.meta.env` to `process.env`.
+- 1fa243d: Update swc_core to 82.2.0.

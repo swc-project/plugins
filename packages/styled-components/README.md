@@ -30,6 +30,16 @@ Then update your `.swcrc` file like below:
 
 # @swc/plugin-styled-components
 
+## 18.0.0
+
+### Major Changes
+
+- 1fa243d: Update swc_core to 82.2.0.
+
+### Patch Changes
+
+- 71f6bc0: Preserve the JSX evaluation site for css prop interpolations to avoid reading bindings before initialization.
+
 ## 17.0.0
 
 ### Major Changes

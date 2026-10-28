@@ -101,6 +101,17 @@ Will extract the metadata: `{project: "web", locale: "en", region: "us"}` that g
 
 # @swc/plugin-formatjs
 
+## 15.0.0
+
+### Major Changes
+
+- 1fa243d: Update swc_core to 82.2.0.
+
+### Patch Changes
+
+- 58dafd0: Support the `[content]` placeholder in `idInterpolationPattern`, which inserts the unhashed default message (plus `#description`, if present).
+- 58dafd0: Generate the same message ID for an empty `description` as for an omitted one, matching `babel-plugin-formatjs`.
+
 ## 14.0.0
 
 ### Major Changes
