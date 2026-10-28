@@ -1,5 +1,15 @@
 # @swc/plugin-loadable-components
 
+## 17.0.0
+
+### Major Changes
+
+- 1fa243d: Update swc_core to 82.2.0.
+
+### Patch Changes
+
+- 2b2767f: Transform loadable calls with `ssr: false` so server rendering receives the required metadata.
+
 ## 16.0.0
 
 ### Major Changes
