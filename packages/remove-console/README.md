@@ -21,6 +21,16 @@ or
 
 # @swc/plugin-remove-console
 
+## 18.0.0
+
+### Major Changes
+
+- 1fa243d: Update swc_core to 82.2.0.
+
+### Patch Changes
+
+- 71b414d: Remove indirect console calls such as console.log.apply()
+
 ## 17.0.0
 
 ### Major Changes
