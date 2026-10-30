@@ -47,6 +47,12 @@ and replace the package name in your plugin configuration.
 
 # @swc/plugin-import-meta-env
 
+## 0.3.0
+
+### Minor Changes
+
+- 7fe5fcd: Update swc_core to 83.0.0.
+
 ## 0.2.0
 
 ### Minor Changes
