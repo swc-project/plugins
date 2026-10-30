@@ -65,6 +65,12 @@ export function sync() {
 
 # @swc/plugin-swc-sdk
 
+## 19.0.1
+
+### Patch Changes
+
+- Update swc_core to 83.0.0.
+
 ## 19.0.0
 
 ### Major Changes

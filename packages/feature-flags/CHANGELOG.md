@@ -1,5 +1,11 @@
 # @swc/plugin-experimental-feature-flags
 
+## 0.24.1
+
+### Patch Changes
+
+- Update swc_core to 83.0.0.
+
 ## 0.24.0
 
 ### Minor Changes
