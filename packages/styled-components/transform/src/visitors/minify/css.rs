@@ -6,10 +6,7 @@ use once_cell::sync::Lazy;
 use regex::Regex;
 use swc_atoms::Atom;
 
-use super::{
-    css_placeholder::{make_placeholder, split_by_placeholders, PLACEHOLDER_REGEX},
-    regex_util::split_keep,
-};
+use super::css_placeholder::{make_placeholder, split_by_placeholders, PLACEHOLDER_REGEX};
 
 fn inject_unique_placeholders(str_arr: impl IntoIterator<Item = impl AsRef<str>>) -> String {
     let mut result = String::new();
@@ -24,11 +21,8 @@ fn inject_unique_placeholders(str_arr: impl IntoIterator<Item = impl AsRef<str>>
     result
 }
 
-static LINEBREAK_REGEX_RAW: Lazy<Regex> =
-    Lazy::new(|| Regex::new(r"(?:\\r|\\n|\r|\n)\s*").unwrap());
 static MULTILINE_COMMENT_REGEX: Lazy<Regex> =
     Lazy::new(|| Regex::new(r"(?s)/\*[^!].*?\*/").unwrap());
-static SYMBOL_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"\s*[;:{},]\s*").unwrap());
 
 /// Counts occurrences of a character inside string
 fn count_occurrences(s: impl AsRef<str>, c: char) -> usize {
@@ -69,28 +63,72 @@ fn strip_line_comment(line: impl AsRef<str>) -> String {
     })
 }
 
+// These simple patterns are scanned directly: a fresh Wasm instance would
+// otherwise compile Unicode-aware whitespace regexes for every input file.
+// char::is_whitespace uses the same Unicode White_Space property as regex's \s.
+fn split_lines(mut code: &str) -> impl Iterator<Item = &str> {
+    let mut done = false;
+    std::iter::from_fn(move || {
+        if done {
+            return None;
+        }
+        for (index, ch) in code.char_indices() {
+            let len = match ch {
+                '\r' | '\n' => 1,
+                '\\' if matches!(code.as_bytes().get(index + 1), Some(b'r' | b'n')) => 2,
+                _ => continue,
+            };
+            let line = &code[..index];
+            code = code[index + len..].trim_start();
+            return Some(line);
+        }
+        done = true;
+        Some(code)
+    })
+}
+
 fn compress_symbols(code: impl AsRef<str>) -> String {
-    split_keep(&SYMBOL_REGEX, code.as_ref())
-        .into_iter()
-        .enumerate()
-        .fold("".to_string(), |s, (index, fragment)| {
-            // Even-indices are non-symbol fragments
-            if index % 2 == 0 {
-                return s + fragment;
-            }
+    let code = code.as_ref();
+    let mut result = String::with_capacity(code.len());
+    let mut chars = code.char_indices().peekable();
+    let mut whitespace_start = None;
+    let mut last = 0;
 
-            // Only manipulate symbols outside of strings
-            if count_occurrences(&s, '\'') % 2 != 0 || count_occurrences(&s, '"') % 2 != 0 {
-                return s + fragment;
-            }
+    while let Some((index, ch)) = chars.next() {
+        if ch.is_whitespace() {
+            whitespace_start.get_or_insert(index);
+            continue;
+        }
+        if !matches!(ch, ';' | ':' | '{' | '}' | ',') {
+            whitespace_start = None;
+            continue;
+        }
 
-            // Preserve whitespace preceding colon, to avoid joining selectors.
-            if !fragment.starts_with(':') && fragment.trim_start().starts_with(':') {
-                return s + " " + fragment.trim();
+        // Match the same non-overlapping fragments as \s*[;:{},]\s*.
+        let start = whitespace_start.take().unwrap_or(index);
+        let mut end = index + ch.len_utf8();
+        while let Some(&(next, ch)) = chars.peek() {
+            if !ch.is_whitespace() {
+                break;
             }
+            end = next + ch.len_utf8();
+            chars.next();
+        }
+        result.push_str(&code[last..start]);
 
-            s + fragment.trim()
-        })
+        // Preserve the existing quote and selector-colon rules.
+        if count_occurrences(&result, '\'') % 2 != 0 || count_occurrences(&result, '"') % 2 != 0 {
+            result.push_str(&code[start..end]);
+        } else {
+            if ch == ':' && start < index {
+                result.push(' ');
+            }
+            result.push(ch);
+        }
+        last = end;
+    }
+    result.push_str(&code[last..]);
+    result
 }
 
 /// Detects lines that are exclusively line comments
@@ -99,12 +137,11 @@ fn is_line_comment(s: impl AsRef<str>) -> bool {
 }
 
 /// Minifies a string of CSS code
-fn minify(code: impl AsRef<str>, linebreak_regex: &Regex) -> String {
+fn minify(code: impl AsRef<str>) -> String {
     // Remove multiline comments
     let code = MULTILINE_COMMENT_REGEX.replace_all(code.as_ref(), "\n");
 
-    let code = linebreak_regex
-        .split(&code) // Split at newlines
+    let code = split_lines(&code) // Split at newlines
         .filter(|line| !line.is_empty() && !is_line_comment(line)) // Removes lines containing only line comments
         .map(strip_line_comment) // Remove line comments inside text
         .collect::<Vec<_>>()
@@ -122,12 +159,9 @@ pub struct MinifyResult {
 }
 
 /// Minifies template literal quasis
-fn minify_values(
-    values: impl IntoIterator<Item = impl AsRef<str>>,
-    linebreak_regex: &Regex,
-) -> MinifyResult {
+fn minify_values(values: impl IntoIterator<Item = impl AsRef<str>>) -> MinifyResult {
     let code = inject_unique_placeholders(values);
-    let minified_code = minify(code, linebreak_regex);
+    let minified_code = minify(code);
 
     let minified_values = split_by_placeholders(&minified_code)
         .into_iter()
@@ -146,12 +180,109 @@ fn minify_values(
 }
 
 pub fn minify_raw_values(values: impl IntoIterator<Item = Atom>) -> MinifyResult {
-    minify_values(values, &LINEBREAK_REGEX_RAW)
+    minify_values(values)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    static LINEBREAK_REGEX_RAW: Lazy<Regex> =
+        Lazy::new(|| Regex::new(r"(?:\\r|\\n|\r|\n)\s*").unwrap());
+    static SYMBOL_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"\s*[;:{},]\s*").unwrap());
+
+    fn compress_symbols_regex(code: impl AsRef<str>) -> String {
+        super::super::regex_util::split_keep(&SYMBOL_REGEX, code.as_ref())
+            .into_iter()
+            .enumerate()
+            .fold("".to_string(), |s, (index, fragment)| {
+                // Even-indices are non-symbol fragments
+                if index % 2 == 0 {
+                    return s + fragment;
+                }
+
+                // Only manipulate symbols outside of strings
+                if count_occurrences(&s, '\'') % 2 != 0 || count_occurrences(&s, '"') % 2 != 0 {
+                    return s + fragment;
+                }
+
+                // Preserve whitespace preceding colon, to avoid joining selectors.
+                if !fragment.starts_with(':') && fragment.trim_start().starts_with(':') {
+                    return s + " " + fragment.trim();
+                }
+
+                s + fragment.trim()
+            })
+    }
+
+    #[test]
+    fn scanners_match_regexes() {
+        fn check(code: &str) {
+            assert_eq!(
+                split_lines(code).collect::<Vec<_>>(),
+                LINEBREAK_REGEX_RAW.split(code).collect::<Vec<_>>(),
+                "line splitting: {code:?}"
+            );
+            assert_eq!(
+                compress_symbols(code),
+                compress_symbols_regex(code),
+                "symbols: {code:?}"
+            );
+            let comments_removed = MULTILINE_COMMENT_REGEX.replace_all(code, "\n");
+            let lines = LINEBREAK_REGEX_RAW
+                .split(&comments_removed)
+                .filter(|line| !line.is_empty() && !is_line_comment(line))
+                .map(strip_line_comment)
+                .collect::<Vec<_>>()
+                .join(" ");
+            assert_eq!(
+                minify(code),
+                compress_symbols_regex(lines),
+                "minify: {code:?}"
+            );
+        }
+
+        // Include every Unicode White_Space character, actual and raw linebreaks,
+        // consecutive symbols, quotes, comments, URLs and interpolation markers.
+        let whitespace = [
+            '\t', '\n', '\u{b}', '\u{c}', '\r', ' ', '\u{85}', '\u{a0}', '\u{1680}', '\u{2000}',
+            '\u{2001}', '\u{2002}', '\u{2003}', '\u{2004}', '\u{2005}', '\u{2006}', '\u{2007}',
+            '\u{2008}', '\u{2009}', '\u{200a}', '\u{2028}', '\u{2029}', '\u{202f}', '\u{205f}',
+            '\u{3000}',
+        ];
+        check("");
+        for ch in whitespace {
+            check(&format!("a{ch}:{ch}b;{ch}{{{ch}}},{ch}:end"));
+            check(&format!("a\\n{ch}b\r\n{ch}c\\r{ch}d"));
+            check(&format!("content: 'a{ch}:{ch}b'; content: \"x{ch}, y\";"));
+        }
+        for code in [
+            "\\\\n\\r\r\n",
+            " : : ; , ",
+            "/* comment\n */ /*! keep */",
+            "url(https://example.com/a); // comment\n color: red;",
+            "color: __PLACEHOLDER_0__; // __PLACEHOLDER_1__\n margin: 0;",
+            "& :last-child { color: blue; }",
+            "content: 'a : b ; ,';",
+        ] {
+            check(code);
+        }
+
+        // Deterministic mixed inputs also exercise malformed/partial CSS, for
+        // which this optimization must retain the old minifier's behavior.
+        let alphabet: Vec<_> = "abé界\t \n\r\\rn;:{},'\"/*!()_012\u{a0}\u{2003}\u{2028}"
+            .chars()
+            .collect();
+        let mut seed = 1u64;
+        for _ in 0..5000 {
+            let mut code = String::new();
+            for _ in 0..80 {
+                seed = seed.wrapping_mul(6364136223846793005).wrapping_add(1);
+                code.push(alphabet[(seed >> 32) as usize % alphabet.len()]);
+            }
+            check(&code);
+        }
+    }
 
     #[test]
     fn test_inject_unique_placeholders() {
@@ -222,15 +353,11 @@ mod tests {
     fn test_minify() {
         fn test(description: &str, code: &str, expected: &str) {
             // test minify()
-            assert_eq!(
-                minify(code, &LINEBREAK_REGEX_RAW),
-                expected,
-                "{description}: minify"
-            );
+            assert_eq!(minify(code), expected, "{description}: minify");
 
             // test minify_values()
             assert_eq!(
-                minify_values(vec![code], &LINEBREAK_REGEX_RAW),
+                minify_values(vec![code]),
                 MinifyResult {
                     values: vec![expected.into()],
                     retained_expression_indices: HashSet::new(),
@@ -280,10 +407,7 @@ mod tests {
     fn test_minify_values() {
         // Returns the indices of retained placeholders (expressions)
         assert_eq!(
-            minify_values(
-                vec!["this is some\ninput with ", " and // ignored ", ""],
-                &LINEBREAK_REGEX_RAW
-            ),
+            minify_values(vec!["this is some\ninput with ", " and // ignored ", ""]),
             MinifyResult {
                 values: vec!["this is some input with ".into(), " and ".into()],
                 retained_expression_indices: vec![0].into_iter().collect(),
