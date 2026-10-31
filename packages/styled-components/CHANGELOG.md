@@ -1,5 +1,11 @@
 # @swc/plugin-styled-components
 
+## 18.0.2
+
+### Patch Changes
+
+- 828c9d7: Reduce CSS minification startup cost by scanning line breaks and symbol whitespace without compiling regular expressions for each Wasm instance.
+
 ## 18.0.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-styled-components",
-  "version": "18.0.1",
+  "version": "18.0.2",
   "publishConfig": {
     "access": "public",
     "provenance": true
