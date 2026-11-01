@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{collections::HashSet, path::PathBuf};
 
 use graphql_parser::query::parse_query;
 use pathdiff::diff_paths;
@@ -7,8 +7,9 @@ use swc_core::{
     common::Span,
     ecma::{
         ast::*,
+        atoms::Atom,
         utils::quote_ident,
-        visit::{visit_mut_pass, VisitMut, VisitMutWith},
+        visit::{visit_mut_pass, Visit, VisitMut, VisitMutWith, VisitWith},
     },
     plugin::{
         errors::HANDLER, metadata::TransformPluginMetadataContextKind, plugin_transform,
@@ -184,11 +185,19 @@ pub struct GraphQLCodegenOptions {
     pub gql_tag_name: String,
     pub naming_convention: String,
     pub document_naming: DocumentNamingOptions,
+    /// Module specifiers the tag function is imported from. When set, only
+    /// calls to a tag imported from one of these modules are rewritten, and
+    /// the tag import is removed once no references to it remain.
+    pub gql_import_sources: Vec<String>,
 }
 
 pub struct GraphQLVisitor {
     options: GraphQLCodegenOptions,
     graphql_operations_or_fragments_to_import: Vec<String>,
+    /// Local names bound to the tag function. `None` matches any identifier
+    /// named `gql_tag_name`, which is the behavior without
+    /// `gql_import_sources`.
+    tag_locals: Option<HashSet<Atom>>,
 }
 
 impl GraphQLVisitor {
@@ -196,7 +205,140 @@ impl GraphQLVisitor {
         GraphQLVisitor {
             options,
             graphql_operations_or_fragments_to_import: Vec::new(),
+            tag_locals: None,
         }
+    }
+
+    fn is_tag_callee(&self, callee: &Callee) -> bool {
+        let Some(expr) = callee.as_expr() else {
+            return false;
+        };
+        let Expr::Ident(ident) = &**expr else {
+            return false;
+        };
+        match &self.tag_locals {
+            Some(locals) => locals.contains(&ident.sym),
+            None => ident.sym == *self.options.gql_tag_name,
+        }
+    }
+
+    fn is_import_source(&self, src: &Str) -> bool {
+        self.options
+            .gql_import_sources
+            .iter()
+            .any(|source| src.value == *source.as_str())
+    }
+
+    /// Local names of the tag function imported from `gql_import_sources`.
+    fn collect_tag_locals(&self, module: &Module) -> HashSet<Atom> {
+        let mut locals = HashSet::new();
+        for item in &module.body {
+            let ModuleItem::ModuleDecl(ModuleDecl::Import(import)) = item else {
+                continue;
+            };
+            if import.type_only || !self.is_import_source(&import.src) {
+                continue;
+            }
+            for specifier in &import.specifiers {
+                let ImportSpecifier::Named(named) = specifier else {
+                    continue;
+                };
+                if named.is_type_only {
+                    continue;
+                }
+                let imported = match &named.imported {
+                    Some(ModuleExportName::Ident(ident)) => ident.sym.clone(),
+                    Some(ModuleExportName::Str(name)) => match name.value.as_str() {
+                        Some(value) => Atom::from(value),
+                        None => continue,
+                    },
+                    None => named.local.sym.clone(),
+                };
+                if imported == *self.options.gql_tag_name {
+                    locals.insert(named.local.sym.clone());
+                }
+            }
+        }
+        locals
+    }
+
+    /// Removes tag import specifiers that no longer have references, and the
+    /// import declarations they leave empty.
+    fn remove_unused_tag_imports(&self, module: &mut Module, tag_locals: &HashSet<Atom>) {
+        let mut finder = ReferenceFinder {
+            names: tag_locals,
+            found: HashSet::new(),
+        };
+        module.visit_with(&mut finder);
+        let unused: HashSet<&Atom> = tag_locals
+            .iter()
+            .filter(|local| !finder.found.contains(*local))
+            .collect();
+        if unused.is_empty() {
+            return;
+        }
+
+        module.body.retain_mut(|item| {
+            let ModuleItem::ModuleDecl(ModuleDecl::Import(import)) = item else {
+                return true;
+            };
+            if !self.is_import_source(&import.src) || import.specifiers.is_empty() {
+                return true;
+            }
+            import.specifiers.retain(|specifier| match specifier {
+                ImportSpecifier::Named(named) => !unused.contains(&named.local.sym),
+                _ => true,
+            });
+            !import.specifiers.is_empty()
+        });
+    }
+
+    /// The generated document export for a tag call, or `None` when the call
+    /// is not a tagged GraphQL document.
+    fn document_import_name(&self, call: &CallExpr) -> Option<String> {
+        if call.args.is_empty() || !self.is_tag_callee(&call.callee) {
+            return None;
+        }
+
+        let quasis = match &*call.args[0].expr {
+            Expr::Tpl(tpl) => &tpl.quasis,
+            _ => return None,
+        };
+
+        let raw = quasis[0].cooked.as_ref()?.as_str()?;
+
+        let graphql_ast = match parse_query::<&str>(raw) {
+            Ok(ast) => ast,
+            Err(e) => {
+                // Currently the parser outputs a string like: "query parse error", so
+                // we add "GraphQL" to the beginning
+                let error = format!("GraphQL {e}");
+                self.handle_error(error.as_str(), quasis[0].span);
+                return None;
+            }
+        };
+
+        let operation_name = match graphql_ast.definitions.first()? {
+            graphql_parser::query::Definition::Fragment(fragment) => {
+                self.options.document_naming.fragment_name(fragment.name)
+            }
+            graphql_parser::query::Definition::Operation(op) => {
+                let name = match op {
+                    graphql_parser::query::OperationDefinition::Query(query) => query.name,
+                    graphql_parser::query::OperationDefinition::Mutation(mutation) => mutation.name,
+                    graphql_parser::query::OperationDefinition::Subscription(subscription) => {
+                        subscription.name
+                    }
+                    _ => None,
+                }?;
+                self.options.document_naming.operation_name(name)
+            }
+        };
+
+        Some(apply_naming_convention(
+            &operation_name,
+            &self.options.naming_convention,
+        ))
     }
 
     fn handle_error(&self, details: &str, span: Span) {
@@ -254,107 +396,46 @@ pub fn create_graphql_codegen_visitor(options: GraphQLCodegenOptions) -> impl Vi
 }
 
 impl VisitMut for GraphQLVisitor {
-    fn visit_mut_var_decl(&mut self, e: &mut VarDecl) {
-        e.visit_mut_children_with(self);
+    fn visit_mut_expr(&mut self, expr: &mut Expr) {
+        expr.visit_mut_children_with(self);
 
-        for decl in e.decls.iter_mut() {
-            if let Some(init) = &mut decl.init {
-                if let Expr::Call(CallExpr { callee, args, .. }) = &mut **init {
-                    if args.is_empty() {
-                        return;
-                    }
+        let Expr::Call(call) = expr else {
+            return;
+        };
+        let Some(import_name) = self.document_import_name(call) else {
+            return;
+        };
 
-                    match callee.as_expr() {
-                        Some(expr_box) => match &**expr_box {
-                            Expr::Ident(ident) => {
-                                if ident.sym != *self.options.gql_tag_name {
-                                    return;
-                                }
-                            }
-                            _ => return,
-                        },
-                        _ => return,
-                    }
-
-                    let quasis = match &*args[0].expr {
-                        Expr::Tpl(tpl) => &tpl.quasis,
-                        _ => return,
-                    };
-
-                    let raw = match &quasis[0].cooked {
-                        Some(cooked) => cooked,
-                        None => return,
-                    };
-
-                    let Some(raw) = raw.as_str() else {
-                        return;
-                    };
-
-                    let graphql_ast = match parse_query::<&str>(raw) {
-                        Ok(ast) => ast,
-                        Err(e) => {
-                            // Currently the parser outputs a string like: "query parse error", so
-                            // we add "GraphQL" to the beginning
-                            let error = format!("GraphQL {e}");
-                            self.handle_error(error.as_str(), quasis[0].span);
-                            return;
-                        }
-                    };
-
-                    let first_definition = match graphql_ast.definitions.first() {
-                        Some(definition) => definition,
-                        None => return,
-                    };
-
-                    let operation_name = match first_definition {
-                        graphql_parser::query::Definition::Fragment(fragment) => {
-                            self.options.document_naming.fragment_name(fragment.name)
-                        }
-                        graphql_parser::query::Definition::Operation(op) => match op {
-                            graphql_parser::query::OperationDefinition::Query(query) => {
-                                match query.name {
-                                    Some(name) => self.options.document_naming.operation_name(name),
-                                    None => return,
-                                }
-                            }
-                            graphql_parser::query::OperationDefinition::Mutation(mutation) => {
-                                match mutation.name {
-                                    Some(name) => self.options.document_naming.operation_name(name),
-                                    None => return,
-                                }
-                            }
-                            graphql_parser::query::OperationDefinition::Subscription(
-                                subscription,
-                            ) => match subscription.name {
-                                Some(name) => self.options.document_naming.operation_name(name),
-                                None => return,
-                            },
-                            _ => return,
-                        },
-                    };
-
-                    let import_name =
-                        apply_naming_convention(&operation_name, &self.options.naming_convention);
-
-                    self.graphql_operations_or_fragments_to_import
-                        .push(import_name.clone());
-
-                    // now change the call expression to a Identifier
-                    let new_expr = Expr::Ident(quote_ident!(import_name).into());
-
-                    **init = new_expr;
-                }
-            }
+        if !self
+            .graphql_operations_or_fragments_to_import
+            .contains(&import_name)
+        {
+            self.graphql_operations_or_fragments_to_import
+                .push(import_name.clone());
         }
+
+        *expr = Expr::Ident(quote_ident!(import_name).into());
     }
 
     fn visit_mut_module(&mut self, module: &mut Module) {
+        if !self.options.gql_import_sources.is_empty() {
+            let tag_locals = self.collect_tag_locals(module);
+            if tag_locals.is_empty() {
+                return;
+            }
+            self.tag_locals = Some(tag_locals);
+        }
+
         // First visit all its children, collect the GraphQL document names, and then
         // add the necessary imports
         module.visit_mut_children_with(self);
 
         if self.graphql_operations_or_fragments_to_import.is_empty() {
             return;
+        }
+
+        if let Some(tag_locals) = self.tag_locals.take() {
+            self.remove_unused_tag_imports(module, &tag_locals);
         }
 
         let platform_specific_path = self.get_relative_import_path("graphql");
@@ -399,6 +480,22 @@ impl VisitMut for GraphQLVisitor {
                     phase: Default::default(),
                 })),
             )
+        }
+    }
+}
+
+/// Records which of `names` are referenced outside import declarations.
+struct ReferenceFinder<'a> {
+    names: &'a HashSet<Atom>,
+    found: HashSet<Atom>,
+}
+
+impl Visit for ReferenceFinder<'_> {
+    fn visit_import_decl(&mut self, _: &ImportDecl) {}
+
+    fn visit_ident(&mut self, ident: &Ident) {
+        if self.names.contains(&ident.sym) {
+            self.found.insert(ident.sym.clone());
         }
     }
 }
@@ -448,6 +545,9 @@ struct PluginOptions {
 
     #[serde(default = "naming_convention_option_default")]
     namingConvention: NamingConventionOption,
+
+    #[serde(default)]
+    gqlImportSources: Vec<String>,
 }
 
 #[plugin_transform]
@@ -480,6 +580,7 @@ pub fn process_transform(program: Program, metadata: TransformPluginProgramMetad
         gql_tag_name: plugin_config.gqlTagName,
         naming_convention: plugin_config.namingConvention.as_type_name_convention(),
         document_naming: plugin_config.document_naming,
+        gql_import_sources: plugin_config.gqlImportSources,
     });
 
     program.apply(&mut visit_mut_pass(visitor))

@@ -19,6 +19,7 @@ fn get_test_code_visitor() -> GraphQLVisitor {
         gql_tag_name: "gql".to_string(),
         naming_convention: "change-case-all#pascalCase".to_string(),
         document_naming: DocumentNamingOptions::default(),
+        gql_import_sources: Vec::new(),
     })
 }
 
@@ -30,6 +31,7 @@ fn get_test_code_visitor_upper_case_first() -> GraphQLVisitor {
         gql_tag_name: "gql".to_string(),
         naming_convention: "change-case-all#upperCaseFirst".to_string(),
         document_naming: DocumentNamingOptions::default(),
+        gql_import_sources: Vec::new(),
     })
 }
 
@@ -55,6 +57,7 @@ fn import_files_from_same_directory(input_path: PathBuf) {
                 gql_tag_name: "gql".to_string(),
                 naming_convention: "change-case-all#pascalCase".to_string(),
                 document_naming: DocumentNamingOptions::default(),
+                gql_import_sources: Vec::new(),
             }))
         },
         &input_path,
@@ -88,6 +91,7 @@ fn import_files_from_other_directory(input_path: PathBuf) {
                 gql_tag_name: "gql".to_string(),
                 naming_convention: "change-case-all#pascalCase".to_string(),
                 document_naming: DocumentNamingOptions::default(),
+                gql_import_sources: Vec::new(),
             }))
         },
         &input_path,
@@ -107,6 +111,7 @@ fn get_windows_path_visitor() -> GraphQLVisitor {
         gql_tag_name: "gql".to_string(),
         naming_convention: "change-case-all#pascalCase".to_string(),
         document_naming: DocumentNamingOptions::default(),
+        gql_import_sources: Vec::new(),
     })
 }
 
@@ -499,4 +504,101 @@ fn naming_conventions_preserve_underscore_boundaries() {
             expected
         );
     }
+}
+
+fn visitor_with_import_sources(sources: &[&str]) -> GraphQLVisitor {
+    let mut visitor = get_test_code_visitor();
+    visitor.options.gql_import_sources = sources.iter().map(|s| s.to_string()).collect();
+    visitor
+}
+
+test_inline!(
+    Default::default(),
+    |_| visit_mut_pass(get_test_code_visitor()),
+    rewrites_calls_outside_variable_declarations,
+    r#"import gql from "gql-tag";
+    useMutation(gql(`mutation SaveUser { id }`), {});
+    const operations = { get: gql(`query GetUser { id }`) };
+    const again = gql(`query GetUser { id }`);"#,
+    r#"import { SaveUserDocument } from "./src/gql/graphql";
+    import { GetUserDocument } from "./src/gql/graphql";
+    import gql from "gql-tag";
+    useMutation(SaveUserDocument, {});
+    const operations = { get: GetUserDocument };
+    const again = GetUserDocument;"#
+);
+
+test_inline!(
+    Default::default(),
+    |_| visit_mut_pass(get_test_code_visitor()),
+    rewrites_every_declarator,
+    r#"import gql from "gql-tag";
+    const ignored = 1, query = gql(`query GetUser { id }`);"#,
+    r#"import { GetUserDocument } from "./src/gql/graphql";
+    import gql from "gql-tag";
+    const ignored = 1, query = GetUserDocument;"#
+);
+
+test_inline!(
+    Default::default(),
+    |_| visit_mut_pass(visitor_with_import_sources(&["@/gql"])),
+    import_sources_remove_the_unused_tag_import,
+    r#"import { gql, useFragment } from "@/gql";
+    const query = gql(`query GetUser { id }`);"#,
+    r#"import { GetUserDocument } from "./src/gql/graphql";
+    import { useFragment } from "@/gql";
+    const query = GetUserDocument;"#
+);
+
+test_inline!(
+    Default::default(),
+    |_| visit_mut_pass(visitor_with_import_sources(&["@/gql", "@/gql/gql"])),
+    import_sources_remove_an_emptied_import,
+    r#"import { gql } from "@/gql/gql";
+    const query = gql(`query GetUser { id }`);"#,
+    r#"import { GetUserDocument } from "./src/gql/graphql";
+    const query = GetUserDocument;"#
+);
+
+test_inline!(
+    Default::default(),
+    |_| visit_mut_pass(visitor_with_import_sources(&["@/gql"])),
+    import_sources_follow_aliased_imports,
+    r#"import { gql as graphql } from "@/gql";
+    const query = graphql(`query GetUser { id }`);"#,
+    r#"import { GetUserDocument } from "./src/gql/graphql";
+    const query = GetUserDocument;"#
+);
+
+test_inline!(
+    Default::default(),
+    |_| visit_mut_pass(visitor_with_import_sources(&["@/gql"])),
+    import_sources_skip_tags_from_other_modules,
+    r#"import { gql } from "./sdk/gql";
+    const query = gql(`query GetVendor { id }`);"#,
+    r#"import { gql } from "./sdk/gql";
+    const query = gql(`query GetVendor { id }`);"#
+);
+
+test_inline!(
+    Default::default(),
+    |_| visit_mut_pass(visitor_with_import_sources(&["@/gql"])),
+    import_sources_keep_a_tag_that_is_still_referenced,
+    r#"import { gql } from "@/gql";
+    const query = gql(`query GetUser { id }`);
+    export const tag = gql;"#,
+    r#"import { GetUserDocument } from "./src/gql/graphql";
+    import { gql } from "@/gql";
+    const query = GetUserDocument;
+    export const tag = gql;"#
+);
+
+#[test]
+fn plugin_options_accept_gql_import_sources() {
+    let options: PluginOptions = serde_json::from_str(
+        r#"{ "artifactDirectory": "./src/gql", "gqlImportSources": ["@/gql", "@/gql/gql"] }"#,
+    )
+    .unwrap();
+
+    assert_eq!(options.gqlImportSources, vec!["@/gql", "@/gql/gql"]);
 }

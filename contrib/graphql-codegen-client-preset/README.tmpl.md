@@ -41,6 +41,25 @@ For example, if Codegen uses `documentVariableSuffix: ""`, set the same option i
 
 A call for `query GetUser { id }` then imports `GetUser` instead of `GetUserDocument`.
 
+The plugin rewrites every call to the tag function whose first argument is a template literal, wherever the call appears, for example `useQuery(graphql(...))` or `{ query: graphql(...) }` as well as `const Query = graphql(...)`.
+
+#### `gqlImportSources`
+
+By default the plugin rewrites any call to a function named `gqlTagName`. Set `gqlImportSources` to the module specifiers your code imports the tag function from. The plugin then:
+
+- rewrites only calls to a tag imported from one of those modules, including aliased imports such as `import { graphql as gql } from "@/gql"`. Packages that ship their own `graphql()` from a different client-preset artifact directory are left alone.
+- removes the tag import once no references to it remain, and removes the import declaration if that leaves it empty. Bundlers then no longer pull the generated `gql.ts` document map into the bundle.
+
+```json
+{
+  "artifactDirectory": "./src/gql",
+  "gqlTagName": "graphql",
+  "gqlImportSources": ["@/gql", "@/gql/gql"]
+}
+```
+
+List every specifier your code uses, such as both the `index.ts` barrel and `gql.ts`. Specifiers are compared as written; relative imports are not resolved.
+
 #### Vite
 
 ```ts
