@@ -37,7 +37,8 @@ pub fn placeholders(input: &str) -> impl Iterator<Item = (Range<usize>, &str)> {
                 cursor = end + 2;
                 return Some((start..cursor, &input[digits..end]));
             }
-            cursor = digits;
+            // A failed prefix can overlap a valid marker at its trailing '_'.
+            cursor = start + 1;
         }
         None
     })
@@ -62,6 +63,13 @@ mod tests {
             expected,
             "{input:?}"
         );
+    }
+
+    #[test]
+    fn overlapping_prefixes_match_regex() {
+        for end in 0..=PREFIX.len() {
+            check(&format!("{}{}", &PREFIX[..end], make_placeholder(0)));
+        }
     }
 
     #[test]

@@ -446,6 +446,17 @@ mod tests {
     }
 
     #[test]
+    fn retains_interpolation_after_placeholder_prefix() {
+        assert_eq!(
+            minify_values(["content: '__PLACEHOLDER", "';"]),
+            MinifyResult {
+                values: vec!["content:'__PLACEHOLDER".into(), "';".into()],
+                retained_expression_indices: [0].into_iter().collect(),
+            }
+        );
+    }
+
+    #[test]
     fn test_minify_values() {
         // Returns the indices of retained placeholders (expressions)
         assert_eq!(
