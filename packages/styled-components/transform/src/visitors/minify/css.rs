@@ -1,12 +1,10 @@
 //! Port of https://github.com/styled-components/babel-plugin-styled-components/blob/4e2eb388d9c90f2921c306c760657d059d01a518/src/minify/index.js
 
-use std::collections::HashSet;
+use std::{borrow::Cow, collections::HashSet};
 
-use once_cell::sync::Lazy;
-use regex::Regex;
 use swc_atoms::Atom;
 
-use super::css_placeholder::{make_placeholder, split_by_placeholders, PLACEHOLDER_REGEX};
+use super::css_placeholder::{make_placeholder, placeholders};
 
 fn inject_unique_placeholders(str_arr: impl IntoIterator<Item = impl AsRef<str>>) -> String {
     let mut result = String::new();
@@ -21,8 +19,37 @@ fn inject_unique_placeholders(str_arr: impl IntoIterator<Item = impl AsRef<str>>
     result
 }
 
-static MULTILINE_COMMENT_REGEX: Lazy<Regex> =
-    Lazy::new(|| Regex::new(r"(?s)/\*[^!].*?\*/").unwrap());
+fn strip_multiline_comments(code: &str) -> Cow<'_, str> {
+    let mut result = String::new();
+    let mut last = 0;
+    let mut cursor = 0;
+    while let Some(start) = code[cursor..].find("/*") {
+        let start = cursor + start;
+        cursor = start + 2;
+        let Some(first) = code[cursor..].chars().next() else {
+            break;
+        };
+        if first == '!' {
+            continue;
+        }
+
+        // Preserve /\*[^!].*?\*/ semantics, including the required first
+        // character. In particular, /**/ alone is not a match.
+        let body = cursor + first.len_utf8();
+        let Some(end) = code[body..].find("*/") else {
+            break;
+        };
+        cursor = body + end + 2;
+        result.push_str(&code[last..start]);
+        result.push('\n');
+        last = cursor;
+    }
+    if last == 0 {
+        return Cow::Borrowed(code);
+    }
+    result.push_str(&code[last..]);
+    Cow::Owned(result)
+}
 
 /// Counts occurrences of a character inside string
 fn count_occurrences(s: impl AsRef<str>, c: char) -> usize {
@@ -139,7 +166,7 @@ fn is_line_comment(s: impl AsRef<str>) -> bool {
 /// Minifies a string of CSS code
 fn minify(code: impl AsRef<str>) -> String {
     // Remove multiline comments
-    let code = MULTILINE_COMMENT_REGEX.replace_all(code.as_ref(), "\n");
+    let code = strip_multiline_comments(code.as_ref());
 
     let code = split_lines(&code) // Split at newlines
         .filter(|line| !line.is_empty() && !is_line_comment(line)) // Removes lines containing only line comments
@@ -163,15 +190,15 @@ fn minify_values(values: impl IntoIterator<Item = impl AsRef<str>>) -> MinifyRes
     let code = inject_unique_placeholders(values);
     let minified_code = minify(code);
 
-    let minified_values = split_by_placeholders(&minified_code)
-        .into_iter()
-        .map(Atom::from)
-        .collect();
-
-    let retained_expression_indices: HashSet<usize> = PLACEHOLDER_REGEX
-        .captures_iter(&minified_code)
-        .map(|captures| captures[1].parse().unwrap())
-        .collect();
+    let mut minified_values = Vec::new();
+    let mut retained_expression_indices = HashSet::new();
+    let mut last = 0;
+    for (range, index) in placeholders(&minified_code) {
+        minified_values.push(Atom::from(&minified_code[last..range.start]));
+        retained_expression_indices.insert(index.parse().unwrap());
+        last = range.end;
+    }
+    minified_values.push(Atom::from(&minified_code[last..]));
 
     MinifyResult {
         values: minified_values,
@@ -185,8 +212,13 @@ pub fn minify_raw_values(values: impl IntoIterator<Item = Atom>) -> MinifyResult
 
 #[cfg(test)]
 mod tests {
+    use once_cell::sync::Lazy;
+    use regex::Regex;
+
     use super::*;
 
+    static MULTILINE_COMMENT_REGEX: Lazy<Regex> =
+        Lazy::new(|| Regex::new(r"(?s)/\*[^!].*?\*/").unwrap());
     static LINEBREAK_REGEX_RAW: Lazy<Regex> =
         Lazy::new(|| Regex::new(r"(?:\\r|\\n|\r|\n)\s*").unwrap());
     static SYMBOL_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"\s*[;:{},]\s*").unwrap());
@@ -229,6 +261,11 @@ mod tests {
                 "symbols: {code:?}"
             );
             let comments_removed = MULTILINE_COMMENT_REGEX.replace_all(code, "\n");
+            assert_eq!(
+                strip_multiline_comments(code),
+                comments_removed,
+                "comments: {code:?}"
+            );
             let lines = LINEBREAK_REGEX_RAW
                 .split(&comments_removed)
                 .filter(|line| !line.is_empty() && !is_line_comment(line))
@@ -260,6 +297,11 @@ mod tests {
             "\\\\n\\r\r\n",
             " : : ; , ",
             "/* comment\n */ /*! keep */",
+            "/**/ /***/ /*é*/ /*界*/ /* unclosed",
+            "/*! outer /* inner */ end */",
+            "'/* quoted */' /*/ trailing */",
+            "/**/",
+            "/*",
             "url(https://example.com/a); // comment\n color: red;",
             "color: __PLACEHOLDER_0__; // __PLACEHOLDER_1__\n margin: 0;",
             "& :last-child { color: blue; }",
@@ -404,6 +446,17 @@ mod tests {
     }
 
     #[test]
+    fn retains_interpolation_after_placeholder_prefix() {
+        assert_eq!(
+            minify_values(["content: '__PLACEHOLDER", "';"]),
+            MinifyResult {
+                values: vec!["content:'__PLACEHOLDER".into(), "';".into()],
+                retained_expression_indices: [0].into_iter().collect(),
+            }
+        );
+    }
+
+    #[test]
     fn test_minify_values() {
         // Returns the indices of retained placeholders (expressions)
         assert_eq!(
@@ -411,6 +464,33 @@ mod tests {
             MinifyResult {
                 values: vec!["this is some input with ".into(), " and ".into()],
                 retained_expression_indices: vec![0].into_iter().collect(),
+            }
+        );
+
+        assert_eq!(
+            minify_values([
+                "color: ",
+                "; /*",
+                "*/ margin: ",
+                "; //",
+                "\n padding: ",
+                ";"
+            ]),
+            MinifyResult {
+                values: vec![
+                    "color:".into(),
+                    ";margin:".into(),
+                    ";padding:".into(),
+                    ";".into()
+                ],
+                retained_expression_indices: [0, 2, 4].into_iter().collect(),
+            }
+        );
+        assert_eq!(
+            minify_values(["", "", ""]),
+            MinifyResult {
+                values: vec!["".into(), "".into(), "".into()],
+                retained_expression_indices: [0, 1].into_iter().collect(),
             }
         );
     }
