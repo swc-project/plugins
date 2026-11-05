@@ -1,5 +1,11 @@
 # @swc/plugin-import-meta-env
 
+## 0.2.2
+
+### Patch Changes
+
+- ea2665b: Update swc_core to 84.0.1.
+
 ## 0.2.1
 
 ### Patch Changes
