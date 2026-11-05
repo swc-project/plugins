@@ -65,6 +65,12 @@ export function sync() {
 
 # @swc/plugin-swc-sdk
 
+## 19.0.2
+
+### Patch Changes
+
+- ea2665b: Update swc_core to 84.0.1.
+
 ## 19.0.1
 
 ### Patch Changes

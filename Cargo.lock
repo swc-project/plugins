@@ -424,9 +424,9 @@ checksum = "cae341ca01ee91c1e68cbcbd9f08e5c9fb6171c7daed060625563232520d37ae"
 
 [[package]]
 name = "cc"
-version = "1.10.0"
+version = "1.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "86e055fa6e3e40ad6187ba25b6855eeb635d5271f8e0f0e1e9a5826b8d75bea0"
+checksum = "375989decec1a0fa424442bed520fa12ede43a48475ce8c7417d2c69b32b5f6b"
 dependencies = [
  "find-msvc-tools",
  "shlex",
@@ -1433,9 +1433,9 @@ dependencies = [
 
 [[package]]
 name = "log"
-version = "0.4.34"
+version = "0.4.35"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
+checksum = "5d15f86d12da44cd8d4ec3c73984537eb7f4cadcb9776a575a0a8a05ca11005c"
 
 [[package]]
 name = "magic-crypt"
@@ -1531,7 +1531,7 @@ dependencies = [
 
 [[package]]
 name = "modularize_imports"
-version = "24.0.0"
+version = "25.0.0"
 dependencies = [
  "convert_case",
  "handlebars",
@@ -1749,19 +1749,20 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
 
 [[package]]
 name = "pest"
-version = "2.9.2"
+version = "2.9.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "45d3aca230fad2e6f6317ca0a72724338c4960cb97168a85cdee66df4a9a21a8"
+checksum = "a8db75153506001cb36ed924f08cadc862eb3f8c4d0d534139f29074769d7660"
 dependencies = [
  "memchr",
+ "pest_stack_guard",
  "ucd-trie",
 ]
 
 [[package]]
 name = "pest_derive"
-version = "2.9.2"
+version = "2.9.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "284b60557f2c4a2e72ad3f2d34d42685a2fa4a6a61d0d2a10c0ae2a5e916c2cf"
+checksum = "20aa17e11fb35664b67d5214a0afac57a360d231b6ec53d6eba0700b27d933b4"
 dependencies = [
  "pest",
  "pest_generator",
@@ -1769,24 +1770,34 @@ dependencies = [
 
 [[package]]
 name = "pest_generator"
-version = "2.9.2"
+version = "2.9.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1d9d1f08a115309ee99268cf85e5228e0e56aa9caf8841ec12866b6be07c3109"
+checksum = "626ec5afccf44ccbfeb2b232316510bb55b4bf34d891afcb0fb07d2b17d7fe9d"
 dependencies = [
  "pest",
  "pest_meta",
  "proc-macro2",
  "quote",
- "syn 2.0.119",
+ "syn 3.0.9",
 ]
 
 [[package]]
 name = "pest_meta"
-version = "2.9.2"
+version = "2.9.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ed93ba1a9ffcca32130a5188701c81c0c49cf00d4b7c5007d5148951d743adcb"
+checksum = "b3f45b6caa65c1b08186832745159c2529994146340a7bf44168095469720f5d"
 dependencies = [
  "pest",
+]
+
+[[package]]
+name = "pest_stack_guard"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9ac6154fd4418b8f0b82532c59c26f303f9ca59a64c883e8ce3971fd82733439"
+dependencies = [
+ "psm",
+ "stacker",
 ]
 
 [[package]]
@@ -2054,7 +2065,7 @@ dependencies = [
 
 [[package]]
 name = "react_remove_properties"
-version = "24.0.0"
+version = "25.0.0"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -2127,7 +2138,7 @@ dependencies = [
 
 [[package]]
 name = "remove_console"
-version = "24.0.0"
+version = "25.0.0"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -2530,7 +2541,7 @@ checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
 
 [[package]]
 name = "styled_components"
-version = "24.0.0"
+version = "25.0.0"
 dependencies = [
  "Inflector",
  "once_cell",
@@ -2552,7 +2563,7 @@ dependencies = [
 
 [[package]]
 name = "styled_jsx"
-version = "24.0.0"
+version = "25.0.0"
 dependencies = [
  "anyhow",
  "lightningcss",
@@ -2652,7 +2663,7 @@ dependencies = [
 
 [[package]]
 name = "swc_confidential"
-version = "24.0.0"
+version = "25.0.0"
 dependencies = [
  "cipher 0.4.4",
  "hex",
@@ -3155,7 +3166,7 @@ dependencies = [
 
 [[package]]
 name = "swc_emotion"
-version = "24.0.0"
+version = "25.0.0"
 dependencies = [
  "base64 0.22.1",
  "byteorder",
@@ -3208,7 +3219,7 @@ dependencies = [
 
 [[package]]
 name = "swc_experimental_babel"
-version = "24.0.0"
+version = "25.0.0"
 dependencies = [
  "anyhow",
  "once_cell",
@@ -3228,7 +3239,7 @@ dependencies = [
 
 [[package]]
 name = "swc_feature_flags"
-version = "24.0.0"
+version = "25.0.0"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -3244,7 +3255,7 @@ dependencies = [
 
 [[package]]
 name = "swc_formatjs_transform"
-version = "47.0.0"
+version = "48.0.0"
 dependencies = [
  "base64ct",
  "digest 0.10.7",
@@ -3265,7 +3276,7 @@ dependencies = [
 
 [[package]]
 name = "swc_icu_messageformat_parser"
-version = "43.0.0"
+version = "44.0.0"
 dependencies = [
  "langtag",
  "once_cell",
@@ -3291,7 +3302,7 @@ dependencies = [
 
 [[package]]
 name = "swc_magic"
-version = "24.0.0"
+version = "25.0.0"
 dependencies = [
  "rustc-hash",
  "serde",
@@ -3308,7 +3319,7 @@ dependencies = [
 
 [[package]]
 name = "swc_mut_cjs_exports"
-version = "35.0.0"
+version = "36.0.0"
 dependencies = [
  "rustc-hash",
  "swc_core",
@@ -3602,7 +3613,7 @@ dependencies = [
 
 [[package]]
 name = "swc_prefresh"
-version = "24.0.0"
+version = "25.0.0"
 dependencies = [
  "serde",
  "swc_atoms",
@@ -3618,7 +3629,7 @@ dependencies = [
 
 [[package]]
 name = "swc_relay"
-version = "24.0.0"
+version = "25.0.0"
 dependencies = [
  "once_cell",
  "regex",
@@ -3636,7 +3647,7 @@ dependencies = [
 
 [[package]]
 name = "swc_sdk"
-version = "24.0.0"
+version = "25.0.0"
 dependencies = [
  "default-from-serde",
  "rustc-hash",
