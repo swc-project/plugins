@@ -1,5 +1,11 @@
 # @swc/plugin-noop
 
+## 18.0.2
+
+### Patch Changes
+
+- ea2665b: Update swc_core to 84.0.1.
+
 ## 18.0.1
 
 ### Patch Changes

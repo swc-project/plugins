@@ -1,6 +1,6 @@
 {
   "name": "@swc-contrib/plugin-graphql-codegen-client-preset",
-  "version": "0.37.1",
+  "version": "0.37.2",
   "publishConfig": {
     "access": "public",
     "provenance": true

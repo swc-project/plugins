@@ -1,5 +1,11 @@
 # @swc-contrib/plugin-graphql-codegen-client-preset
 
+## 0.37.2
+
+### Patch Changes
+
+- ea2665b: Update swc_core to 84.0.1.
+
 ## 0.37.1
 
 ### Patch Changes
