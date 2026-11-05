@@ -16,6 +16,31 @@ You will need to provide the `artifactDirectory` path that should be the same as
 
 The plugin also supports a `namingConvention` option to match the naming convention configured in your `codegen.ts`. The default is `"change-case-all#pascalCase"` which matches the default for `@graphql-codegen/client-preset`. If you have set `namingConvention: "change-case-all#upperCaseFirst"` in your `codegen.ts`, you must also set it in the plugin options.
 
+The following options must also match your Codegen configuration when you change document variable names:
+
+| Option | Default | Effect |
+| --- | --- | --- |
+| `documentVariablePrefix` | `""` | Prefix for query, mutation, and subscription document variables. |
+| `documentVariableSuffix` | `"Document"` | Suffix for query, mutation, and subscription document variables. Use `""` to remove it. |
+| `fragmentVariablePrefix` | `""` | Prefix for fragment document variables. |
+| `fragmentVariableSuffix` | `"FragmentDoc"` | Suffix for fragment document variables. Use `""` to remove it. |
+| `dedupeOperationSuffix` | `false` | Remove the leading `Fragment` from the fragment suffix when the fragment name already ends with `Fragment`. The comparison ignores case. |
+| `omitOperationSuffix` | `false` | Omit the fragment variable suffix. This takes precedence over `dedupeOperationSuffix`. |
+
+As in Codegen, `dedupeOperationSuffix` and `omitOperationSuffix` do not change operation document variable names. The plugin applies `namingConvention` after combining the prefix, name, and suffix. The supported string naming conventions preserve underscores and convert each underscore-separated segment independently.
+
+For example, if Codegen uses `documentVariableSuffix: ""`, set the same option in the plugin:
+
+```json
+{
+  "artifactDirectory": "./src/gql",
+  "gqlTagName": "graphql",
+  "documentVariableSuffix": ""
+}
+```
+
+A call for `query GetUser { id }` then imports `GetUser` instead of `GetUserDocument`.
+
 #### Vite
 
 ```ts
@@ -71,3 +96,273 @@ const nextConfig = {
   },
 }
 ```
+
+# @swc-contrib/plugin-graphql-codegen-client-preset
+
+## 0.37.2
+
+### Patch Changes
+
+- ea2665b: Update swc_core to 84.0.1.
+
+## 0.37.1
+
+### Patch Changes
+
+- Update swc_core to 83.0.0.
+
+## 0.37.0
+
+### Minor Changes
+
+- 1fa243d: Update swc_core to 82.2.0.
+
+## 0.36.0
+
+### Minor Changes
+
+- 5c6d86d: Update swc_core to 82.0.0.
+
+## 0.35.0
+
+### Minor Changes
+
+- e995ea5: build!: Update swc_core to v81.0.2
+
+### Patch Changes
+
+- 1a64141: Reuse existing boxed expressions instead of allocating new boxes, fixing `clippy::replace_box` warnings without changing transform behavior.
+
+## 0.34.0
+
+### Minor Changes
+
+- 27f28a4: build!: Update swc_core to v81.0.0
+
+## 0.33.0
+
+### Minor Changes
+
+- a9a7fe9: build!: Update swc_core to v78.0.0
+
+## 0.32.0
+
+### Minor Changes
+
+- 74931df: build!: Update swc_core to v77.0.0
+
+## 0.31.0
+
+### Minor Changes
+
+- 8d2db7f: build: Update swc_core to v76.0.0
+
+## 0.30.0
+
+### Minor Changes
+
+- 1a6fdee: build: Update swc_core to v75.0.0
+
+## 0.29.0
+
+### Minor Changes
+
+- 6051cea: build: Update swc_core to v74.0.0
+
+## 0.28.0
+
+### Minor Changes
+
+- b7be81b: build: Update swc_core to v73.0.0
+
+## 0.27.0
+
+### Minor Changes
+
+- 4b382e7: build: Update swc_core to v72.0.0
+
+## 0.26.1
+
+### Patch Changes
+
+- e785517: build: Update swc_core to v71.0.5
+
+## 0.26.0
+
+### Minor Changes
+
+- 7cc5e96: build: Update swc_core to v72
+
+## 0.25.0
+
+### Minor Changes
+
+- c3013d7: build: Update swc_core to v69
+
+## 0.24.0
+
+### Minor Changes
+
+- 3b04284: build: Update swc_core to v68
+
+## 0.23.0
+
+### Minor Changes
+
+- 3b4d5b9: build: Update swc_core to v67
+
+## 0.22.0
+
+### Minor Changes
+
+- 5e967fc: build: Update swc_core to v66.0.3
+
+## 0.21.0
+
+### Minor Changes
+
+- d2f9cfa: build: Update swc_core to v65.0.0
+
+## 0.20.0
+
+### Minor Changes
+
+- a0fb975: Update swc_core to v61.0.1
+
+## 0.19.0
+
+### Minor Changes
+
+- 1cbeb5a: build: Update swc_core to v58.0.1
+
+## 0.18.0
+
+### Minor Changes
+
+- 2113ddb: build: Update swc_core to v57
+
+## 0.17.0
+
+### Minor Changes
+
+- 870774a: build: Update swc_core to v56
+
+## 0.16.0
+
+### Minor Changes
+
+- 66f5258: build: Update swc_core to v55.x.x
+
+## 0.15.0
+
+### Minor Changes
+
+- 9c163ec: Update swc_core to v53, really
+
+## 0.14.0
+
+### Minor Changes
+
+- 3799fa4: Update swc_core to v53.0.0
+
+## 0.13.0
+
+### Minor Changes
+
+- 0a1d66f: Update swc_core to v52.0.0
+
+## 0.12.1
+
+### Patch Changes
+
+- a73246f: build: Update swc_core to v49.0.0
+
+## 0.12.0
+
+### Minor Changes
+
+- 6c46f86: feat: Enable backward-compatibility feature
+
+## 0.11.1
+
+### Patch Changes
+
+- ad79e09: Update swc_core to v48.0.4
+
+## 0.11.0
+
+### Minor Changes
+
+- 7a0fbdb: Update swc_core to v48
+
+## 0.10.1
+
+### Patch Changes
+
+- 593f438: Update swc_core to v47
+
+## 0.10.0
+
+### Minor Changes
+
+- 25e0c2c: Update swc_core to v46.0.0
+
+## 0.9.0
+
+### Minor Changes
+
+- c324a59: Update swc_core to v45
+
+## 0.8.0
+
+### Minor Changes
+
+- 8bad98d: Update swc_core to v44
+
+## 0.7.0
+
+### Minor Changes
+
+- 47be132: Update swc_core to v42
+
+## 0.6.0
+
+### Minor Changes
+
+- 0c9d7a1: build: Update swc_core to v39.0.0
+
+## 0.5.0
+
+### Minor Changes
+
+- a872100: build: Update swc_core to v38
+
+## 0.4.3
+
+### Patch Changes
+
+- 5c67c0f: Add import below directives
+
+## 0.4.2
+
+### Patch Changes
+
+- 9b08ff7: Update swc_core to v35
+
+## 0.4.1
+
+### Patch Changes
+
+- df280ad: Update swc_core to v34.0.0
+
+## 0.4.0
+
+### Minor Changes
+
+- 562e755: Update swc_core to v33
+
+## 0.3.1
+
+### Patch Changes
+
+- 06d6656: Migrate from `@graphql-codegen/client-preset-swc-plugin`
