@@ -1,5 +1,11 @@
 # @swc/plugin-loadable-components
 
+## 17.0.3
+
+### Patch Changes
+
+- Update swc_core to 85.0.0.
+
 ## 17.0.2
 
 ### Patch Changes
