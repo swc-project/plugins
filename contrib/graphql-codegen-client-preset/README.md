@@ -99,6 +99,12 @@ const nextConfig = {
 
 # @swc-contrib/plugin-graphql-codegen-client-preset
 
+## 0.37.3
+
+### Patch Changes
+
+- Update swc_core to 85.0.0.
+
 ## 0.37.2
 
 ### Patch Changes

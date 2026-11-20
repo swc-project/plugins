@@ -4,6 +4,12 @@
 
 # @swc/plugin-jest
 
+## 18.0.3
+
+### Patch Changes
+
+- Update swc_core to 85.0.0.
+
 ## 18.0.2
 
 ### Patch Changes

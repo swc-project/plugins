@@ -1,6 +1,6 @@
 {
   "name": "@swc/plugin-swc-sdk",
-  "version": "19.0.2",
+  "version": "19.0.3",
   "publishConfig": {
     "access": "public",
     "provenance": true
