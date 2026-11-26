@@ -78,6 +78,24 @@ const nextConfig = {
 };
 ```
 
+> **Monorepos with Turbopack:** Turbopack passes its [root directory](https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory) to SWC as the `cwd`. By default this is the workspace root (the directory containing your lockfile, e.g. `yarn.lock` or `pnpm-lock.yaml`), not the Next.js app directory. If your app lives below that root, write `artifactDirectory` as a path from the workspace root. This does not apply to webpack builds, or if you set `turbopack.root` to the app directory. In those cases, keep the path relative to the app.
+
+```ts
+// apps/web/next.config.mjs, in a monorepo where the lockfile sits at the repo root
+const nextConfig = {
+  experimental: {
+    swcPlugins: [
+      [
+        "@swc-contrib/plugin-graphql-codegen-client-preset",
+        { artifactDirectory: "apps/web/src/gql", gqlTagName: "graphql" },
+      ],
+    ],
+  },
+};
+
+export default nextConfig;
+```
+
 #### `.swcrc`
 
 ```json5
